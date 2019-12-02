@@ -1,0 +1,28 @@
+/* vanity/index.css */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+html {
+  position: relative;
+}
+
+#container {
+  width: 80%;
+  height: 100%;
+  margin: auto;
+  padding: 20px;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+  padding-bottom: 20px;
+  font-size: 0.8em;
+  width: 100%;
+}
