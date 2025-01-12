@@ -141,6 +141,10 @@ a.content-link:hover::after {
 
 .project-content {
   padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 59%;
 }
 
 .project-links {

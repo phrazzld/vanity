@@ -32,13 +32,15 @@ export default function ProjectCard({
         />
       </div>
       <div className="project-content">
-        <h2>{title}</h2>
-        <p>{description}</p>
-        <ul className="tech-stack">
-          {techStack.map((tech) => (
-            <li key={tech}>{tech}</li>
-          ))}
-        </ul>
+        <div>
+          <h2>{title}</h2>
+          <p>{description}</p>
+          <ul className="tech-stack">
+            {techStack.map((tech) => (
+              <li key={tech}>{tech}</li>
+            ))}
+          </ul>
+        </div>
         <div className="project-links">
           {siteUrl && (
             <a href={siteUrl} target="_blank" className="content-link secondary-link" rel="noreferrer">
