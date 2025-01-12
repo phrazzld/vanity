@@ -28,17 +28,28 @@ html, body {
 }
 
 .nav-list a {
+  position: relative;
   text-decoration: none;
-  color: #000;
+  color: black;
   font-weight: 600;
-  transition: color 0.2s, border-bottom 0.2s;
-  border-bottom: 2px solid transparent;
+  transition: color 0.2s;
 }
 
-.nav-list a:hover {
-  color: black;
-  padding-bottom: 0.4rem;
-  border-bottom: 3px solid black;
+.nav-list a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  height: 3px;
+  width: 100%;
+  background-color: black;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s;
+}
+
+.nav-list a:hover::after {
+  transform: scaleX(1);
 }
 
 main {
