@@ -1,7 +1,12 @@
 import { READINGS, Reading } from '../data'
 
-export default function ReadingDetailPage({ params }: { params: { slug: string } }) {
-  const reading = READINGS.find((item: Reading) => item.slug === params.slug)
+interface Props {
+  params: Promise<{ slug: string }>
+}
+
+export default async function ReadingDetailPage({ params }: Props) {
+  const { slug } = await params
+  const reading = READINGS.find((item: Reading) => item.slug === slug)
   if (!reading) {
     return <div>not found</div>
   }
