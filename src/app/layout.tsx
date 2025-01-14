@@ -24,6 +24,9 @@ export default function RootLayout({
               <li>
                 <Link href="/projects">projects</Link>
               </li>
+              <li>
+                <Link href="/readings">readings</Link>
+              </li>
             </ul>
           </nav>
         </header>
