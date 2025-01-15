@@ -1,7 +1,7 @@
 "use client"
 
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
 import { READINGS, Reading } from './data'
 import { getSeededPlaceholderStyles } from './placeholderUtils'
 
@@ -62,9 +62,8 @@ export default function ReadingsPage() {
                     fill
                     style={{
                       objectFit: 'cover',
-                      // apply styles based on whether the book is unfinished
-                      filter: reading.finishedDate === null ? 'grayscale(100%)' : 'none',
-                      opacity: reading.finishedDate === null ? 0.7 : 1,
+                      filter: reading.dropped ? 'grayscale(100%)' : 'none',
+                      opacity: reading.finishedDate === null ? 0.5 : 1,
                       transition: 'filter 0.2s ease, opacity 0.2s ease', // smooth transition for hover effects
                     }}
                   />

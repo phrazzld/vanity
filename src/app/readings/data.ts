@@ -5,72 +5,17 @@ export type Reading = {
   finishedDate: Date | null;
   coverImageSrc: string | null;
   thoughts: string;
+  dropped: boolean;
 }
 
 const READINGS_CURRENTLY: Reading[] = [
-  {
-    slug: 'designing-data-intensive-applications',
-    title: 'Designing Data-Intensive Applications',
-    author: 'Martin Kleppmann',
-    finishedDate: null,
-    coverImageSrc: '/readings/designing-data-intensive-applications-01.jpg',
-    thoughts: 'some short notes here about the meaning of quality and the tension between classical and romantic approaches...',
-  },
-  {
-    slug: 'man-and-woman-he-created-them-a-theology-of-the-body',
-    title: 'Man and Woman He Created Them: A Theology of the Body',
-    author: 'John Paul II',
-    finishedDate: null,
-    coverImageSrc: '/readings/man-and-woman-he-created-them-01.jpg',
-    thoughts: ''
-  },
-  {
-    slug: 'paradise-lost',
-    title: 'Paradise Lost',
-    author: 'John Milton',
-    finishedDate: null,
-    coverImageSrc: '/readings/paradise-lost-01.jpg',
-    thoughts: ''
-  },
-  {
-    slug: 'scaling-people',
-    title: 'Scaling People',
-    author: 'Claire Hughes Johnson',
-    finishedDate: null,
-    coverImageSrc: '/readings/scaling-people-01.jpg',
-    thoughts: ''
-  },
-  {
-    slug: 'structure-and-interpretation-of-computer-programs-second-edition',
-    title: 'Structure and Interpretation of Computer Programs, Second Edition',
-    author: 'Abelson and Sussman',
-    finishedDate: null,
-    coverImageSrc: '/readings/structure-and-interpretation-of-computer-programs-01.jpg',
-    thoughts: ''
-  },
-  {
-    slug: 'shorter-summa',
-    title: 'Shorter Summa',
-    author: 'St. Thomas Aquinas',
-    finishedDate: null,
-    coverImageSrc: '/readings/shorter-summa-01.jpg',
-    thoughts: ''
-  },
-  {
-    slug: 'dominion',
-    title: 'Dominion',
-    author: 'Tom Holland',
-    finishedDate: null,
-    coverImageSrc: '/readings/dominion-01.jpg',
-    thoughts: ''
-  },
   {
     slug: 'the-story-of-civilization-volume-i-our-oriental-heritage',
     title: 'The Story of Civilization - Volume I - Our Oriental Heritage',
     author: 'Will Durant',
     finishedDate: null,
     coverImageSrc: '/readings/the-story-of-civilization-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-silmarillion',
@@ -78,7 +23,7 @@ const READINGS_CURRENTLY: Reading[] = [
     author: 'J.R.R. Tolkien',
     finishedDate: null,
     coverImageSrc: '/readings/the-silmarillion-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
 ]
 
@@ -91,7 +36,7 @@ const READINGS_2024: Reading[] = [
     author: 'Dale Carnegie',
     finishedDate: new Date('2024-01-30'),
     coverImageSrc: '/readings/how-to-win-friends-and-influence-people-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'berserk',
@@ -99,7 +44,7 @@ const READINGS_2024: Reading[] = [
     author: 'Kentaro Miura',
     finishedDate: new Date('2024-02-03'),
     coverImageSrc: '/readings/berserk-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'salt-fat-acid-heat',
@@ -107,7 +52,7 @@ const READINGS_2024: Reading[] = [
     author: 'Samin Nosrat',
     finishedDate: new Date('2024-02-09'),
     coverImageSrc: '/readings/salt-fat-acid-heat-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'gradually-then-suddenly',
@@ -115,7 +60,7 @@ const READINGS_2024: Reading[] = [
     author: 'Parker Lewis',
     finishedDate: new Date('2024-02-16'),
     coverImageSrc: '/readings/gradually-then-suddenly-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-divine-comedy-purgatorio',
@@ -123,7 +68,7 @@ const READINGS_2024: Reading[] = [
     author: 'Dante Alighieri',
     finishedDate: new Date('2024-02-20'),
     coverImageSrc: '/readings/the-divine-comedy-purgatorio-02.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'galapagos',
@@ -131,7 +76,7 @@ const READINGS_2024: Reading[] = [
     author: 'Kurt Vonnegut',
     finishedDate: new Date('2024-03-16'),
     coverImageSrc: '/readings/galapagos-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-divine-comedy-paradiso',
@@ -139,7 +84,7 @@ const READINGS_2024: Reading[] = [
     author: 'Dante Alighieri',
     finishedDate: new Date('2024-04-16'),
     coverImageSrc: '/readings/the-divine-comedy-paradiso-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'a-prayer-journal',
@@ -147,7 +92,7 @@ const READINGS_2024: Reading[] = [
     author: 'Flannery O\'Connor',
     finishedDate: new Date('2024-05-19'),
     coverImageSrc: '/readings/prayer-journal-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-bible',
@@ -155,7 +100,7 @@ const READINGS_2024: Reading[] = [
     author: '',
     finishedDate: new Date('2024-06-11'),
     coverImageSrc: '/readings/holy-bible-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-screwtape-letters',
@@ -163,7 +108,7 @@ const READINGS_2024: Reading[] = [
     author: 'C.S. Lewis',
     finishedDate: new Date('2024-06-16'),
     coverImageSrc: '/readings/screwtape-letters-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-book-of-five-rings',
@@ -171,7 +116,7 @@ const READINGS_2024: Reading[] = [
     author: 'Miyamoto Musashi',
     finishedDate: new Date('2024-06-25'),
     coverImageSrc: '/readings/the-book-of-five-rings-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'reasonable-faith',
@@ -179,7 +124,7 @@ const READINGS_2024: Reading[] = [
     author: 'William Lane Craig',
     finishedDate: new Date('2024-08-03'),
     coverImageSrc: '/readings/reasonable-faith-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-everlasting-man',
@@ -187,7 +132,7 @@ const READINGS_2024: Reading[] = [
     author: 'G.K. Chesterton',
     finishedDate: new Date('2024-08-27'),
     coverImageSrc: '/readings/the-everlasting-man-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'saint-thomas-aquinas',
@@ -195,7 +140,7 @@ const READINGS_2024: Reading[] = [
     author: 'G.K. Chesterton',
     finishedDate: new Date('2024-09-25'),
     coverImageSrc: '/readings/saint-thomas-aquinas-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'when-the-church-was-young',
@@ -203,7 +148,7 @@ const READINGS_2024: Reading[] = [
     author: 'Marcellino D\'Ambrosio',
     finishedDate: new Date('2024-10-20'),
     coverImageSrc: '/readings/when-the-church-was-young-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-promised-neverland',
@@ -211,7 +156,7 @@ const READINGS_2024: Reading[] = [
     author: 'Kaiu Shirai',
     finishedDate: new Date('2024-11-11'),
     coverImageSrc: '/readings/the-promised-neverland-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'story-of-a-soul',
@@ -219,7 +164,7 @@ const READINGS_2024: Reading[] = [
     author: 'St. Therese of Lisieux',
     finishedDate: new Date('2024-11-15'),
     coverImageSrc: '/readings/story-of-a-soul-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'catechism-of-the-catholic-church',
@@ -227,7 +172,7 @@ const READINGS_2024: Reading[] = [
     author: '',
     finishedDate: new Date('2024-11-18'),
     coverImageSrc: '/readings/catechism-of-the-catholic-church-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'walking-with-god',
@@ -235,7 +180,7 @@ const READINGS_2024: Reading[] = [
     author: 'Tim Gray and Jeff Cavins',
     finishedDate: new Date('2024-12-05'),
     coverImageSrc: '/readings/walking-with-god-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
 ]
 
@@ -246,7 +191,7 @@ const READINGS_2023: Reading[] = [
     author: 'Saifedean Ammous',
     finishedDate: new Date('2023-01-10'),
     coverImageSrc: '/readings/the-fiat-standard-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-man-without-a-face',
@@ -254,7 +199,7 @@ const READINGS_2023: Reading[] = [
     author: 'Masha Gessen',
     finishedDate: new Date('2023-01-12'),
     coverImageSrc: '/readings/the-man-without-a-face-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-one-world-schoolhouse',
@@ -262,7 +207,7 @@ const READINGS_2023: Reading[] = [
     author: 'Salman Khan',
     finishedDate: new Date('2023-01-16'),
     coverImageSrc: '/readings/the-one-world-schoolhouse-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'euthyphro',
@@ -270,7 +215,7 @@ const READINGS_2023: Reading[] = [
     author: 'Plato',
     finishedDate: new Date('2023-01-18'),
     coverImageSrc: '/readings/euthyphro-01.jpeg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'apology',
@@ -278,7 +223,7 @@ const READINGS_2023: Reading[] = [
     author: 'Plato',
     finishedDate: new Date('2023-01-18'),
     coverImageSrc: '/readings/apology-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'human-action',
@@ -286,7 +231,7 @@ const READINGS_2023: Reading[] = [
     author: 'Ludwig Von Mises',
     finishedDate: new Date('2023-01-22'),
     coverImageSrc: '/readings/human-action-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'crito',
@@ -294,7 +239,7 @@ const READINGS_2023: Reading[] = [
     author: 'Plato',
     finishedDate: new Date('2023-01-24'),
     coverImageSrc: '/readings/crito-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'where-wizards-stay-up-late',
@@ -302,7 +247,7 @@ const READINGS_2023: Reading[] = [
     author: 'Katie Hafner',
     finishedDate: new Date('2023-01-27'),
     coverImageSrc: '/readings/where-wizards-stay-up-late-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'phaedo',
@@ -310,7 +255,7 @@ const READINGS_2023: Reading[] = [
     author: 'Plato',
     finishedDate: new Date('2023-02-23'),
     coverImageSrc: '/readings/phaedo-02.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'andrew-carnegie',
@@ -318,7 +263,7 @@ const READINGS_2023: Reading[] = [
     author: 'David Nasaw',
     finishedDate: new Date('2023-03-08'),
     coverImageSrc: '/readings/andrew-carnegie-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'mere-christianity',
@@ -326,7 +271,7 @@ const READINGS_2023: Reading[] = [
     author: 'C.S. Lewis',
     finishedDate: new Date('2023-03-14'),
     coverImageSrc: '/readings/mere-christianity-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'impromptu',
@@ -334,7 +279,7 @@ const READINGS_2023: Reading[] = [
     author: 'Reid Hoffman',
     finishedDate: new Date('2023-03-26'),
     coverImageSrc: '/readings/impromptu-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'debt',
@@ -342,7 +287,7 @@ const READINGS_2023: Reading[] = [
     author: 'David Graeber',
     finishedDate: new Date('2023-04-05'),
     coverImageSrc: '/readings/debt-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'softwar',
@@ -350,7 +295,7 @@ const READINGS_2023: Reading[] = [
     author: 'Jason P. Lowery',
     finishedDate: new Date('2023-04-29'),
     coverImageSrc: '/readings/softwar-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-bhagavad-gita',
@@ -358,7 +303,7 @@ const READINGS_2023: Reading[] = [
     author: '',
     finishedDate: new Date('2023-05-02'),
     coverImageSrc: '/readings/bhagavad-gita-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'cratylus',
@@ -366,7 +311,7 @@ const READINGS_2023: Reading[] = [
     author: 'Plato',
     finishedDate: new Date('2023-05-04'),
     coverImageSrc: '/readings/cratylus-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'theaetetus',
@@ -374,7 +319,7 @@ const READINGS_2023: Reading[] = [
     author: 'Plato',
     finishedDate: new Date('2023-05-06'),
     coverImageSrc: '/readings/theaetetus-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'napoleon',
@@ -382,7 +327,7 @@ const READINGS_2023: Reading[] = [
     author: 'Andrew Roberts',
     finishedDate: new Date('2023-05-06'),
     coverImageSrc: '/readings/napoleon-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'neuromancer',
@@ -390,7 +335,7 @@ const READINGS_2023: Reading[] = [
     author: 'William Gibson',
     finishedDate: new Date('2023-05-07'),
     coverImageSrc: '/readings/neuromancer-02.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'orthodoxy',
@@ -398,7 +343,7 @@ const READINGS_2023: Reading[] = [
     author: 'G.K. Chesterton',
     finishedDate: new Date('2023-05-13'),
     coverImageSrc: '/readings/orthodoxy-01.webp',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'deadeye-dick',
@@ -406,7 +351,7 @@ const READINGS_2023: Reading[] = [
     author: 'Kurt Vonnegut',
     finishedDate: new Date('2023-05-15'),
     coverImageSrc: '/readings/deadeye-dick-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'means-of-ascent',
@@ -414,7 +359,7 @@ const READINGS_2023: Reading[] = [
     author: 'Robert A. Caro',
     finishedDate: new Date('2023-05-24'),
     coverImageSrc: '/readings/means-of-ascent-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'thus-spoke-zarathustra',
@@ -422,7 +367,7 @@ const READINGS_2023: Reading[] = [
     author: 'Friedrich Nietzsche',
     finishedDate: new Date('2023-07-15'),
     coverImageSrc: '/readings/thus-spoke-zarathustra-01.webp',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'master-of-the-senate',
@@ -430,7 +375,7 @@ const READINGS_2023: Reading[] = [
     author: 'Robert A. Caro',
     finishedDate: new Date('2023-08-01'),
     coverImageSrc: '/readings/master-of-the-senate-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'working',
@@ -438,7 +383,7 @@ const READINGS_2023: Reading[] = [
     author: 'Robert A. Caro',
     finishedDate: new Date('2023-09-27'),
     coverImageSrc: '/readings/working-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'hidden-repression',
@@ -446,7 +391,7 @@ const READINGS_2023: Reading[] = [
     author: 'Alex Gladstein',
     finishedDate: new Date('2023-10-08'),
     coverImageSrc: '/readings/hidden-repression-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'confessions',
@@ -454,7 +399,7 @@ const READINGS_2023: Reading[] = [
     author: 'St. Augustine',
     finishedDate: new Date('2023-10-12'),
     coverImageSrc: '/readings/confessions-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'sophist',
@@ -462,7 +407,7 @@ const READINGS_2023: Reading[] = [
     author: 'Plato',
     finishedDate: new Date('2023-10-17'),
     coverImageSrc: '/readings/sophist-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'blood-meridian',
@@ -470,7 +415,7 @@ const READINGS_2023: Reading[] = [
     author: 'Cormac McCarthy',
     finishedDate: new Date('2023-10-28'),
     coverImageSrc: '/readings/blood-meridian-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'broken-money',
@@ -478,7 +423,7 @@ const READINGS_2023: Reading[] = [
     author: 'Lyn Alden',
     finishedDate: new Date('2023-11-10'),
     coverImageSrc: '/readings/broken-money-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-dark-forest',
@@ -486,7 +431,7 @@ const READINGS_2023: Reading[] = [
     author: 'Cixin Liu',
     finishedDate: new Date('2023-11-15'),
     coverImageSrc: '/readings/the-dark-forest-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'death-s-end',
@@ -494,7 +439,7 @@ const READINGS_2023: Reading[] = [
     author: 'Cixin Liu',
     finishedDate: new Date('2023-11-25'),
     coverImageSrc: '/readings/deaths-end-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'bluebeard',
@@ -502,7 +447,7 @@ const READINGS_2023: Reading[] = [
     author: 'Kurt Vonnegut',
     finishedDate: new Date('2023-12-02'),
     coverImageSrc: '/readings/bluebeard-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-killing-joke',
@@ -510,7 +455,7 @@ const READINGS_2023: Reading[] = [
     author: 'Alan Moore',
     finishedDate: new Date('2023-12-02'),
     coverImageSrc: '/readings/the-killing-joke-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'facing-violence',
@@ -518,7 +463,7 @@ const READINGS_2023: Reading[] = [
     author: 'Rory Miller',
     finishedDate: new Date('2023-12-08'),
     coverImageSrc: '/readings/facing-violence-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-creative-act',
@@ -526,7 +471,7 @@ const READINGS_2023: Reading[] = [
     author: 'Rick Rubin',
     finishedDate: new Date('2023-12-10'),
     coverImageSrc: '/readings/the-creative-act-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-divine-comedy-inferno',
@@ -534,7 +479,7 @@ const READINGS_2023: Reading[] = [
     author: 'Dante Alighieri',
     finishedDate: new Date('2023-12-15'),
     coverImageSrc: '/readings/the-divine-comedy-inferno-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
 ]
 
@@ -545,7 +490,7 @@ const READINGS_2022: Reading[] = [
     author: 'Kurt Vonnegut',
     finishedDate: new Date('2022-01-11'),
     coverImageSrc: '/readings/god-bless-you-mr-rosewater-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'true-names',
@@ -553,7 +498,7 @@ const READINGS_2022: Reading[] = [
     author: 'Vernor Vinge',
     finishedDate: new Date('2022-01-16'),
     coverImageSrc: '/readings/true-names-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'meditations',
@@ -561,7 +506,7 @@ const READINGS_2022: Reading[] = [
     author: 'Marcus Aurelius',
     finishedDate: new Date('2022-02-11'),
     coverImageSrc: '/readings/meditations-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'east-of-eden',
@@ -569,7 +514,7 @@ const READINGS_2022: Reading[] = [
     author: 'John Steinbeck',
     finishedDate: new Date('2022-02-13'),
     coverImageSrc: '/readings/east-of-eden-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'mastering-the-lightning-network',
@@ -577,7 +522,7 @@ const READINGS_2022: Reading[] = [
     author: 'Andreas M. Antonopoulos',
     finishedDate: new Date('2022-02-25'),
     coverImageSrc: '/readings/mastering-the-lightning-network-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'jailbird',
@@ -585,7 +530,7 @@ const READINGS_2022: Reading[] = [
     author: 'Kurt Vonnegut',
     finishedDate: new Date('2022-03-01'),
     coverImageSrc: '/readings/jailbird-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'bone',
@@ -593,7 +538,7 @@ const READINGS_2022: Reading[] = [
     author: 'Jeff Smith',
     finishedDate: new Date('2022-03-06'),
     coverImageSrc: '/readings/bone-02.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'letters-from-a-stoic',
@@ -601,7 +546,7 @@ const READINGS_2022: Reading[] = [
     author: 'Seneca',
     finishedDate: new Date('2022-03-09'),
     coverImageSrc: '/readings/letters-from-a-stoic-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'extreme-privacy',
@@ -609,7 +554,7 @@ const READINGS_2022: Reading[] = [
     author: 'Michael Bazzell',
     finishedDate: new Date('2022-03-12'),
     coverImageSrc: '/readings/extreme-privacy-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'thank-god-for-bitcoin',
@@ -617,7 +562,7 @@ const READINGS_2022: Reading[] = [
     author: 'The Bitcoin and Bible Group',
     finishedDate: new Date('2022-03-14'),
     coverImageSrc: '/readings/thank-god-for-bitcoin-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'check-your-financial-privilege',
@@ -625,7 +570,7 @@ const READINGS_2022: Reading[] = [
     author: 'Alex Gladstein',
     finishedDate: new Date('2022-03-26'),
     coverImageSrc: '/readings/check-your-financial-privilege-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-urban-homestead',
@@ -633,7 +578,7 @@ const READINGS_2022: Reading[] = [
     author: 'Kelly Coyne',
     finishedDate: new Date('2022-03-27'),
     coverImageSrc: '/readings/the-urban-homestead-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'nausicaa-of-the-valley-of-the-wind',
@@ -641,7 +586,7 @@ const READINGS_2022: Reading[] = [
     author: 'Hayao Miyazaki',
     finishedDate: new Date('2022-03-30'),
     coverImageSrc: '/readings/nausicaa-01.webp',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'ghost-in-the-shell',
@@ -649,7 +594,7 @@ const READINGS_2022: Reading[] = [
     author: 'Masamune Shirow',
     finishedDate: new Date('2022-04-25'),
     coverImageSrc: '/readings/ghost-in-the-shell-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'bitcoin-is-venice',
@@ -657,7 +602,7 @@ const READINGS_2022: Reading[] = [
     author: 'Allen Farrington',
     finishedDate: new Date('2022-04-30'),
     coverImageSrc: '/readings/bitcoin-is-venice-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-mandibles',
@@ -665,7 +610,7 @@ const READINGS_2022: Reading[] = [
     author: 'Lionel Shriver',
     finishedDate: new Date('2022-05-04'),
     coverImageSrc: '/readings/the-mandibles-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'free-software-free-society',
@@ -673,7 +618,7 @@ const READINGS_2022: Reading[] = [
     author: 'Richard M. Stallman',
     finishedDate: new Date('2022-05-10'),
     coverImageSrc: '/readings/free-software-free-society-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'working-in-public',
@@ -681,7 +626,7 @@ const READINGS_2022: Reading[] = [
     author: 'Nadia Eghbal',
     finishedDate: new Date('2022-06-07'),
     coverImageSrc: '/readings/working-in-public-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'leviathan-falls',
@@ -689,7 +634,7 @@ const READINGS_2022: Reading[] = [
     author: 'James S.A. Corey',
     finishedDate: new Date('2022-06-19'),
     coverImageSrc: '/readings/leviathan-falls-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'lonesome-dove',
@@ -697,7 +642,7 @@ const READINGS_2022: Reading[] = [
     author: 'Larry McMurtry',
     finishedDate: new Date('2022-06-28'),
     coverImageSrc: '/readings/lonesome-dove-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-aeneid',
@@ -705,7 +650,7 @@ const READINGS_2022: Reading[] = [
     author: 'Virgil',
     finishedDate: new Date('2022-12-12'),
     coverImageSrc: '/readings/the-aeneid-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
 
 ]
@@ -717,7 +662,7 @@ const READINGS_2021: Reading[] = [
     author: 'Andreas M. Antonopoulos',
     finishedDate: new Date('2021-01-09'),
     coverImageSrc: '/readings/mastering-bitcoin-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-three-body-problem',
@@ -725,7 +670,7 @@ const READINGS_2021: Reading[] = [
     author: 'Cixin Liu',
     finishedDate: new Date('2021-01-28'),
     coverImageSrc: '/readings/the-three-body-problem-01.webp',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-fourth-turning',
@@ -733,7 +678,7 @@ const READINGS_2021: Reading[] = [
     author: 'William Strauss',
     finishedDate: new Date('2021-02-10'),
     coverImageSrc: '/readings/the-fourth-turning-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'genghis-khan-and-the-making-of-the-modern-world',
@@ -741,7 +686,7 @@ const READINGS_2021: Reading[] = [
     author: 'Jack Weatherford',
     finishedDate: new Date('2021-02-17'),
     coverImageSrc: '/readings/genghis-khan-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-bitcoin-standard',
@@ -749,7 +694,7 @@ const READINGS_2021: Reading[] = [
     author: 'Saifedean Ammous',
     finishedDate: new Date('2021-03-06'),
     coverImageSrc: '/readings/the-bitcoin-standard-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'bitcoin-and-black-america',
@@ -757,7 +702,7 @@ const READINGS_2021: Reading[] = [
     author: 'Isaiah Jackson',
     finishedDate: new Date('2021-03-07'),
     coverImageSrc: '/readings/bitcoin-and-black-america-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-sovereign-individual',
@@ -765,7 +710,7 @@ const READINGS_2021: Reading[] = [
     author: 'James Dale Davidson',
     finishedDate: new Date('2021-03-10'),
     coverImageSrc: '/readings/the-sovereign-individual-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-art-of-loving',
@@ -773,7 +718,7 @@ const READINGS_2021: Reading[] = [
     author: 'Erich Fromm',
     finishedDate: new Date('2021-03-13'),
     coverImageSrc: '/readings/the-art-of-loving-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'beyond-order',
@@ -781,7 +726,7 @@ const READINGS_2021: Reading[] = [
     author: 'Jordan B. Peterson',
     finishedDate: new Date('2021-03-18'),
     coverImageSrc: '/readings/beyond-order-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-moon-is-a-harsh-mistress',
@@ -789,7 +734,7 @@ const READINGS_2021: Reading[] = [
     author: 'Robert A. Heinlein',
     finishedDate: new Date('2021-03-18'),
     coverImageSrc: '/readings/the-moon-is-a-harsh-mistress-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'thomas-jefferson',
@@ -797,7 +742,7 @@ const READINGS_2021: Reading[] = [
     author: 'Jon Meacham',
     finishedDate: new Date('2021-03-30'),
     coverImageSrc: '/readings/thomas-jefferson-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-plague',
@@ -805,7 +750,7 @@ const READINGS_2021: Reading[] = [
     author: 'Albert Camus',
     finishedDate: new Date('2021-04-01'),
     coverImageSrc: '/readings/the-plague-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-internet-of-money-volume-one',
@@ -813,7 +758,7 @@ const READINGS_2021: Reading[] = [
     author: 'Andreas M. Antonopoulos',
     finishedDate: new Date('2021-04-03'),
     coverImageSrc: '/readings/the-internet-of-money-volume-one-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-internet-of-money-volume-two',
@@ -821,7 +766,7 @@ const READINGS_2021: Reading[] = [
     author: 'Andreas M. Antonopoulos',
     finishedDate: new Date('2021-04-04'),
     coverImageSrc: '/readings/the-internet-of-money-volume-two-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-internet-of-money-volume-three',
@@ -829,7 +774,7 @@ const READINGS_2021: Reading[] = [
     author: 'Andreas M. Antonopoulos',
     finishedDate: new Date('2021-04-08'),
     coverImageSrc: '/readings/the-internet-of-money-volume-three-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'starship-troopers',
@@ -837,7 +782,7 @@ const READINGS_2021: Reading[] = [
     author: 'Robert A. Heinlein',
     finishedDate: new Date('2021-04-25'),
     coverImageSrc: '/readings/starship-troopers-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-black-swan',
@@ -845,7 +790,7 @@ const READINGS_2021: Reading[] = [
     author: 'Nassim Nicholas Taleb',
     finishedDate: new Date('2021-04-26'),
     coverImageSrc: '/readings/the-black-swan-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-law',
@@ -853,7 +798,7 @@ const READINGS_2021: Reading[] = [
     author: 'Frédéric Bastiat',
     finishedDate: new Date('2021-04-27'),
     coverImageSrc: '/readings/the-law-01.webp',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'breakfast-of-champions',
@@ -861,7 +806,7 @@ const READINGS_2021: Reading[] = [
     author: 'Kurt Vonnegut',
     finishedDate: new Date('2021-05-01'),
     coverImageSrc: '/readings/breakfast-of-champions-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'grokking-bitcoin',
@@ -869,7 +814,7 @@ const READINGS_2021: Reading[] = [
     author: 'Kalle Rosenbaum',
     finishedDate: new Date('2021-05-02'),
     coverImageSrc: '/readings/grokking-bitcoin-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'inventing-bitcoin',
@@ -877,7 +822,7 @@ const READINGS_2021: Reading[] = [
     author: 'Yan Pritzker',
     finishedDate: new Date('2021-05-05'),
     coverImageSrc: '/readings/inventing-bitcoin-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-myth-of-sisyphus',
@@ -885,7 +830,7 @@ const READINGS_2021: Reading[] = [
     author: 'Albert Camus',
     finishedDate: new Date('2021-05-07'),
     coverImageSrc: '/readings/the-myth-of-sisyphus-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'murder-on-the-orient-express',
@@ -893,7 +838,7 @@ const READINGS_2021: Reading[] = [
     author: 'Agatha Christie',
     finishedDate: new Date('2021-05-09'),
     coverImageSrc: '/readings/murder-on-the-orient-express-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'mother-night',
@@ -901,7 +846,7 @@ const READINGS_2021: Reading[] = [
     author: 'Kurt Vonnegut',
     finishedDate: new Date('2021-05-15'),
     coverImageSrc: '/readings/mother-night-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'washington',
@@ -909,7 +854,7 @@ const READINGS_2021: Reading[] = [
     author: 'Ron Chernow',
     finishedDate: new Date('2021-05-16'),
     coverImageSrc: '/readings/washington-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-book-of-satoshi',
@@ -917,7 +862,7 @@ const READINGS_2021: Reading[] = [
     author: 'Phil Champagne',
     finishedDate: new Date('2021-05-22'),
     coverImageSrc: '/readings/the-book-of-satoshi-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'mastering-ethereum',
@@ -925,7 +870,7 @@ const READINGS_2021: Reading[] = [
     author: 'Andreas M. Antonopoulos',
     finishedDate: new Date('2021-06-11'),
     coverImageSrc: '/readings/mastering-ethereum-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-bed-of-procrustes',
@@ -933,7 +878,7 @@ const READINGS_2021: Reading[] = [
     author: 'Nassim Nicholas Taleb',
     finishedDate: new Date('2021-06-11'),
     coverImageSrc: '/readings/the-bed-of-procrustes-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'titan',
@@ -941,7 +886,7 @@ const READINGS_2021: Reading[] = [
     author: 'Ron Chernow',
     finishedDate: new Date('2021-07-18'),
     coverImageSrc: '/readings/titan-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'zero-to-one',
@@ -949,7 +894,7 @@ const READINGS_2021: Reading[] = [
     author: 'Peter Thiel',
     finishedDate: new Date('2021-07-30'),
     coverImageSrc: '/readings/zero-to-one-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'bobby-fischer-teaches-chess',
@@ -957,7 +902,7 @@ const READINGS_2021: Reading[] = [
     author: 'Bobby Fischer',
     finishedDate: new Date('2021-07-30'),
     coverImageSrc: '/readings/bobby-fischer-teaches-chess-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'demons',
@@ -965,7 +910,7 @@ const READINGS_2021: Reading[] = [
     author: 'Fyodor Dostoevsky',
     finishedDate: new Date('2021-08-17'),
     coverImageSrc: '/readings/demons-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: '21-lessons',
@@ -973,7 +918,7 @@ const READINGS_2021: Reading[] = [
     author: 'Gigi',
     finishedDate: new Date('2021-08-20'),
     coverImageSrc: '/readings/21-lessons-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-journalist-and-the-murderer',
@@ -981,7 +926,7 @@ const READINGS_2021: Reading[] = [
     author: 'Janet Malcolm',
     finishedDate: new Date('2021-08-20'),
     coverImageSrc: '/readings/the-journalist-and-the-murderer-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-rise-and-fall-of-the-third-reich',
@@ -989,7 +934,7 @@ const READINGS_2021: Reading[] = [
     author: 'William L. Shirer',
     finishedDate: new Date('2021-08-22'),
     coverImageSrc: '/readings/the-rise-and-fall-of-the-third-reich-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'atlas-shrugged',
@@ -997,7 +942,7 @@ const READINGS_2021: Reading[] = [
     author: 'Ayn Rand',
     finishedDate: new Date('2021-09-04'),
     coverImageSrc: '/readings/atlas-shrugged-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'payments-systems-in-the-us',
@@ -1005,7 +950,7 @@ const READINGS_2021: Reading[] = [
     author: 'Carol Coye Benson',
     finishedDate: new Date('2021-09-05'),
     coverImageSrc: '/readings/payments-systems-in-the-us-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'javascript',
@@ -1013,7 +958,7 @@ const READINGS_2021: Reading[] = [
     author: 'Douglas Crockford',
     finishedDate: new Date('2021-09-15'),
     coverImageSrc: '/readings/javascript-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'mastery',
@@ -1021,7 +966,7 @@ const READINGS_2021: Reading[] = [
     author: 'Robert Greene',
     finishedDate: new Date('2021-09-22'),
     coverImageSrc: '/readings/mastery-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'welcome-to-the-monkey-house',
@@ -1029,7 +974,7 @@ const READINGS_2021: Reading[] = [
     author: 'Kurt Vonnegut',
     finishedDate: new Date('2021-09-24'),
     coverImageSrc: '/readings/welcome-to-the-monkey-house-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-house-of-morgan',
@@ -1037,7 +982,7 @@ const READINGS_2021: Reading[] = [
     author: 'Ron Chernow',
     finishedDate: new Date('2021-09-29'),
     coverImageSrc: '/readings/the-house-of-morgan-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-blocksize-war',
@@ -1045,7 +990,7 @@ const READINGS_2021: Reading[] = [
     author: 'Jonathan Bier',
     finishedDate: new Date('2021-10-04'),
     coverImageSrc: '/readings/the-blocksize-war-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-bullish-case-for-bitcoin',
@@ -1053,7 +998,7 @@ const READINGS_2021: Reading[] = [
     author: 'Vijay Boyapati',
     finishedDate: new Date('2021-10-09'),
     coverImageSrc: '/readings/the-bullish-case-for-bitcoin-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'effective-typescript',
@@ -1061,7 +1006,7 @@ const READINGS_2021: Reading[] = [
     author: 'Dan Vanderkam',
     finishedDate: new Date('2021-10-10'),
     coverImageSrc: '/readings/effective-typescript-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'websocket',
@@ -1069,7 +1014,7 @@ const READINGS_2021: Reading[] = [
     author: 'Andrew Lombardi',
     finishedDate: new Date('2021-10-18'),
     coverImageSrc: '/readings/websocket-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-cathedral-and-the-bazaar',
@@ -1077,7 +1022,7 @@ const READINGS_2021: Reading[] = [
     author: 'Eric S. Raymond',
     finishedDate: new Date('2021-10-28'),
     coverImageSrc: '/readings/the-cathedral-and-the-bazaar-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-infinite-machine',
@@ -1085,7 +1030,7 @@ const READINGS_2021: Reading[] = [
     author: 'Camila Russo',
     finishedDate: new Date('2021-10-29'),
     coverImageSrc: '/readings/the-infinite-machine-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'masters-of-doom',
@@ -1093,7 +1038,7 @@ const READINGS_2021: Reading[] = [
     author: 'David Kushner',
     finishedDate: new Date('2021-11-09'),
     coverImageSrc: '/readings/masters-of-doom-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'layered-money',
@@ -1101,7 +1046,7 @@ const READINGS_2021: Reading[] = [
     author: 'Nik Bhatia',
     finishedDate: new Date('2021-11-12'),
     coverImageSrc: '/readings/layered-money-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'cryptoeconomics',
@@ -1109,7 +1054,7 @@ const READINGS_2021: Reading[] = [
     author: 'Eric Voskuil',
     finishedDate: new Date('2021-12-19'),
     coverImageSrc: '/readings/cryptoeconomics-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
 
 ]
@@ -1121,7 +1066,7 @@ const READINGS_2020: Reading[] = [
     author: 'Jane Austen',
     finishedDate: new Date('2020-01-01'),
     coverImageSrc: '/readings/pride-and-prejudice-01.webp',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'run-for-your-life',
@@ -1129,7 +1074,7 @@ const READINGS_2020: Reading[] = [
     author: 'Mark Cucuzzella',
     finishedDate: new Date('2020-01-17'),
     coverImageSrc: '/readings/run-for-your-life-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'anarchist-education-and-the-modern-school',
@@ -1137,7 +1082,7 @@ const READINGS_2020: Reading[] = [
     author: 'Francesc Ferrer I Guárdia',
     finishedDate: new Date('2020-02-14'),
     coverImageSrc: '/readings/anarchist-education-and-the-modern-school-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'why-nations-fail',
@@ -1145,7 +1090,7 @@ const READINGS_2020: Reading[] = [
     author: 'Daron Acemoğlu',
     finishedDate: new Date('2020-05-10'),
     coverImageSrc: '/readings/why-nations-fail-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-great-mortality',
@@ -1153,7 +1098,7 @@ const READINGS_2020: Reading[] = [
     author: 'John Kelly',
     finishedDate: new Date('2020-05-20'),
     coverImageSrc: '/readings/the-great-mortality-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-three-musketeers',
@@ -1161,7 +1106,7 @@ const READINGS_2020: Reading[] = [
     author: 'Alexandre Dumas',
     finishedDate: new Date('2020-06-02'),
     coverImageSrc: '/readings/the-three-musketeers-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-power-broker',
@@ -1169,7 +1114,7 @@ const READINGS_2020: Reading[] = [
     author: 'Robert A. Caro',
     finishedDate: new Date('2020-06-08'),
     coverImageSrc: '/readings/the-power-broker-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'endurance',
@@ -1177,7 +1122,7 @@ const READINGS_2020: Reading[] = [
     author: 'Alfred Lansing',
     finishedDate: new Date('2020-06-13'),
     coverImageSrc: '/readings/endurance-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'educated',
@@ -1185,7 +1130,7 @@ const READINGS_2020: Reading[] = [
     author: 'Tara Westover',
     finishedDate: new Date('2020-06-19'),
     coverImageSrc: '/readings/educated-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: '1984',
@@ -1193,7 +1138,7 @@ const READINGS_2020: Reading[] = [
     author: 'George Orwell',
     finishedDate: new Date('2020-06-27'),
     coverImageSrc: '/readings/1984-02.jpeg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'caesar',
@@ -1201,7 +1146,7 @@ const READINGS_2020: Reading[] = [
     author: 'Adrian Goldsworthy',
     finishedDate: new Date('2020-06-28'),
     coverImageSrc: '/readings/caesar-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'phaedrus',
@@ -1209,7 +1154,7 @@ const READINGS_2020: Reading[] = [
     author: 'Plato',
     finishedDate: new Date('2020-07-02'),
     coverImageSrc: '/readings/phaedrus-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'beyond-good-and-evil',
@@ -1217,7 +1162,7 @@ const READINGS_2020: Reading[] = [
     author: 'Friedrich Nietzsche',
     finishedDate: new Date('2020-08-02'),
     coverImageSrc: '/readings/beyond-good-and-evil-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-federalist-papers',
@@ -1225,7 +1170,7 @@ const READINGS_2020: Reading[] = [
     author: 'Alexander Hamilton',
     finishedDate: new Date('2020-09-20'),
     coverImageSrc: '/readings/the-federalist-papers-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'escape-from-freedom',
@@ -1233,7 +1178,7 @@ const READINGS_2020: Reading[] = [
     author: 'Erich Fromm',
     finishedDate: new Date('2020-10-04'),
     coverImageSrc: '/readings/escape-from-freedom-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'loserthink',
@@ -1241,7 +1186,7 @@ const READINGS_2020: Reading[] = [
     author: 'Scott Adams',
     finishedDate: new Date('2020-10-10'),
     coverImageSrc: '/readings/loserthink-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'everywhere-all-the-time',
@@ -1249,7 +1194,7 @@ const READINGS_2020: Reading[] = [
     author: 'Matt Hern',
     finishedDate: new Date('2020-11-07'),
     coverImageSrc: '/readings/everywhere-all-the-time-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
 
 ]
@@ -1261,7 +1206,7 @@ const READINGS_2019: Reading[] = [
     author: 'Doris Kearns Goodwin',
     finishedDate: new Date('2019-02-04'),
     coverImageSrc: '/readings/team-of-rivals-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'anna-karenina',
@@ -1269,7 +1214,7 @@ const READINGS_2019: Reading[] = [
     author: 'Leo Tolstoy',
     finishedDate: new Date('2019-04-10'),
     coverImageSrc: '/readings/anna-karenina-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'american-kingpin',
@@ -1277,7 +1222,7 @@ const READINGS_2019: Reading[] = [
     author: 'Nick Bilton',
     finishedDate: new Date('2019-04-13'),
     coverImageSrc: '/readings/american-kingpin-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'tiamats-wrath',
@@ -1285,7 +1230,7 @@ const READINGS_2019: Reading[] = [
     author: 'James S.A. Corey',
     finishedDate: new Date('2019-04-20'),
     coverImageSrc: '/readings/tiamats-wrath-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-emperor-of-all-maladies',
@@ -1293,7 +1238,7 @@ const READINGS_2019: Reading[] = [
     author: 'Siddhartha Mukherjee',
     finishedDate: new Date('2019-06'),
     coverImageSrc: '/readings/the-emperor-of-all-maladies-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'alexander-the-great',
@@ -1301,7 +1246,7 @@ const READINGS_2019: Reading[] = [
     author: 'Philip Freeman',
     finishedDate: new Date('2019-07-19'),
     coverImageSrc: '/readings/alexander-the-great-02.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-48-laws-of-power',
@@ -1309,7 +1254,7 @@ const READINGS_2019: Reading[] = [
     author: 'Robert Greene',
     finishedDate: new Date('2019-07-29'),
     coverImageSrc: '/readings/the-48-laws-of-power-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-simple-path-to-wealth',
@@ -1317,7 +1262,7 @@ const READINGS_2019: Reading[] = [
     author: 'J.L. Collins',
     finishedDate: new Date('2019-09-11'),
     coverImageSrc: '/readings/the-simple-path-to-wealth-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'surely-youre-joking-mr-feynman',
@@ -1325,7 +1270,7 @@ const READINGS_2019: Reading[] = [
     author: 'Richard Feynman',
     finishedDate: new Date('2019-09-21'),
     coverImageSrc: '/readings/surely-youre-joking-mr-feynman-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-big-sleep',
@@ -1333,7 +1278,7 @@ const READINGS_2019: Reading[] = [
     author: 'Raymond Chandler',
     finishedDate: new Date('2019-10-09'),
     coverImageSrc: '/readings/the-big-sleep-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-pragmatic-programmer',
@@ -1341,7 +1286,7 @@ const READINGS_2019: Reading[] = [
     author: 'Andy Hunt',
     finishedDate: new Date('2019-10-25'),
     coverImageSrc: '/readings/the-pragmatic-programmer-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-hard-thing-about-hard-things',
@@ -1349,7 +1294,7 @@ const READINGS_2019: Reading[] = [
     author: 'Ben Horowitz',
     finishedDate: new Date('2019-10-30'),
     coverImageSrc: '/readings/the-hard-thing-about-hard-things-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
 
 ]
@@ -1361,7 +1306,7 @@ const READINGS_2018: Reading[] = [
     author: 'Charles Dickens',
     finishedDate: new Date('2018-02-12'),
     coverImageSrc: '/readings/great-expectations-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'foundation',
@@ -1369,7 +1314,7 @@ const READINGS_2018: Reading[] = [
     author: 'Isaac Asimov',
     finishedDate: new Date('2018-02-14'),
     coverImageSrc: '/readings/foundation-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'pimp',
@@ -1377,7 +1322,7 @@ const READINGS_2018: Reading[] = [
     author: 'Iceberg Slim',
     finishedDate: new Date('2018-02-24'),
     coverImageSrc: '/readings/pimp-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: '12-rules-for-life',
@@ -1385,7 +1330,7 @@ const READINGS_2018: Reading[] = [
     author: 'Jordan B. Peterson',
     finishedDate: new Date('2018-03-17'),
     coverImageSrc: '/readings/12-rules-for-life-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'notes-from-underground',
@@ -1393,7 +1338,7 @@ const READINGS_2018: Reading[] = [
     author: 'Fyodor Dostoevsky',
     finishedDate: new Date('2018-03-23'),
     coverImageSrc: '/readings/notes-from-underground-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'childhoods-end',
@@ -1401,7 +1346,7 @@ const READINGS_2018: Reading[] = [
     author: 'Arthur C. Clarke',
     finishedDate: new Date('2018-04-10'),
     coverImageSrc: '/readings/childhoods-end-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'modern-man-in-search-of-a-soul',
@@ -1409,7 +1354,7 @@ const READINGS_2018: Reading[] = [
     author: 'Carl Jung',
     finishedDate: new Date('2018-05-03'),
     coverImageSrc: '/readings/modern-man-in-search-of-a-soul-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-road-to-wigan-pier',
@@ -1417,7 +1362,7 @@ const READINGS_2018: Reading[] = [
     author: 'George Orwell',
     finishedDate: new Date('2018-05-14'),
     coverImageSrc: '/readings/the-road-to-wigan-pier-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'one-day-in-the-life-of-ivan-denisovich',
@@ -1425,7 +1370,7 @@ const READINGS_2018: Reading[] = [
     author: 'Aleksandr Solzhenitsyn',
     finishedDate: new Date('2018-05-21'),
     coverImageSrc: '/readings/one-day-in-the-life-of-ivan-denisovich-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'foundation-and-empire',
@@ -1433,7 +1378,7 @@ const READINGS_2018: Reading[] = [
     author: 'Isaac Asimov',
     finishedDate: new Date('2018-05-27'),
     coverImageSrc: '/readings/foundation-and-empire-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'unix-and-linux-system-administration-handbook',
@@ -1441,7 +1386,7 @@ const READINGS_2018: Reading[] = [
     author: 'Evi Nemeth',
     finishedDate: new Date('2018-05-29'),
     coverImageSrc: '/readings/unix-and-linux-system-administration-handbook-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'second-foundation',
@@ -1449,7 +1394,7 @@ const READINGS_2018: Reading[] = [
     author: 'Isaac Asimov',
     finishedDate: new Date('2018-06'),
     coverImageSrc: '/readings/second-foundation-02.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'leviathan-wakes',
@@ -1457,7 +1402,7 @@ const READINGS_2018: Reading[] = [
     author: 'James S.A. Corey',
     finishedDate: new Date('2018-06-16'),
     coverImageSrc: '/readings/leviathan-wakes-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'eloquent-javascript',
@@ -1465,7 +1410,7 @@ const READINGS_2018: Reading[] = [
     author: 'Marijn Haverbeke',
     finishedDate: new Date('2018-06-21'),
     coverImageSrc: '/readings/eloquent-javascript-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'calibans-war',
@@ -1473,7 +1418,7 @@ const READINGS_2018: Reading[] = [
     author: 'James S.A. Corey',
     finishedDate: new Date('2018-06-22'),
     coverImageSrc: '/readings/calibans-war-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'abaddons-gate',
@@ -1481,7 +1426,7 @@ const READINGS_2018: Reading[] = [
     author: 'James S.A. Corey',
     finishedDate: new Date('2018-06-26'),
     coverImageSrc: '/readings/abaddons-gate-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'cibola-burn',
@@ -1489,7 +1434,7 @@ const READINGS_2018: Reading[] = [
     author: 'James S.A. Corey',
     finishedDate: new Date('2018-06-30'),
     coverImageSrc: '/readings/cibola-burn-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'nemesis-games',
@@ -1497,7 +1442,7 @@ const READINGS_2018: Reading[] = [
     author: 'James S.A. Corey',
     finishedDate: new Date('2018-07-11'),
     coverImageSrc: '/readings/nemesis-games-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'babylons-ashes',
@@ -1505,7 +1450,7 @@ const READINGS_2018: Reading[] = [
     author: 'James S.A. Corey',
     finishedDate: new Date('2018-07-31'),
     coverImageSrc: '/readings/babylons-ashes-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'persepolis-rising',
@@ -1513,7 +1458,7 @@ const READINGS_2018: Reading[] = [
     author: 'James S.A. Corey',
     finishedDate: new Date('2018-08-31'),
     coverImageSrc: '/readings/persepolis-rising-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'strange-dogs',
@@ -1521,7 +1466,7 @@ const READINGS_2018: Reading[] = [
     author: 'James S.A. Corey',
     finishedDate: new Date('2018-09'),
     coverImageSrc: '/readings/strange-dogs-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-butcher-of-anderson-station',
@@ -1529,7 +1474,7 @@ const READINGS_2018: Reading[] = [
     author: 'James S.A. Corey',
     finishedDate: new Date('2018-09-04'),
     coverImageSrc: '/readings/the-butcher-of-anderson-station-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-vital-abyss',
@@ -1537,7 +1482,7 @@ const READINGS_2018: Reading[] = [
     author: 'James S.A. Corey',
     finishedDate: new Date('2018-09-05'),
     coverImageSrc: '/readings/the-vital-abyss-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-churn',
@@ -1545,7 +1490,7 @@ const READINGS_2018: Reading[] = [
     author: 'James S.A. Corey',
     finishedDate: new Date('2018-09-08'),
     coverImageSrc: '/readings/the-churn-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'gods-of-risk',
@@ -1553,7 +1498,7 @@ const READINGS_2018: Reading[] = [
     author: 'James S.A. Corey',
     finishedDate: new Date('2018-09-08'),
     coverImageSrc: '/readings/gods-of-risk-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'vulnerability-management-for-dummies',
@@ -1561,7 +1506,7 @@ const READINGS_2018: Reading[] = [
     author: 'Qualys',
     finishedDate: new Date('2018-09-13'),
     coverImageSrc: '/readings/vulnerability-management-for-dummies-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-perfect-weapon',
@@ -1569,7 +1514,7 @@ const READINGS_2018: Reading[] = [
     author: 'David E. Sanger',
     finishedDate: new Date('2018-09-27'),
     coverImageSrc: '/readings/the-perfect-weapon-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-hacker-playbook-two',
@@ -1577,7 +1522,7 @@ const READINGS_2018: Reading[] = [
     author: 'Peter Kim',
     finishedDate: new Date('2018-10-04'),
     coverImageSrc: '/readings/the-hacker-playbook-two-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'mans-search-for-meaning',
@@ -1585,7 +1530,7 @@ const READINGS_2018: Reading[] = [
     author: 'Viktor E. Frankl',
     finishedDate: new Date('2018-10-05'),
     coverImageSrc: '/readings/mans-search-for-meaning-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'bad-blood',
@@ -1593,7 +1538,7 @@ const READINGS_2018: Reading[] = [
     author: 'John Carreyrou',
     finishedDate: new Date('2018-10-10'),
     coverImageSrc: '/readings/bad-blood-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-psychopath-test',
@@ -1601,7 +1546,7 @@ const READINGS_2018: Reading[] = [
     author: 'Jon Ronson',
     finishedDate: new Date('2018-10-16'),
     coverImageSrc: '/readings/the-psychopath-test-02.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'skin-in-the-game',
@@ -1609,7 +1554,7 @@ const READINGS_2018: Reading[] = [
     author: 'Nassim Nicholas Taleb',
     finishedDate: new Date('2018-11-15'),
     coverImageSrc: '/readings/skin-in-the-game-02.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
 
 ]
@@ -1621,7 +1566,7 @@ const READINGS_2017: Reading[] = [
     author: 'Donald J. Trump',
     finishedDate: new Date('2017-01-27'),
     coverImageSrc: '/readings/the-art-of-the-deal-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'one-hundred-years-of-solitude',
@@ -1629,7 +1574,7 @@ const READINGS_2017: Reading[] = [
     author: 'Gabriel García Márquez',
     finishedDate: new Date('2017-05-24'),
     coverImageSrc: '/readings/one-hundred-years-of-solitude-02.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'how-to-read-a-book',
@@ -1637,7 +1582,7 @@ const READINGS_2017: Reading[] = [
     author: 'Mortimer J. Adler',
     finishedDate: new Date('2017-06'),
     coverImageSrc: '/readings/how-to-read-a-book-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'a-wrinkle-in-time',
@@ -1645,7 +1590,7 @@ const READINGS_2017: Reading[] = [
     author: 'Hope Larson',
     finishedDate: new Date('2017-07-30'),
     coverImageSrc: '/readings/a-wrinkle-in-time-graphic-novel-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'gullivers-travels',
@@ -1653,7 +1598,7 @@ const READINGS_2017: Reading[] = [
     author: 'Jonathan Swift',
     finishedDate: new Date('2017-09-22'),
     coverImageSrc: '/readings/gullivers-travels-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'how-to-fail-at-almost-everything-and-still-win-big',
@@ -1661,7 +1606,7 @@ const READINGS_2017: Reading[] = [
     author: 'Scott Adams',
     finishedDate: new Date('2017-09-26'),
     coverImageSrc: '/readings/how-to-fail-at-almost-everything-and-still-win-big-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'snow-crash',
@@ -1669,7 +1614,7 @@ const READINGS_2017: Reading[] = [
     author: 'Neal Stephenson',
     finishedDate: new Date('2017-10-05'),
     coverImageSrc: '/readings/snow-crash-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'stranger-in-a-strange-land',
@@ -1677,7 +1622,7 @@ const READINGS_2017: Reading[] = [
     author: 'Robert A. Heinlein',
     finishedDate: new Date('2017-10-17'),
     coverImageSrc: '/readings/stranger-in-a-strange-land-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'sapiens',
@@ -1685,7 +1630,7 @@ const READINGS_2017: Reading[] = [
     author: 'Yuval Noah Harari',
     finishedDate: new Date('2017-10-21'),
     coverImageSrc: '/readings/sapiens-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'win-bigly',
@@ -1693,7 +1638,7 @@ const READINGS_2017: Reading[] = [
     author: 'Scott Adams',
     finishedDate: new Date('2017-11-04'),
     coverImageSrc: '/readings/win-bigly-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-path-to-power',
@@ -1701,7 +1646,7 @@ const READINGS_2017: Reading[] = [
     author: 'Robert A. Caro',
     finishedDate: new Date('2017-11-14'),
     coverImageSrc: '/readings/the-path-to-power-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'influence',
@@ -1709,7 +1654,7 @@ const READINGS_2017: Reading[] = [
     author: 'Robert B. Cialdini',
     finishedDate: new Date('2017-11-14'),
     coverImageSrc: '/readings/influence-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'pre-suasion',
@@ -1717,7 +1662,7 @@ const READINGS_2017: Reading[] = [
     author: 'Robert B. Cialdini',
     finishedDate: new Date('2017-12-04'),
     coverImageSrc: '/readings/presuasion-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
 
 ]
@@ -1729,7 +1674,7 @@ const READINGS_2016: Reading[] = [
     author: 'Philip K. Dick',
     finishedDate: new Date('2016-01-23'),
     coverImageSrc: '/readings/the-man-in-the-high-castle-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'capitalism-and-freedom',
@@ -1737,7 +1682,7 @@ const READINGS_2016: Reading[] = [
     author: 'Milton Friedman',
     finishedDate: new Date('2016-02-16'),
     coverImageSrc: '/readings/capitalism-and-freedom-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'cloud-atlas',
@@ -1745,7 +1690,7 @@ const READINGS_2016: Reading[] = [
     author: 'David Mitchell',
     finishedDate: new Date('2016-02-28'),
     coverImageSrc: '/readings/cloud-atlas-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'stardust',
@@ -1753,7 +1698,7 @@ const READINGS_2016: Reading[] = [
     author: 'Neil Gaiman',
     finishedDate: new Date('2016-03-21'),
     coverImageSrc: '/readings/stardust-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'how-google-works',
@@ -1761,7 +1706,7 @@ const READINGS_2016: Reading[] = [
     author: 'Eric Schmidt',
     finishedDate: new Date('2016-03-31'),
     coverImageSrc: '/readings/how-google-works-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'shantaram',
@@ -1769,7 +1714,7 @@ const READINGS_2016: Reading[] = [
     author: 'Gregory David Roberts',
     finishedDate: new Date('2016-05-08'),
     coverImageSrc: '/readings/shantaram-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-war-of-art',
@@ -1777,7 +1722,7 @@ const READINGS_2016: Reading[] = [
     author: 'Steven Pressfield',
     finishedDate: new Date('2016-05-12'),
     coverImageSrc: '/readings/the-war-of-art-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'bird-by-bird',
@@ -1785,7 +1730,7 @@ const READINGS_2016: Reading[] = [
     author: 'Anne Lamott',
     finishedDate: new Date('2016-06-17'),
     coverImageSrc: '/readings/bird-by-bird-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'on-writing',
@@ -1793,7 +1738,7 @@ const READINGS_2016: Reading[] = [
     author: 'Stephen King',
     finishedDate: new Date('2016-06-21'),
     coverImageSrc: '/readings/on-writing-02.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'steal-like-an-artist',
@@ -1801,7 +1746,7 @@ const READINGS_2016: Reading[] = [
     author: 'Austin Kleon',
     finishedDate: new Date('2016-07-16'),
     coverImageSrc: '/readings/steal-like-an-artist-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'other-desert-cities',
@@ -1809,7 +1754,7 @@ const READINGS_2016: Reading[] = [
     author: 'Jon Robin Baitz',
     finishedDate: new Date('2016-10-09'),
     coverImageSrc: '/readings/other-desert-cities-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'player-piano',
@@ -1817,7 +1762,7 @@ const READINGS_2016: Reading[] = [
     author: 'Kurt Vonnegut',
     finishedDate: new Date('2016-10-11'),
     coverImageSrc: '/readings/player-piano-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'narconomics',
@@ -1825,7 +1770,7 @@ const READINGS_2016: Reading[] = [
     author: 'Tom Wainwright',
     finishedDate: new Date('2016-10-30'),
     coverImageSrc: '/readings/narconomics-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-sirens-of-titan',
@@ -1833,7 +1778,7 @@ const READINGS_2016: Reading[] = [
     author: 'Kurt Vonnegut',
     finishedDate: new Date('2016-12-02'),
     coverImageSrc: '/readings/the-sirens-of-titan-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'fooled-by-randomness',
@@ -1841,7 +1786,7 @@ const READINGS_2016: Reading[] = [
     author: 'Nassim Nicholas Taleb',
     finishedDate: new Date('2016-12-11'),
     coverImageSrc: '/readings/fooled-by-randomness-02.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'antifragile',
@@ -1849,7 +1794,7 @@ const READINGS_2016: Reading[] = [
     author: 'Nassim Nicholas Taleb',
     finishedDate: new Date('2016-12-31'),
     coverImageSrc: '/readings/antifragile-02.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
 
 ]
@@ -1861,7 +1806,7 @@ const READINGS_2015: Reading[] = [
     author: 'Red Beckman',
     finishedDate: new Date('2015-01-02'),
     coverImageSrc: '/readings/why-the-militia-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-beginners-guide-to-insight-meditation',
@@ -1869,7 +1814,7 @@ const READINGS_2015: Reading[] = [
     author: 'Arinna Weisman',
     finishedDate: new Date('2015-01-02'),
     coverImageSrc: '/readings/the-beginners-guide-to-insight-meditation-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'homage-to-catalonia',
@@ -1877,7 +1822,7 @@ const READINGS_2015: Reading[] = [
     author: 'George Orwell',
     finishedDate: new Date('2015-01-09'),
     coverImageSrc: '/readings/homage-to-catalonia-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'your-first-meteor-application',
@@ -1885,7 +1830,7 @@ const READINGS_2015: Reading[] = [
     author: 'David Turnbull',
     finishedDate: new Date('2015-01-19'),
     coverImageSrc: '/readings/your-first-meteor-application-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'benjamin-franklin',
@@ -1893,7 +1838,7 @@ const READINGS_2015: Reading[] = [
     author: 'Walter Isaacson',
     finishedDate: new Date('2015-02-08'),
     coverImageSrc: '/readings/benjamin-franklin-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-age-of-innocence',
@@ -1901,7 +1846,7 @@ const READINGS_2015: Reading[] = [
     author: 'Edith Wharton',
     finishedDate: new Date('2015-02-26'),
     coverImageSrc: '/readings/the-age-of-innocence-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'ready-player-one',
@@ -1909,7 +1854,7 @@ const READINGS_2015: Reading[] = [
     author: 'Ernest Cline',
     finishedDate: new Date('2015-03-04'),
     coverImageSrc: '/readings/ready-player-one-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'boxers-and-saints',
@@ -1917,7 +1862,7 @@ const READINGS_2015: Reading[] = [
     author: 'Gene Luen Yang',
     finishedDate: new Date('2015-03-20'),
     coverImageSrc: '/readings/boxers-and-saints-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'steppenwolf',
@@ -1925,7 +1870,7 @@ const READINGS_2015: Reading[] = [
     author: 'Hermann Hesse',
     finishedDate: new Date('2015-04'),
     coverImageSrc: '/readings/steppenwolf-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'war-and-peace-in-the-global-village',
@@ -1933,7 +1878,7 @@ const READINGS_2015: Reading[] = [
     author: 'Marshall McLuhan',
     finishedDate: new Date('2015-05-16'),
     coverImageSrc: '/readings/war-and-peace-in-the-global-village-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'toward-a-libertarian-society',
@@ -1941,7 +1886,7 @@ const READINGS_2015: Reading[] = [
     author: 'Walter Block',
     finishedDate: new Date('2015-07-11'),
     coverImageSrc: '/readings/toward-a-libertarian-society-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-martian',
@@ -1949,7 +1894,7 @@ const READINGS_2015: Reading[] = [
     author: 'Andy Weir',
     finishedDate: new Date('2015-07-16'),
     coverImageSrc: '/readings/the-martian-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-circle',
@@ -1957,7 +1902,7 @@ const READINGS_2015: Reading[] = [
     author: 'Dave Eggers',
     finishedDate: new Date('2015-07-27'),
     coverImageSrc: '/readings/the-circle-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'doing-good-better',
@@ -1965,7 +1910,7 @@ const READINGS_2015: Reading[] = [
     author: 'William Macaskill',
     finishedDate: new Date('2015-08-29'),
     coverImageSrc: '/readings/doing-good-better-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'symposium',
@@ -1973,7 +1918,7 @@ const READINGS_2015: Reading[] = [
     author: 'Plato',
     finishedDate: new Date('2015-12-09'),
     coverImageSrc: '/readings/symposium-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-principles-of-beautiful-web-design',
@@ -1981,7 +1926,7 @@ const READINGS_2015: Reading[] = [
     author: 'Jason Beaird',
     finishedDate: new Date('2015-12-14'),
     coverImageSrc: '/readings/the-principles-of-beautiful-web-design-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'pen-pals',
@@ -1989,7 +1934,7 @@ const READINGS_2015: Reading[] = [
     author: 'Aaron Cometbus',
     finishedDate: new Date('2015-12-28'),
     coverImageSrc: '/readings/pen-pals-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-road-less-traveled',
@@ -1997,7 +1942,7 @@ const READINGS_2015: Reading[] = [
     author: 'M. Scott Peck',
     finishedDate: new Date('2015-12-28'),
     coverImageSrc: '/readings/the-road-less-traveled-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
 
 ]
@@ -2009,7 +1954,7 @@ const READINGS_2014: Reading[] = [
     author: 'Darrin M. McMahon',
     finishedDate: new Date('2014-01'),
     coverImageSrc: '/readings/divine-fury-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'crime-and-punishment',
@@ -2017,7 +1962,7 @@ const READINGS_2014: Reading[] = [
     author: 'Fyodor Dostoevsky',
     finishedDate: new Date('2014-01-14'),
     coverImageSrc: '/readings/crime-and-punishment-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'crossing-the-mangrove',
@@ -2025,7 +1970,7 @@ const READINGS_2014: Reading[] = [
     author: 'Maryse Condé',
     finishedDate: new Date('2014-02'),
     coverImageSrc: '/readings/crossing-the-mangrove-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'a-study-in-scarlet',
@@ -2033,7 +1978,7 @@ const READINGS_2014: Reading[] = [
     author: 'Arthur Conan Doyle',
     finishedDate: new Date('2014-04'),
     coverImageSrc: '/readings/a-study-in-scarlet-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'a-peoples-history-of-the-united-states',
@@ -2041,7 +1986,7 @@ const READINGS_2014: Reading[] = [
     author: 'Howard Zinn',
     finishedDate: new Date('2014-04-08'),
     coverImageSrc: '/readings/a-peoples-history-of-the-united-states-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'economics-in-one-lesson',
@@ -2049,7 +1994,7 @@ const READINGS_2014: Reading[] = [
     author: 'Henry Hazlitt',
     finishedDate: new Date('2014-05-02'),
     coverImageSrc: '/readings/economics-in-one-lesson-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-fall',
@@ -2057,7 +2002,7 @@ const READINGS_2014: Reading[] = [
     author: 'Albert Camus',
     finishedDate: new Date('2014-05-04'),
     coverImageSrc: '/readings/the-fall-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'a-clockwork-orange',
@@ -2065,7 +2010,7 @@ const READINGS_2014: Reading[] = [
     author: 'Anthony Burgess',
     finishedDate: new Date('2014-05-11'),
     coverImageSrc: '/readings/a-clockwork-orange-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'dune',
@@ -2073,7 +2018,7 @@ const READINGS_2014: Reading[] = [
     author: 'Frank Herbert',
     finishedDate: new Date('2014-06-10'),
     coverImageSrc: '/readings/dune-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-deacons-for-defense',
@@ -2081,7 +2026,7 @@ const READINGS_2014: Reading[] = [
     author: 'Lance Hill',
     finishedDate: new Date('2014-07-03'),
     coverImageSrc: '/readings/the-deacons-for-defense-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-brothers-karamazov',
@@ -2089,7 +2034,7 @@ const READINGS_2014: Reading[] = [
     author: 'Fyodor Dostoevsky',
     finishedDate: new Date('2014-08-18'),
     coverImageSrc: '/readings/the-brothers-karamazov-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-anatomy-of-the-state',
@@ -2097,7 +2042,7 @@ const READINGS_2014: Reading[] = [
     author: 'Murray N. Rothbard',
     finishedDate: new Date('2014-08-21'),
     coverImageSrc: '/readings/anatomy-of-the-state-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 't-sql-fundamentals',
@@ -2105,7 +2050,7 @@ const READINGS_2014: Reading[] = [
     author: 'Itzik Ben-Gan',
     finishedDate: new Date('2014-09'),
     coverImageSrc: '/readings/t-sql-fundamentals-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-art-of-learning',
@@ -2113,7 +2058,7 @@ const READINGS_2014: Reading[] = [
     author: 'Josh Waitzkin',
     finishedDate: new Date('2014-10-06'),
     coverImageSrc: '/readings/the-art-of-learning-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'so-you-want-to-play-go-beginner-level-one',
@@ -2121,7 +2066,7 @@ const READINGS_2014: Reading[] = [
     author: 'Jonathan Hop',
     finishedDate: new Date('2014-10-15'),
     coverImageSrc: '/readings/so-you-want-to-play-go-beginner-level-one-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'training-kit-exam-70-461-querying-microsoft-sql-server-2012-mcsa',
@@ -2129,7 +2074,7 @@ const READINGS_2014: Reading[] = [
     author: 'Dejan Sarka',
     finishedDate: new Date('2014-10-24'),
     coverImageSrc: '/readings/querying-microsoft-sql-server-2012-02.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'superintelligence',
@@ -2137,7 +2082,7 @@ const READINGS_2014: Reading[] = [
     author: 'Nick Bostrom',
     finishedDate: new Date('2014-11-10'),
     coverImageSrc: '/readings/superintelligence-02.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-privatization-of-roads-and-highways',
@@ -2145,7 +2090,7 @@ const READINGS_2014: Reading[] = [
     author: 'Walter Block',
     finishedDate: new Date('2014-11-23'),
     coverImageSrc: '/readings/the-privatization-of-roads-and-highways-02.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
 
 ]
@@ -2157,7 +2102,7 @@ const READINGS_2013: Reading[] = [
     author: 'Alexander Osterwalder',
     finishedDate: new Date('2013-01'),
     coverImageSrc: '/readings/business-model-generation-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-deadline',
@@ -2165,7 +2110,7 @@ const READINGS_2013: Reading[] = [
     author: 'Tom Demarco',
     finishedDate: new Date('2013-01'),
     coverImageSrc: '/readings/the-deadline-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'keep-the-aspidistra-flying',
@@ -2173,7 +2118,7 @@ const READINGS_2013: Reading[] = [
     author: 'George Orwell',
     finishedDate: new Date('2013-02'),
     coverImageSrc: '/readings/keep-the-aspidistra-flying-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-art-of-war',
@@ -2181,7 +2126,7 @@ const READINGS_2013: Reading[] = [
     author: 'Sun Tzu',
     finishedDate: new Date('2013-03'),
     coverImageSrc: '/readings/the-art-of-war-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'here-comes-everybody',
@@ -2189,7 +2134,7 @@ const READINGS_2013: Reading[] = [
     author: 'Clay Shirky',
     finishedDate: new Date('2013-03'),
     coverImageSrc: '/readings/here-comes-everybody-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'brave-new-war',
@@ -2197,7 +2142,7 @@ const READINGS_2013: Reading[] = [
     author: 'John Robb',
     finishedDate: new Date('2013-03'),
     coverImageSrc: '/readings/brave-new-war-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'peopleware',
@@ -2205,7 +2150,7 @@ const READINGS_2013: Reading[] = [
     author: 'Tom Demarco',
     finishedDate: new Date('2013-03'),
     coverImageSrc: '/readings/peopleware-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'emergence',
@@ -2213,7 +2158,7 @@ const READINGS_2013: Reading[] = [
     author: 'Steven Johnson',
     finishedDate: new Date('2013-04'),
     coverImageSrc: '/readings/emergence-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-metamorphosis-of-prime-intellect',
@@ -2221,7 +2166,7 @@ const READINGS_2013: Reading[] = [
     author: 'Roger Williams',
     finishedDate: new Date('2013-04'),
     coverImageSrc: '/readings/the-metamorphosis-of-prime-intellect-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-autobiography-of-malcolm-x',
@@ -2229,7 +2174,7 @@ const READINGS_2013: Reading[] = [
     author: 'Malcolm X',
     finishedDate: new Date('2013-04'),
     coverImageSrc: '/readings/the-autobiography-of-malcolm-x-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'nikola-tesla',
@@ -2237,7 +2182,7 @@ const READINGS_2013: Reading[] = [
     author: 'Sean Patrick',
     finishedDate: new Date('2013-05-22'),
     coverImageSrc: '/readings/nikola-tesla-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'cognitive-surplus',
@@ -2245,7 +2190,7 @@ const READINGS_2013: Reading[] = [
     author: 'Clay Shirky',
     finishedDate: new Date('2013-05-22'),
     coverImageSrc: '/readings/cognitive-surplus-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'hackers-and-painters',
@@ -2253,7 +2198,7 @@ const READINGS_2013: Reading[] = [
     author: 'Paul Graham',
     finishedDate: new Date('2013-05-23'),
     coverImageSrc: '/readings/hackers-and-painters-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'a-game-of-thrones',
@@ -2261,7 +2206,7 @@ const READINGS_2013: Reading[] = [
     author: 'George R.R. Martin',
     finishedDate: new Date('2013-06'),
     coverImageSrc: '/readings/a-game-of-thrones-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'pedagogy-of-the-oppressed',
@@ -2269,7 +2214,7 @@ const READINGS_2013: Reading[] = [
     author: 'Paulo Friere',
     finishedDate: new Date('2013-06-23'),
     coverImageSrc: '/readings/pedagogy-of-the-oppressed-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'a-clash-of-kings',
@@ -2277,7 +2222,7 @@ const READINGS_2013: Reading[] = [
     author: 'George R.R. Martin',
     finishedDate: new Date('2013-07'),
     coverImageSrc: '/readings/a-clash-of-kings-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'a-storm-of-swords',
@@ -2285,7 +2230,7 @@ const READINGS_2013: Reading[] = [
     author: 'George R.R. Martin',
     finishedDate: new Date('2013-07'),
     coverImageSrc: '/readings/a-storm-of-swords-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'essential-fish-care-in-aquaponics',
@@ -2293,7 +2238,7 @@ const READINGS_2013: Reading[] = [
     author: 'Victoria Kelley',
     finishedDate: new Date('2013-08'),
     coverImageSrc: '/readings/essential-fish-care-in-aquaponics-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'aquaponics',
@@ -2301,7 +2246,7 @@ const READINGS_2013: Reading[] = [
     author: 'Melinda Clark',
     finishedDate: new Date('2013-08'),
     coverImageSrc: '/readings/aquaponics-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: '7-myths-about-aquaponics',
@@ -2309,7 +2254,7 @@ const READINGS_2013: Reading[] = [
     author: 'Michelle Booth',
     finishedDate: new Date('2013-08'),
     coverImageSrc: '/readings/7-myths-about-aquaponics-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'aquaponic-gardening',
@@ -2317,7 +2262,7 @@ const READINGS_2013: Reading[] = [
     author: 'Sylvia Bernstein',
     finishedDate: new Date('2013-08'),
     coverImageSrc: '/readings/aquaponic-gardening-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-urban-food-revolution',
@@ -2325,7 +2270,7 @@ const READINGS_2013: Reading[] = [
     author: 'Peter Ladner',
     finishedDate: new Date('2013-08'),
     coverImageSrc: '/readings/the-urban-food-revolution-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'a-dance-with-dragons',
@@ -2333,7 +2278,7 @@ const READINGS_2013: Reading[] = [
     author: 'George R.R. Martin',
     finishedDate: new Date('2013-08'),
     coverImageSrc: '/readings/a-dance-with-dragons-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'a-feast-for-crows',
@@ -2341,7 +2286,7 @@ const READINGS_2013: Reading[] = [
     author: 'George R.R. Martin',
     finishedDate: new Date('2013-08'),
     coverImageSrc: '/readings/a-feast-for-crows-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'letters-to-a-young-teacher',
@@ -2349,7 +2294,7 @@ const READINGS_2013: Reading[] = [
     author: 'Jonathan Kozol',
     finishedDate: new Date('2013-09'),
     coverImageSrc: '/readings/letters-to-a-young-teacher-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-post-american-world',
@@ -2357,7 +2302,7 @@ const READINGS_2013: Reading[] = [
     author: 'Fareed Zakaria',
     finishedDate: new Date('2013-09'),
     coverImageSrc: '/readings/the-post-american-world-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'cats-cradle',
@@ -2365,7 +2310,7 @@ const READINGS_2013: Reading[] = [
     author: 'Kurt Vonnegut',
     finishedDate: new Date('2013-09'),
     coverImageSrc: '/readings/cats-cradle-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-4-hour-workweek',
@@ -2373,7 +2318,7 @@ const READINGS_2013: Reading[] = [
     author: 'Timothy Ferriss',
     finishedDate: new Date('2013-11'),
     coverImageSrc: '/readings/the-4-hour-workweek-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
 
 ]
@@ -2385,7 +2330,7 @@ const READINGS_2012: Reading[] = [
     author: 'Paul Orfalea',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/the-entrepreneurial-investor-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-soft-revolution',
@@ -2393,7 +2338,7 @@ const READINGS_2012: Reading[] = [
     author: 'Neil Postman',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/the-soft-revolution-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'news-from-a-parallel-world',
@@ -2401,7 +2346,7 @@ const READINGS_2012: Reading[] = [
     author: 'Richard Raznikov',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/news-from-a-parallel-world-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'thinking-fast-and-slow',
@@ -2409,7 +2354,7 @@ const READINGS_2012: Reading[] = [
     author: 'Daniel Kahneman',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/thinking-fast-and-slow-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'disciplined-dreaming',
@@ -2417,7 +2362,7 @@ const READINGS_2012: Reading[] = [
     author: 'Josh Linkner',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/disciplined-dreaming-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'aftershock',
@@ -2425,7 +2370,7 @@ const READINGS_2012: Reading[] = [
     author: 'Robert B. Reich',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/aftershock-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'rich-dad-poor-dad',
@@ -2433,7 +2378,7 @@ const READINGS_2012: Reading[] = [
     author: 'Robert T. Kiyosaki',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/rich-dad-poor-dad-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'persuasion',
@@ -2441,7 +2386,7 @@ const READINGS_2012: Reading[] = [
     author: 'James Borg',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/persuasion-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'on-the-road',
@@ -2449,7 +2394,7 @@ const READINGS_2012: Reading[] = [
     author: 'Jack Kerouac',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/on-the-road-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'slaughterhouse-five',
@@ -2457,7 +2402,7 @@ const READINGS_2012: Reading[] = [
     author: 'Kurt Vonnegut',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/slaughterhouse-five-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'what-makes-a-terrorist',
@@ -2465,7 +2410,7 @@ const READINGS_2012: Reading[] = [
     author: 'Alan B. Krueger',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/what-makes-a-terrorist-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-prince',
@@ -2473,7 +2418,7 @@ const READINGS_2012: Reading[] = [
     author: 'Niccoló Machiavelli',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/the-prince-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'program-design-with-pseudocode',
@@ -2481,7 +2426,7 @@ const READINGS_2012: Reading[] = [
     author: 't.e. Bailey',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/program-design-with-pseudocode-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-four-steps-to-the-epiphany',
@@ -2489,7 +2434,7 @@ const READINGS_2012: Reading[] = [
     author: 'Steve Blank',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/the-four-steps-to-the-epiphany-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'moneyball',
@@ -2497,7 +2442,7 @@ const READINGS_2012: Reading[] = [
     author: 'Michael Lewis',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/moneyball-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'negotiating-rationally',
@@ -2505,7 +2450,7 @@ const READINGS_2012: Reading[] = [
     author: 'Max H. Bazerman',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/negotiating-rationally-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'merchants-of-immortality',
@@ -2513,7 +2458,7 @@ const READINGS_2012: Reading[] = [
     author: 'Stephen S. Hall',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/merchants-of-immortality-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'thinking-strategically',
@@ -2521,7 +2466,7 @@ const READINGS_2012: Reading[] = [
     author: 'Avinash K. Dixit',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/thinking-strategically-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-e-myth-revisited',
@@ -2529,7 +2474,7 @@ const READINGS_2012: Reading[] = [
     author: 'Michael E. Gerber',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/the-e-myth-revisited-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'flow',
@@ -2537,7 +2482,7 @@ const READINGS_2012: Reading[] = [
     author: 'Mihály Csíkszentmihályi',
     finishedDate: new Date('2012'),
     coverImageSrc: '/readings/flow-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'steve-jobs',
@@ -2545,7 +2490,7 @@ const READINGS_2012: Reading[] = [
     author: 'Walter Isaacson',
     finishedDate: new Date('2012-07'),
     coverImageSrc: '/readings/steve-jobs-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'rework',
@@ -2553,7 +2498,7 @@ const READINGS_2012: Reading[] = [
     author: 'Jason Fried',
     finishedDate: new Date('2012-07'),
     coverImageSrc: '/readings/rework-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'genome',
@@ -2561,7 +2506,7 @@ const READINGS_2012: Reading[] = [
     author: 'Matt Ridley',
     finishedDate: new Date('2012-07'),
     coverImageSrc: '/readings/genome-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-power-of-habit',
@@ -2569,7 +2514,7 @@ const READINGS_2012: Reading[] = [
     author: 'Charles Duhigg',
     finishedDate: new Date('2012-08'),
     coverImageSrc: '/readings/the-power-of-habit-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'brave-new-world',
@@ -2577,7 +2522,7 @@ const READINGS_2012: Reading[] = [
     author: 'Aldous Huxley',
     finishedDate: new Date('2012-08'),
     coverImageSrc: '/readings/brave-new-world-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'outliers',
@@ -2585,7 +2530,7 @@ const READINGS_2012: Reading[] = [
     author: 'Malcolm Gladwell',
     finishedDate: new Date('2012-09'),
     coverImageSrc: '/readings/outliers-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'never-let-me-go',
@@ -2593,7 +2538,7 @@ const READINGS_2012: Reading[] = [
     author: 'Kazuo Ishiguro',
     finishedDate: new Date('2012-09'),
     coverImageSrc: '/readings/never-let-me-go-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'i-robot',
@@ -2601,7 +2546,7 @@ const READINGS_2012: Reading[] = [
     author: 'Isaac Asimov',
     finishedDate: new Date('2012-10'),
     coverImageSrc: '/readings/i-robot-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'a-scanner-darkly',
@@ -2609,7 +2554,7 @@ const READINGS_2012: Reading[] = [
     author: 'Philip K. Dick',
     finishedDate: new Date('2012-10'),
     coverImageSrc: '/readings/a-scanner-darkly-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'go-for-beginners',
@@ -2617,7 +2562,7 @@ const READINGS_2012: Reading[] = [
     author: 'Kaoru Iwamoto',
     finishedDate: new Date('2012-10'),
     coverImageSrc: '/readings/go-for-beginners-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'fight-club',
@@ -2625,7 +2570,7 @@ const READINGS_2012: Reading[] = [
     author: 'Chuck Palahniuk',
     finishedDate: new Date('2012-10'),
     coverImageSrc: '/readings/fight-club-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-open-classroom',
@@ -2633,7 +2578,7 @@ const READINGS_2012: Reading[] = [
     author: 'Herbert R. Kohl',
     finishedDate: new Date('2012-11'),
     coverImageSrc: '/readings/the-open-classroom-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'operating-manual-for-spaceship-earth',
@@ -2641,7 +2586,7 @@ const READINGS_2012: Reading[] = [
     author: 'R. Buckminster Fuller',
     finishedDate: new Date('2012-11'),
     coverImageSrc: '/readings/operating-manual-for-spaceship-earth-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-mythical-man-month',
@@ -2649,7 +2594,7 @@ const READINGS_2012: Reading[] = [
     author: 'Frederick P. Brooks Jr.',
     finishedDate: new Date('2012-12'),
     coverImageSrc: '/readings/mythical-man-month-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
 
 ]
@@ -2661,7 +2606,7 @@ const READINGS_2011: Reading[] = [
     author: 'Scott Belsky',
     finishedDate: new Date('2011'),
     coverImageSrc: '/readings/making-ideas-happen-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'inside-steves-brain',
@@ -2669,7 +2614,7 @@ const READINGS_2011: Reading[] = [
     author: 'Leander Kahney',
     finishedDate: new Date('2011'),
     coverImageSrc: '/readings/inside-steves-brain-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'john-dies-at-the-end',
@@ -2677,7 +2622,7 @@ const READINGS_2011: Reading[] = [
     author: 'David Wong',
     finishedDate: new Date('2011'),
     coverImageSrc: '/readings/john-dies-at-the-end-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'spin-selling',
@@ -2685,7 +2630,7 @@ const READINGS_2011: Reading[] = [
     author: 'Neil Rackham',
     finishedDate: new Date('2011'),
     coverImageSrc: '/readings/spin-selling-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-art-of-the-start',
@@ -2693,7 +2638,7 @@ const READINGS_2011: Reading[] = [
     author: 'Guy Kawasaki',
     finishedDate: new Date('2011'),
     coverImageSrc: '/readings/the-art-of-the-start-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'the-fountainhead',
@@ -2701,7 +2646,7 @@ const READINGS_2011: Reading[] = [
     author: 'Ayn Rand',
     finishedDate: new Date('2011'),
     coverImageSrc: '/readings/the-fountainhead-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'phil-gordons-little-green-book',
@@ -2709,7 +2654,7 @@ const READINGS_2011: Reading[] = [
     author: 'Phil Gordon',
     finishedDate: new Date('2011'),
     coverImageSrc: '/readings/phil-gordons-little-green-book-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
   },
   {
     slug: 'illusions',
@@ -2717,7 +2662,67 @@ const READINGS_2011: Reading[] = [
     author: 'Richard Bach',
     finishedDate: new Date('2011'),
     coverImageSrc: '/readings/illusions-01.jpg',
-    thoughts: ''
+    thoughts: '', dropped: false
+  },
+]
+
+const READINGS_DROPPED = [
+  {
+    slug: 'designing-data-intensive-applications',
+    title: 'Designing Data-Intensive Applications',
+    author: 'Martin Kleppmann',
+    finishedDate: null,
+    coverImageSrc: '/readings/designing-data-intensive-applications-01.jpg',
+    thoughts: 'some short notes here about the meaning of quality and the tension between classical and romantic approaches...',
+    dropped: true
+  },
+  {
+    slug: 'man-and-woman-he-created-them-a-theology-of-the-body',
+    title: 'Man and Woman He Created Them: A Theology of the Body',
+    author: 'John Paul II',
+    finishedDate: null,
+    coverImageSrc: '/readings/man-and-woman-he-created-them-01.jpg',
+    thoughts: '', dropped: true
+  },
+  {
+    slug: 'paradise-lost',
+    title: 'Paradise Lost',
+    author: 'John Milton',
+    finishedDate: null,
+    coverImageSrc: '/readings/paradise-lost-01.jpg',
+    thoughts: '', dropped: true
+  },
+  {
+    slug: 'scaling-people',
+    title: 'Scaling People',
+    author: 'Claire Hughes Johnson',
+    finishedDate: null,
+    coverImageSrc: '/readings/scaling-people-01.jpg',
+    thoughts: '', dropped: true
+  },
+  {
+    slug: 'structure-and-interpretation-of-computer-programs-second-edition',
+    title: 'Structure and Interpretation of Computer Programs, Second Edition',
+    author: 'Abelson and Sussman',
+    finishedDate: null,
+    coverImageSrc: '/readings/structure-and-interpretation-of-computer-programs-01.jpg',
+    thoughts: '', dropped: true
+  },
+  {
+    slug: 'shorter-summa',
+    title: 'Shorter Summa',
+    author: 'St. Thomas Aquinas',
+    finishedDate: null,
+    coverImageSrc: '/readings/shorter-summa-01.jpg',
+    thoughts: '', dropped: true
+  },
+  {
+    slug: 'dominion',
+    title: 'Dominion',
+    author: 'Tom Holland',
+    finishedDate: null,
+    coverImageSrc: '/readings/dominion-01.jpg',
+    thoughts: '', dropped: true
   },
 ]
 
@@ -2746,4 +2751,4 @@ export const READINGS: Reading[] = [
 
   // compare actual dates
   return b.finishedDate.getTime() - a.finishedDate.getTime()
-})
+}).concat(READINGS_DROPPED)
