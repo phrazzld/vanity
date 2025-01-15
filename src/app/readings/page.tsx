@@ -13,7 +13,7 @@ export default function ReadingsPage() {
           display: 'grid',
           gap: '1rem',
           // auto-fill ensures as many columns as fit in the container
-          gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
         }}
       >
         {READINGS.map((reading: Reading) => {
