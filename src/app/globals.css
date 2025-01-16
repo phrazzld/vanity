@@ -206,3 +206,80 @@ a.content-link:hover::after {
   justify-content: center;
   margin-top: 1rem;
 }
+
+/* dark mode */
+html.dark,
+html.dark body {
+  background: #000;
+  color: #fff;
+}
+
+html.dark .site-header {
+  border-bottom-color: #444;
+}
+
+html.dark a {
+  color: #fff;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem;
+  border-bottom: 1px solid #ccc;
+}
+
+/* style the toggle a little */
+.dark-mode-toggle {
+  padding: 0.5rem 1rem;
+  border: 1px solid currentColor;
+  background: transparent;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.dark-mode-toggle:hover {
+  background: rgba(0,0,0,0.1);
+}
+/* in dark mode, make the text & border white */
+html.dark .dark-mode-toggle {
+  color: #fff;
+  border-color: #fff;
+}
+html.dark .dark-mode-toggle:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+/* fix nav link underline in dark mode */
+html.dark .nav-list a::after {
+  background-color: #fff;
+}
+
+/* fix project-card background & text in dark mode */
+html.dark .project-card {
+  background: #111;
+  color: #fff;
+  border-color: #444;
+}
+
+html.dark .tech-stack li {
+  background: #333;
+  color: #fff;
+}
+
+/* make sure the link text is visible in dark mode */
+html.dark .secondary-link {
+  color: #fff;
+  border-bottom-color: #fff;
+}
+
+html.dark a.content-link::after {
+  background-color: white;
+}
+
+html.dark .project-card:hover {
+  box-shadow: 0 4px 10px rgba(255,255,255,0.15);
+  transform: scale(1.01);
+}

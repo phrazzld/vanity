@@ -1,6 +1,7 @@
-import './globals.css'
-import Link from 'next/link'
+import DarkModeToggle from '@/app/components/DarkModeToggle'
 import type { Metadata } from 'next'
+import Link from 'next/link'
+import './globals.css'
 
 export const metadata: Metadata = {
   title: 'phaedrus | software engineer and general tinkerer',
@@ -29,6 +30,7 @@ export default function RootLayout({
               </li>
             </ul>
           </nav>
+          <DarkModeToggle />
         </header>
         <main>{children}</main>
       </body>
