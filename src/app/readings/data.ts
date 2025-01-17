@@ -2724,6 +2724,14 @@ const READINGS_DROPPED = [
     coverImageSrc: '/readings/dominion-01.jpg',
     thoughts: '', dropped: true
   },
+  {
+    slug: 'how-the-catholic-church-built-western-civilization',
+    title: 'How the Catholic Church Built Western Civilization',
+    author: 'Thomas E. Woods, Jr.',
+    finishedDate: null,
+    coverImageSrc: '/readings/how-the-catholic-church-built-western-civilization-01.jpg',
+    thoughts: '', dropped: true
+  },
 ]
 
 export const READINGS: Reading[] = [
