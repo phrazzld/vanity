@@ -1,13 +1,13 @@
+import whetstoneImg from '@/../public/images/projects/book-02.webp'
+import brainrotImg from '@/../public/images/projects/books-01.webp'
+import wrapItUpImg from '@/../public/images/projects/christmas-01.webp'
+import studymodeImg from '@/../public/images/projects/circles-01.webp'
+import timImg from '@/../public/images/projects/clock-01.webp'
+import superwireImg from '@/../public/images/projects/headphones-02.webp'
+import brainstormPressImg from '@/../public/images/projects/lightning-01.webp'
+import personalSiteImg from '@/../public/images/projects/waves-01.webp'
+import anyzineImg from '@/../public/images/projects/zines-01.webp'
 import ProjectCard from '@/app/components/ProjectCard'
-import whetstoneImg from '../../../public/images/projects/book-02.png'
-import brainrotImg from '../../../public/images/projects/books-01.png'
-import wrapItUpImg from '../../../public/images/projects/christmas-01.png'
-import studymodeImg from '../../../public/images/projects/circles-01.png'
-import timImg from '../../../public/images/projects/clock-01.png'
-import superwireImg from '../../../public/images/projects/headphones-02.png'
-import brainstormPressImg from '../../../public/images/projects/lightning-01.png'
-import personalSiteImg from '../../../public/images/projects/waves-01.png'
-import anyzineImg from '../../../public/images/projects/zines-01.png'
 
 export default function ProjectsPage() {
   return (
