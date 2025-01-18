@@ -29,7 +29,7 @@ export default function RootLayout({
                 <Link href="/readings">readings</Link>
               </li>
               <li>
-                <Link href="/map">map</Link>
+                <Link href="/map">travels</Link>
               </li>
             </ul>
           </nav>
