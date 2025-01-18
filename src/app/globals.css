@@ -283,3 +283,7 @@ html.dark .project-card:hover {
   box-shadow: 0 4px 10px rgba(255,255,255,0.15);
   transform: scale(1.01);
 }
+
+html.dark a.leaflet-control-zoom-in, html.dark a.leaflet-control-zoom-out {
+  background-color: black;
+}

@@ -11,7 +11,7 @@ export type Reading = {
 const READINGS_CURRENTLY: Reading[] = [
   {
     slug: 'the-story-of-civilization-volume-i-our-oriental-heritage',
-    title: 'The Story of Civilization - Volume I - Our Oriental Heritage',
+    title: 'The Story of Civilization:: Volume I: Our Oriental Heritage',
     author: 'Will Durant',
     finishedDate: null,
     coverImageSrc: '/readings/the-story-of-civilization-01.jpg',

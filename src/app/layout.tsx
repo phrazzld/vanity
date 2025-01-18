@@ -28,6 +28,9 @@ export default function RootLayout({
               <li>
                 <Link href="/readings">readings</Link>
               </li>
+              <li>
+                <Link href="/map">map</Link>
+              </li>
             </ul>
           </nav>
           <DarkModeToggle />
