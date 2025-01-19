@@ -10,6 +10,14 @@ export type Reading = {
 
 const READINGS_CURRENTLY: Reading[] = [
   {
+    slug: 'the-silmarillion',
+    title: 'The Silmarillion',
+    author: 'J.R.R. Tolkien',
+    finishedDate: null,
+    coverImageSrc: '/readings/the-silmarillion-01.jpg',
+    thoughts: '', dropped: false
+  },
+  {
     slug: 'the-story-of-civilization-volume-i-our-oriental-heritage',
     title: 'The Story of Civilization:: Volume I: Our Oriental Heritage',
     author: 'Will Durant',
@@ -18,11 +26,11 @@ const READINGS_CURRENTLY: Reading[] = [
     thoughts: '', dropped: false
   },
   {
-    slug: 'the-silmarillion',
-    title: 'The Silmarillion',
-    author: 'J.R.R. Tolkien',
+    slug: 'dominion',
+    title: 'Dominion',
+    author: 'Tom Holland',
     finishedDate: null,
-    coverImageSrc: '/readings/the-silmarillion-01.jpg',
+    coverImageSrc: '/readings/dominion-01.jpg',
     thoughts: '', dropped: false
   },
 ]
@@ -2714,14 +2722,6 @@ const READINGS_DROPPED = [
     author: 'St. Thomas Aquinas',
     finishedDate: null,
     coverImageSrc: '/readings/shorter-summa-01.jpg',
-    thoughts: '', dropped: true
-  },
-  {
-    slug: 'dominion',
-    title: 'Dominion',
-    author: 'Tom Holland',
-    finishedDate: null,
-    coverImageSrc: '/readings/dominion-01.jpg',
     thoughts: '', dropped: true
   },
   {
