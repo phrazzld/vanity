@@ -287,3 +287,14 @@ html.dark .project-card:hover {
 html.dark a.leaflet-control-zoom-in, html.dark a.leaflet-control-zoom-out {
   background-color: black;
 }
+
+.typewriter-container {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  color: #333;
+  transition: color 0.3s;
+}
+
+html.dark .typewriter-container {
+  color: #fff;
+}
