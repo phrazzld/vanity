@@ -10,6 +10,14 @@ export type Reading = {
 
 const READINGS_CURRENTLY: Reading[] = [
   {
+    slug: 'why-greatness-cannot-be-planned',
+    title: 'Why Greatness Cannot Be Planned: The Myth of the Objective',
+    author: 'Kenneth O. O. Stanley',
+    finishedDate: null,
+    coverImageSrc: '/readings/why-greatness-cannot-be-planned-01.jpg',
+    thoughts: '', dropped: false
+  },
+  {
     slug: 'the-silmarillion',
     title: 'The Silmarillion',
     author: 'J.R.R. Tolkien',
