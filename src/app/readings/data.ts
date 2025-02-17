@@ -15,7 +15,8 @@ const READINGS_CURRENTLY: Reading[] = [
     author: 'Kenneth O. O. Stanley',
     finishedDate: null,
     coverImageSrc: '/readings/why-greatness-cannot-be-planned-01.jpg',
-    thoughts: '', dropped: false
+    thoughts: '',
+    dropped: false
   },
   {
     slug: 'the-silmarillion',
@@ -23,7 +24,8 @@ const READINGS_CURRENTLY: Reading[] = [
     author: 'J.R.R. Tolkien',
     finishedDate: null,
     coverImageSrc: '/readings/the-silmarillion-01.jpg',
-    thoughts: '', dropped: false
+    thoughts: '',
+    dropped: false
   },
   {
     slug: 'the-story-of-civilization-volume-i-our-oriental-heritage',
@@ -31,19 +33,22 @@ const READINGS_CURRENTLY: Reading[] = [
     author: 'Will Durant',
     finishedDate: null,
     coverImageSrc: '/readings/the-story-of-civilization-01.jpg',
-    thoughts: '', dropped: false
+    thoughts: '',
+    dropped: false
   },
+]
+
+const READINGS_2025: Reading[] = [
   {
     slug: 'dominion',
     title: 'Dominion',
     author: 'Tom Holland',
-    finishedDate: null,
+    finishedDate: new Date('2025-02-08'),
     coverImageSrc: '/readings/dominion-01.jpg',
-    thoughts: '', dropped: false
+    thoughts: '',
+    dropped: false
   },
 ]
-
-const READINGS_2025: Reading[] = []
 
 const READINGS_2024: Reading[] = [
   {
