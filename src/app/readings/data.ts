@@ -10,15 +10,6 @@ export type Reading = {
 
 const READINGS_CURRENTLY: Reading[] = [
   {
-    slug: 'there-is-no-antimemetics-division',
-    title: 'There Is No Antimemetics Division',
-    author: 'qntm',
-    finishedDate: null,
-    coverImageSrc: '/readings/there-is-no-antimemetics-division-01.jpg',
-    thoughts: '',
-    dropped: false
-  },
-  {
     slug: 'why-greatness-cannot-be-planned',
     title: 'Why Greatness Cannot Be Planned: The Myth of the Objective',
     author: 'Kenneth O. O. Stanley',
@@ -54,6 +45,15 @@ const READINGS_2025: Reading[] = [
     author: 'Tom Holland',
     finishedDate: new Date('2025-02-08'),
     coverImageSrc: '/readings/dominion-01.jpg',
+    thoughts: '',
+    dropped: false
+  },
+  {
+    slug: 'there-is-no-antimemetics-division',
+    title: 'There Is No Antimemetics Division',
+    author: 'qntm',
+    finishedDate: new Date('2025-02-18'),
+    coverImageSrc: '/readings/there-is-no-antimemetics-division-01.jpg',
     thoughts: '',
     dropped: false
   },
