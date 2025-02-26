@@ -27,6 +27,15 @@ const READINGS_CURRENTLY: Reading[] = [
     thoughts: '',
     dropped: false
   },
+  {
+    slug: 'the-technological-republic',
+    title: 'The Technological Republic: Hard Power, Soft Belief, and the Future of the West',
+    author: 'Alexander C. Karp and Nicholas W. Zamiska',
+    finishedDate: null,
+    coverImageSrc: '/readings/the-technological-republic-01.jpg',
+    thoughts: '',
+    dropped: false
+  },
 ]
 
 const READINGS_2025: Reading[] = [
