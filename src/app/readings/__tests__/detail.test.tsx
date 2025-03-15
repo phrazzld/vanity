@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { getReading } from '../utils';
+import { getReading } from '@/lib/db';
 import ReadingDetailPage from '../[slug]/page';
 import prisma from '@/lib/prisma';
 
