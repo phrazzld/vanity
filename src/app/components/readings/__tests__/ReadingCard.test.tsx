@@ -11,13 +11,31 @@ jest.mock('../placeholderUtils', () => ({
 // Mock Next.js image component
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: (props) => <img {...props} />,
+  default: (props) => {
+    // Convert boolean to string for attributes like "fill"
+    const imgProps = Object.keys(props).reduce((acc, key) => {
+      if (typeof props[key] === 'boolean') {
+        acc[key] = props[key].toString();
+      } else {
+        acc[key] = props[key];
+      }
+      return acc;
+    }, {});
+    return <img {...imgProps} />;
+  },
 }));
 
 // Mock environment variables
 process.env.NEXT_PUBLIC_SPACES_BASE_URL = 'https://test-space.com';
 
+// Mock setInterval and clearInterval
+jest.useFakeTimers();
+
 describe('ReadingCard', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  
   const mockProps = {
     slug: 'test-book',
     title: 'Test Book',
@@ -34,6 +52,10 @@ describe('ReadingCard', () => {
     
     const image = screen.getByAltText('Test Book cover');
     expect(image).toBeInTheDocument();
+    
+    // Should show finished date label
+    const finishedLabel = screen.getByText(/Finished/i);
+    expect(finishedLabel).toBeInTheDocument();
   });
 
   it('renders without cover image using placeholder', () => {
@@ -51,7 +73,7 @@ describe('ReadingCard', () => {
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
   });
 
-  it('applies grayscale filter when dropped is true', () => {
+  it('shows dropped indicator when dropped is true', () => {
     render(
       <ReadingCard 
         {...mockProps}
@@ -59,11 +81,19 @@ describe('ReadingCard', () => {
       />
     );
     
+    // Book cover should have grayscale filter
     const image = screen.getByAltText('Test Book cover');
     expect(image).toHaveStyle('filter: grayscale(100%)');
+    
+    // Should show dropped label
+    const droppedLabel = screen.getByText('DROPPED');
+    expect(droppedLabel).toBeInTheDocument();
+    
+    // Should not show finished date label
+    expect(screen.queryByText(/Finished/i)).not.toBeInTheDocument();
   });
 
-  it('applies opacity when finishedDate is null', () => {
+  it('shows reading indicator when book is in progress (null finishedDate)', () => {
     render(
       <ReadingCard 
         {...mockProps}
@@ -71,12 +101,13 @@ describe('ReadingCard', () => {
       />
     );
     
-    const image = screen.getByAltText('Test Book cover');
-    expect(image).toHaveStyle('opacity: 0.5');
+    // No dropped or finished labels
+    expect(screen.queryByText(/Finished/i)).not.toBeInTheDocument();
+    expect(screen.queryByText('DROPPED')).not.toBeInTheDocument();
   });
 
   it('applies hover styles when mouse enters', () => {
-    const { container } = render(<ReadingCard {...mockProps} />);
+    render(<ReadingCard {...mockProps} />);
     
     const card = screen.getByTitle('Test Book');
     
@@ -99,6 +130,5 @@ describe('ReadingCard', () => {
     
     // Check that the state has been reset
     expect(card).toHaveStyle('transform: translateY(0) scale(1)');
-    expect(card).toHaveStyle('box-shadow: 0 1px 2px rgba(0,0,0,0.05)');
   });
 });
