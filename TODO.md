@@ -163,22 +163,22 @@
   - Dependencies: None
   - Priority: Medium
 
-- [ ] Create Reading form
+- [x] Create Reading form
   - Description: Implement form for adding/editing readings with validation
-  - Dependencies: react-hook-form, API routes
+  - Dependencies: API routes
   - Priority: High
 
-- [ ] Create Quote form
+- [x] Create Quote form
   - Description: Implement form for adding/editing quotes with validation
-  - Dependencies: react-hook-form, API routes
+  - Dependencies: API routes
   - Priority: High
 
-- [ ] Add feedback notifications
-  - Description: Install and configure react-toastify for success/error notifications
+- [x] Add feedback notifications
+  - Description: Implement success/error notifications for form operations
   - Dependencies: Form implementations
   - Priority: Medium
 
-- [ ] Implement deletion confirmation
+- [x] Implement deletion confirmation
   - Description: Add confirmation dialog for delete operations
   - Dependencies: Form implementations
   - Priority: Medium
