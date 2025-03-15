@@ -47,7 +47,7 @@ export default function RootLayout({
           <Suspense fallback={<div>Loading...</div>}>
             <Header />
           </Suspense>
-          <main className="dark:bg-gray-900">{children}</main>
+          <main className="bg-white dark:bg-gray-900">{children}</main>
         </ThemeProvider>
       </body>
     </html>

@@ -11,8 +11,10 @@
   font-family: 'Inter', sans-serif;
 }
 
+/* Use the Tailwind dark class selector for dark mode */
 .dark .admin-layout {
   background-color: #111827;
+  color-scheme: dark;
 }
 
 .admin-header {

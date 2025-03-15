@@ -10,6 +10,10 @@
     @apply h-full;
   }
   
+  html.dark {
+    color-scheme: dark;
+  }
+  
   body {
     @apply h-full bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-inter leading-relaxed;
   }

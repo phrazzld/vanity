@@ -14,7 +14,6 @@ import { usePathname } from "next/navigation";
 import { ReactNode, useState, useEffect } from "react";
 import './admin.css';
 import { useTheme } from '../context/ThemeContext';
-import DarkModeToggle from "../components/DarkModeToggle";
 
 export default function AdminLayout({
   children,
@@ -98,10 +97,8 @@ export default function AdminLayout({
             </div>
             
             {/* Right side links */}
-            <nav className="flex items-center space-x-3">
-              <DarkModeToggle />
-              
-              <Link href="/" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 ml-4">
+            <nav className="flex items-center space-x-3">              
+              <Link href="/" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
                 View Site
               </Link>
               
