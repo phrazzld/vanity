@@ -13,7 +13,11 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "prisma:generate": "prisma generate"
+    "prisma:generate": "prisma generate",
+    "migrate:deploy": "prisma migrate deploy",
+    "migrate:data": "node scripts/migrate-data.js",
+    "migrate:quotes": "node scripts/migrate-quotes.js",
+    "migrate:all": "./scripts/migration-deploy.sh"
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",
