@@ -54,7 +54,7 @@
   - Dependencies: src/lib/db directory
   - Priority: High
 
-- [ ] Move quote utilities
+- [x] Move quote utilities
   - Description: Move quote database functions to src/lib/db/quotes.ts
   - Dependencies: src/lib/db directory
   - Priority: High
