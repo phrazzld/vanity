@@ -37,7 +37,7 @@
   - Dependencies: None
   - Priority: Low
 
-- [ ] Run npm prune
+- [x] Run npm prune
   - Description: Remove unlisted dependencies from node_modules
   - Dependencies: Updated package.json
   - Priority: Low
