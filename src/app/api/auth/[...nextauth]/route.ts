@@ -55,32 +55,44 @@ export async function GET(request: NextRequest) {
 // Handle POST requests for login actions
 export async function POST(request: NextRequest) {
   try {
+    console.log('POST request to auth endpoint received');
+    
     const formData = await request.formData();
     const username = formData.get('username') as string;
     const password = formData.get('password') as string;
     const callbackUrl = formData.get('callbackUrl') as string || '/admin';
     
+    console.log(`Login attempt: username=${username}, callbackUrl=${callbackUrl}`);
+    console.log(`Current environment: ${process.env.NODE_ENV}`);
+    
     // Use our auth utility to validate credentials
     const result = auth.validateCredentials(username, password);
     
     if (result.success) {
-      // Set authentication cookie and redirect to callback URL
-      const response = NextResponse.redirect(new URL(callbackUrl, request.url));
+      console.log('Credentials validated successfully, setting cookies...');
       
-      // Set a cookie to track authentication status - in a real app, you'd use a secure httpOnly cookie
-      // with proper session management. This is just for demo purposes.
+      // Build the callback URL
+      const redirectUrl = new URL(callbackUrl, request.url);
+      console.log(`Redirecting to: ${redirectUrl.toString()}`);
+      
+      // Set authentication cookie and redirect to callback URL
+      const response = NextResponse.redirect(redirectUrl);
+      
+      // Set a cookie to track authentication status
       response.cookies.set({
         name: 'admin_authenticated',
         value: 'true',
         path: '/',
         maxAge: 60 * 60 * 24, // 24 hours
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        // In Vercel preview deployments, we should allow non-secure cookies
+        secure: process.env.NODE_ENV === 'production' && !process.env.VERCEL_ENV?.includes('preview'),
         sameSite: 'lax'
       });
       
       // Store user info in a cookie for display purposes
       if (result.user) {
+        console.log('Setting user cookie...');
         response.cookies.set({
           name: 'admin_user',
           value: JSON.stringify({
@@ -91,22 +103,29 @@ export async function POST(request: NextRequest) {
           path: '/',
           maxAge: 60 * 60 * 24, // 24 hours
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
+          // In Vercel preview deployments, we should allow non-secure cookies
+          secure: process.env.NODE_ENV === 'production' && !process.env.VERCEL_ENV?.includes('preview'),
           sameSite: 'lax'
         });
       }
       
+      console.log('Returning redirect response...');
       return response;
     }
     
+    console.log('Authentication failed, redirecting to login page with error');
     // Redirect to login with error on failure
     return NextResponse.redirect(
       new URL('/admin/login?error=CredentialsSignin', request.url)
     );
   } catch (error) {
     console.error('Login error:', error);
+    // Provide more detailed error information for debugging
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`Error details: ${errorMessage}`);
+    
     return NextResponse.redirect(
-      new URL('/admin/login?error=InternalError', request.url)
+      new URL(`/admin/login?error=InternalError&message=${encodeURIComponent(errorMessage)}`, request.url)
     );
   }
 }

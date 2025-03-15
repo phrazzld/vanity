@@ -15,11 +15,18 @@ const auth = {
    * @returns Success status and user object if valid
    */
   validateCredentials(username: string, password: string) {
+    // Get environment variables with fallbacks for development
+    const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'password123';
+    
+    // Log auth attempt (without printing actual passwords)
+    console.log(`Auth attempt for user: ${username}`);
+    console.log(`Expected admin username: ${adminUsername}`);
+    console.log(`Environment variables present: ${!!process.env.ADMIN_USERNAME}, ${!!process.env.ADMIN_PASSWORD}`);
+    
     // Check credentials against environment variables
-    if (
-      username === process.env.ADMIN_USERNAME &&
-      password === process.env.ADMIN_PASSWORD
-    ) {
+    if (username === adminUsername && password === adminPassword) {
+      console.log('Authentication successful');
       return {
         success: true,
         user: {
@@ -32,6 +39,7 @@ const auth = {
     }
     
     // Invalid credentials
+    console.log('Authentication failed: invalid credentials');
     return {
       success: false,
       user: null

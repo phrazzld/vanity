@@ -35,8 +35,35 @@ function LoginForm() {
     setIsLoading(true);
     setErrorMessage('');
     
-    // The form will be submitted to the auth endpoint
-    // This is handled directly by the browser
+    try {
+      // Use fetch to manually submit the form
+      const response = await fetch('/api/auth/signin', {
+        method: 'POST',
+        body: formData,
+        redirect: 'follow'
+      });
+      
+      // If we get here, check if it's a redirect (success)
+      if (response.redirected) {
+        // Navigate to the redirect location
+        window.location.href = response.url;
+        return;
+      }
+      
+      // If not a redirect, parse response for potential error
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const data = await response.json();
+        setErrorMessage(data.error || 'Authentication failed');
+      } else {
+        setErrorMessage('Authentication failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setErrorMessage('Login failed. Please check your credentials and try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   return (
@@ -55,10 +82,8 @@ function LoginForm() {
           </div>
         )}
         
-        {/* Direct form submission to auth API endpoint */}
+        {/* Form for login */}
         <form 
-          action="/api/auth/signin" 
-          method="POST" 
           onSubmit={handleSubmit} 
           className="mt-8 space-y-6"
         >
