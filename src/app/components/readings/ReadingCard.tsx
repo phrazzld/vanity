@@ -1,13 +1,36 @@
 'use client'
 
+/**
+ * @file ReadingCard component displays an individual book or reading in a card format
+ * @module components/readings/ReadingCard
+ */
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import type { ReadingListItem } from '@/types'
 import { getSeededPlaceholderStyles } from './placeholderUtils'
 
+/**
+ * Props for the ReadingCard component
+ * Omits the author field from ReadingListItem as it's not displayed in the card
+ * @typedef {Omit<ReadingListItem, 'author'>} ReadingCardProps
+ */
 type ReadingCardProps = Omit<ReadingListItem, 'author'>
 
+/**
+ * ReadingCard component that displays a book cover with hover animations
+ * If no cover image is provided, a colored placeholder is generated based on the slug
+ * Visual cues are applied to show reading status (finished, in progress, or dropped)
+ *
+ * @param {ReadingCardProps} props - Component properties
+ * @param {string} props.slug - Unique URL-friendly identifier for the reading
+ * @param {string} props.title - Title of the book or reading
+ * @param {string|null} props.coverImageSrc - URL to cover image, or null if not available
+ * @param {boolean} props.dropped - Whether the reading was abandoned before completion
+ * @param {Date|null} props.finishedDate - When the reading was completed, or null if in progress
+ * @returns {JSX.Element} A link card with book cover and visual status indicators
+ */
 export default function ReadingCard({ 
   slug, 
   title,
@@ -15,6 +38,7 @@ export default function ReadingCard({
   dropped, 
   finishedDate 
 }: ReadingCardProps) {
+  // Generate a consistent placeholder background if no cover image is available
   const placeholderStyles = !coverImageSrc ? getSeededPlaceholderStyles(slug) : {}
 
   return (

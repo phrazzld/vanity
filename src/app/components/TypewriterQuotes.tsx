@@ -1,9 +1,27 @@
 'use client'
 
+/**
+ * @file TypewriterQuotes component that displays quotes with a typewriter animation effect
+ * @module components/TypewriterQuotes
+ */
+
 import { useEffect, useState } from 'react'
 import type { Quote } from '@/types'
 
-// six phases
+/**
+ * Represents the current animation phase of the typewriter effect
+ * 
+ * @typedef {'typingQuote' | 'pauseAfterQuote' | 'typingAuthor' | 'pauseAfterAuthor' | 'erasingAuthor' | 'erasingQuote' | 'loading'} Phase
+ * 
+ * The phases are:
+ * - loading: Initial state while quotes are being fetched
+ * - typingQuote: Typing the quote text character by character
+ * - pauseAfterQuote: Brief pause after quote is fully typed
+ * - typingAuthor: Typing the author name character by character
+ * - pauseAfterAuthor: Longer pause after author is fully typed
+ * - erasingAuthor: Erasing the author name character by character
+ * - erasingQuote: Erasing the quote text character by character
+ */
 type Phase =
   | 'typingQuote'
   | 'pauseAfterQuote'
@@ -13,25 +31,61 @@ type Phase =
   | 'erasingQuote'
   | 'loading'
 
-// tuning constants
-const TYPING_SPEED = 25         // ms between typed chars
-const ERASE_SPEED = 15          // ms between erasing chars
-const PAUSE_AFTER_QUOTE = 1000  // pause once quote is fully typed
-const PAUSE_AFTER_AUTHOR = 2000 // pause once author is fully typed
+/**
+ * Animation timing constants (in milliseconds)
+ */
+// Speed for typing characters (lower = faster)
+const TYPING_SPEED = 25
+// Speed for erasing characters (lower = faster)
+const ERASE_SPEED = 15
+// Time to pause after quote is fully typed
+const PAUSE_AFTER_QUOTE = 1000
+// Time to pause after author is fully typed 
+const PAUSE_AFTER_AUTHOR = 2000
+// How fast the cursor blinks
 const CURSOR_BLINK_INTERVAL = 500
 
+/**
+ * TypewriterQuotes component
+ * 
+ * Displays random quotes from the database with a typewriter animation effect.
+ * The component cycles through quotes in these steps:
+ * 1. Type the quote text character by character
+ * 2. Type the author's name
+ * 3. Pause to allow reading
+ * 4. Erase the author and quote
+ * 5. Select a new random quote and repeat
+ * 
+ * @returns {JSX.Element} The animated quotes component
+ */
 export default function TypewriterQuotes() {
+  // Store fetched quotes from the API
   const [quotes, setQuotes] = useState<Quote[]>([])
+  // Index of the currently displayed quote
   const [quoteIndex, setQuoteIndex] = useState(0)
+  // Current animation phase
   const [phase, setPhase] = useState<Phase>('loading')
 
-  // typed "partials"
+  // Current displayed text (partial strings that grow/shrink during animation)
   const [displayedQuote, setDisplayedQuote] = useState('')
   const [displayedAuthor, setDisplayedAuthor] = useState('')
+  // Controls the blinking cursor appearance
   const [cursorVisible, setCursorVisible] = useState(true)
 
-  // Fetch quotes from API
+  /**
+   * Fetch quotes from the API when the component mounts
+   * 
+   * This effect:
+   * 1. Makes a request to the quotes API with cache-busting headers
+   * 2. Processes the response and updates the quotes state
+   * 3. Randomly selects the first quote to display
+   * 4. Provides a fallback quote if the API call fails
+   */
   useEffect(() => {
+    /**
+     * Fetches quotes from the API and handles the response
+     * @async
+     */
     const fetchQuotes = async () => {
       try {
         console.log('TypewriterQuotes: Fetching quotes from API...')
@@ -77,25 +131,46 @@ export default function TypewriterQuotes() {
     fetchQuotes()
   }, [])
 
-  // Get the current quote and author (safely)
+  /**
+   * Get the current quote and prepare it for display
+   * Safely handles empty states and replaces escape sequences with proper line breaks
+   */
   const currentQuote = quotes[quoteIndex]
   const rawQuote = currentQuote ? currentQuote.text.replace(/\\n/g, '\n') : ''
   const rawAuthor = currentQuote && currentQuote.author 
     ? currentQuote.author.replace(/\\n/g, '\n') 
     : ''
 
-  // ========== CURSOR BLINK ==========
-
+  /**
+   * Cursor blinking effect
+   * 
+   * Sets up an interval to toggle cursor visibility state
+   * for the blinking text cursor animation
+   */
   useEffect(() => {
+    // Setup blinking interval
     const blink = setInterval(() => {
       setCursorVisible(v => !v)
     }, CURSOR_BLINK_INTERVAL)
+    
+    // Clean up interval on unmount
     return () => clearInterval(blink)
   }, [])
 
-  // ========== MAIN TYPING/ERASING LOGIC ==========
-
+  /**
+   * Main typewriter animation effect
+   * 
+   * Handles the core logic for the typewriter animation:
+   * - Types characters one by one for quote and author
+   * - Manages pauses between phases
+   * - Erases text before moving to next quote
+   * - Selects a new random quote when cycle completes
+   * 
+   * The effect runs whenever any of its dependencies change,
+   * primarily when the phase or displayed text changes.
+   */
   useEffect(() => {
+    // Skip if still loading or no quotes available
     if (phase === 'loading' || quotes.length === 0) {
       return // Don't run typewriter logic until quotes are loaded
     }
@@ -105,11 +180,12 @@ export default function TypewriterQuotes() {
     switch (phase) {
       case 'typingQuote':
         if (displayedQuote.length < rawQuote.length) {
+          // Add one character at a time to the displayed quote
           timer = setTimeout(() => {
             setDisplayedQuote(rawQuote.slice(0, displayedQuote.length + 1))
           }, TYPING_SPEED)
         } else {
-          // fully typed quote
+          // Quote is fully typed, pause before showing the author
           timer = setTimeout(() => {
             setPhase('pauseAfterQuote')
           }, PAUSE_AFTER_QUOTE)
@@ -117,7 +193,7 @@ export default function TypewriterQuotes() {
         break
 
       case 'pauseAfterQuote':
-        // short gap, then type author
+        // Brief pause after quote is displayed, then begin typing author
         timer = setTimeout(() => {
           setPhase('typingAuthor')
         }, 300)
@@ -125,11 +201,12 @@ export default function TypewriterQuotes() {
 
       case 'typingAuthor':
         if (displayedAuthor.length < rawAuthor.length) {
+          // Add one character at a time to the displayed author
           timer = setTimeout(() => {
             setDisplayedAuthor(rawAuthor.slice(0, displayedAuthor.length + 1))
           }, TYPING_SPEED)
         } else {
-          // fully typed author
+          // Author is fully typed, pause for reading
           timer = setTimeout(() => {
             setPhase('pauseAfterAuthor')
           }, PAUSE_AFTER_AUTHOR)
@@ -137,7 +214,7 @@ export default function TypewriterQuotes() {
         break
 
       case 'pauseAfterAuthor':
-        // short gap, then erase author
+        // Longer pause after author is displayed, then begin erasing
         timer = setTimeout(() => {
           setPhase('erasingAuthor')
         }, 500)
@@ -145,22 +222,24 @@ export default function TypewriterQuotes() {
 
       case 'erasingAuthor':
         if (displayedAuthor.length > 0) {
+          // Erase author one character at a time from end
           timer = setTimeout(() => {
             setDisplayedAuthor(displayedAuthor.slice(0, -1))
           }, ERASE_SPEED)
         } else {
-          // done erasing author, move on to quote
+          // Author is fully erased, begin erasing the quote
           setPhase('erasingQuote')
         }
         break
 
       case 'erasingQuote':
         if (displayedQuote.length > 0) {
+          // Erase quote one character at a time from end
           timer = setTimeout(() => {
             setDisplayedQuote(displayedQuote.slice(0, -1))
           }, ERASE_SPEED)
         } else {
-          // done erasing everything, pick next random quote
+          // Quote is fully erased, select a new random quote and start over
           const nextIndex = Math.floor(Math.random() * quotes.length)
           setQuoteIndex(nextIndex)
           setPhase('typingQuote')
@@ -168,6 +247,7 @@ export default function TypewriterQuotes() {
         break
     }
 
+    // Clean up timer on unmount or when dependencies change
     return () => {
       if (timer) clearTimeout(timer)
     }
@@ -181,15 +261,21 @@ export default function TypewriterQuotes() {
     quotes
   ])
 
-  // ========== DETERMINE WHERE THE CURSOR GOES ==========
-
+  /**
+   * Determine which element should display the cursor
+   * 
+   * Based on current animation phase, determine whether the
+   * cursor should be shown in the quote or author element
+   */
   const isQuoteActive = [
     'typingQuote',
     'pauseAfterQuote',
     'erasingQuote'
   ].includes(phase)
 
-  // Show loading state if no quotes available
+  /**
+   * Show loading state while quotes are being fetched
+   */
   if (phase === 'loading') {
     return (
       <div
@@ -208,40 +294,44 @@ export default function TypewriterQuotes() {
     )
   }
 
-  // ========== RENDER ==========
-
+  /**
+   * Render the quote and author with typewriter animation
+   * 
+   * @returns {JSX.Element} The rendered component with quote and author text
+   */
   return (
     <div
       style={{
-        // anchor so large multi-line quotes don't shift the page too wildly
+        // Fixed container size ensures quotes don't shift page layout
         margin: '2rem auto 0 auto',
         width: '90%',
         maxWidth: '700px',
-        minHeight: '15rem', // more height for big quotes
+        minHeight: '15rem', // Consistent height for all quote sizes
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-start',
       }}
     >
-      {/* quote text */}
+      {/* Quote text element with blinking cursor when active */}
       <div
         data-testid="quote-text"
         style={{
           fontSize: '1.25rem',
           fontWeight: 500,
-          lineHeight: 1.6, // comfortable reading for multi-line
-          whiteSpace: 'pre-wrap', // preserve actual line breaks
+          lineHeight: 1.6, // Comfortable reading for multi-line quotes
+          whiteSpace: 'pre-wrap', // Preserve actual line breaks in text
           marginBottom: '0.75rem',
           fontFamily: 'Inter, sans-serif',
         }}
       >
         {displayedQuote}
+        {/* Show cursor in quote element when quote is being manipulated */}
         {isQuoteActive && cursorVisible && (
           <span style={{ borderRight: '2px solid #444', marginLeft: '2px' }} />
         )}
       </div>
 
-      {/* author text */}
+      {/* Author attribution with blinking cursor when active */}
       <div
         style={{
           fontSize: '1rem',
@@ -253,6 +343,7 @@ export default function TypewriterQuotes() {
         }}
       >
         {displayedAuthor}
+        {/* Show cursor in author element when author is being manipulated */}
         {!isQuoteActive && cursorVisible && (
           <span style={{ borderRight: '2px solid #444', marginLeft: '2px' }} />
         )}

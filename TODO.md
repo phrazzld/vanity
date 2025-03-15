@@ -98,7 +98,7 @@
   - Dependencies: None
   - Priority: Medium
 
-- [ ] Add JSDoc comments
+- [x] Add JSDoc comments
   - Description: Document key functions with JSDoc comments in database utility files
   - Dependencies: Refactored database utility files
   - Priority: Low
