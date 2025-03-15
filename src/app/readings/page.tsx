@@ -1,4 +1,4 @@
-import ReadingCard from '../components/ReadingCard'
+import ReadingCard from '../components/readings/ReadingCard'
 import { getReadings } from '@/lib/db'
 import type { Reading } from '@/types'
 

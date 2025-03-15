@@ -88,7 +88,7 @@
 
 ### 1.5 Improve Code Organization
 
-- [ ] Organize components
+- [x] Organize components
   - Description: Move reading-related components to src/app/components/readings/ subdirectory
   - Dependencies: None
   - Priority: Medium

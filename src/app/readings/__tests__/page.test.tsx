@@ -13,7 +13,7 @@ jest.mock('@/lib/prisma', () => ({
 }));
 
 // Mock the ReadingCard component
-jest.mock('../../components/ReadingCard', () => {
+jest.mock('../../components/readings/ReadingCard', () => {
   return {
     __esModule: true,
     default: ({ slug }: { slug: string }) => <div data-testid="reading-card">{slug}</div>,
