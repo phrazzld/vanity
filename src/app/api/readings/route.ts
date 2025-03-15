@@ -1,13 +1,35 @@
+/**
+ * @file API route handlers for readings resource
+ * @module api/readings
+ * 
+ * This file defines the API endpoints for managing readings:
+ * - GET: Fetch all readings or a specific reading by slug
+ * - POST: Create a new reading
+ * - PUT: Update an existing reading
+ * - DELETE: Remove a reading
+ * 
+ * All endpoints perform validation and return appropriate status codes
+ * and error messages when necessary.
+ */
+
 import { getReadings, getReading, createReading, updateReading, deleteReading } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import type { ReadingInput } from '@/types';
 
-// Disable caching
+/**
+ * Next.js configuration options to disable caching for this API route
+ * Ensures that data is always fresh and not stale from edge or browser caches
+ */
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
 export const revalidate = 0;
 
-// Helper function to set cache headers
+/**
+ * Sets cache control headers on the response to prevent caching
+ * 
+ * @param {NextResponse} response - The response object to modify
+ * @returns {NextResponse} The response with cache-prevention headers
+ */
 const setCacheHeaders = (response: NextResponse) => {
   response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   response.headers.set('Pragma', 'no-cache');
@@ -15,13 +37,24 @@ const setCacheHeaders = (response: NextResponse) => {
   return response;
 };
 
-// Helper for validating reading input data
+/**
+ * Validates reading input data for API operations
+ * 
+ * Performs validation checks on reading data to ensure it meets requirements:
+ * - Verifies presence of required fields when creating a new reading
+ * - Validates data types and formats (e.g., URL-friendly slugs)
+ * - Checks that strings are non-empty and dates are valid
+ *
+ * @param {any} data - The data to validate, typically from request body
+ * @param {boolean} requireAllFields - Whether to require all mandatory fields (for POST vs PUT)
+ * @returns {{ valid: boolean; message?: string }} Validation result with error message if invalid
+ */
 const validateReadingInput = (data: any, requireAllFields = true): { valid: boolean; message?: string } => {
   if (!data) {
     return { valid: false, message: 'Request body is required' };
   }
   
-  // Validate required fields
+  // Validate required fields for new readings (POST requests)
   if (requireAllFields) {
     if (!data.slug) return { valid: false, message: 'Slug is required' };
     if (!data.title) return { valid: false, message: 'Title is required' };
@@ -33,23 +66,23 @@ const validateReadingInput = (data: any, requireAllFields = true): { valid: bool
     if (typeof data.slug !== 'string') {
       return { valid: false, message: 'Slug must be a string' };
     }
-    // Slugs should be URL-friendly
+    // Ensure slugs are URL-friendly (lowercase, alphanumeric, hyphens only)
     if (!/^[a-z0-9-]+$/.test(data.slug)) {
       return { valid: false, message: 'Slug must contain only lowercase letters, numbers, and hyphens' };
     }
   }
   
-  // Validate title length if provided
+  // Validate title is a non-empty string if provided
   if (data.title !== undefined && (typeof data.title !== 'string' || data.title.length < 1)) {
     return { valid: false, message: 'Title must be a non-empty string' };
   }
   
-  // Validate author if provided
+  // Validate author is a non-empty string if provided
   if (data.author !== undefined && (typeof data.author !== 'string' || data.author.length < 1)) {
     return { valid: false, message: 'Author must be a non-empty string' };
   }
   
-  // Validate finishedDate if provided
+  // Validate finishedDate can be parsed as a date if provided
   if (data.finishedDate !== undefined && data.finishedDate !== null) {
     try {
       new Date(data.finishedDate);
@@ -63,21 +96,38 @@ const validateReadingInput = (data: any, requireAllFields = true): { valid: bool
 };
 
 /**
- * GET - Fetch all readings or a specific reading by slug
+ * GET handler for readings API
+ * 
+ * Handles two types of requests:
+ * 1. GET /api/readings - Returns all readings
+ * 2. GET /api/readings?slug={slug} - Returns a specific reading by slug
+ * 
+ * @param {NextRequest} request - The incoming HTTP request
+ * @returns {Promise<NextResponse>} JSON response with reading data or error details
+ * 
+ * @example
+ * // Fetch all readings
+ * fetch('/api/readings')
+ * 
+ * @example
+ * // Fetch a specific reading
+ * fetch('/api/readings?slug=some-book-title')
  */
 export async function GET(request: NextRequest) {
   try {
     console.log('API Route: Fetching readings from database...');
     
-    // Check if there's a slug parameter
+    // Parse the URL to check for query parameters
     const url = new URL(request.url);
     const slug = url.searchParams.get('slug');
     
     let data;
     if (slug) {
+      // Single reading request with slug parameter
       console.log(`API Route: Fetching reading with slug: ${slug}`);
       data = await getReading(slug);
       
+      // Return 404 if reading not found
       if (!data) {
         return setCacheHeaders(NextResponse.json(
           { error: 'Reading not found' },
@@ -85,13 +135,16 @@ export async function GET(request: NextRequest) {
         ));
       }
     } else {
+      // Multiple readings request (no slug parameter)
       data = await getReadings();
     }
     
     console.log(`API Route: Successfully fetched ${slug ? 'single reading' : `${Array.isArray(data) ? data.length : 0} readings`}`);
     
+    // Return successful response with data
     return setCacheHeaders(NextResponse.json(data));
   } catch (error) {
+    // Handle and log any errors that occur
     console.error('API Route: Error fetching readings:', error);
     return setCacheHeaders(NextResponse.json(
       { error: 'Failed to fetch readings', details: String(error) },
@@ -101,14 +154,36 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * POST - Create a new reading
+ * POST handler for readings API - Create a new reading
+ * 
+ * Creates a new reading record in the database with the provided data.
+ * Requires authentication via Bearer token and validates input data.
+ * 
+ * @param {NextRequest} request - The incoming HTTP request with reading data in body
+ * @returns {Promise<NextResponse>} JSON response with created reading or error details
+ * 
+ * @example
+ * // Create a new reading
+ * fetch('/api/readings', {
+ *   method: 'POST',
+ *   headers: {
+ *     'Content-Type': 'application/json',
+ *     'Authorization': 'Bearer your-token'
+ *   },
+ *   body: JSON.stringify({
+ *     slug: 'book-title',
+ *     title: 'Book Title',
+ *     author: 'Author Name',
+ *     // other optional fields
+ *   })
+ * })
  */
 export async function POST(request: NextRequest) {
   try {
     console.log('API Route: Creating new reading');
     
-    // Check if user is authenticated (in a real implementation, you'd check session here)
-    // For now, we'll check an auth token in the header
+    // Verify authentication via Authorization header
+    // In a production app, this would use NextAuth or similar for session validation
     const authToken = request.headers.get('Authorization');
     if (!authToken || !authToken.startsWith('Bearer ')) {
       return setCacheHeaders(NextResponse.json(
@@ -117,7 +192,7 @@ export async function POST(request: NextRequest) {
       ));
     }
     
-    // Parse request body
+    // Parse and validate the request body
     let data: ReadingInput;
     try {
       data = await request.json();
@@ -129,7 +204,7 @@ export async function POST(request: NextRequest) {
       ));
     }
     
-    // Validate data
+    // Validate the reading data (requiring all mandatory fields)
     const validation = validateReadingInput(data, true);
     if (!validation.valid) {
       return setCacheHeaders(NextResponse.json(
@@ -138,12 +213,12 @@ export async function POST(request: NextRequest) {
       ));
     }
     
-    // Create reading
+    // Attempt to create the reading in the database
     const reading = await createReading(data);
     if (!reading) {
       return setCacheHeaders(NextResponse.json(
         { error: 'Failed to create reading, slug may already exist' },
-        { status: 409 }
+        { status: 409 } // Conflict status code for duplicate resource
       ));
     }
     
@@ -159,7 +234,27 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * PUT - Update an existing reading
+ * PUT handler for readings API - Update an existing reading
+ * 
+ * Updates a reading record in the database identified by its slug.
+ * Requires authentication and validates input data.
+ * 
+ * @param {NextRequest} request - The incoming HTTP request with updated reading data
+ * @returns {Promise<NextResponse>} JSON response with updated reading or error details
+ * 
+ * @example
+ * // Update an existing reading
+ * fetch('/api/readings?slug=existing-slug', {
+ *   method: 'PUT',
+ *   headers: {
+ *     'Content-Type': 'application/json',
+ *     'Authorization': 'Bearer your-token'
+ *   },
+ *   body: JSON.stringify({
+ *     title: 'Updated Title',
+ *     // other fields to update
+ *   })
+ * })
  */
 export async function PUT(request: NextRequest) {
   try {
@@ -226,7 +321,22 @@ export async function PUT(request: NextRequest) {
 }
 
 /**
- * DELETE - Delete a reading
+ * DELETE handler for readings API - Remove a reading
+ * 
+ * Deletes a reading record from the database identified by its slug.
+ * Requires authentication.
+ * 
+ * @param {NextRequest} request - The incoming HTTP request with slug query parameter
+ * @returns {Promise<NextResponse>} JSON response confirming deletion or error details
+ * 
+ * @example
+ * // Delete a reading
+ * fetch('/api/readings?slug=book-to-delete', {
+ *   method: 'DELETE',
+ *   headers: {
+ *     'Authorization': 'Bearer your-token'
+ *   }
+ * })
  */
 export async function DELETE(request: NextRequest) {
   try {
