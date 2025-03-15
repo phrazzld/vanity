@@ -1,0 +1,35 @@
+/* Admin-specific styles that apply Tailwind classes */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.admin-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f7fa;
+}
+
+.admin-header {
+  @apply bg-white shadow-sm sticky top-0 z-10;
+}
+
+.admin-nav-link {
+  @apply text-gray-600 hover:text-blue-600 transition-colors flex items-center;
+}
+
+.admin-main {
+  @apply flex-1 overflow-auto p-4 sm:p-6;
+}
+
+.admin-card {
+  @apply bg-white shadow rounded-xl overflow-hidden border border-gray-100 transition transform;
+}
+
+.admin-button {
+  @apply inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors;
+}
+
+.admin-footer {
+  @apply bg-white border-t py-4;
+}

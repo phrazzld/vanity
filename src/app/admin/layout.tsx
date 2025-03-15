@@ -11,6 +11,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode, useState, useEffect } from "react";
+import './admin.css';
 
 export default function AdminLayout({
   children,
@@ -57,9 +58,9 @@ export default function AdminLayout({
   }, [pathname]);
   
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 flex flex-col admin-layout">
       {/* Top navigation bar */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
+      <header className="admin-header">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
           <div className="flex items-center justify-between">
             {/* Logo and mobile menu button */}
