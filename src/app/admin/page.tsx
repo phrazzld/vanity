@@ -118,61 +118,14 @@ export default function AdminDashboardPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1">
-            Welcome{user ? `, ${user.name}` : ''}! Manage your content here.
-          </p>
-        </div>
-        <div className="hidden sm:block">
-          <span className="inline-flex rounded-md shadow-sm">
-            <Link
-              href="/admin/readings"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-            >
-              <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              New Reading
-            </Link>
-          </span>
-        </div>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+        <p className="text-gray-600 mt-1">
+          Welcome{user ? `, ${user.name}` : ''}! Manage your content here.
+        </p>
       </div>
       
-      {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl shadow-lg mb-8 overflow-hidden">
-        <div className="p-6 sm:p-8 md:flex md:items-center md:justify-between">
-          <div className="md:flex-1 mb-6 md:mb-0">
-            <h2 className="text-xl font-bold text-white sm:text-2xl">
-              Welcome back, {user?.name || 'Admin'}!
-            </h2>
-            <p className="mt-2 text-blue-100">
-              {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
-            <Link 
-              href="/admin/readings/new" 
-              className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-800 bg-opacity-60 hover:bg-opacity-70 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
-            >
-              <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              New Reading
-            </Link>
-            <Link 
-              href="/admin/quotes/new" 
-              className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-800 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
-            >
-              <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              New Quote
-            </Link>
-          </div>
-        </div>
-      </div>
+      {/* Content Cards */}
       
       {/* Stats Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
@@ -306,51 +259,29 @@ export default function AdminDashboardPage() {
       {/* Management Cards */}
       <div className="mb-8">
         <h2 className="text-lg font-medium text-gray-900 mb-4">Content Management</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {dashboardCards.map((card, index) => {
-            const colorClasses = {
-              blue: {
-                bg: 'bg-blue-50',
-                text: 'text-blue-500',
-                hover: 'hover:bg-blue-700',
-                ring: 'focus:ring-blue-500',
-                button: 'bg-blue-600'
-              },
-              green: {
-                bg: 'bg-green-50',
-                text: 'text-green-500',
-                hover: 'hover:bg-green-700',
-                ring: 'focus:ring-green-500',
-                button: 'bg-green-600'
-              },
-              indigo: {
-                bg: 'bg-indigo-50',
-                text: 'text-indigo-500',
-                hover: 'hover:bg-indigo-700',
-                ring: 'focus:ring-indigo-500',
-                button: 'bg-indigo-600'
-              }
-            };
-            const colorClass = colorClasses[card.color as keyof typeof colorClasses || 'blue'] || colorClasses.blue;
+            // Simple color mapping for each card
+            const bgColor = card.color === 'blue' ? 'bg-blue-50' : 'bg-green-50';
+            const buttonColor = card.color === 'blue' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-600 hover:bg-green-700';
+            const ringColor = card.color === 'blue' ? 'focus:ring-blue-500' : 'focus:ring-green-500';
             
             return (
-              <div key={index} className="bg-white shadow rounded-xl overflow-hidden transition transform hover:translate-y-[-3px] hover:shadow-lg border border-gray-100">
-                <div className="p-6">
+              <div key={index} className="bg-white shadow rounded-xl overflow-hidden border border-gray-100 hover:shadow-md">
+                <div className="p-5">
                   <div className="flex items-center justify-between mb-4">
-                    <div className={`${colorClass.bg} rounded-lg p-3`}>
+                    <div className={`${bgColor} rounded-lg p-3`}>
                       {card.icon}
                     </div>
-                    {card.count !== null && (
-                      <span className="text-2xl font-bold text-gray-800">
-                        {isLoading ? "..." : card.count}
-                      </span>
-                    )}
+                    <span className="text-2xl font-bold text-gray-800">
+                      {isLoading ? "..." : card.count}
+                    </span>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{card.title}</h3>
-                  <p className="text-gray-600 text-sm mb-5">{card.description}</p>
+                  <h3 className="text-lg font-medium text-gray-900 mb-1">{card.title}</h3>
+                  <p className="text-gray-600 text-sm mb-4">{card.description}</p>
                   <Link
                     href={card.link}
-                    className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white ${colorClass.button} ${colorClass.hover} focus:outline-none focus:ring-2 focus:ring-offset-2 ${colorClass.ring} transition-colors w-full justify-center`}
+                    className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white ${buttonColor} focus:outline-none focus:ring-2 focus:ring-offset-2 ${ringColor} transition-colors w-full justify-center`}
                   >
                     {card.ctaText}
                     <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -364,30 +295,6 @@ export default function AdminDashboardPage() {
         </div>
       </div>
       
-      {/* System Information */}
-      <div className="mb-6">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">System Information</h2>
-        <div className="bg-white shadow rounded-xl overflow-hidden border border-gray-100">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-sm font-medium text-gray-600">Environment Details</h3>
-          </div>
-          <div className="p-6">
-            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6">
-              <div>
-                <dt className="text-sm font-medium text-gray-500">Environment</dt>
-                <dd className="mt-1 text-sm text-gray-900 flex items-center">
-                  <span className={`inline-block h-2.5 w-2.5 rounded-full ${process.env.NODE_ENV === 'production' ? 'bg-green-400' : 'bg-yellow-400'} mr-2`}></span>
-                  {process.env.NODE_ENV || 'development'}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-gray-500">Next.js Version</dt>
-                <dd className="mt-1 text-sm text-gray-900">15.1.4</dd>
-              </div>
-            </dl>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
