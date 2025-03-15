@@ -32,7 +32,7 @@
   - Dependencies: None
   - Priority: Medium
 
-- [ ] Review dependencies in package.json
+- [x] Review dependencies in package.json
   - Description: Identify and remove any unused dependencies added for migration (e.g., ts-node if no longer needed)
   - Dependencies: None
   - Priority: Low
