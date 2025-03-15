@@ -81,7 +81,7 @@
   - Dependencies: src/types directory
   - Priority: High
 
-- [ ] Update imports
+- [x] Update imports
   - Description: Ensure all components use the new type definitions
   - Dependencies: Type definition files
   - Priority: Medium

@@ -1,16 +1,6 @@
 import ReadingCard from '../components/ReadingCard'
 import { getReadings } from '@/lib/db'
-
-export type Reading = {
-  id: number
-  slug: string
-  title: string
-  author: string
-  finishedDate: Date | null
-  coverImageSrc: string | null
-  thoughts: string
-  dropped: boolean
-}
+import type { Reading } from '@/types'
 
 export const dynamic = 'force-dynamic'; // Disable static rendering and caching
 

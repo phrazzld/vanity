@@ -1,11 +1,6 @@
 import { getQuotes } from '@/lib/db'
 import { NextResponse } from 'next/server'
-
-export type QuoteType = {
-  id: number
-  text: string
-  author: string | null
-}
+import type { Quote } from '@/types'
 
 // Disable caching
 export const dynamic = 'force-dynamic'

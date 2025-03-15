@@ -5,13 +5,14 @@
  */
 
 import prisma from '../prisma';
+import type { Quote } from '@/types';
 
 /**
  * Fetches all quotes from the database
  * 
  * @returns Array of quote objects
  */
-export async function getQuotes() {
+export async function getQuotes(): Promise<Quote[]> {
   try {
     console.log('Getting quotes from database...')
     
@@ -24,7 +25,7 @@ export async function getQuotes() {
       console.warn('No quotes found in database')
     }
     
-    return quotes
+    return quotes as Quote[]
   } catch (error) {
     console.error('Error fetching quotes:', error)
     return []
@@ -37,7 +38,7 @@ export async function getQuotes() {
  * @param id - The unique ID of the quote
  * @returns The quote object or null if not found
  */
-export async function getQuote(id: number) {
+export async function getQuote(id: number): Promise<Quote | null> {
   try {
     console.log(`Fetching quote with ID: ${id}`)
     
@@ -49,7 +50,7 @@ export async function getQuote(id: number) {
       LIMIT 1;
     `
     
-    const quote = Array.isArray(quotes) && quotes.length > 0 ? quotes[0] : null
+    const quote = Array.isArray(quotes) && quotes.length > 0 ? quotes[0] as Quote : null
     
     console.log(quote ? `Found quote with ID ${id}` : `No quote found with ID ${id}`)
     return quote
