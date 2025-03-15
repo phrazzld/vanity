@@ -97,6 +97,7 @@ export default function ReadingCard({
         borderRadius: '6px',
         transition: 'all 0.3s ease',
         aspectRatio: '2 / 3', // lock the shape
+        border: '1px solid rgba(0,0,0,0.05)',
         boxShadow: isHovered 
           ? '0 4px 12px rgba(0,0,0,0.12)' 
           : '0 1px 3px rgba(0,0,0,0.08)',
@@ -107,19 +108,7 @@ export default function ReadingCard({
       onMouseLeave={() => setIsHovered(false)}
       title={title} // Show title on hover
     >
-      {/* Left edge indicator */}
-      <div 
-        style={{
-          position: 'absolute',
-          top: 0,
-          bottom: 0,
-          left: 0,
-          backgroundColor: statusColor,
-          zIndex: 3,
-          transition: 'width 0.3s ease',
-          width: isHovered ? '6px' : '4px'
-        }} 
-      />
+      {/* No left edge indicator anymore */}
       
       {/* Cover image or placeholder */}
       <div
