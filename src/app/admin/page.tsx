@@ -49,28 +49,6 @@ const dashboardIcons = {
         d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" 
       />
     </svg>
-  ),
-  settings: (
-    <svg 
-      className="w-8 h-8 text-indigo-500" 
-      xmlns="http://www.w3.org/2000/svg" 
-      fill="none" 
-      viewBox="0 0 24 24" 
-      stroke="currentColor"
-    >
-      <path 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
-        strokeWidth={1.5} 
-        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" 
-      />
-      <path 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
-        strokeWidth={1.5} 
-        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" 
-      />
-    </svg>
   )
 };
 
@@ -135,15 +113,6 @@ export default function AdminDashboardPage() {
       icon: dashboardIcons.quotes,
       ctaText: "Manage Quotes",
       count: stats.quotes
-    },
-    {
-      title: "Settings",
-      description: "Configure application settings and preferences.",
-      link: "#",
-      color: "indigo",
-      icon: dashboardIcons.settings,
-      ctaText: "View Settings",
-      count: null
     }
   ];
 
@@ -395,119 +364,27 @@ export default function AdminDashboardPage() {
         </div>
       </div>
       
-      {/* Recent Activity & System Information */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        {/* Recent Activity */}
-        <div className="lg:col-span-2">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Recent Activity</h2>
-          <div className="bg-white shadow rounded-xl overflow-hidden border border-gray-100">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-medium text-gray-600">Latest Actions</h3>
-                <span className="px-2.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">Today</span>
-              </div>
-            </div>
-            <div className="divide-y divide-gray-200">
-              <div className="px-6 py-4">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <span className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
-                      <svg className="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                      </svg>
-                    </span>
-                  </div>
-                  <div className="ml-4 flex-1">
-                    <div className="text-sm font-medium text-gray-900">New quote added</div>
-                    <div className="text-sm text-gray-500">2 hours ago</div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="px-6 py-4">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <span className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                      <svg className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                    </span>
-                  </div>
-                  <div className="ml-4 flex-1">
-                    <div className="text-sm font-medium text-gray-900">Updated reading details</div>
-                    <div className="text-sm text-gray-500">Yesterday</div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="px-6 py-4">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <span className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center">
-                      <svg className="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                      </svg>
-                    </span>
-                  </div>
-                  <div className="ml-4 flex-1">
-                    <div className="text-sm font-medium text-gray-900">Signed in</div>
-                    <div className="text-sm text-gray-500">3 days ago</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="px-6 py-3 bg-gray-50 border-t border-gray-200">
-              <Link href="#" className="text-sm font-medium text-blue-600 hover:text-blue-500 flex items-center justify-center">
-                View all activity
-                <svg className="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </Link>
-            </div>
+      {/* System Information */}
+      <div className="mb-6">
+        <h2 className="text-lg font-medium text-gray-900 mb-4">System Information</h2>
+        <div className="bg-white shadow rounded-xl overflow-hidden border border-gray-100">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h3 className="text-sm font-medium text-gray-600">Environment Details</h3>
           </div>
-        </div>
-        
-        {/* System Information */}
-        <div className="lg:col-span-1">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">System Information</h2>
-          <div className="bg-white shadow rounded-xl overflow-hidden border border-gray-100">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-sm font-medium text-gray-600">Environment Details</h3>
-            </div>
-            <div className="p-6">
-              <dl className="grid grid-cols-1 gap-y-4">
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Environment</dt>
-                  <dd className="mt-1 text-sm text-gray-900 flex items-center">
-                    <span className={`inline-block h-2.5 w-2.5 rounded-full ${process.env.NODE_ENV === 'production' ? 'bg-green-400' : 'bg-yellow-400'} mr-2`}></span>
-                    {process.env.NODE_ENV || 'development'}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Next.js Version</dt>
-                  <dd className="mt-1 text-sm text-gray-900">15.1.4</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Server Status</dt>
-                  <dd className="mt-1 text-sm text-gray-900 flex items-center">
-                    <span className="inline-block h-2.5 w-2.5 rounded-full bg-green-400 mr-2"></span>
-                    Online
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Last Deployment</dt>
-                  <dd className="mt-1 text-sm text-gray-900">3 days ago</dd>
-                </div>
-              </dl>
-            </div>
-            <div className="px-6 py-3 bg-gray-50 border-t border-gray-200">
-              <Link href="#" className="text-sm font-medium text-blue-600 hover:text-blue-500 flex items-center justify-center">
-                System status
-                <svg className="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </Link>
-            </div>
+          <div className="p-6">
+            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6">
+              <div>
+                <dt className="text-sm font-medium text-gray-500">Environment</dt>
+                <dd className="mt-1 text-sm text-gray-900 flex items-center">
+                  <span className={`inline-block h-2.5 w-2.5 rounded-full ${process.env.NODE_ENV === 'production' ? 'bg-green-400' : 'bg-yellow-400'} mr-2`}></span>
+                  {process.env.NODE_ENV || 'development'}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-sm font-medium text-gray-500">Next.js Version</dt>
+                <dd className="mt-1 text-sm text-gray-900">15.1.4</dd>
+              </div>
+            </dl>
           </div>
         </div>
       </div>
