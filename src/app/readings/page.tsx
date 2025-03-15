@@ -1,5 +1,5 @@
-import prisma from '@/lib/prisma'
 import ReadingCard from '../components/ReadingCard'
+import { getReadings } from './utils'
 
 export type Reading = {
   id: number
@@ -12,37 +12,10 @@ export type Reading = {
   dropped: boolean
 }
 
-export async function getReadings() {
-  try {
-    console.log('Getting readings from database...')
-    
-    // Use raw query for maximum compatibility
-    const readings = await prisma.$queryRaw`
-      SELECT id, slug, title, author, "finishedDate", "coverImageSrc", thoughts, dropped
-      FROM "Reading"
-      ORDER BY 
-        CASE WHEN "finishedDate" IS NULL THEN 1 ELSE 0 END,
-        "finishedDate" DESC,
-        id DESC;
-    `
-    
-    console.log(`Found ${Array.isArray(readings) ? readings.length : 0} readings`)
-    
-    if (!readings || (Array.isArray(readings) && readings.length === 0)) {
-      console.warn('No readings found in database')
-    }
-    
-    return readings
-  } catch (error) {
-    console.error('Error fetching readings:', error)
-    return []
-  }
-}
-
 export const dynamic = 'force-dynamic'; // Disable static rendering and caching
 
 export default async function ReadingsPage() {
-  const readings = await getReadings()
+  const readings = await getReadings() as Reading[]
   console.log(`Rendering readings page with ${readings.length} readings`)
 
   return (
