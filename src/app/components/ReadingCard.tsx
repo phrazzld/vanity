@@ -3,15 +3,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
+import type { ReadingListItem } from '@/types'
 import { getSeededPlaceholderStyles } from '../readings/placeholderUtils'
 
-interface ReadingCardProps {
-  slug: string
-  title: string
-  coverImageSrc: string | null
-  dropped: boolean
-  finishedDate: Date | null
-}
+type ReadingCardProps = Omit<ReadingListItem, 'author'>
 
 export default function ReadingCard({ 
   slug, 

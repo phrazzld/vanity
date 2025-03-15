@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { getReading } from '@/lib/db';
 import ReadingDetailPage from '../[slug]/page';
 import prisma from '@/lib/prisma';
+import type { Reading } from '@/types';
 
 // Mock the Prisma client
 jest.mock('@/lib/prisma', () => ({
@@ -31,7 +32,7 @@ describe('ReadingDetailPage', () => {
 
   it('fetches a single reading by slug', async () => {
     // Mock data
-    const mockReading = { 
+    const mockReading: Reading = { 
       id: 1, 
       slug: 'test-book', 
       title: 'Test Book', 
@@ -77,7 +78,7 @@ describe('ReadingDetailPage', () => {
 
   it('renders reading details when reading exists', async () => {
     // Mock data with a valid Date object (not a string)
-    const mockReading = { 
+    const mockReading: Reading = { 
       id: 1, 
       slug: 'test-book', 
       title: 'Test Book', 

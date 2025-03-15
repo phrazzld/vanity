@@ -5,6 +5,7 @@
  */
 
 import prisma from '../prisma';
+import type { Reading } from '@/types';
 
 /**
  * Fetches a single reading by slug
@@ -12,7 +13,7 @@ import prisma from '../prisma';
  * @param slug - The unique slug identifier of the reading
  * @returns The reading object or null if not found
  */
-export async function getReading(slug: string) {
+export async function getReading(slug: string): Promise<Reading | null> {
   try {
     console.log(`Fetching reading with slug: ${slug}`)
     
@@ -24,7 +25,7 @@ export async function getReading(slug: string) {
       LIMIT 1;
     `
     
-    const reading = Array.isArray(readings) && readings.length > 0 ? readings[0] : null
+    const reading = Array.isArray(readings) && readings.length > 0 ? readings[0] as Reading : null
     
     console.log(reading ? `Found reading: ${reading.title}` : `No reading found for slug: ${slug}`)
     return reading
@@ -39,7 +40,7 @@ export async function getReading(slug: string) {
  * 
  * @returns Array of reading objects ordered by finished date (desc)
  */
-export async function getReadings() {
+export async function getReadings(): Promise<Reading[]> {
   try {
     console.log('Getting readings from database...')
     
@@ -59,7 +60,7 @@ export async function getReadings() {
       console.warn('No readings found in database')
     }
     
-    return readings
+    return readings as Reading[]
   } catch (error) {
     console.error('Error fetching readings:', error)
     return []

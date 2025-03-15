@@ -1,4 +1,4 @@
-import { Reading } from '../page'
+import type { Reading } from '@/types'
 import { getReading } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'; // Disable static rendering and caching

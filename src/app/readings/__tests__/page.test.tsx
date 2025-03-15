@@ -2,6 +2,7 @@ import { render } from '@testing-library/react';
 import { getReadings } from '@/lib/db';
 import ReadingsPage from '../page';
 import prisma from '@/lib/prisma';
+import type { Reading } from '@/types';
 
 // Mock the Prisma client
 jest.mock('@/lib/prisma', () => ({
@@ -31,7 +32,7 @@ describe('ReadingsPage', () => {
 
   it('fetches readings from database', async () => {
     // Mock data
-    const mockReadings = [
+    const mockReadings: Reading[] = [
       { 
         id: 1, 
         slug: 'book-1', 
@@ -78,13 +79,13 @@ describe('ReadingsPage', () => {
 
   it('renders the readings page with reading cards', async () => {
     // Mock data with serializable dates (ISO strings instead of Date objects)
-    const mockReadings = [
+    const mockReadings: Omit<Reading, 'finishedDate'>[] = [
       { 
         id: 1, 
         slug: 'book-1', 
         title: 'Book 1', 
         author: 'Author 1', 
-        finishedDate: new Date('2023-01-01').toISOString(), 
+        finishedDate: new Date('2023-01-01').toISOString() as any, 
         coverImageSrc: '/covers/book1.jpg',
         thoughts: 'Great book',
         dropped: false,

@@ -1,5 +1,6 @@
 import { GET } from '../quotes/route';
 import * as db from '@/lib/db';
+import type { Quote } from '@/types';
 
 // Mock the db module
 jest.mock('@/lib/db', () => ({
@@ -29,7 +30,7 @@ describe('/api/quotes endpoint', () => {
 
   it('returns quotes successfully', async () => {
     // Mock data
-    const mockQuotes = [
+    const mockQuotes: Quote[] = [
       { id: 1, text: 'Quote 1', author: 'Author 1' },
       { id: 2, text: 'Quote 2', author: 'Author 2' },
     ];

@@ -1,12 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-
-type QuoteType = {
-  id: number
-  text: string
-  author: string | null
-}
+import type { Quote } from '@/types'
 
 // six phases
 type Phase =
@@ -26,7 +21,7 @@ const PAUSE_AFTER_AUTHOR = 2000 // pause once author is fully typed
 const CURSOR_BLINK_INTERVAL = 500
 
 export default function TypewriterQuotes() {
-  const [quotes, setQuotes] = useState<QuoteType[]>([])
+  const [quotes, setQuotes] = useState<Quote[]>([])
   const [quoteIndex, setQuoteIndex] = useState(0)
   const [phase, setPhase] = useState<Phase>('loading')
 
@@ -74,7 +69,7 @@ export default function TypewriterQuotes() {
       } catch (error) {
         console.error('TypewriterQuotes: Error fetching quotes:', error)
         // Fallback to a default quote if API fails
-        setQuotes([{ id: 0, text: 'Error loading quotes from database. Please check console for details.', author: 'System' }])
+        setQuotes([{ id: 0, text: 'Error loading quotes from database. Please check console for details.', author: 'System' } as Quote])
         setPhase('typingQuote')
       }
     }
