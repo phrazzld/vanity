@@ -440,7 +440,7 @@ export default function ReadingsManagementPage() {
                       />
                     </div>
                     <p className="mt-1 text-xs text-gray-500">
-                      URL-friendly identifier. Example: "the-great-gatsby"
+                      URL-friendly identifier. Example: &quot;the-great-gatsby&quot;
                     </p>
                   </div>
                   
