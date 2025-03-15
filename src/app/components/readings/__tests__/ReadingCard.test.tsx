@@ -8,6 +8,15 @@ jest.mock('../placeholderUtils', () => ({
   }),
 }));
 
+// Mock Next.js image component
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: (props) => <img {...props} />,
+}));
+
+// Mock environment variables
+process.env.NEXT_PUBLIC_SPACES_BASE_URL = 'https://test-space.com';
+
 describe('ReadingCard', () => {
   const mockProps = {
     slug: 'test-book',
@@ -20,8 +29,8 @@ describe('ReadingCard', () => {
   it('renders with cover image', () => {
     render(<ReadingCard {...mockProps} />);
     
-    const link = screen.getByRole('link');
-    expect(link).toHaveAttribute('href', '/readings/test-book');
+    const card = screen.getByTitle('Test Book');
+    expect(card).toBeInTheDocument();
     
     const image = screen.getByAltText('Test Book cover');
     expect(image).toBeInTheDocument();
@@ -35,8 +44,8 @@ describe('ReadingCard', () => {
       />
     );
     
-    const link = screen.getByRole('link');
-    expect(link).toBeInTheDocument();
+    const card = screen.getByTitle('Test Book');
+    expect(card).toBeInTheDocument();
     
     // No image should be rendered
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
@@ -67,27 +76,29 @@ describe('ReadingCard', () => {
   });
 
   it('applies hover styles when mouse enters', () => {
-    render(<ReadingCard {...mockProps} />);
+    const { container } = render(<ReadingCard {...mockProps} />);
     
-    const link = screen.getByRole('link');
+    const card = screen.getByTitle('Test Book');
     
     // Simulate mouse enter
-    fireEvent.mouseEnter(link);
+    fireEvent.mouseEnter(card);
     
-    expect(link).toHaveStyle('transform: translateY(-2px) scale(1.02)');
-    expect(link).toHaveStyle('box-shadow: 0 4px 8px rgba(0,0,0,0.1)');
+    // Check that the state has been updated (card now has hover styles)
+    expect(card).toHaveStyle('transform: translateY(-2px) scale(1.02)');
+    expect(card).toHaveStyle('box-shadow: 0 4px 8px rgba(0,0,0,0.1)');
   });
 
   it('removes hover styles when mouse leaves', () => {
     render(<ReadingCard {...mockProps} />);
     
-    const link = screen.getByRole('link');
+    const card = screen.getByTitle('Test Book');
     
     // Simulate mouse enter then leave
-    fireEvent.mouseEnter(link);
-    fireEvent.mouseLeave(link);
+    fireEvent.mouseEnter(card);
+    fireEvent.mouseLeave(card);
     
-    expect(link).toHaveStyle('transform: translateY(0) scale(1)');
-    expect(link).toHaveStyle('box-shadow: 0 1px 2px rgba(0,0,0,0.05)');
+    // Check that the state has been reset
+    expect(card).toHaveStyle('transform: translateY(0) scale(1)');
+    expect(card).toHaveStyle('box-shadow: 0 1px 2px rgba(0,0,0,0.05)');
   });
 });

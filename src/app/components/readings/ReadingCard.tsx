@@ -6,7 +6,6 @@
  */
 
 import Image from 'next/image'
-import Link from 'next/link'
 import { useState } from 'react'
 import type { ReadingListItem } from '@/types'
 import { getSeededPlaceholderStyles } from './placeholderUtils'
@@ -29,7 +28,7 @@ type ReadingCardProps = Omit<ReadingListItem, 'author'>
  * @param {string|null} props.coverImageSrc - URL to cover image, or null if not available
  * @param {boolean} props.dropped - Whether the reading was abandoned before completion
  * @param {Date|null} props.finishedDate - When the reading was completed, or null if in progress
- * @returns {JSX.Element} A link card with book cover and visual status indicators
+ * @returns {JSX.Element} A card with book cover and visual status indicators
  */
 export default function ReadingCard({ 
   slug, 
@@ -40,11 +39,13 @@ export default function ReadingCard({
 }: ReadingCardProps) {
   // Generate a consistent placeholder background if no cover image is available
   const placeholderStyles = !coverImageSrc ? getSeededPlaceholderStyles(slug) : {}
+  
+  // State for hover effects
+  const [isHovered, setIsHovered] = useState(false)
 
   return (
-    <Link
+    <div
       key={slug}
-      href={`/readings/${slug}`}
       style={{
         // card container
         display: 'block',
@@ -54,20 +55,13 @@ export default function ReadingCard({
         borderRadius: '6px',
         transition: 'transform 0.2s ease, box-shadow 0.2s ease',
         aspectRatio: '2 / 3', // lock the shape
-        boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
-        textDecoration: 'none',
-        color: 'inherit',
+        boxShadow: isHovered ? '0 4px 8px rgba(0,0,0,0.1)' : '0 1px 2px rgba(0,0,0,0.05)',
+        transform: isHovered ? 'translateY(-2px) scale(1.02)' : 'translateY(0) scale(1)',
+        cursor: 'default',
       }}
-      onMouseEnter={(e) => {
-        const card = e.currentTarget
-        card.style.transform = 'translateY(-2px) scale(1.02)'
-        card.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)'
-      }}
-      onMouseLeave={(e) => {
-        const card = e.currentTarget
-        card.style.transform = 'translateY(0) scale(1)'
-        card.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)'
-      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      title={title} // Show title on hover
     >
       <div
         style={{
@@ -90,6 +84,6 @@ export default function ReadingCard({
           />
         )}
       </div>
-    </Link>
+    </div>
   )
 }
