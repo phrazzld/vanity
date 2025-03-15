@@ -13,10 +13,22 @@ import * as quotesDb from './quotes';
 export { readingsDb, quotesDb };
 
 // Export individual reading functions for backward compatibility
-export const { getReading, getReadings } = readingsDb;
+export const { 
+  getReading, 
+  getReadings, 
+  createReading, 
+  updateReading, 
+  deleteReading 
+} = readingsDb;
 
 // Export individual quote functions for backward compatibility
-export const { getQuote, getQuotes } = quotesDb;
+export const { 
+  getQuote, 
+  getQuotes, 
+  createQuote, 
+  updateQuote, 
+  deleteQuote 
+} = quotesDb;
 
 // Export the Prisma client
 export { default as prisma } from '../prisma';
