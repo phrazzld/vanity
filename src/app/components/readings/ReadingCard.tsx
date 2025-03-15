@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import type { ReadingListItem } from '@/types'
-import { getSeededPlaceholderStyles } from '../readings/placeholderUtils'
+import { getSeededPlaceholderStyles } from './placeholderUtils'
 
 type ReadingCardProps = Omit<ReadingListItem, 'author'>
 

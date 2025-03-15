@@ -20,24 +20,24 @@
   - Dependencies: Verify all components use database queries instead
   - Priority: High
 
-- [ ] Remove temporary migration files
+- [x] Remove temporary migration files
   - Description: Delete .env.migration and logs_result.json files used during database transition
   - Dependencies: None (ensure they're properly added to .gitignore)
   - Priority: Medium
 
 ### 1.2 Code Cleanup
 
-- [ ] Remove debugging statements
+- [x] Remove debugging statements
   - Description: Clean up console.log statements and commented-out code in src/app/readings/page.tsx and utils.ts
   - Dependencies: None
   - Priority: Medium
 
-- [ ] Review dependencies in package.json
+- [x] Review dependencies in package.json
   - Description: Identify and remove any unused dependencies added for migration (e.g., ts-node if no longer needed)
   - Dependencies: None
   - Priority: Low
 
-- [ ] Run npm prune
+- [x] Run npm prune
   - Description: Remove unlisted dependencies from node_modules
   - Dependencies: Updated package.json
   - Priority: Low
@@ -88,7 +88,7 @@
 
 ### 1.5 Improve Code Organization
 
-- [ ] Organize components
+- [x] Organize components
   - Description: Move reading-related components to src/app/components/readings/ subdirectory
   - Dependencies: None
   - Priority: Medium

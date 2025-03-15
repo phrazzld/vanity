@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import ReadingCard from '../ReadingCard';
 
 // Mock the getSeededPlaceholderStyles function
-jest.mock('../../readings/placeholderUtils', () => ({
+jest.mock('../placeholderUtils', () => ({
   getSeededPlaceholderStyles: jest.fn().mockReturnValue({
     backgroundColor: '#f5f5f5',
   }),

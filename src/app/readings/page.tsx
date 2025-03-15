@@ -1,4 +1,4 @@
-import ReadingCard from '../components/ReadingCard'
+import ReadingCard from '../components/readings/ReadingCard'
 import { getReadings } from '@/lib/db'
 import type { Reading } from '@/types'
 
@@ -6,7 +6,6 @@ export const dynamic = 'force-dynamic'; // Disable static rendering and caching
 
 export default async function ReadingsPage() {
   const readings = await getReadings() as Reading[]
-  console.log(`Rendering readings page with ${readings.length} readings`)
 
   return (
     <section style={{ maxWidth: '1200px', margin: '0 auto', padding: '1rem' }}>
