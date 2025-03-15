@@ -1,12 +1,9 @@
 import { GET } from '../quotes/route';
-import prisma from '@/lib/prisma';
+import * as db from '@/lib/db';
 
-// Mock the Prisma client
-jest.mock('@/lib/prisma', () => ({
-  __esModule: true,
-  default: {
-    $queryRaw: jest.fn(),
-  },
+// Mock the db module
+jest.mock('@/lib/db', () => ({
+  getQuotes: jest.fn(),
 }));
 
 // Mock the NextResponse
@@ -37,8 +34,8 @@ describe('/api/quotes endpoint', () => {
       { id: 2, text: 'Quote 2', author: 'Author 2' },
     ];
     
-    // Mock Prisma response
-    (prisma.$queryRaw as jest.Mock).mockResolvedValueOnce(mockQuotes);
+    // Mock database function response
+    (db.getQuotes as jest.Mock).mockResolvedValueOnce(mockQuotes);
     
     // Call the handler directly without request param
     const response = await GET();
@@ -50,13 +47,13 @@ describe('/api/quotes endpoint', () => {
     const data = await response.json();
     expect(data).toEqual(mockQuotes);
     
-    // Verify Prisma query was called correctly
-    expect(prisma.$queryRaw).toHaveBeenCalledTimes(1);
+    // Verify database function was called
+    expect(db.getQuotes).toHaveBeenCalledTimes(1);
   });
 
   it('handles database errors', async () => {
     // Mock database error
-    (prisma.$queryRaw as jest.Mock).mockRejectedValueOnce(new Error('Database error'));
+    (db.getQuotes as jest.Mock).mockRejectedValueOnce(new Error('Database error'));
     
     // Call the handler directly without request param
     const response = await GET();

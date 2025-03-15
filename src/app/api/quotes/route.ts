@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma'
+import { getQuotes } from '@/lib/db'
 import { NextResponse } from 'next/server'
 
 export type QuoteType = {
@@ -16,15 +16,9 @@ export async function GET() {
   try {
     console.log('API Route: Fetching quotes from database...')
     
-    // Use a direct query for maximum compatibility
-    const quotes = await prisma.$queryRaw`SELECT id, text, author FROM "Quote";`
+    const quotes = await getQuotes()
     
     console.log(`API Route: Successfully fetched ${Array.isArray(quotes) ? quotes.length : 0} quotes`)
-    
-    // Handle empty results
-    if (!quotes || (Array.isArray(quotes) && quotes.length === 0)) {
-      console.warn('API Route: No quotes found in database')
-    }
     
     // Set appropriate headers to prevent caching
     return NextResponse.json(quotes, {

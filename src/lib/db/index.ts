@@ -7,14 +7,16 @@
 
 // Import entity-specific database utilities
 import * as readingsDb from './readings';
-// import * as quotesDb from './quotes';
+import * as quotesDb from './quotes';
 
 // Re-export all database utilities
-export { readingsDb };
-// export { quotesDb };
+export { readingsDb, quotesDb };
 
 // Export individual reading functions for backward compatibility
 export const { getReading, getReadings } = readingsDb;
+
+// Export individual quote functions for backward compatibility
+export const { getQuote, getQuotes } = quotesDb;
 
 // Export the Prisma client
 export { default as prisma } from '../prisma';
