@@ -114,7 +114,6 @@ export default function ReadingCard({
           top: 0,
           bottom: 0,
           left: 0,
-          width: '4px',
           backgroundColor: statusColor,
           zIndex: 3,
           transition: 'width 0.3s ease',
