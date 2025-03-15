@@ -27,7 +27,7 @@
 
 ### 1.2 Code Cleanup
 
-- [ ] Remove debugging statements
+- [x] Remove debugging statements
   - Description: Clean up console.log statements and commented-out code in src/app/readings/page.tsx and utils.ts
   - Dependencies: None
   - Priority: Medium
