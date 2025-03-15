@@ -1,12 +1,14 @@
-import { READINGS, Reading } from '../data'
+import { Reading } from '../page'
+import { getReading } from '../utils'
 
-interface Props {
-  params: Promise<{ slug: string }>
-}
+export const dynamic = 'force-dynamic'; // Disable static rendering and caching
 
-export default async function ReadingDetailPage({ params }: Props) {
-  const { slug } = await params
-  const reading = READINGS.find((item: Reading) => item.slug === slug)
+// Using a simpler parameter format to avoid interface mismatches
+export default async function ReadingDetailPage(props: any) {
+  const { params } = props
+  const { slug } = params
+  const reading = await getReading(slug)
+  
   if (!reading) {
     return <div>not found</div>
   }

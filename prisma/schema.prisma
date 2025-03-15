@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Reading {
+  id            Int       @id @default(autoincrement())
+  slug          String    @unique
+  title         String
+  author        String
+  finishedDate  DateTime?
+  coverImageSrc String?
+  thoughts      String    @default("")
+  dropped       Boolean   @default(false)
+}
+
+model Quote {
+  id     Int     @id @default(autoincrement())
+  text   String
+  author String?
+}
