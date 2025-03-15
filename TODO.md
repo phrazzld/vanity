@@ -1,100 +1,265 @@
 # TODO
 
 ## Assumptions
-- We're migrating from hardcoded data in TypeScript files to a Neon Postgres database
-- The project will be deployed on Vercel, requiring a serverless-compatible database
-- The existing data structure in the code files should be preserved in the database schema
-- No additional features beyond data migration are required at this time
+- The project has been successfully migrated from hardcoded data to a Neon Postgres database
+- The application is deployed and functioning on Vercel
+- The current structure follows Next.js 15+ conventions with React server components
+- Authentication will be implemented for the admin interface without existing auth infrastructure
 
-## Database Setup
+## 1. Cleanup and Refactoring
 
-- [x] Create Neon Postgres database account
-  - Description: Sign up at neon.tech and create a new Postgres database instance
+### 1.1 Remove Leftover Files
+
+- [x] Remove src/app/readings/data.ts file
+  - Description: Delete the hardcoded READINGS array that's been replaced by database queries
+  - Dependencies: Verify TypewriterQuotes component no longer imports from this file
+  - Priority: High
+
+- [ ] Remove src/app/quotes.ts file
+  - Description: Delete the hardcoded QUOTES array that's been replaced by database queries
+  - Dependencies: Verify all components use database queries instead
+  - Priority: High
+
+- [ ] Remove temporary migration files
+  - Description: Delete .env.migration and logs_result.json files used during database transition
+  - Dependencies: None (ensure they're properly added to .gitignore)
+  - Priority: Medium
+
+### 1.2 Code Cleanup
+
+- [ ] Remove debugging statements
+  - Description: Clean up console.log statements and commented-out code in src/app/readings/page.tsx and utils.ts
+  - Dependencies: None
+  - Priority: Medium
+
+- [ ] Review dependencies in package.json
+  - Description: Identify and remove any unused dependencies added for migration (e.g., ts-node if no longer needed)
+  - Dependencies: None
+  - Priority: Low
+
+- [ ] Run npm prune
+  - Description: Remove unlisted dependencies from node_modules
+  - Dependencies: Updated package.json
+  - Priority: Low
+
+### 1.3 Refactor Database Access
+
+- [ ] Create dedicated database directory
+  - Description: Create src/lib/db directory for database-related utilities
   - Dependencies: None
   - Priority: High
 
-- [x] Install and initialize Prisma
-  - Description: Install required Prisma packages and initialize with PostgreSQL provider
+- [ ] Move reading utilities
+  - Description: Move database access functions from src/app/readings/utils.ts to src/lib/db/readings.ts
+  - Dependencies: src/lib/db directory
+  - Priority: High
+
+- [ ] Move quote utilities
+  - Description: Move quote database functions to src/lib/db/quotes.ts
+  - Dependencies: src/lib/db directory
+  - Priority: High
+
+- [ ] Enhance error handling
+  - Description: Add robust error handling to database functions with appropriate error messages and logging
+  - Dependencies: Refactored database utility files
+  - Priority: Medium
+
+### 1.4 Create Type Definitions
+
+- [ ] Create types directory
+  - Description: Add src/types directory for shared interfaces
   - Dependencies: None
   - Priority: High
-  
-- [x] Configure environment variables
-  - Description: Create .env file with DATABASE_URL and add to .gitignore
-  - Dependencies: Neon database creation
+
+- [ ] Define Reading interface
+  - Description: Create src/types/reading.ts with Reading interface
+  - Dependencies: src/types directory
   - Priority: High
 
-## Schema Definition
-
-- [x] Define Reading model in schema.prisma
-  - Description: Create Reading model with all fields matching the current data structure
-  - Dependencies: Prisma initialization
+- [ ] Define Quote interface
+  - Description: Create src/types/quote.ts with Quote interface
+  - Dependencies: src/types directory
   - Priority: High
 
-- [x] Define Quote model in schema.prisma
-  - Description: Create Quote model with text and author fields
-  - Dependencies: Prisma initialization
-  - Priority: High
-
-- [x] Run initial migration
-  - Description: Execute Prisma migrate to create database tables
-  - Dependencies: Schema definition
-  - Priority: High
-
-## Data Migration
-
-- [x] Create migration script
-  - Description: Develop a script to transfer data from hardcoded arrays to database
-  - Dependencies: Database schema, Prisma client generation
-  - Priority: High
-
-- [x] Execute data migration
-  - Description: Run the migration script and verify data in Neon database
-  - Dependencies: Migration script
-  - Priority: High
-
-## Application Code Updates
-
-- [x] Create Prisma client instance
-  - Description: Create src/lib/prisma.ts to export PrismaClient instance
-  - Dependencies: Prisma setup
+- [ ] Update imports
+  - Description: Ensure all components use the new type definitions
+  - Dependencies: Type definition files
   - Priority: Medium
 
-- [x] Update readings list page
-  - Description: Modify src/app/readings/page.tsx to fetch data from database
-  - Dependencies: Prisma client setup
+### 1.5 Improve Code Organization
+
+- [ ] Organize components
+  - Description: Move reading-related components to src/app/components/readings/ subdirectory
+  - Dependencies: None
   - Priority: Medium
 
-- [x] Update reading detail page
-  - Description: Modify src/app/readings/[slug]/page.tsx to fetch single reading from database
-  - Dependencies: Prisma client setup
+- [ ] Extract inline styles
+  - Description: Move inline styles from src/app/readings/page.tsx to CSS modules or Tailwind classes
+  - Dependencies: None
   - Priority: Medium
 
-- [x] Update quotes component
-  - Description: Modify TypewriterQuotes.tsx to fetch quotes from database
-  - Dependencies: Prisma client setup
-  - Priority: Medium
-
-## Deployment
-
-- [x] Configure Vercel environment variables
-  - Description: Add DATABASE_URL to Vercel project settings
-  - Dependencies: Neon database setup
+- [ ] Add JSDoc comments
+  - Description: Document key functions with JSDoc comments in database utility files
+  - Dependencies: Refactored database utility files
   - Priority: Low
 
-- [x] Deploy and test
-  - Description: Push changes and verify functionality on Vercel
-  - Dependencies: All code changes
+- [ ] Update README.md
+  - Description: Add section on project structure and database integration
+  - Dependencies: Completed refactoring
   - Priority: Low
 
-## Cleanup
+## 2. Database Management Tool
 
-- [ ] Remove static data files
-  - Description: Delete data.ts and quotes.ts after successful deployment
-  - Dependencies: Verified deployment (completed with successful data migration)
-  - Priority: Low (can be kept as a backup until verified in production)
+### 2.1 Setup Authentication
+
+- [ ] Install NextAuth.js
+  - Description: Add next-auth dependency with npm install next-auth
+  - Dependencies: None
+  - Priority: High
+
+- [ ] Configure NextAuth
+  - Description: Create src/app/api/auth/[...nextauth]/route.ts file with credentials provider
+  - Dependencies: next-auth installation
+  - Priority: High
+
+- [ ] Add environment variables
+  - Description: Update .env with NEXTAUTH_SECRET and NEXTAUTH_URL variables
+  - Dependencies: NextAuth configuration
+  - Priority: High
+
+### 2.2 Create Admin Page
+
+- [ ] Create admin route
+  - Description: Add src/app/admin/page.tsx with session protection
+  - Dependencies: NextAuth setup
+  - Priority: High
+
+- [ ] Add admin layout
+  - Description: Create simple layout with navigation between readings and quotes management
+  - Dependencies: Admin route
+  - Priority: Medium
+
+### 2.3 Implement CRUD API Routes
+
+- [ ] Create readings API routes
+  - Description: Implement src/app/api/readings/route.ts with GET, POST, PUT, DELETE methods
+  - Dependencies: Database utility functions
+  - Priority: High
+
+- [ ] Create quotes API routes
+  - Description: Implement src/app/api/quotes/route.ts with GET, POST, PUT, DELETE methods
+  - Dependencies: Database utility functions
+  - Priority: High
+
+- [ ] Add server-side validation
+  - Description: Ensure API routes validate input data before database operations
+  - Dependencies: API routes implementation
+  - Priority: Medium
+
+### 2.4 Build Admin Forms
+
+- [ ] Install form utilities
+  - Description: Add react-hook-form dependency for form handling
+  - Dependencies: None
+  - Priority: Medium
+
+- [ ] Create Reading form
+  - Description: Implement form for adding/editing readings with validation
+  - Dependencies: react-hook-form, API routes
+  - Priority: High
+
+- [ ] Create Quote form
+  - Description: Implement form for adding/editing quotes with validation
+  - Dependencies: react-hook-form, API routes
+  - Priority: High
+
+- [ ] Add feedback notifications
+  - Description: Install and configure react-toastify for success/error notifications
+  - Dependencies: Form implementations
+  - Priority: Medium
+
+- [ ] Implement deletion confirmation
+  - Description: Add confirmation dialog for delete operations
+  - Dependencies: Form implementations
+  - Priority: Medium
+
+## 3. Readings Page Redesign
+
+### 3.1 Enhance Layout
+
+- [ ] Install masonry layout library
+  - Description: Add react-masonry-css dependency for fluid grid layout
+  - Dependencies: None
+  - Priority: High
+
+- [ ] Implement masonry grid
+  - Description: Replace current grid with masonry layout in src/app/readings/page.tsx
+  - Dependencies: react-masonry-css
+  - Priority: High
+
+- [ ] Add responsive breakpoints
+  - Description: Configure proper column counts for different viewport sizes
+  - Dependencies: Masonry implementation
+  - Priority: Medium
+
+### 3.2 Improve Visual Design
+
+- [ ] Define color scheme
+  - Description: Update tailwind.config.ts with custom color palette
+  - Dependencies: None
+  - Priority: High
+
+- [ ] Redesign ReadingCard component
+  - Description: Enhance card design with shadows, hover effects, and improved typography
+  - Dependencies: Updated color scheme
+  - Priority: High
+
+- [ ] Install animation library
+  - Description: Add framer-motion dependency for animations
+  - Dependencies: None
+  - Priority: Medium
+
+- [ ] Add entry animations
+  - Description: Implement staggered animations when cards appear on screen
+  - Dependencies: framer-motion
+  - Priority: Medium
+
+### 3.3 Improve UX
+
+- [ ] Add sticky sidebar navigation
+  - Description: Implement year-based sidebar navigation with smooth scrolling
+  - Dependencies: None
+  - Priority: Medium
+
+- [ ] Implement search functionality
+  - Description: Add search bar to filter readings by title, author, etc.
+  - Dependencies: None
+  - Priority: High
+
+- [ ] Add filtering options
+  - Description: Implement filters for year, completion status, etc.
+  - Dependencies: Search implementation
+  - Priority: Medium
+
+### 3.4 Optimize Performance
+
+- [ ] Configure image optimization
+  - Description: Update next.config.ts with proper image settings for remote images
+  - Dependencies: None
+  - Priority: High
+
+- [ ] Implement lazy loading
+  - Description: Add lazy loading for images and content below the fold
+  - Dependencies: None
+  - Priority: Medium
+
+- [ ] Add loading states
+  - Description: Implement skeleton loaders during data fetching
+  - Dependencies: None
+  - Priority: Medium
 
 ## Summary
-- Total tasks: 15
-- High priority: 7
-- Medium priority: 4
-- Low priority: 4
+- Total tasks: 42
+- High priority: 19
+- Medium priority: 18
+- Low priority: 5
