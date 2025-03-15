@@ -1,12 +1,38 @@
-import { READINGS, Reading } from '../data'
+import prisma from '@/lib/prisma'
+import { Reading } from '../page'
 
 interface Props {
-  params: Promise<{ slug: string }>
+  params: { slug: string }
+}
+
+export const dynamic = 'force-dynamic'; // Disable static rendering and caching
+
+export async function getReading(slug: string) {
+  try {
+    console.log(`Fetching reading with slug: ${slug}`)
+    
+    // Use raw query for maximum compatibility
+    const readings = await prisma.$queryRaw`
+      SELECT id, slug, title, author, "finishedDate", "coverImageSrc", thoughts, dropped
+      FROM "Reading"
+      WHERE slug = ${slug}
+      LIMIT 1;
+    `
+    
+    const reading = Array.isArray(readings) && readings.length > 0 ? readings[0] : null
+    
+    console.log(reading ? `Found reading: ${reading.title}` : `No reading found for slug: ${slug}`)
+    return reading
+  } catch (error) {
+    console.error(`Error fetching reading with slug ${slug}:`, error)
+    return null
+  }
 }
 
 export default async function ReadingDetailPage({ params }: Props) {
-  const { slug } = await params
-  const reading = READINGS.find((item: Reading) => item.slug === slug)
+  const { slug } = params
+  const reading = await getReading(slug)
+  
   if (!reading) {
     return <div>not found</div>
   }

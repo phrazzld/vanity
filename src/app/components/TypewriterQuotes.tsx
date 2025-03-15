@@ -1,7 +1,12 @@
 'use client'
 
-import { QUOTES } from '@/app/quotes'
 import { useEffect, useState } from 'react'
+
+type QuoteType = {
+  id: number
+  text: string
+  author: string | null
+}
 
 // six phases
 type Phase =
@@ -11,6 +16,7 @@ type Phase =
   | 'pauseAfterAuthor'
   | 'erasingAuthor'
   | 'erasingQuote'
+  | 'loading'
 
 // tuning constants
 const TYPING_SPEED = 25         // ms between typed chars
@@ -20,18 +26,68 @@ const PAUSE_AFTER_AUTHOR = 2000 // pause once author is fully typed
 const CURSOR_BLINK_INTERVAL = 500
 
 export default function TypewriterQuotes() {
-  // pick a random starting quote
-  const [quoteIndex, setQuoteIndex] = useState(Math.floor(Math.random() * QUOTES.length))
-  const [phase, setPhase] = useState<Phase>('typingQuote')
+  const [quotes, setQuotes] = useState<QuoteType[]>([])
+  const [quoteIndex, setQuoteIndex] = useState(0)
+  const [phase, setPhase] = useState<Phase>('loading')
 
-  // typed “partials”
+  // typed "partials"
   const [displayedQuote, setDisplayedQuote] = useState('')
   const [displayedAuthor, setDisplayedAuthor] = useState('')
   const [cursorVisible, setCursorVisible] = useState(true)
 
-  // we do inline transformations: convert literal \n sequences
-  const rawQuote = QUOTES[quoteIndex].text.replace(/\\n/g, '\n')
-  const rawAuthor = QUOTES[quoteIndex].author.replace(/\\n/g, '\n') // just in case
+  // Fetch quotes from API
+  useEffect(() => {
+    const fetchQuotes = async () => {
+      try {
+        console.log('TypewriterQuotes: Fetching quotes from API...')
+        const response = await fetch('/api/quotes', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            // Add cache busting to prevent stale data
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+          },
+          // Force fetch even if response is in the cache
+          cache: 'no-store'
+        })
+        
+        console.log('TypewriterQuotes: API response status:', response.status)
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch quotes: ${response.status} ${response.statusText}`)
+        }
+        
+        const data = await response.json()
+        console.log(`TypewriterQuotes: Received ${data.length} quotes from API`)
+        
+        if (data.length === 0) {
+          throw new Error('No quotes received from API')
+        }
+        
+        setQuotes(data)
+        
+        // Initialize with a random quote after fetching
+        const randomIndex = Math.floor(Math.random() * data.length)
+        setQuoteIndex(randomIndex)
+        setPhase('typingQuote')
+      } catch (error) {
+        console.error('TypewriterQuotes: Error fetching quotes:', error)
+        // Fallback to a default quote if API fails
+        setQuotes([{ id: 0, text: 'Error loading quotes from database. Please check console for details.', author: 'System' }])
+        setPhase('typingQuote')
+      }
+    }
+
+    fetchQuotes()
+  }, [])
+
+  // Get the current quote and author (safely)
+  const currentQuote = quotes[quoteIndex]
+  const rawQuote = currentQuote ? currentQuote.text.replace(/\\n/g, '\n') : ''
+  const rawAuthor = currentQuote && currentQuote.author 
+    ? currentQuote.author.replace(/\\n/g, '\n') 
+    : ''
 
   // ========== CURSOR BLINK ==========
 
@@ -45,6 +101,10 @@ export default function TypewriterQuotes() {
   // ========== MAIN TYPING/ERASING LOGIC ==========
 
   useEffect(() => {
+    if (phase === 'loading' || quotes.length === 0) {
+      return // Don't run typewriter logic until quotes are loaded
+    }
+
     let timer: NodeJS.Timeout
 
     switch (phase) {
@@ -106,7 +166,7 @@ export default function TypewriterQuotes() {
           }, ERASE_SPEED)
         } else {
           // done erasing everything, pick next random quote
-          const nextIndex = Math.floor(Math.random() * QUOTES.length)
+          const nextIndex = Math.floor(Math.random() * quotes.length)
           setQuoteIndex(nextIndex)
           setPhase('typingQuote')
         }
@@ -122,7 +182,8 @@ export default function TypewriterQuotes() {
     displayedAuthor,
     rawQuote,
     rawAuthor,
-    quoteIndex
+    quoteIndex,
+    quotes
   ])
 
   // ========== DETERMINE WHERE THE CURSOR GOES ==========
@@ -133,12 +194,31 @@ export default function TypewriterQuotes() {
     'erasingQuote'
   ].includes(phase)
 
+  // Show loading state if no quotes available
+  if (phase === 'loading') {
+    return (
+      <div
+        style={{
+          margin: '2rem auto 0 auto',
+          width: '90%',
+          maxWidth: '700px',
+          minHeight: '15rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        Loading quotes...
+      </div>
+    )
+  }
+
   // ========== RENDER ==========
 
   return (
     <div
       style={{
-        // anchor so large multi-line quotes don’t shift the page too wildly
+        // anchor so large multi-line quotes don't shift the page too wildly
         margin: '2rem auto 0 auto',
         width: '90%',
         maxWidth: '700px',
@@ -150,6 +230,7 @@ export default function TypewriterQuotes() {
     >
       {/* quote text */}
       <div
+        data-testid="quote-text"
         style={{
           fontSize: '1.25rem',
           fontWeight: 500,

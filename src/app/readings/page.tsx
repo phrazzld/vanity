@@ -1,11 +1,50 @@
-"use client"
+import prisma from '@/lib/prisma'
+import ReadingCard from '../components/ReadingCard'
 
-import Image from 'next/image'
-import Link from 'next/link'
-import { READINGS, Reading } from './data'
-import { getSeededPlaceholderStyles } from './placeholderUtils'
+export type Reading = {
+  id: number
+  slug: string
+  title: string
+  author: string
+  finishedDate: Date | null
+  coverImageSrc: string | null
+  thoughts: string
+  dropped: boolean
+}
 
-export default function ReadingsPage() {
+export async function getReadings() {
+  try {
+    console.log('Getting readings from database...')
+    
+    // Use raw query for maximum compatibility
+    const readings = await prisma.$queryRaw`
+      SELECT id, slug, title, author, "finishedDate", "coverImageSrc", thoughts, dropped
+      FROM "Reading"
+      ORDER BY 
+        CASE WHEN "finishedDate" IS NULL THEN 1 ELSE 0 END,
+        "finishedDate" DESC,
+        id DESC;
+    `
+    
+    console.log(`Found ${Array.isArray(readings) ? readings.length : 0} readings`)
+    
+    if (!readings || (Array.isArray(readings) && readings.length === 0)) {
+      console.warn('No readings found in database')
+    }
+    
+    return readings
+  } catch (error) {
+    console.error('Error fetching readings:', error)
+    return []
+  }
+}
+
+export const dynamic = 'force-dynamic'; // Disable static rendering and caching
+
+export default async function ReadingsPage() {
+  const readings = await getReadings()
+  console.log(`Rendering readings page with ${readings.length} readings`)
+
   return (
     <section style={{ maxWidth: '1200px', margin: '0 auto', padding: '1rem' }}>
       <div
@@ -16,62 +55,16 @@ export default function ReadingsPage() {
           gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
         }}
       >
-        {READINGS.map((reading: Reading) => {
-          const { slug, coverImageSrc } = reading
-          const placeholderStyles = !coverImageSrc ? getSeededPlaceholderStyles(slug) : {}
-
-          return (
-            <Link
-              key={slug}
-              href={`/readings/${slug}`}
-              style={{
-                // card container
-                display: 'block',
-                width: '100%',
-                position: 'relative',
-                overflow: 'hidden',
-                borderRadius: '6px',
-                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                aspectRatio: '2 / 3', // lock the shape
-                boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
-                textDecoration: 'none',
-                color: 'inherit',
-              }}
-              onMouseEnter={(e) => {
-                const card = e.currentTarget
-                card.style.transform = 'translateY(-2px) scale(1.02)'
-                card.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)'
-              }}
-              onMouseLeave={(e) => {
-                const card = e.currentTarget
-                card.style.transform = 'translateY(0) scale(1)'
-                card.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)'
-              }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  ...placeholderStyles,
-                }}
-              >
-                {coverImageSrc && (
-                  <Image
-                    src={`${process.env.NEXT_PUBLIC_SPACES_BASE_URL}${coverImageSrc}`}
-                    alt={`${reading.title} cover`}
-                    fill
-                    style={{
-                      objectFit: 'cover',
-                      filter: reading.dropped ? 'grayscale(100%)' : 'none',
-                      opacity: reading.finishedDate === null ? 0.5 : 1,
-                      transition: 'filter 0.2s ease, opacity 0.2s ease', // smooth transition for hover effects
-                    }}
-                  />
-                )}
-              </div>
-            </Link>
-          )
-        })}
+        {readings.map((reading) => (
+          <ReadingCard
+            key={reading.slug}
+            slug={reading.slug}
+            title={reading.title}
+            coverImageSrc={reading.coverImageSrc}
+            dropped={reading.dropped}
+            finishedDate={reading.finishedDate}
+          />
+        ))}
       </div>
     </section>
   )
