@@ -26,7 +26,7 @@ export default function ReadingsManagementPage() {
     slug: '',
     title: '',
     author: '',
-    finishedDate: '',
+    finishedDate: null,
     coverImageSrc: '',
     thoughts: '',
     dropped: false
@@ -74,7 +74,7 @@ export default function ReadingsManagementPage() {
       slug: reading.slug,
       title: reading.title,
       author: reading.author,
-      finishedDate: reading.finishedDate ? new Date(reading.finishedDate).toISOString().split('T')[0] : '',
+      finishedDate: reading.finishedDate,
       coverImageSrc: reading.coverImageSrc || '',
       thoughts: reading.thoughts || '',
       dropped: reading.dropped || false
@@ -90,7 +90,7 @@ export default function ReadingsManagementPage() {
       slug: '',
       title: '',
       author: '',
-      finishedDate: '',
+      finishedDate: null,
       coverImageSrc: '',
       thoughts: '',
       dropped: false
@@ -108,7 +108,14 @@ export default function ReadingsManagementPage() {
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
       setFormData(prev => ({ ...prev, [name]: checked }));
-    } else {
+    } 
+    // Handle date inputs
+    else if (name === 'finishedDate') {
+      const dateValue = value ? new Date(value) : null;
+      setFormData(prev => ({ ...prev, [name]: dateValue }));
+    } 
+    // Handle all other inputs
+    else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
@@ -380,7 +387,7 @@ export default function ReadingsManagementPage() {
                     <input
                       type="date"
                       name="finishedDate"
-                      value={formData.finishedDate || ''}
+                      value={formData.finishedDate ? new Date(formData.finishedDate).toISOString().split('T')[0] : ''}
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md"
                     />
@@ -422,7 +429,7 @@ export default function ReadingsManagementPage() {
                         className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
                       />
                       <span className="ml-2 text-sm text-gray-700">
-                        Dropped (didn't finish)
+                        Dropped (didn&apos;t finish)
                       </span>
                     </label>
                   </div>
@@ -486,7 +493,7 @@ export default function ReadingsManagementPage() {
           <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6">
             <h3 className="text-lg font-semibold mb-4">Confirm Deletion</h3>
             <p className="mb-6">
-              Are you sure you want to delete "{readingToDelete?.title}"? This action cannot be undone.
+              Are you sure you want to delete &ldquo;{readingToDelete?.title}&rdquo;? This action cannot be undone.
             </p>
             <div className="flex justify-end gap-3">
               <button

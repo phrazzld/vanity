@@ -80,19 +80,21 @@ export async function POST(request: NextRequest) {
       });
       
       // Store user info in a cookie for display purposes
-      response.cookies.set({
-        name: 'admin_user',
-        value: JSON.stringify({
-          name: result.user.name,
-          email: result.user.email,
-          role: result.user.role
-        }),
-        path: '/',
-        maxAge: 60 * 60 * 24, // 24 hours
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax'
-      });
+      if (result.user) {
+        response.cookies.set({
+          name: 'admin_user',
+          value: JSON.stringify({
+            name: result.user.name,
+            email: result.user.email,
+            role: result.user.role
+          }),
+          path: '/',
+          maxAge: 60 * 60 * 24, // 24 hours
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax'
+        });
+      }
       
       return response;
     }

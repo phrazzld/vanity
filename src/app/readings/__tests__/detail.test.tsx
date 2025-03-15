@@ -15,7 +15,7 @@ jest.mock('@/lib/prisma', () => ({
 // Mock next/image to avoid static asset loading errors
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: (props: any) => <img {...props} />,
+  default: (props: any) => <img {...props} alt={props.alt || ''} />,
 }));
 
 // Mock process.env for NEXT_PUBLIC_SPACES_BASE_URL

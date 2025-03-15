@@ -244,7 +244,7 @@ export default function QuotesManagementPage() {
                     className={`py-3 px-2 cursor-pointer hover:bg-gray-50 ${selectedQuote?.id === quote.id ? 'bg-indigo-50' : ''}`}
                     onClick={() => handleSelectQuote(quote)}
                   >
-                    <div className="font-medium text-sm">"{getPreviewText(quote.text)}"</div>
+                    <div className="font-medium text-sm">&ldquo;{getPreviewText(quote.text)}&rdquo;</div>
                     <div className="text-xs text-gray-600 mt-1">
                       {quote.author ? `— ${quote.author}` : '— Anonymous'}
                     </div>
@@ -372,7 +372,7 @@ export default function QuotesManagementPage() {
               Are you sure you want to delete this quote? This action cannot be undone.
             </p>
             <div className="p-3 bg-gray-100 rounded-md mb-4">
-              <p className="text-sm italic">"{quoteToDelete?.text}"</p>
+              <p className="text-sm italic">&ldquo;{quoteToDelete?.text}&rdquo;</p>
               <p className="text-xs text-gray-600 mt-1">
                 {quoteToDelete?.author ? `— ${quoteToDelete.author}` : '— Anonymous'}
               </p>
