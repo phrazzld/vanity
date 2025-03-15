@@ -11,10 +11,22 @@ async function migrateQuotes() {
     
     // Path to the quotes file
     const quotesPath = path.join(__dirname, '../src/app/quotes.ts');
-    console.log('Reading quotes from:', quotesPath);
     
-    // Read the file content
-    const content = fs.readFileSync(quotesPath, 'utf8');
+    // Check if the file exists (it may have been removed after migration)
+    let content = '';
+    try {
+      if (fs.existsSync(quotesPath)) {
+        console.log('Reading quotes from:', quotesPath);
+        content = fs.readFileSync(quotesPath, 'utf8');
+      } else {
+        console.log('Quotes file not found. Migration has likely already been completed.');
+        console.log('Skipping file parsing step. Will only process existing database entries.');
+        return; // Skip the migration since the file doesn't exist
+      }
+    } catch (error) {
+      console.error('Error checking/reading quotes file:', error);
+      throw error;
+    }
     
     // Parse the quotes using a simple line-by-line approach
     const quotes = [];

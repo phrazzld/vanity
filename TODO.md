@@ -15,7 +15,7 @@
   - Dependencies: Verify TypewriterQuotes component no longer imports from this file
   - Priority: High
 
-- [ ] Remove src/app/quotes.ts file
+- [x] Remove src/app/quotes.ts file
   - Description: Delete the hardcoded QUOTES array that's been replaced by database queries
   - Dependencies: Verify all components use database queries instead
   - Priority: High
