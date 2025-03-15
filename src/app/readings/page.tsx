@@ -1,5 +1,5 @@
 import ReadingCard from '../components/ReadingCard'
-import { getReadings } from './utils'
+import { getReadings } from '@/lib/db'
 
 export type Reading = {
   id: number

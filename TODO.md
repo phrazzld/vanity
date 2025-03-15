@@ -49,7 +49,7 @@
   - Dependencies: None
   - Priority: High
 
-- [ ] Move reading utilities
+- [x] Move reading utilities
   - Description: Move database access functions from src/app/readings/utils.ts to src/lib/db/readings.ts
   - Dependencies: src/lib/db directory
   - Priority: High

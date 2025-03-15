@@ -5,12 +5,16 @@
  * Database operations are organized by entity (readings, quotes, etc.) for improved maintainability.
  */
 
-// Import entity-specific database utilities when they're created
-// import * as readingsDb from './readings';
+// Import entity-specific database utilities
+import * as readingsDb from './readings';
 // import * as quotesDb from './quotes';
 
 // Re-export all database utilities
-// export { readingsDb, quotesDb };
+export { readingsDb };
+// export { quotesDb };
+
+// Export individual reading functions for backward compatibility
+export const { getReading, getReadings } = readingsDb;
 
 // Export the Prisma client
 export { default as prisma } from '../prisma';
