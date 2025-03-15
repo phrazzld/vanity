@@ -339,7 +339,7 @@ export default function AdminDashboardPage() {
         <h2 className="text-lg font-medium text-gray-900 mb-4">Content Management</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {dashboardCards.map((card, index) => {
-            const colorClass = {
+            const colorClasses = {
               blue: {
                 bg: 'bg-blue-50',
                 text: 'text-blue-500',
@@ -361,7 +361,8 @@ export default function AdminDashboardPage() {
                 ring: 'focus:ring-indigo-500',
                 button: 'bg-indigo-600'
               }
-            }[card.color || 'blue'];
+            };
+            const colorClass = colorClasses[card.color as keyof typeof colorClasses || 'blue'] || colorClasses.blue;
             
             return (
               <div key={index} className="bg-white shadow rounded-xl overflow-hidden transition transform hover:translate-y-[-3px] hover:shadow-lg border border-gray-100">
