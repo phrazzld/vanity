@@ -7,12 +7,13 @@
     "dev:log": "./scripts/rotate-logs.sh && next dev --turbopack 2>&1 | tee -a logs/dev.log",
     "logs": "cat logs/dev.log",
     "logs:watch": "tail -f logs/dev.log",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "prisma:generate": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",
