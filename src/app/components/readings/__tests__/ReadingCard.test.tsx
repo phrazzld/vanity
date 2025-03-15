@@ -53,9 +53,9 @@ describe('ReadingCard', () => {
     const image = screen.getByAltText('Test Book cover');
     expect(image).toBeInTheDocument();
     
-    // Should show finished date label
-    const finishedLabel = screen.getByText(/Finished/i);
-    expect(finishedLabel).toBeInTheDocument();
+    // Should show date in the status badge - use regex for flexibility
+    const dateLabel = screen.getByText(/Dec 2022|Jan 2023/);
+    expect(dateLabel).toBeInTheDocument();
   });
 
   it('renders without cover image using placeholder', () => {
@@ -73,7 +73,7 @@ describe('ReadingCard', () => {
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
   });
 
-  it('shows dropped indicator when dropped is true', () => {
+  it('shows paused indicator when dropped is true', () => {
     render(
       <ReadingCard 
         {...mockProps}
@@ -83,14 +83,14 @@ describe('ReadingCard', () => {
     
     // Book cover should have grayscale filter
     const image = screen.getByAltText('Test Book cover');
-    expect(image).toHaveStyle('filter: grayscale(100%)');
+    expect(image).toHaveStyle('filter: grayscale(50%) brightness(0.95)');
     
-    // Should show dropped label
-    const droppedLabel = screen.getByText('DROPPED');
-    expect(droppedLabel).toBeInTheDocument();
+    // Should show paused label
+    const pausedLabel = screen.getByText('Paused');
+    expect(pausedLabel).toBeInTheDocument();
     
     // Should not show finished date label
-    expect(screen.queryByText(/Finished/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Completed/i)).not.toBeInTheDocument();
   });
 
   it('shows reading indicator when book is in progress (null finishedDate)', () => {
@@ -101,9 +101,13 @@ describe('ReadingCard', () => {
       />
     );
     
-    // No dropped or finished labels
-    expect(screen.queryByText(/Finished/i)).not.toBeInTheDocument();
-    expect(screen.queryByText('DROPPED')).not.toBeInTheDocument();
+    // Should show reading label
+    const readingLabel = screen.getByText('Reading');
+    expect(readingLabel).toBeInTheDocument();
+    
+    // No completed or paused labels
+    expect(screen.queryByText(/Completed/i)).not.toBeInTheDocument();
+    expect(screen.queryByText('Paused')).not.toBeInTheDocument();
   });
 
   it('applies hover styles when mouse enters', () => {
@@ -115,8 +119,8 @@ describe('ReadingCard', () => {
     fireEvent.mouseEnter(card);
     
     // Check that the state has been updated (card now has hover styles)
-    expect(card).toHaveStyle('transform: translateY(-2px) scale(1.02)');
-    expect(card).toHaveStyle('box-shadow: 0 4px 8px rgba(0,0,0,0.1)');
+    expect(card).toHaveStyle('transform: translateY(-2px)');
+    expect(card).toHaveStyle('boxShadow: 0 4px 12px rgba(0,0,0,0.12)');
   });
 
   it('removes hover styles when mouse leaves', () => {
@@ -129,6 +133,7 @@ describe('ReadingCard', () => {
     fireEvent.mouseLeave(card);
     
     // Check that the state has been reset
-    expect(card).toHaveStyle('transform: translateY(0) scale(1)');
+    expect(card).toHaveStyle('transform: translateY(0)');
+    expect(card).toHaveStyle('boxShadow: 0 1px 3px rgba(0,0,0,0.08)');
   });
 });
