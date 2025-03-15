@@ -7,6 +7,13 @@ const prisma = new PrismaClient();
 
 // Helper function to extract array data from TypeScript files
 function extractArrayFromFile(filePath, arrayName) {
+  // Check if the file exists
+  if (!fs.existsSync(filePath)) {
+    console.log(`File not found: ${filePath}`);
+    console.log('Migration has likely already been completed.');
+    return [];
+  }
+  
   const content = fs.readFileSync(filePath, 'utf8');
   
   // Special case for the READINGS array which is at the end of the file
