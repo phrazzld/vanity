@@ -4,8 +4,37 @@ import type { Reading } from '@/types'
 
 export const dynamic = 'force-dynamic'; // Disable static rendering and caching
 
+/**
+ * Helper function to check if a reading is "currently reading"
+ * Currently reading = no finishedDate and not dropped
+ */
+function isCurrentlyReading(reading: Reading): boolean {
+  return reading.finishedDate === null && !reading.dropped;
+}
+
+/**
+ * Sorts readings to prioritize currently reading items first
+ */
+function sortReadings(readings: Reading[]): Reading[] {
+  return [...readings].sort((a, b) => {
+    // If a is currently reading and b is not, a comes first
+    if (isCurrentlyReading(a) && !isCurrentlyReading(b)) {
+      return -1;
+    }
+    // If b is currently reading and a is not, b comes first
+    if (!isCurrentlyReading(a) && isCurrentlyReading(b)) {
+      return 1;
+    }
+    // Otherwise, keep original order
+    return 0;
+  });
+}
+
 export default async function ReadingsPage() {
-  const readings = await getReadings() as Reading[]
+  const readings = await getReadings() as Reading[];
+  
+  // Sort readings to display "currently reading" at the top
+  const sortedReadings = sortReadings(readings);
 
   return (
     <section style={{ maxWidth: '1200px', margin: '0 auto', padding: '1rem' }}>
@@ -17,7 +46,7 @@ export default async function ReadingsPage() {
           gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
         }}
       >
-        {readings.map((reading) => (
+        {sortedReadings.map((reading) => (
           <ReadingCard
             key={reading.slug}
             slug={reading.slug}

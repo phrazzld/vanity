@@ -16,7 +16,9 @@ jest.mock('@/lib/prisma', () => ({
 jest.mock('../../components/readings/ReadingCard', () => {
   return {
     __esModule: true,
-    default: ({ slug }: { slug: string }) => <div data-testid="reading-card">{slug}</div>,
+    default: ({ slug, title }: { slug: string, title: string }) => (
+      <div data-testid="reading-card" title={title}>{slug}</div>
+    ),
   };
 });
 
@@ -77,28 +79,38 @@ describe('ReadingsPage', () => {
     expect(readings).toEqual([]);
   });
 
-  it('renders the readings page with reading cards', async () => {
-    // Mock data with serializable dates (ISO strings instead of Date objects)
-    const mockReadings: Omit<Reading, 'finishedDate'>[] = [
+  it('renders the readings page with reading cards and sorts currently reading first', async () => {
+    // Mock data with both completed and in-progress books
+    const mockReadings: Reading[] = [
       { 
         id: 1, 
-        slug: 'book-1', 
-        title: 'Book 1', 
+        slug: 'finished-book', 
+        title: 'Finished Book', 
         author: 'Author 1', 
-        finishedDate: new Date('2023-01-01').toISOString() as any, 
+        finishedDate: new Date('2023-01-01'), 
         coverImageSrc: '/covers/book1.jpg',
         thoughts: 'Great book',
         dropped: false,
       },
       { 
         id: 2, 
-        slug: 'book-2', 
-        title: 'Book 2', 
+        slug: 'current-book', 
+        title: 'Currently Reading Book',
         author: 'Author 2',
         finishedDate: null,
         coverImageSrc: null,
         thoughts: 'Reading in progress',
         dropped: false,
+      },
+      { 
+        id: 3, 
+        slug: 'dropped-book', 
+        title: 'Dropped Book',
+        author: 'Author 3',
+        finishedDate: null,
+        coverImageSrc: null,
+        thoughts: 'Didn\'t finish this one',
+        dropped: true,
       },
     ];
     
@@ -111,8 +123,13 @@ describe('ReadingsPage', () => {
     
     // Check that reading cards are rendered
     const cards = getAllByTestId('reading-card');
-    expect(cards).toHaveLength(2);
-    expect(cards[0].textContent).toBe('book-1');
-    expect(cards[1].textContent).toBe('book-2');
+    expect(cards).toHaveLength(3);
+    
+    // Currently reading book should appear first
+    expect(cards[0].textContent).toBe('current-book');
+    
+    // Other books (finished or dropped) appear after
+    // We don't check exact order of the other items since the sort
+    // only prioritizes currently reading books
   });
 });

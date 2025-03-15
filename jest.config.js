@@ -15,9 +15,8 @@ const customJestConfig = {
   },
   collectCoverageFrom: [
     'src/app/api/quotes/**/*.{js,jsx,ts,tsx}',
-    'src/app/components/ReadingCard.tsx',
+    'src/app/components/readings/ReadingCard.tsx',
     'src/app/components/TypewriterQuotes.tsx',
-    'src/app/readings/[slug]/**/*.{js,jsx,ts,tsx}',
     'src/app/readings/page.tsx',
     'src/lib/prisma.ts',
     '!src/**/*.d.ts',

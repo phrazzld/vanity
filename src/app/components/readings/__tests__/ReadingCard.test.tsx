@@ -8,7 +8,34 @@ jest.mock('../placeholderUtils', () => ({
   }),
 }));
 
+// Mock Next.js image component
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: (props) => {
+    // Convert boolean to string for attributes like "fill"
+    const imgProps = Object.keys(props).reduce((acc, key) => {
+      if (typeof props[key] === 'boolean') {
+        acc[key] = props[key].toString();
+      } else {
+        acc[key] = props[key];
+      }
+      return acc;
+    }, {});
+    return <img {...imgProps} />;
+  },
+}));
+
+// Mock environment variables
+process.env.NEXT_PUBLIC_SPACES_BASE_URL = 'https://test-space.com';
+
+// Mock setInterval and clearInterval
+jest.useFakeTimers();
+
 describe('ReadingCard', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  
   const mockProps = {
     slug: 'test-book',
     title: 'Test Book',
@@ -20,11 +47,15 @@ describe('ReadingCard', () => {
   it('renders with cover image', () => {
     render(<ReadingCard {...mockProps} />);
     
-    const link = screen.getByRole('link');
-    expect(link).toHaveAttribute('href', '/readings/test-book');
+    const card = screen.getByTitle('Test Book');
+    expect(card).toBeInTheDocument();
     
     const image = screen.getByAltText('Test Book cover');
     expect(image).toBeInTheDocument();
+    
+    // Should show date in the status badge - use regex for flexibility
+    const dateLabel = screen.getByText(/Dec 2022|Jan 2023/);
+    expect(dateLabel).toBeInTheDocument();
   });
 
   it('renders without cover image using placeholder', () => {
@@ -35,14 +66,14 @@ describe('ReadingCard', () => {
       />
     );
     
-    const link = screen.getByRole('link');
-    expect(link).toBeInTheDocument();
+    const card = screen.getByTitle('Test Book');
+    expect(card).toBeInTheDocument();
     
     // No image should be rendered
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
   });
 
-  it('applies grayscale filter when dropped is true', () => {
+  it('shows paused indicator when dropped is true', () => {
     render(
       <ReadingCard 
         {...mockProps}
@@ -50,11 +81,19 @@ describe('ReadingCard', () => {
       />
     );
     
+    // Book cover should have grayscale filter
     const image = screen.getByAltText('Test Book cover');
-    expect(image).toHaveStyle('filter: grayscale(100%)');
+    expect(image).toHaveStyle('filter: grayscale(50%) brightness(0.95)');
+    
+    // Should show paused label
+    const pausedLabel = screen.getByText('Paused');
+    expect(pausedLabel).toBeInTheDocument();
+    
+    // Should not show finished date label
+    expect(screen.queryByText(/Completed/i)).not.toBeInTheDocument();
   });
 
-  it('applies opacity when finishedDate is null', () => {
+  it('shows reading indicator when book is in progress (null finishedDate)', () => {
     render(
       <ReadingCard 
         {...mockProps}
@@ -62,32 +101,39 @@ describe('ReadingCard', () => {
       />
     );
     
-    const image = screen.getByAltText('Test Book cover');
-    expect(image).toHaveStyle('opacity: 0.5');
+    // Should show reading label
+    const readingLabel = screen.getByText('Reading');
+    expect(readingLabel).toBeInTheDocument();
+    
+    // No completed or paused labels
+    expect(screen.queryByText(/Completed/i)).not.toBeInTheDocument();
+    expect(screen.queryByText('Paused')).not.toBeInTheDocument();
   });
 
   it('applies hover styles when mouse enters', () => {
     render(<ReadingCard {...mockProps} />);
     
-    const link = screen.getByRole('link');
+    const card = screen.getByTitle('Test Book');
     
     // Simulate mouse enter
-    fireEvent.mouseEnter(link);
+    fireEvent.mouseEnter(card);
     
-    expect(link).toHaveStyle('transform: translateY(-2px) scale(1.02)');
-    expect(link).toHaveStyle('box-shadow: 0 4px 8px rgba(0,0,0,0.1)');
+    // Check that the state has been updated (card now has hover styles)
+    expect(card).toHaveStyle('transform: translateY(-2px)');
+    expect(card).toHaveStyle('boxShadow: 0 4px 12px rgba(0,0,0,0.12)');
   });
 
   it('removes hover styles when mouse leaves', () => {
     render(<ReadingCard {...mockProps} />);
     
-    const link = screen.getByRole('link');
+    const card = screen.getByTitle('Test Book');
     
     // Simulate mouse enter then leave
-    fireEvent.mouseEnter(link);
-    fireEvent.mouseLeave(link);
+    fireEvent.mouseEnter(card);
+    fireEvent.mouseLeave(card);
     
-    expect(link).toHaveStyle('transform: translateY(0) scale(1)');
-    expect(link).toHaveStyle('box-shadow: 0 1px 2px rgba(0,0,0,0.05)');
+    // Check that the state has been reset
+    expect(card).toHaveStyle('transform: translateY(0)');
+    expect(card).toHaveStyle('boxShadow: 0 1px 3px rgba(0,0,0,0.08)');
   });
 });
