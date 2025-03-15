@@ -93,7 +93,7 @@
   - Dependencies: None
   - Priority: Medium
 
-- [ ] Extract inline styles
+- [x] Extract inline styles
   - Description: Move inline styles from src/app/readings/page.tsx to CSS modules or Tailwind classes
   - Dependencies: None
   - Priority: Medium
@@ -158,7 +158,7 @@
 
 ### 2.4 Build Admin Forms
 
-- [ ] Install form utilities
+- [x] Install form utilities
   - Description: Add react-hook-form dependency for form handling
   - Dependencies: None
   - Priority: Medium
