@@ -19,12 +19,6 @@ export default function ReadingsManagementPage() {
   const [readings, setReadings] = useState<Reading[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [debugInfo, setDebugInfo] = useState<Record<string, string>>({});
-  
-  // Debug helper function 
-  const debug = (key: string, value: string) => {
-    setDebugInfo(prev => ({ ...prev, [key]: value }));
-  };
   
   // State for selected reading and form
   const [selectedReading, setSelectedReading] = useState<Reading | null>(null);
@@ -51,13 +45,6 @@ export default function ReadingsManagementPage() {
   // Fetch readings when component mounts
   useEffect(() => {
     fetchReadings();
-    
-    // Add debug info about environment
-    if (process.env.NEXT_PUBLIC_SPACES_BASE_URL) {
-      debug('NEXT_PUBLIC_SPACES_BASE_URL', process.env.NEXT_PUBLIC_SPACES_BASE_URL);
-    } else {
-      debug('ENV_ERROR', 'NEXT_PUBLIC_SPACES_BASE_URL is not defined');
-    }
   }, []);
   
   const fetchReadings = async () => {
@@ -93,14 +80,6 @@ export default function ReadingsManagementPage() {
       thoughts: reading.thoughts || '',
       dropped: reading.dropped || false
     });
-    
-    // Log reading details for debugging
-    debug(`reading-${reading.slug}`, JSON.stringify({
-      title: reading.title,
-      coverImageSrc: reading.coverImageSrc,
-      fullImageUrl: reading.coverImageSrc ? `${process.env.NEXT_PUBLIC_SPACES_BASE_URL}${reading.coverImageSrc}` : 'none'
-    }));
-    
     setFormError(null);
     setSuccessMessage(null);
   };
@@ -276,28 +255,6 @@ export default function ReadingsManagementPage() {
 
   return (
     <div className="space-y-6">
-      {/* Debug panel */}
-      {Object.keys(debugInfo).length > 0 && (
-        <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md">
-          <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-400 mb-2">Image Loading Debug Info</h3>
-          <div className="max-h-40 overflow-auto text-xs">
-            {Object.entries(debugInfo).map(([key, value]) => (
-              <div key={key} className="mb-1">
-                <span className="font-medium">{key}:</span> {value}
-              </div>
-            ))}
-          </div>
-          <div className="mt-2">
-            <button 
-              onClick={() => setDebugInfo({})} 
-              className="text-xs text-yellow-800 dark:text-yellow-400 underline"
-            >
-              Clear Debug Info
-            </button>
-          </div>
-        </div>
-      )}
-      
       {/* Header */}
       <div className="sm:flex sm:items-center sm:justify-between pb-6 border-b border-gray-200">
         <div>
@@ -395,7 +352,6 @@ export default function ReadingsManagementPage() {
                               height={56}
                               className="h-full w-full object-cover"
                               onError={(e) => {
-                                debug(`imageError-${reading.slug}`, `Failed to load: ${process.env.NEXT_PUBLIC_SPACES_BASE_URL}${reading.coverImageSrc}`);
                                 e.currentTarget.src = '/images/projects/book-02.webp';
                               }}
                             />
@@ -791,7 +747,6 @@ export default function ReadingsManagementPage() {
                                 height={56}
                                 className="h-full w-full object-cover"
                                 onError={(e) => {
-                                  debug(`modalImageError-${readingToDelete.slug}`, `Failed to load: ${process.env.NEXT_PUBLIC_SPACES_BASE_URL}${readingToDelete.coverImageSrc}`);
                                   e.currentTarget.src = '/images/projects/book-02.webp';
                                 }}
                               />
