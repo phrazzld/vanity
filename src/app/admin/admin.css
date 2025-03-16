@@ -11,12 +11,18 @@
   font-family: 'Inter', sans-serif;
 }
 
+/* Use the Tailwind dark class selector for dark mode */
+.dark .admin-layout {
+  background-color: #111827;
+  color-scheme: dark;
+}
+
 .admin-header {
-  @apply bg-white shadow-sm sticky top-0 z-10;
+  @apply bg-white dark:bg-gray-800 shadow-sm dark:shadow-gray-900/50 sticky top-0 z-10;
 }
 
 .admin-nav-link {
-  @apply text-gray-600 hover:text-blue-600 transition-colors flex items-center;
+  @apply text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center;
 }
 
 .admin-main {
@@ -24,24 +30,24 @@
 }
 
 .admin-card {
-  @apply bg-white shadow rounded-xl overflow-hidden border border-gray-100 transition transform;
+  @apply bg-white dark:bg-gray-800 shadow rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 transition transform;
 }
 
 .admin-button {
-  @apply inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors;
+  @apply inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 transition-colors;
 }
 
 .admin-footer {
-  @apply bg-white border-t py-4;
+  @apply bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-4;
 }
 
 /* Beautiful form styling */
 .form-container {
-  @apply bg-white shadow-md rounded-xl overflow-hidden border border-gray-100;
+  @apply bg-white dark:bg-gray-800 shadow-md rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700;
 }
 
 .form-header {
-  @apply px-6 py-5 border-b border-gray-100 flex items-center justify-between;
+  @apply px-6 py-5 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between;
 }
 
 .form-body {
@@ -53,106 +59,106 @@
 }
 
 .form-section-title {
-  @apply text-sm font-medium text-gray-700 flex items-center gap-2 pb-1 border-b border-gray-100;
+  @apply text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2 pb-1 border-b border-gray-100 dark:border-gray-700;
 }
 
 .form-footer {
-  @apply px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-between items-center;
+  @apply px-6 py-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center;
 }
 
 .form-input {
-  @apply block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-200 
-  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all duration-200;
+  @apply block w-full rounded-md border-0 py-2.5 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-200 dark:ring-gray-700 dark:bg-gray-700/50
+  placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-blue-500 dark:focus:ring-blue-400 sm:text-sm transition-all duration-200;
 }
 
 .form-textarea {
-  @apply block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-200 
-  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all duration-200 min-h-[120px];
+  @apply block w-full rounded-md border-0 py-2.5 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-200 dark:ring-gray-700 dark:bg-gray-700/50
+  placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-blue-500 dark:focus:ring-blue-400 sm:text-sm transition-all duration-200 min-h-[120px];
 }
 
 .form-label {
-  @apply block text-sm font-medium leading-6 text-gray-900 mb-1;
+  @apply block text-sm font-medium leading-6 text-gray-900 dark:text-gray-200 mb-1;
 }
 
 .form-help-text {
-  @apply mt-1 text-xs text-gray-500;
+  @apply mt-1 text-xs text-gray-500 dark:text-gray-400;
 }
 
 .form-button-primary {
   @apply inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium 
   rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 
-  focus:ring-offset-2 focus:ring-blue-500 transition-colors min-w-[90px];
+  focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 transition-colors min-w-[90px];
 }
 
 .form-button-secondary {
-  @apply inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm 
-  font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 
-  focus:ring-offset-2 focus:ring-blue-500 transition-colors;
+  @apply inline-flex justify-center items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm 
+  font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 
+  focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 transition-colors;
 }
 
 .form-button-danger {
   @apply inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium 
   rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 
-  focus:ring-offset-2 focus:ring-red-500 transition-colors;
+  focus:ring-offset-2 focus:ring-red-500 dark:focus:ring-offset-gray-900 transition-colors;
 }
 
 .form-checkbox {
-  @apply h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 transition-colors;
+  @apply h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 dark:text-blue-400 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors;
 }
 
 .form-card-item {
-  @apply p-4 border border-gray-100 rounded-lg hover:border-blue-200 hover:shadow-sm cursor-pointer 
+  @apply p-4 border border-gray-100 dark:border-gray-700 rounded-lg hover:border-blue-200 dark:hover:border-blue-800 hover:shadow-sm dark:hover:shadow-gray-900/50 cursor-pointer 
   transition-all duration-200 flex items-center gap-3;
 }
 
 .form-card-item-selected {
-  @apply border-blue-500 bg-blue-50 shadow-sm;
+  @apply border-blue-500 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/30 shadow-sm dark:shadow-gray-900/50;
 }
 
 /* List styling */
 .item-list {
-  @apply bg-white shadow-md rounded-xl overflow-hidden border border-gray-100 h-full;
+  @apply bg-white dark:bg-gray-800 shadow-md rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 h-full;
 }
 
 .item-list-header {
-  @apply px-6 py-5 border-b border-gray-100;
+  @apply px-6 py-5 border-b border-gray-100 dark:border-gray-700;
 }
 
 .item-list-body {
-  @apply divide-y divide-gray-100 max-h-[650px] overflow-auto;
+  @apply divide-y divide-gray-100 dark:divide-gray-700 max-h-[650px] overflow-auto;
 }
 
 .item-list-item {
-  @apply px-6 py-4 hover:bg-gray-50 cursor-pointer transition-colors;
+  @apply px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors;
 }
 
 .item-list-item-selected {
-  @apply bg-blue-50 border-l-4 border-blue-500;
+  @apply bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-500 dark:border-blue-400;
 }
 
 /* Message styling */
 .success-message {
-  @apply mb-4 rounded-md bg-green-50 p-4 text-sm text-green-800 flex items-start gap-2;
+  @apply mb-4 rounded-md bg-green-50 dark:bg-green-900/20 p-4 text-sm text-green-800 dark:text-green-300 flex items-start gap-2;
 }
 
 .error-message {
-  @apply mb-4 rounded-md bg-red-50 p-4 text-sm text-red-800 flex items-start gap-2;
+  @apply mb-4 rounded-md bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-800 dark:text-red-300 flex items-start gap-2;
 }
 
 /* Modal styling */
 .modal-backdrop {
-  @apply fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity;
+  @apply fixed inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-80 transition-opacity;
 }
 
 .modal-container {
-  @apply inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl 
+  @apply inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl dark:shadow-gray-900/50
   transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full;
 }
 
 .modal-body {
-  @apply bg-white px-4 py-5 sm:p-6;
+  @apply bg-white dark:bg-gray-800 px-4 py-5 sm:p-6;
 }
 
 .modal-footer {
-  @apply bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse;
+  @apply bg-gray-50 dark:bg-gray-700/50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse;
 }

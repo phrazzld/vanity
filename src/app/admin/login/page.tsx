@@ -67,11 +67,11 @@ function LoginForm() {
   };
   
   return (
-    <div className="min-h-screen flex flex-col justify-center bg-gray-50 py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex flex-col justify-center bg-gray-50 dark:bg-gray-900 py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
           <svg 
-            className="mx-auto h-12 w-12 text-blue-600" 
+            className="mx-auto h-12 w-12 text-blue-600 dark:text-blue-400" 
             fill="none" 
             viewBox="0 0 24 24" 
             stroke="currentColor"
@@ -83,16 +83,16 @@ function LoginForm() {
               d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" 
             />
           </svg>
-          <h2 className="mt-6 text-2xl font-bold text-gray-900">Admin Login</h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <h2 className="mt-6 text-2xl font-bold text-gray-900 dark:text-white">Admin Login</h2>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
             Sign in to access the admin dashboard
           </p>
         </div>
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
             {(error || errorMessage) && (
-              <div className="mb-6 rounded-md bg-red-50 p-4">
+              <div className="mb-6 rounded-md bg-red-50 dark:bg-red-900/20 p-4">
                 <div className="flex">
                   <div className="flex-shrink-0">
                     <svg className="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -101,7 +101,7 @@ function LoginForm() {
                     </svg>
                   </div>
                   <div className="ml-3">
-                    <h3 className="text-sm font-medium text-red-800">
+                    <h3 className="text-sm font-medium text-red-800 dark:text-red-300">
                       {error === 'CredentialsSignin' ? 'Invalid credentials' : errorMessage}
                     </h3>
                   </div>
@@ -113,7 +113,7 @@ function LoginForm() {
               <input type="hidden" name="callbackUrl" value={callbackUrl} />
               
               <div>
-                <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                   Username
                 </label>
                 <div className="mt-1">
@@ -123,14 +123,16 @@ function LoginForm() {
                     type="text"
                     required
                     autoComplete="username"
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm 
-                      placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 
+                      rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 
+                      text-gray-900 dark:text-white bg-white dark:bg-gray-700
+                      focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                   Password
                 </label>
                 <div className="mt-1">
@@ -140,8 +142,10 @@ function LoginForm() {
                     type="password"
                     required
                     autoComplete="current-password"
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm 
-                      placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 
+                      rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 
+                      text-gray-900 dark:text-white bg-white dark:bg-gray-700
+                      focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                   />
                 </div>
               </div>
@@ -152,7 +156,7 @@ function LoginForm() {
                   disabled={isLoading}
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md 
                     shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 
-                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800
                     disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
@@ -167,8 +171,8 @@ function LoginForm() {
                 </button>
               </div>
               
-              <div className="text-center pt-2 border-t border-gray-200">
-                <p className="text-xs text-gray-500">
+              <div className="text-center pt-2 border-t border-gray-200 dark:border-gray-700">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   Demo credentials: <span className="font-medium">admin / password123</span>
                 </p>
               </div>

@@ -205,8 +205,8 @@ export default function QuotesManagementPage() {
       {/* Header */}
       <div className="sm:flex sm:items-center sm:justify-between pb-6 border-b border-gray-200">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Quotes</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Quotes</h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             Collect and manage meaningful quotes
           </p>
         </div>
@@ -240,9 +240,9 @@ export default function QuotesManagementPage() {
           <div className="item-list">
             <div className="item-list-header">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-medium text-gray-900">All Quotes</h2>
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white">All Quotes</h2>
                 {!isLoading && quotes.length > 0 && (
-                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
                     {quotes.length} {quotes.length === 1 ? 'quote' : 'quotes'}
                   </span>
                 )}
@@ -257,12 +257,12 @@ export default function QuotesManagementPage() {
                 </svg>
               </div>
             ) : error ? (
-              <div className="p-4 bg-red-50 text-red-600 border-t border-b border-red-100">
+              <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-t border-b border-red-100 dark:border-red-800">
                 <p className="text-sm">{error}</p>
               </div>
             ) : quotes.length === 0 ? (
-              <div className="p-8 text-center text-gray-500">
-                <div className="w-16 h-16 mx-auto bg-gray-50 rounded-full flex items-center justify-center mb-3">
+              <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+                <div className="w-16 h-16 mx-auto bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mb-3">
                   <svg className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path 
                       strokeLinecap="round" 
@@ -272,8 +272,8 @@ export default function QuotesManagementPage() {
                     />
                   </svg>
                 </div>
-                <p className="text-sm font-medium text-gray-900">No quotes found</p>
-                <p className="mt-1 text-xs text-gray-500">Start building your collection of inspirational quotes</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">No quotes found</p>
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Start building your collection of inspirational quotes</p>
                 <button
                   onClick={handleNewQuote}
                   className="mt-4 inline-flex items-center px-3 py-1.5 text-sm text-blue-600 font-medium"
@@ -298,11 +298,11 @@ export default function QuotesManagementPage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                             d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                         </svg>
-                        <p className="text-sm font-medium text-gray-900 leading-5">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white leading-5">
                           &ldquo;{getPreviewText(quote.text)}&rdquo;
                         </p>
                       </div>
-                      <div className="mt-1 ml-5.5 text-xs text-gray-500">
+                      <div className="mt-1 ml-5.5 text-xs text-gray-500 dark:text-gray-400">
                         {quote.author ? `— ${quote.author}` : '— Anonymous'}
                       </div>
                     </div>
@@ -318,11 +318,11 @@ export default function QuotesManagementPage() {
           {(selectedQuote || isCreating) ? (
             <div className="form-container">
               <div className="form-header">
-                <h2 className="text-lg font-medium text-gray-900">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white">
                   {isCreating ? 'Add New Quote' : 'Edit Quote'}
                 </h2>
                 {!isCreating && selectedQuote && (
-                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
                     ID: {selectedQuote.id}
                   </span>
                 )}
@@ -462,8 +462,8 @@ export default function QuotesManagementPage() {
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium text-gray-900">No quote selected</h3>
-                <p className="mt-1 text-sm text-gray-500 max-w-md">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">No quote selected</h3>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 max-w-md">
                   Select a quote from the list to edit it, or create a new one to add to your collection.
                 </p>
                 <div className="mt-6">
@@ -500,11 +500,11 @@ export default function QuotesManagementPage() {
                     </svg>
                   </div>
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white" id="modal-title">
                       Delete Quote
                     </h3>
                     <div className="mt-2">
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         Are you sure you want to delete this quote? This action cannot be undone.
                       </p>
                       <div className="mt-3 p-4 bg-gray-50 rounded-md border border-gray-200">

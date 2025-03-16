@@ -4,143 +4,134 @@
 @tailwind components;
 @tailwind utilities;
 
-/* reset & base */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@layer base {
+  /* Set base styles */
+  html {
+    @apply h-full;
+  }
+  
+  html.dark {
+    color-scheme: dark;
+  }
+  
+  body {
+    @apply h-full bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-inter leading-relaxed;
+  }
+  
+  h1, h2, h3 {
+    @apply font-space-grotesk mb-3;
+  }
+  
+  p {
+    @apply mb-4;
+  }
 }
 
-html, body {
-  height: 100%;
-  background: #fff;
-  color: #000;
-  /* heading = space grotesk, body = inter */
-  font-family: 'Inter', sans-serif;
-  line-height: 1.5;
-}
-
-.site-header {
-  padding: 2rem;
-  border-bottom: 1px solid #ccc; /* subtle line for that borderline vibe */
-}
-
-.nav-list {
-  display: flex;
-  gap: 1rem;
-  list-style: none;
-}
-
-.nav-list a {
-  position: relative;
-  text-decoration: none;
-  color: black;
-  font-weight: 600;
-  transition: color 0.2s;
-}
-
-.nav-list a::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -10px;
-  height: 3px;
-  width: 100%;
-  background-color: black;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.2s;
-}
-
-.nav-list a:hover::after {
-  transform: scaleX(1);
-}
-
-main {
-  padding: 2rem;
-  position: relative;
-}
-
-/* headings in space grotesk */
-h1, h2, h3 {
-  font-family: 'Space Grotesk', sans-serif;
-  margin-bottom: 0.75rem;
-}
-
-.big-heading {
-  font-size: 3rem;
-  font-weight: 700;
-}
-
-.medium-heading {
-  font-size: 2rem;
-  font-weight: 600;
-  margin-bottom: 2rem;
-}
-
-p {
-  margin-bottom: 1rem;
-}
-
-/* subtle link underline animation in the content area */
-a.content-link {
-  position: relative;
-  text-decoration: none;
-  color: black;
-  transition: color 0.2s;
-}
-
-a.content-link::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -2px;
-  height: 2px;
-  width: 100%;
-  background-color: black;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.2s;
-}
-
-a.content-link:hover::after {
-  transform: scaleX(1);
-}
-
-@media (max-width: 768px) {
+@layer components {
+  .site-header {
+    @apply flex items-center justify-between p-8 border-b border-gray-200 dark:border-gray-700;
+  }
+  
   .nav-list {
-    flex-direction: column;
+    @apply flex gap-4 list-none;
   }
-
+  
+  .nav-list a {
+    @apply relative no-underline text-gray-900 dark:text-white font-semibold transition-colors duration-200 hover:text-blue-600 dark:hover:text-blue-400;
+  }
+  
+  .nav-list a::after {
+    @apply content-[''] absolute left-0 -bottom-2.5 h-0.5 w-full bg-gray-900 dark:bg-white scale-x-0 origin-left transition-transform duration-200;
+  }
+  
+  .nav-list a:hover::after {
+    @apply scale-x-100;
+  }
+  
+  main {
+    @apply p-8 relative;
+  }
+  
   .big-heading {
-    font-size: 2rem;
+    @apply text-5xl font-bold;
+  }
+  
+  .medium-heading {
+    @apply text-3xl font-semibold mb-8;
+  }
+  
+  /* Content link styles */
+  .content-link {
+    @apply relative no-underline text-gray-900 dark:text-white transition-colors duration-200;
+  }
+  
+  .content-link::after {
+    @apply content-[''] absolute left-0 -bottom-0.5 h-px w-full bg-gray-900 dark:bg-white scale-x-0 origin-left transition-transform duration-200;
+  }
+  
+  .content-link:hover::after {
+    @apply scale-x-100;
+  }
+  
+  .secondary-link {
+    @apply text-sm border-b border-dashed border-gray-900 dark:border-white pb-0.5 transition-colors duration-200;
+  }
+  
+  .secondary-link:hover {
+    @apply border-gray-900 dark:border-white;
+  }
+
+  /* Project cards */
+  .projects-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8;
+  }
+  
+  .project-card {
+    @apply border border-gray-200 dark:border-gray-700 relative overflow-hidden flex flex-col transition-all duration-300 
+    animate-fade-in opacity-0 translate-y-2.5 hover:shadow-lg dark:hover:shadow-gray-900/70 hover:scale-[1.01] 
+    bg-white dark:bg-gray-800 dark:text-white;
+  }
+  
+  .project-image-container {
+    @apply relative w-full h-44;
+  }
+  
+  .project-content {
+    @apply p-4 flex flex-col justify-between h-[59%];
+  }
+  
+  .project-links {
+    @apply mt-4 flex gap-4;
+  }
+  
+  .tech-stack {
+    @apply list-none flex flex-wrap gap-2 mt-2 p-0;
+  }
+  
+  .tech-stack li {
+    @apply bg-gray-100 dark:bg-gray-700 dark:text-gray-200 py-1 px-2 rounded text-xs;
+  }
+  
+  /* About section */
+  .about-section {
+    @apply flex flex-col gap-4;
+  }
+  
+  .about-content p {
+    @apply mb-4;
+  }
+  
+  .about-image-container {
+    @apply flex justify-center mt-4;
+  }
+  
+  /* Typewriter */
+  .typewriter-container {
+    @apply font-space-grotesk font-semibold text-gray-800 dark:text-white transition-colors duration-300;
   }
 }
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
-}
 
-.project-card {
-  border: 1px solid #ccc;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  transition: box-shadow 0.2s, transform 0.3s;
-  animation: fade-in-up 0.4s ease forwards;
-  opacity: 0;
-  transform: translateY(10px);
-}
-
-.project-card:hover {
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-  transform: scale(1.01);
-}
-
-/* fade-in keyframe */
+/* Custom animation */
 @keyframes fade-in-up {
   to {
     opacity: 1;
@@ -148,157 +139,26 @@ a.content-link:hover::after {
   }
 }
 
-.project-image-container {
-  position: relative;
-  width: 100%;
-  height: 180px; /* adjust as needed for your aspect ratio */
+.animate-fade-in {
+  animation: fade-in-up 0.4s ease forwards;
 }
 
-.project-content {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 59%;
+/* Font families */
+.font-inter {
+  font-family: 'Inter', sans-serif;
 }
 
-.project-links {
-  margin-top: 1rem;
-  display: flex;
-  gap: 1rem;
-}
-
-/* optional mini style for the tech stack bullets */
-.tech-stack {
-  list-style: none;
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-  padding: 0;
-}
-
-.tech-stack li {
-  background: #f5f5f5;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
-}
-
-.secondary-link {
-  font-size: 0.9rem;
-  border-bottom: 1px dashed black;
-  padding-bottom: 2px;
-  transition: border-bottom-color 0.2s;
-}
-
-.secondary-link:hover {
-  border-bottom-color: black;
-}
-
-.about-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.about-content p {
-  margin-bottom: 1rem;
-}
-
-.about-image-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 1rem;
-}
-
-/* dark mode */
-html.dark,
-html.dark body {
-  background: #000;
-  color: #fff;
-}
-
-html.dark .site-header {
-  border-bottom-color: #444;
-}
-
-html.dark a {
-  color: #fff;
-}
-
-.site-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 2rem;
-  border-bottom: 1px solid #ccc;
-}
-
-/* style the toggle a little */
-.dark-mode-toggle {
-  padding: 0.5rem 1rem;
-  border: 1px solid currentColor;
-  background: transparent;
-  border-radius: 4px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.dark-mode-toggle:hover {
-  background: rgba(0,0,0,0.1);
-}
-/* in dark mode, make the text & border white */
-html.dark .dark-mode-toggle {
-  color: #fff;
-  border-color: #fff;
-}
-html.dark .dark-mode-toggle:hover {
-  background: rgba(255,255,255,0.1);
-}
-
-/* fix nav link underline in dark mode */
-html.dark .nav-list a::after {
-  background-color: #fff;
-}
-
-/* fix project-card background & text in dark mode */
-html.dark .project-card {
-  background: #111;
-  color: #fff;
-  border-color: #444;
-}
-
-html.dark .tech-stack li {
-  background: #333;
-  color: #fff;
-}
-
-/* make sure the link text is visible in dark mode */
-html.dark .secondary-link {
-  color: #fff;
-  border-bottom-color: #fff;
-}
-
-html.dark a.content-link::after {
-  background-color: white;
-}
-
-html.dark .project-card:hover {
-  box-shadow: 0 4px 10px rgba(255,255,255,0.15);
-  transform: scale(1.01);
-}
-
-html.dark a.leaflet-control-zoom-in, html.dark a.leaflet-control-zoom-out {
-  background-color: black;
-}
-
-.typewriter-container {
+.font-space-grotesk {
   font-family: 'Space Grotesk', sans-serif;
-  font-weight: 600;
-  color: #333;
-  transition: color 0.3s;
 }
 
-html.dark .typewriter-container {
-  color: #fff;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .nav-list {
+    @apply flex-col;
+  }
+  
+  .big-heading {
+    @apply text-3xl;
+  }
 }

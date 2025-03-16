@@ -119,8 +119,8 @@ export default function AdminDashboardPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-        <p className="text-gray-600 mt-1">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-1">
           Welcome{user ? `, ${user.name}` : ''}! Manage your content here.
         </p>
       </div>
@@ -130,7 +130,7 @@ export default function AdminDashboardPage() {
       {/* Stats Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
         {/* Readings Stats Card */}
-        <div className="bg-white overflow-hidden shadow rounded-xl border border-gray-100 transition hover:shadow-md">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-xl border border-gray-100 dark:border-gray-700 transition hover:shadow-md">
           <div className="p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0 bg-blue-50 rounded-lg p-3">
@@ -150,16 +150,16 @@ export default function AdminDashboardPage() {
                 </svg>
               </div>
               <div className="ml-4 flex-1">
-                <dt className="text-sm font-medium text-gray-500 truncate">
+                <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
                   Total Readings
                 </dt>
-                <dd className="mt-1 text-3xl font-bold text-gray-900">
+                <dd className="mt-1 text-3xl font-bold text-gray-900 dark:text-white">
                   {isLoading ? '...' : stats.readings}
                 </dd>
               </div>
             </div>
-            <div className="mt-6 pt-3 border-t border-gray-100">
-              <Link href="/admin/readings" className="font-medium text-blue-600 hover:text-blue-500 flex items-center text-sm">
+            <div className="mt-6 pt-3 border-t border-gray-100 dark:border-gray-700">
+              <Link href="/admin/readings" className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 flex items-center text-sm">
                 View all readings
                 <svg className="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -170,7 +170,7 @@ export default function AdminDashboardPage() {
         </div>
         
         {/* Quotes Stats Card */}
-        <div className="bg-white overflow-hidden shadow rounded-xl border border-gray-100 transition hover:shadow-md">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-xl border border-gray-100 dark:border-gray-700 transition hover:shadow-md">
           <div className="p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0 bg-green-50 rounded-lg p-3">
@@ -190,16 +190,16 @@ export default function AdminDashboardPage() {
                 </svg>
               </div>
               <div className="ml-4 flex-1">
-                <dt className="text-sm font-medium text-gray-500 truncate">
+                <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
                   Total Quotes
                 </dt>
-                <dd className="mt-1 text-3xl font-bold text-gray-900">
+                <dd className="mt-1 text-3xl font-bold text-gray-900 dark:text-white">
                   {isLoading ? '...' : stats.quotes}
                 </dd>
               </div>
             </div>
-            <div className="mt-6 pt-3 border-t border-gray-100">
-              <Link href="/admin/quotes" className="font-medium text-green-600 hover:text-green-500 flex items-center text-sm">
+            <div className="mt-6 pt-3 border-t border-gray-100 dark:border-gray-700">
+              <Link href="/admin/quotes" className="font-medium text-green-600 dark:text-green-400 hover:text-green-500 dark:hover:text-green-300 flex items-center text-sm">
                 View all quotes
                 <svg className="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -210,7 +210,7 @@ export default function AdminDashboardPage() {
         </div>
         
         {/* User Status Card */}
-        <div className="bg-white overflow-hidden shadow rounded-xl border border-gray-100 transition hover:shadow-md">
+        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-xl border border-gray-100 dark:border-gray-700 transition hover:shadow-md">
           <div className="p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0 bg-indigo-50 rounded-lg p-3">
@@ -230,22 +230,22 @@ export default function AdminDashboardPage() {
                 </svg>
               </div>
               <div className="ml-4 flex-1">
-                <dt className="text-sm font-medium text-gray-500 truncate">
+                <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
                   Account Status
                 </dt>
                 <dd className="mt-1 flex flex-col">
                   <div className="flex items-center">
                     <span className="h-2.5 w-2.5 bg-green-400 rounded-full mr-2"></span>
-                    <span className="text-sm font-semibold text-gray-900">Active as {user?.role || 'Admin'}</span>
+                    <span className="text-sm font-semibold text-gray-900 dark:text-white">Active as {user?.role || 'Admin'}</span>
                   </div>
-                  <div className="mt-2 text-xs text-gray-500">
+                  <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
                     Last login: {new Date().toLocaleString()}
                   </div>
                 </dd>
               </div>
             </div>
-            <div className="mt-6 pt-3 border-t border-gray-100">
-              <span className="text-sm font-medium text-gray-600 flex items-center">
+            <div className="mt-6 pt-3 border-t border-gray-100 dark:border-gray-700">
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center">
                 <svg className="mr-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
@@ -258,7 +258,7 @@ export default function AdminDashboardPage() {
       
       {/* Management Cards */}
       <div className="mb-8">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">Content Management</h2>
+        <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Content Management</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {dashboardCards.map((card, index) => {
             // Simple color mapping for each card
@@ -267,21 +267,21 @@ export default function AdminDashboardPage() {
             const ringColor = card.color === 'blue' ? 'focus:ring-blue-500' : 'focus:ring-green-500';
             
             return (
-              <div key={index} className="bg-white shadow rounded-xl overflow-hidden border border-gray-100 hover:shadow-md">
+              <div key={index} className="bg-white dark:bg-gray-800 shadow rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 hover:shadow-md">
                 <div className="p-5">
                   <div className="flex items-center justify-between mb-4">
                     <div className={`${bgColor} rounded-lg p-3`}>
                       {card.icon}
                     </div>
-                    <span className="text-2xl font-bold text-gray-800">
+                    <span className="text-2xl font-bold text-gray-800 dark:text-white">
                       {isLoading ? "..." : card.count}
                     </span>
                   </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-1">{card.title}</h3>
-                  <p className="text-gray-600 text-sm mb-4">{card.description}</p>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">{card.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">{card.description}</p>
                   <Link
                     href={card.link}
-                    className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white ${buttonColor} focus:outline-none focus:ring-2 focus:ring-offset-2 ${ringColor} transition-colors w-full justify-center`}
+                    className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white ${buttonColor} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-800 ${ringColor} transition-colors w-full justify-center`}
                   >
                     {card.ctaText}
                     <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

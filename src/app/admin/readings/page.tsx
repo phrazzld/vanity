@@ -9,6 +9,7 @@
 import { useState, useEffect, FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import type { Reading, ReadingInput } from '@/types';
 
 export default function ReadingsManagementPage() {
@@ -257,8 +258,8 @@ export default function ReadingsManagementPage() {
       {/* Header */}
       <div className="sm:flex sm:items-center sm:justify-between pb-6 border-b border-gray-200">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Readings</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Readings</h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             Track and manage your reading collection
           </p>
         </div>
@@ -292,9 +293,9 @@ export default function ReadingsManagementPage() {
           <div className="item-list">
             <div className="item-list-header">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-medium text-gray-900">All Readings</h2>
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white">All Readings</h2>
                 {!isLoading && readings.length > 0 && (
-                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
                     {readings.length} {readings.length === 1 ? 'book' : 'books'}
                   </span>
                 )}
@@ -309,19 +310,19 @@ export default function ReadingsManagementPage() {
                 </svg>
               </div>
             ) : error ? (
-              <div className="p-4 bg-red-50 text-red-600 border-t border-b border-red-100">
+              <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-t border-b border-red-100 dark:border-red-800">
                 <p className="text-sm">{error}</p>
               </div>
             ) : readings.length === 0 ? (
-              <div className="p-8 text-center text-gray-500">
-                <div className="w-16 h-16 mx-auto bg-gray-50 rounded-full flex items-center justify-center mb-3">
+              <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+                <div className="w-16 h-16 mx-auto bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mb-3">
                   <svg className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} 
                       d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                   </svg>
                 </div>
-                <p className="text-sm font-medium text-gray-900">No readings found</p>
-                <p className="mt-1 text-xs text-gray-500">Start building your literary collection</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">No readings found</p>
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Start building your literary collection</p>
                 <button
                   onClick={handleNewReading}
                   className="mt-4 inline-flex items-center px-3 py-1.5 text-sm text-blue-600 font-medium"
@@ -343,14 +344,27 @@ export default function ReadingsManagementPage() {
                     <div className="flex items-start gap-3">
                       {reading.coverImageSrc ? (
                         <div className="h-14 w-10 flex-shrink-0 rounded overflow-hidden border border-gray-200">
-                          <img 
-                            src={reading.coverImageSrc} 
-                            alt={`Cover for ${reading.title}`}
-                            className="h-full w-full object-cover"
-                          />
+                          {process.env.NEXT_PUBLIC_SPACES_BASE_URL ? (
+                            <Image 
+                              src={`${process.env.NEXT_PUBLIC_SPACES_BASE_URL}${reading.coverImageSrc}`}
+                              alt={`Cover for ${reading.title}`}
+                              width={40}
+                              height={56}
+                              className="h-full w-full object-cover"
+                              onError={(e) => {
+                                e.currentTarget.src = '/images/projects/book-02.webp';
+                              }}
+                            />
+                          ) : (
+                            <img 
+                              src="/images/projects/book-02.webp"
+                              alt={`Cover for ${reading.title}`}
+                              className="h-full w-full object-cover"
+                            />
+                          )}
                         </div>
                       ) : (
-                        <div className="h-14 w-10 flex-shrink-0 rounded bg-gray-100 flex items-center justify-center border border-gray-200">
+                        <div className="h-14 w-10 flex-shrink-0 rounded bg-gray-100 dark:bg-gray-700 flex items-center justify-center border border-gray-200 dark:border-gray-600">
                           <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} 
                               d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -358,9 +372,9 @@ export default function ReadingsManagementPage() {
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-medium text-gray-900 truncate">{reading.title}</h3>
-                        <div className="mt-1 text-xs text-gray-600 truncate">{reading.author}</div>
-                        <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
+                        <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate">{reading.title}</h3>
+                        <div className="mt-1 text-xs text-gray-600 dark:text-gray-300 truncate">{reading.author}</div>
+                        <div className="mt-1 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                           <span className="flex items-center">
                             <svg className="h-3 w-3 text-gray-400 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
@@ -369,7 +383,7 @@ export default function ReadingsManagementPage() {
                             {reading.finishedDate ? new Date(reading.finishedDate).toLocaleDateString() : 'Unfinished'}
                           </span>
                           {reading.dropped && (
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300">
                               Dropped
                             </span>
                           )}
@@ -388,11 +402,11 @@ export default function ReadingsManagementPage() {
           {(selectedReading || isCreating) ? (
             <div className="form-container">
               <div className="form-header">
-                <h2 className="text-lg font-medium text-gray-900">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white">
                   {isCreating ? 'Add New Reading' : 'Edit Reading'}
                 </h2>
                 {!isCreating && selectedReading && (
-                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
                     ID: {selectedReading.id}
                   </span>
                 )}
@@ -677,8 +691,8 @@ export default function ReadingsManagementPage() {
                       d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium text-gray-900">No reading selected</h3>
-                <p className="mt-1 text-sm text-gray-500 max-w-md">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">No reading selected</h3>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 max-w-md">
                   Select a reading from the list to edit it, or create a new one to add to your collection.
                 </p>
                 <div className="mt-6">
@@ -715,24 +729,37 @@ export default function ReadingsManagementPage() {
                     </svg>
                   </div>
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white" id="modal-title">
                       Delete Reading
                     </h3>
                     <div className="mt-2">
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         Are you sure you want to delete &ldquo;{readingToDelete?.title}&rdquo;? This action cannot be undone.
                       </p>
-                      <div className="mt-3 p-4 bg-gray-50 rounded-md border border-gray-200 flex items-start gap-3">
+                      <div className="mt-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700 flex items-start gap-3">
                         {readingToDelete?.coverImageSrc ? (
-                          <div className="h-14 w-10 flex-shrink-0 rounded overflow-hidden border border-gray-200">
-                            <img 
-                              src={readingToDelete.coverImageSrc} 
-                              alt={`Cover for ${readingToDelete.title}`}
-                              className="h-full w-full object-cover"
-                            />
+                          <div className="h-14 w-10 flex-shrink-0 rounded overflow-hidden border border-gray-200 dark:border-gray-700">
+                            {process.env.NEXT_PUBLIC_SPACES_BASE_URL ? (
+                              <Image 
+                                src={`${process.env.NEXT_PUBLIC_SPACES_BASE_URL}${readingToDelete.coverImageSrc}`}
+                                alt={`Cover for ${readingToDelete.title}`}
+                                width={40}
+                                height={56}
+                                className="h-full w-full object-cover"
+                                onError={(e) => {
+                                  e.currentTarget.src = '/images/projects/book-02.webp';
+                                }}
+                              />
+                            ) : (
+                              <img 
+                                src="/images/projects/book-02.webp"
+                                alt={`Cover for ${readingToDelete.title}`}
+                                className="h-full w-full object-cover"
+                              />
+                            )}
                           </div>
                         ) : (
-                          <div className="h-14 w-10 flex-shrink-0 rounded bg-gray-100 flex items-center justify-center border border-gray-200">
+                          <div className="h-14 w-10 flex-shrink-0 rounded bg-gray-100 dark:bg-gray-700 flex items-center justify-center border border-gray-200 dark:border-gray-600">
                             <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} 
                                 d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -740,8 +767,8 @@ export default function ReadingsManagementPage() {
                           </div>
                         )}
                         <div>
-                          <p className="text-sm font-medium text-gray-900">{readingToDelete?.title}</p>
-                          <p className="text-xs text-gray-500">{readingToDelete?.author}</p>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">{readingToDelete?.title}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{readingToDelete?.author}</p>
                         </div>
                       </div>
                     </div>
