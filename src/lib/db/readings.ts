@@ -5,7 +5,7 @@
  */
 
 import prisma from '../prisma';
-import type { Reading, ReadingInput } from '@/types';
+import type { Reading, ReadingInput, ReadingsQueryParams, PaginationResult } from '@/types';
 
 /**
  * Fetches a single reading by slug
@@ -64,6 +64,138 @@ export async function getReadings(): Promise<Reading[]> {
   } catch (error) {
     console.error('Error fetching readings:', error)
     return []
+  }
+}
+
+/**
+ * Fetches readings with search, filtering, sorting, and pagination
+ * 
+ * @param params - Query parameters for filtering readings
+ * @returns Paginated result with readings and metadata
+ */
+export async function getReadingsWithFilters(params: ReadingsQueryParams): Promise<PaginationResult<Reading>> {
+  try {
+    console.log('Getting filtered readings from database...')
+    
+    // Extract parameters with defaults
+    const {
+      search = '',
+      status,
+      sortBy = 'date',
+      sortOrder = 'desc',
+      limit = 10,
+      offset = 0
+    } = params;
+    
+    // Build WHERE conditions
+    const whereConditions: string[] = [];
+    const queryParams: any[] = [];
+    let paramIndex = 1;
+    
+    // Search in title, author, or thoughts
+    if (search && search.trim() !== '') {
+      whereConditions.push(`(
+        title ILIKE $${paramIndex} OR 
+        author ILIKE $${paramIndex} OR 
+        thoughts ILIKE $${paramIndex}
+      )`);
+      queryParams.push(`%${search.trim()}%`);
+      paramIndex++;
+    }
+    
+    // Filter by status (read/dropped)
+    if (status) {
+      if (status === 'read') {
+        whereConditions.push(`(dropped = false AND "finishedDate" IS NOT NULL)`);
+      } else if (status === 'dropped') {
+        whereConditions.push(`dropped = true`);
+      }
+      // 'all' doesn't need a filter
+    }
+    
+    // Construct WHERE clause
+    const whereClause = whereConditions.length > 0 
+      ? `WHERE ${whereConditions.join(' AND ')}` 
+      : '';
+    
+    // Construct ORDER BY clause based on sortBy and sortOrder
+    let orderByClause = '';
+    
+    if (sortBy === 'date') {
+      orderByClause = `
+        CASE WHEN "finishedDate" IS NULL THEN 1 ELSE 0 END,
+        "finishedDate" ${sortOrder === 'asc' ? 'ASC' : 'DESC'},
+        id DESC
+      `;
+    } else if (sortBy === 'title') {
+      orderByClause = `
+        title ${sortOrder === 'asc' ? 'ASC' : 'DESC'},
+        id DESC
+      `;
+    } else if (sortBy === 'author') {
+      orderByClause = `
+        author ${sortOrder === 'asc' ? 'ASC' : 'DESC'},
+        id DESC
+      `;
+    }
+    
+    // Get total count for pagination
+    // Build the count query with parameters
+    let countQuery = 'SELECT COUNT(*) as total FROM "Reading"';
+    if (whereClause) {
+      countQuery += ` ${whereClause}`;
+    }
+    
+    // Execute count query with parameters
+    const countResult = await prisma.$queryRawUnsafe(
+      countQuery,
+      ...queryParams
+    );
+    
+    const totalCount = parseInt(countResult[0].total.toString(), 10);
+    console.log(`Total matching readings: ${totalCount}`);
+    
+    // Build the main query with parameters
+    let mainQuery = `
+      SELECT id, slug, title, author, "finishedDate", "coverImageSrc", thoughts, dropped
+      FROM "Reading"
+    `;
+    
+    if (whereClause) {
+      mainQuery += ` ${whereClause}`;
+    }
+    
+    mainQuery += ` ORDER BY ${orderByClause}`;
+    mainQuery += ` LIMIT ${limit} OFFSET ${offset}`;
+    
+    // Execute main query with parameters
+    const readings = await prisma.$queryRawUnsafe(
+      mainQuery,
+      ...queryParams
+    ) as Reading[];
+    
+    console.log(`Found ${readings.length} readings for current page`);
+    
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(totalCount / limit);
+    const currentPage = Math.floor(offset / limit) + 1;
+    
+    return {
+      data: readings,
+      totalCount,
+      currentPage,
+      totalPages,
+      pageSize: limit
+    };
+  } catch (error) {
+    console.error('Error fetching filtered readings:', error);
+    return {
+      data: [],
+      totalCount: 0,
+      currentPage: 1,
+      totalPages: 0,
+      pageSize: 10
+    };
   }
 }
 

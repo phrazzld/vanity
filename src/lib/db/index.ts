@@ -24,7 +24,8 @@ export const {
 // Export individual quote functions for backward compatibility
 export const { 
   getQuote, 
-  getQuotes, 
+  getQuotes,
+  getQuotesWithFilters,
   createQuote, 
   updateQuote, 
   deleteQuote 
