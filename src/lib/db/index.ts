@@ -16,6 +16,7 @@ export { readingsDb, quotesDb };
 export const { 
   getReading, 
   getReadings, 
+  getReadingsWithFilters,
   createReading, 
   updateReading, 
   deleteReading 
