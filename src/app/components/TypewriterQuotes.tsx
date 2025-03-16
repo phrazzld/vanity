@@ -454,36 +454,59 @@ export default function TypewriterQuotes() {
         break
         
       case 'erasingAuthor':
-        // Handle erasing author with recursive timeouts
-        const eraseAuthor = () => {
-          if (displayedAuthor.length > 0) {
-            setDisplayedAuthor(prev => prev.slice(0, -1))
-            safeSetTimeout(eraseAuthor, ERASE_SPEED)
-          } else {
-            setPhase('erasingQuote')
-          }
+        // Use interval for erasing author to avoid closure issues
+        if (typingIntervalRef.current) {
+          clearInterval(typingIntervalRef.current)
         }
         
-        // Start the erasing process
-        safeSetTimeout(eraseAuthor, ERASE_SPEED)
+        typingIntervalRef.current = setInterval(() => {
+          setDisplayedAuthor(prev => {
+            // If we have content to erase
+            if (prev.length > 0) {
+              return prev.slice(0, -1);
+            } 
+            // If we're done erasing
+            else {
+              // Clear this interval
+              if (typingIntervalRef.current) {
+                clearInterval(typingIntervalRef.current)
+                typingIntervalRef.current = null
+              }
+              // Move to next phase
+              setPhase('erasingQuote')
+              return prev; // Return empty string unchanged
+            }
+          });
+        }, ERASE_SPEED);
         break
         
       case 'erasingQuote':
-        // Handle erasing quote with recursive timeouts
-        const eraseQuote = () => {
-          if (displayedQuote.length > 0) {
-            setDisplayedQuote(prev => prev.slice(0, -1))
-            safeSetTimeout(eraseQuote, ERASE_SPEED)
-          } else {
-            // Quote is fully erased, select a new random quote and start over
-            const nextIndex = Math.floor(Math.random() * quotes.length)
-            setQuoteIndex(nextIndex)
-            setPhase('typingQuote')
-          }
+        // Use interval for erasing quote to avoid closure issues
+        if (typingIntervalRef.current) {
+          clearInterval(typingIntervalRef.current)
         }
         
-        // Start the erasing process
-        safeSetTimeout(eraseQuote, ERASE_SPEED)
+        typingIntervalRef.current = setInterval(() => {
+          setDisplayedQuote(prev => {
+            // If we have content to erase
+            if (prev.length > 0) {
+              return prev.slice(0, -1);
+            } 
+            // If we're done erasing
+            else {
+              // Clear this interval
+              if (typingIntervalRef.current) {
+                clearInterval(typingIntervalRef.current)
+                typingIntervalRef.current = null
+              }
+              // Select new quote and start over
+              const nextIndex = Math.floor(Math.random() * quotes.length)
+              setQuoteIndex(nextIndex)
+              setPhase('typingQuote')
+              return prev; // Return empty string unchanged
+            }
+          });
+        }, ERASE_SPEED);
         break
     }
     
