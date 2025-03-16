@@ -184,6 +184,9 @@ export default function TypewriterQuotes() {
 
   // Track whether we're currently in a punctuation pause
   const [inPunctuationPause, setInPunctuationPause] = useState(false)
+  
+  // Track pause timer for synchronization
+  const [pauseTimer, setPauseTimer] = useState<NodeJS.Timeout | null>(null)
 
   /**
    * Cursor blinking effect
@@ -258,53 +261,51 @@ export default function TypewriterQuotes() {
     }
 
     let timer: NodeJS.Timeout
-    let animationFrameId: number
 
     switch (phase) {
       case 'typingQuote':
         if (displayedQuote.length < rawQuote.length) {
+          // If we're in a pause, don't add any new characters
+          if (pauseTimer) {
+            break;
+          }
+          
           // Get the current character that's being typed
           const currentChar = rawQuote[displayedQuote.length]
           
-          // First, add the character to the displayed text at the normal speed
-          const startTime = performance.now()
-          const basicTypingDelay = TYPING_SPEED
+          // Add the character immediately
+          setDisplayedQuote(rawQuote.slice(0, displayedQuote.length + 1))
           
-          const basicTypingStep = (timestamp: number) => {
-            const elapsed = timestamp - startTime
+          // Check if the character is a punctuation mark that needs a pause
+          const isPunctuation = Object.keys(PUNCTUATION_PAUSES).includes(currentChar)
+          const shouldPause = isPunctuation && (currentChar === '.' || currentChar === '!' || 
+                               currentChar === '?' || currentChar === ';' || 
+                               currentChar === ':');
+          
+          if (shouldPause) {
+            // Get multiplier for consecutive punctuation (debounce effect)
+            const multiplier = getPunctuationDelayMultiplier(rawQuote, displayedQuote.length)
             
-            if (elapsed >= basicTypingDelay) {
-              // Time to update the text
-              setDisplayedQuote(rawQuote.slice(0, displayedQuote.length + 1))
-              
-              // After rendering the character, check if it's a punctuation mark that needs a pause
-              const isPunctuation = Object.keys(PUNCTUATION_PAUSES).includes(currentChar)
-              
-              if (isPunctuation && (currentChar === '.' || currentChar === '!' || 
-                                   currentChar === '?' || currentChar === ';' || 
-                                   currentChar === ':')) {
-                // Get multiplier for consecutive punctuation (debounce effect)
-                const multiplier = getPunctuationDelayMultiplier(rawQuote, displayedQuote.length)
-                
-                // Calculate the punctuation pause duration
-                const punctuationDelay = PUNCTUATION_PAUSES[currentChar as keyof typeof PUNCTUATION_PAUSES] * multiplier
-                
-                // Set the pause state for visual indicator
-                setInPunctuationPause(true)
-                
-                // Add additional delay after the punctuation
-                setTimeout(() => {
-                  // Reset punctuation pause state when the pause is done
-                  setInPunctuationPause(false)
-                }, punctuationDelay)
-              }
-            } else {
-              // Not enough time has passed, continue the animation
-              animationFrameId = requestAnimationFrame(basicTypingStep)
-            }
+            // Calculate the punctuation pause duration
+            const punctuationDelay = PUNCTUATION_PAUSES[currentChar as keyof typeof PUNCTUATION_PAUSES] * multiplier
+            
+            // Set the pause state for visual indicator
+            setInPunctuationPause(true)
+            
+            // Create a timer that will prevent typing during the pause
+            const newTimer = setTimeout(() => {
+              setInPunctuationPause(false)
+              setPauseTimer(null)
+            }, punctuationDelay)
+            
+            setPauseTimer(newTimer)
+          } else {
+            // No punctuation pause needed, schedule the next character
+            timer = setTimeout(() => {
+              // This will trigger the effect to run again and type the next character
+              setDisplayedQuote(prev => prev)
+            }, TYPING_SPEED)
           }
-          
-          animationFrameId = requestAnimationFrame(basicTypingStep)
         } else {
           // Quote is fully typed, pause before showing the author
           timer = setTimeout(() => {
@@ -322,46 +323,44 @@ export default function TypewriterQuotes() {
 
       case 'typingAuthor':
         if (displayedAuthor.length < rawAuthor.length) {
+          // If we're in a pause, don't add any new characters
+          if (pauseTimer) {
+            break;
+          }
+          
           // Get the current character that's being typed
           const currentChar = rawAuthor[displayedAuthor.length]
           
-          // First, add the character to the displayed text at the normal speed
-          const startTime = performance.now()
-          const basicTypingDelay = TYPING_SPEED
+          // Add the character immediately
+          setDisplayedAuthor(rawAuthor.slice(0, displayedAuthor.length + 1))
           
-          const basicTypingStep = (timestamp: number) => {
-            const elapsed = timestamp - startTime
+          // Check if the character is a comma (only pause for commas in author)
+          const isComma = currentChar === ',';
+          
+          if (isComma) {
+            // Get multiplier for consecutive punctuation (debounce effect)
+            const multiplier = getPunctuationDelayMultiplier(rawAuthor, displayedAuthor.length)
             
-            if (elapsed >= basicTypingDelay) {
-              // Time to update the text
-              setDisplayedAuthor(rawAuthor.slice(0, displayedAuthor.length + 1))
-              
-              // After rendering the character, check if it's a comma (only pause for commas in author)
-              const isComma = currentChar === ','
-              
-              if (isComma) {
-                // Get multiplier for consecutive punctuation (debounce effect)
-                const multiplier = getPunctuationDelayMultiplier(rawAuthor, displayedAuthor.length)
-                
-                // Calculate the punctuation pause duration
-                const punctuationDelay = PUNCTUATION_PAUSES[currentChar as keyof typeof PUNCTUATION_PAUSES] * multiplier
-                
-                // Set the pause state for visual indicator
-                setInPunctuationPause(true)
-                
-                // Add additional delay after the punctuation
-                setTimeout(() => {
-                  // Reset punctuation pause state when the pause is done
-                  setInPunctuationPause(false)
-                }, punctuationDelay)
-              }
-            } else {
-              // Not enough time has passed, continue the animation
-              animationFrameId = requestAnimationFrame(basicTypingStep)
-            }
+            // Calculate the punctuation pause duration
+            const punctuationDelay = PUNCTUATION_PAUSES[currentChar as keyof typeof PUNCTUATION_PAUSES] * multiplier
+            
+            // Set the pause state for visual indicator
+            setInPunctuationPause(true)
+            
+            // Create a timer that will prevent typing during the pause
+            const newTimer = setTimeout(() => {
+              setInPunctuationPause(false)
+              setPauseTimer(null)
+            }, punctuationDelay)
+            
+            setPauseTimer(newTimer)
+          } else {
+            // No punctuation pause needed, schedule the next character
+            timer = setTimeout(() => {
+              // This will trigger the effect to run again and type the next character
+              setDisplayedAuthor(prev => prev)
+            }, TYPING_SPEED)
           }
-          
-          animationFrameId = requestAnimationFrame(basicTypingStep)
         } else {
           // Author is fully typed, pause for reading
           timer = setTimeout(() => {
@@ -404,10 +403,10 @@ export default function TypewriterQuotes() {
         break
     }
 
-    // Clean up timer and animation frame on unmount or when dependencies change
+    // Clean up timers on unmount or when dependencies change
     return () => {
       if (timer) clearTimeout(timer)
-      if (animationFrameId) cancelAnimationFrame(animationFrameId)
+      if (pauseTimer) clearTimeout(pauseTimer)
     }
   }, [
     phase,
@@ -417,7 +416,8 @@ export default function TypewriterQuotes() {
     rawAuthor,
     quoteIndex,
     quotes,
-    inPunctuationPause
+    inPunctuationPause,
+    pauseTimer
   ])
 
   /**
