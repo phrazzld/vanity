@@ -10,14 +10,48 @@ import { useState, useEffect, FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { Quote, QuoteInput } from '@/types';
+import { useQuotesList } from '@/app/hooks';
+import { 
+  SearchBar, 
+  Pagination, 
+  QuoteListSkeleton, 
+  SearchLoadingIndicator,
+  QuotesList
+} from '@/app/components';
+import type { FilterConfig } from '@/app/components/SearchBar';
 
 export default function QuotesManagementPage() {
   const router = useRouter();
   
-  // State for quotes list and loading status
-  const [quotes, setQuotes] = useState<Quote[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Use the quotes list hook for search, filter, and pagination
+  const {
+    items: quotes,
+    search,
+    filters,
+    sort,
+    pagination,
+    isLoading,
+    error,
+    setSearch,
+    updateFilter,
+    setSort,
+    toggleSort,
+    setPage,
+    setPageSize,
+    refreshData
+  } = useQuotesList({
+    initialSort: { field: 'id', order: 'desc' },
+    fetchOnMount: true
+  });
+  
+  // Filter configuration for author filter (optional for future expansion)
+  const filterConfig: FilterConfig[] = [];
+  
+  // Handle search and filter changes
+  const handleSearch = (query: string, searchFilters: Record<string, string>) => {
+    setSearch(query);
+    // Apply any additional filters if needed in the future
+  };
   
   // State for selected quote and form
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
@@ -35,32 +69,6 @@ export default function QuotesManagementPage() {
   // Modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [quoteToDelete, setQuoteToDelete] = useState<Quote | null>(null);
-  
-  // Fetch quotes when component mounts
-  useEffect(() => {
-    fetchQuotes();
-  }, []);
-  
-  const fetchQuotes = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      const response = await fetch('/api/quotes');
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch quotes: ${response.status} ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      setQuotes(data);
-    } catch (err) {
-      console.error('Error fetching quotes:', err);
-      setError('Failed to load quotes. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
   
   const handleSelectQuote = (quote: Quote) => {
     setSelectedQuote(quote);
@@ -134,7 +142,7 @@ export default function QuotesManagementPage() {
       setSuccessMessage(isCreating ? 'Quote created successfully!' : 'Quote updated successfully!');
       
       // Refresh quotes list
-      fetchQuotes();
+      refreshData();
       
       if (isCreating) {
         // Switch to edit mode for the new quote
@@ -177,7 +185,7 @@ export default function QuotesManagementPage() {
       }
       
       // Refresh quotes list
-      fetchQuotes();
+      refreshData();
       
       // Reset form if we were editing the deleted quote
       if (selectedQuote?.id === quoteToDelete.id) {
@@ -195,10 +203,7 @@ export default function QuotesManagementPage() {
     }
   };
   
-  const getPreviewText = (text: string, maxLength = 60) => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
-  };
+  
 
   return (
     <div className="space-y-6">
@@ -243,18 +248,37 @@ export default function QuotesManagementPage() {
                 <h2 className="text-lg font-medium text-gray-900 dark:text-white">All Quotes</h2>
                 {!isLoading && quotes.length > 0 && (
                   <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
-                    {quotes.length} {quotes.length === 1 ? 'quote' : 'quotes'}
+                    {pagination.totalItems} {pagination.totalItems === 1 ? 'quote' : 'quotes'}
                   </span>
                 )}
               </div>
+              
+              {/* Search Bar */}
+              <div className="mt-3">
+                <div className="flex items-center">
+                  <div className="flex-grow">
+                    <SearchBar
+                      onSearch={handleSearch}
+                      initialQuery={search}
+                      placeholder="Search by quote text or author..."
+                      filters={filterConfig}
+                      debounceMs={300}
+                      searchAsYouType={true}
+                    />
+                  </div>
+                  {isLoading && (
+                    <div className="ml-3">
+                      <SearchLoadingIndicator isLoading={isLoading} />
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
             
-            {isLoading ? (
-              <div className="py-12 flex justify-center">
-                <svg className="animate-spin h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
+            {/* Initial loading state (only for first load) */}
+            {isLoading && quotes.length === 0 ? (
+              <div className="transition-opacity duration-300">
+                <QuoteListSkeleton count={5} />
               </div>
             ) : error ? (
               <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-t border-b border-red-100 dark:border-red-800">
@@ -273,42 +297,60 @@ export default function QuotesManagementPage() {
                   </svg>
                 </div>
                 <p className="text-sm font-medium text-gray-900 dark:text-white">No quotes found</p>
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Start building your collection of inspirational quotes</p>
-                <button
-                  onClick={handleNewQuote}
-                  className="mt-4 inline-flex items-center px-3 py-1.5 text-sm text-blue-600 font-medium"
-                >
-                  <svg className="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                  Add your first quote
-                </button>
+                {search ? (
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Try adjusting your search criteria
+                  </p>
+                ) : (
+                  <>
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Start building your collection of inspirational quotes</p>
+                    <button
+                      onClick={handleNewQuote}
+                      className="mt-4 inline-flex items-center px-3 py-1.5 text-sm text-blue-600 font-medium"
+                    >
+                      <svg className="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      Add your first quote
+                    </button>
+                  </>
+                )}
               </div>
             ) : (
-              <ul className="item-list-body">
-                {quotes.map(quote => (
-                  <li 
-                    key={quote.id}
-                    className={`item-list-item ${selectedQuote?.id === quote.id ? 'item-list-item-selected' : ''}`}
-                    onClick={() => handleSelectQuote(quote)}
+              <>
+                {/* Inline loading state (for subsequent loads after initial data is fetched) */}
+                {isLoading && quotes.length > 0 ? (
+                  <div 
+                    className="transition-opacity duration-300"
+                    aria-live="polite"
+                    aria-busy="true"
                   >
-                    <div className="flex flex-col">
-                      <div className="flex items-start">
-                        <svg className="h-4 w-4 text-gray-400 mt-0.5 mr-1.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                            d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                        </svg>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white leading-5">
-                          &ldquo;{getPreviewText(quote.text)}&rdquo;
-                        </p>
-                      </div>
-                      <div className="mt-1 ml-5.5 text-xs text-gray-500 dark:text-gray-400">
-                        {quote.author ? `— ${quote.author}` : '— Anonymous'}
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                    <QuoteListSkeleton count={5} />
+                  </div>
+                ) : (
+                  <QuotesList
+                    quotes={quotes}
+                    sort={sort}
+                    onSortChange={toggleSort}
+                    searchQuery={search}
+                    onSelectQuote={handleSelectQuote}
+                    selectedQuote={selectedQuote}
+                  />
+                )}
+                
+                {/* Pagination */}
+                {!isLoading && quotes.length > 0 && (
+                  <Pagination
+                    currentPage={pagination.currentPage}
+                    totalPages={pagination.totalPages}
+                    totalItems={pagination.totalItems}
+                    pageSize={pagination.pageSize}
+                    onPageChange={setPage}
+                    onPageSizeChange={setPageSize}
+                    showPageSizeSelector={false}
+                  />
+                )}
+              </>
             )}
           </div>
         </div>
