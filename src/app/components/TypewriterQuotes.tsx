@@ -5,7 +5,7 @@
  * @module components/TypewriterQuotes
  */
 
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import type { Quote } from '@/types'
 
 /**
@@ -59,7 +59,6 @@ const PUNCTUATION_PAUSES = {
   ',': 300,  // Comma
   ';': 450,  // Semicolon
   ':': 450,  // Colon
-  // Add more punctuation marks if needed
 }
 
 /**
@@ -94,6 +93,28 @@ export default function TypewriterQuotes() {
   const [authorHeight, setAuthorHeight] = useState(0)
   const quoteSizerRef = useRef<HTMLDivElement>(null)
   const authorSizerRef = useRef<HTMLDivElement>(null)
+  
+  // Track whether we're currently in a punctuation pause
+  const [inPunctuationPause, setInPunctuationPause] = useState(false)
+  
+  // Track the typing interval
+  const typingIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  
+  // Track active timeouts
+  const timeoutsRef = useRef<NodeJS.Timeout[]>([])
+  
+  // Helper function to safely set a timeout and track it for cleanup
+  const safeSetTimeout = useCallback((callback: () => void, delay: number) => {
+    const timeoutId = setTimeout(callback, delay)
+    timeoutsRef.current.push(timeoutId)
+    return timeoutId
+  }, [])
+  
+  // Helper function to safely clear all tracked timeouts
+  const clearAllTimeouts = useCallback(() => {
+    timeoutsRef.current.forEach(clearTimeout)
+    timeoutsRef.current = []
+  }, [])
 
   /**
    * Fetch quotes from the API when the component mounts
@@ -172,21 +193,46 @@ export default function TypewriterQuotes() {
    */
   useEffect(() => {
     if (rawQuote && quoteSizerRef.current) {
-      quoteSizerRef.current.textContent = rawQuote;
-      setQuoteHeight(quoteSizerRef.current.clientHeight);
+      quoteSizerRef.current.textContent = rawQuote
+      setQuoteHeight(quoteSizerRef.current.clientHeight)
     }
     
     if (rawAuthor && authorSizerRef.current) {
-      authorSizerRef.current.textContent = rawAuthor;
-      setAuthorHeight(authorSizerRef.current.clientHeight);
+      authorSizerRef.current.textContent = rawAuthor
+      setAuthorHeight(authorSizerRef.current.clientHeight)
     }
-  }, [rawQuote, rawAuthor]);
+  }, [rawQuote, rawAuthor])
 
-  // Track whether we're currently in a punctuation pause
-  const [inPunctuationPause, setInPunctuationPause] = useState(false)
-  
-  // Track pause timer for synchronization
-  const [pauseTimer, setPauseTimer] = useState<NodeJS.Timeout | null>(null)
+  /**
+   * Helper function to optimize consecutive punctuation
+   * 
+   * This creates a debounce effect for consecutive punctuation marks,
+   * reducing the pause time when multiple punctuation marks appear together.
+   * For example, in text like "Wait...what?" the three periods would have
+   * a reduced combined delay rather than three full delays.
+   * 
+   * @param text The full text being analyzed
+   * @param currentIndex The current position in the text
+   * @returns The adjusted delay multiplier (0-1)
+   */
+  const getPunctuationDelayMultiplier = useCallback((text: string, currentIndex: number): number => {
+    if (currentIndex === 0) return 1
+    
+    // Check if previous character was also punctuation
+    const prevChar = text[currentIndex - 1]
+    const currentChar = text[currentIndex]
+    
+    const isPrevCharPunctuation = Object.keys(PUNCTUATION_PAUSES).includes(prevChar)
+    const isCurrentCharPunctuation = Object.keys(PUNCTUATION_PAUSES).includes(currentChar)
+    
+    // If both current and previous characters are punctuation, reduce the delay
+    if (isPrevCharPunctuation && isCurrentCharPunctuation) {
+      // Use 0.3 (30%) of the normal pause for consecutive punctuation
+      return 0.3
+    }
+    
+    return 1
+  }, [])
 
   /**
    * Cursor blinking effect
@@ -207,192 +253,197 @@ export default function TypewriterQuotes() {
     
     // Clean up interval on unmount
     return () => clearInterval(blink)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inPunctuationPause])
 
   /**
-   * Helper function to optimize consecutive punctuation
-   * 
-   * This creates a debounce effect for consecutive punctuation marks,
-   * reducing the pause time when multiple punctuation marks appear together.
-   * For example, in text like "Wait...what?" the three periods would have
-   * a reduced combined delay rather than three full delays.
-   * 
-   * @param text The full text being analyzed
-   * @param currentIndex The current position in the text
-   * @returns The adjusted delay multiplier (0-1)
+   * Types a single character in the quote text,
+   * and applies appropriate punctuation pauses
    */
-  const getPunctuationDelayMultiplier = (text: string, currentIndex: number): number => {
-    if (currentIndex === 0) return 1;
-    
-    // Check if previous character was also punctuation
-    const prevChar = text[currentIndex - 1];
-    const currentChar = text[currentIndex];
-    
-    const isPrevCharPunctuation = Object.keys(PUNCTUATION_PAUSES).includes(prevChar);
-    const isCurrentCharPunctuation = Object.keys(PUNCTUATION_PAUSES).includes(currentChar);
-    
-    // If both current and previous characters are punctuation, reduce the delay
-    if (isPrevCharPunctuation && isCurrentCharPunctuation) {
-      // Use 0.3 (30%) of the normal pause for consecutive punctuation
-      return 0.3;
+  const typeNextQuoteCharacter = useCallback(() => {
+    if (displayedQuote.length < rawQuote.length) {
+      // Add the next character
+      const nextChar = rawQuote[displayedQuote.length]
+      setDisplayedQuote(prev => prev + nextChar)
+      
+      // Check if we should pause after this character
+      const isPunctuation = Object.keys(PUNCTUATION_PAUSES).includes(nextChar)
+      const shouldPauseAfter = isPunctuation && (
+        nextChar === '.' || nextChar === '!' || nextChar === '?' || 
+        nextChar === ';' || nextChar === ':'
+      )
+      
+      // If this is a punctuation mark we should pause after
+      if (shouldPauseAfter) {
+        // Get multiplier for consecutive punctuation
+        const multiplier = getPunctuationDelayMultiplier(rawQuote, displayedQuote.length)
+        
+        // Calculate punctuation pause duration
+        const punctuationDelay = PUNCTUATION_PAUSES[nextChar as keyof typeof PUNCTUATION_PAUSES] * multiplier
+        
+        // Set the pause indicator
+        setInPunctuationPause(true)
+        
+        // Pause typing during the punctuation pause
+        if (typingIntervalRef.current) {
+          clearInterval(typingIntervalRef.current)
+          typingIntervalRef.current = null
+        }
+        
+        // Schedule resuming typing after the pause
+        safeSetTimeout(() => {
+          setInPunctuationPause(false)
+          typingIntervalRef.current = setInterval(typeNextQuoteCharacter, TYPING_SPEED)
+        }, punctuationDelay)
+      }
+    } else {
+      // We've finished typing the quote
+      if (typingIntervalRef.current) {
+        clearInterval(typingIntervalRef.current)
+        typingIntervalRef.current = null
+      }
+      
+      // Move to the next phase after a short pause
+      safeSetTimeout(() => {
+        setPhase('pauseAfterQuote')
+      }, PAUSE_AFTER_QUOTE)
     }
-    
-    return 1;
-  };
+  // We intentionally exclude setDisplayedQuote, rawQuote.length, and displayedQuote.length
+  // from the dependency array because we want to reference their latest values each call
+  }, [displayedQuote, rawQuote, getPunctuationDelayMultiplier, safeSetTimeout])
 
   /**
-   * Main typewriter animation effect
+   * Types a single character in the author text,
+   * and applies appropriate punctuation pauses
+   */
+  const typeNextAuthorCharacter = useCallback(() => {
+    if (displayedAuthor.length < rawAuthor.length) {
+      // Add the next character
+      const nextChar = rawAuthor[displayedAuthor.length]
+      setDisplayedAuthor(prev => prev + nextChar)
+      
+      // For author text, we only pause after commas
+      const isComma = nextChar === ','
+      
+      // If this is a comma, add a pause
+      if (isComma) {
+        // Get multiplier for consecutive punctuation
+        const multiplier = getPunctuationDelayMultiplier(rawAuthor, displayedAuthor.length)
+        
+        // Calculate punctuation pause duration 
+        const commaDelay = PUNCTUATION_PAUSES[nextChar as keyof typeof PUNCTUATION_PAUSES] * multiplier
+        
+        // Set the pause indicator
+        setInPunctuationPause(true)
+        
+        // Pause typing during the punctuation pause
+        if (typingIntervalRef.current) {
+          clearInterval(typingIntervalRef.current)
+          typingIntervalRef.current = null
+        }
+        
+        // Schedule resuming typing after the pause
+        safeSetTimeout(() => {
+          setInPunctuationPause(false)
+          typingIntervalRef.current = setInterval(typeNextAuthorCharacter, TYPING_SPEED)
+        }, commaDelay)
+      }
+    } else {
+      // We've finished typing the author
+      if (typingIntervalRef.current) {
+        clearInterval(typingIntervalRef.current)
+        typingIntervalRef.current = null
+      }
+      
+      // Move to the next phase after a short pause
+      safeSetTimeout(() => {
+        setPhase('pauseAfterAuthor')
+      }, PAUSE_AFTER_AUTHOR)
+    }
+  // We intentionally exclude setDisplayedAuthor, rawAuthor.length, and displayedAuthor.length
+  // from the dependency array because we want to reference their latest values each call
+  }, [displayedAuthor, rawAuthor, getPunctuationDelayMultiplier, safeSetTimeout])
+
+  /**
+   * Main animation effect
    * 
-   * Handles the core logic for the typewriter animation:
-   * - Types characters one by one for quote and author
-   * - Manages pauses between phases
-   * - Erases text before moving to next quote
-   * - Selects a new random quote when cycle completes
-   * - Optimizes pauses for punctuation marks
-   * 
-   * The effect runs whenever any of its dependencies change,
-   * primarily when the phase or displayed text changes.
+   * Handles the core logic for the typewriter animation based on the current phase.
+   * This effect manages phase transitions and typewriter animation.
    */
   useEffect(() => {
     // Skip if still loading or no quotes available
     if (phase === 'loading' || quotes.length === 0) {
-      return // Don't run typewriter logic until quotes are loaded
+      return
     }
-
-    let timer: NodeJS.Timeout
-
+    
+    // Clean up existing intervals and timers when phase changes
+    if (typingIntervalRef.current) {
+      clearInterval(typingIntervalRef.current)
+      typingIntervalRef.current = null
+    }
+    
+    clearAllTimeouts()
+    
+    // Phase-specific logic
     switch (phase) {
       case 'typingQuote':
-        if (displayedQuote.length < rawQuote.length) {
-          // If we're in a pause, don't add any new characters
-          if (pauseTimer) {
-            break;
-          }
-          
-          // Get the current character that's being typed
-          const currentChar = rawQuote[displayedQuote.length]
-          
-          // Add the character immediately
-          setDisplayedQuote(rawQuote.slice(0, displayedQuote.length + 1))
-          
-          // Check if the character is a punctuation mark that needs a pause
-          const isPunctuation = Object.keys(PUNCTUATION_PAUSES).includes(currentChar)
-          const shouldPause = isPunctuation && (currentChar === '.' || currentChar === '!' || 
-                               currentChar === '?' || currentChar === ';' || 
-                               currentChar === ':');
-          
-          if (shouldPause) {
-            // Get multiplier for consecutive punctuation (debounce effect)
-            const multiplier = getPunctuationDelayMultiplier(rawQuote, displayedQuote.length)
-            
-            // Calculate the punctuation pause duration
-            const punctuationDelay = PUNCTUATION_PAUSES[currentChar as keyof typeof PUNCTUATION_PAUSES] * multiplier
-            
-            // Set the pause state for visual indicator
-            setInPunctuationPause(true)
-            
-            // Create a timer that will prevent typing during the pause
-            const newTimer = setTimeout(() => {
-              setInPunctuationPause(false)
-              setPauseTimer(null)
-            }, punctuationDelay)
-            
-            setPauseTimer(newTimer)
-          } else {
-            // No punctuation pause needed, schedule the next character
-            timer = setTimeout(() => {
-              // This will trigger the effect to run again and type the next character
-              setDisplayedQuote(prev => prev)
-            }, TYPING_SPEED)
-          }
-        } else {
-          // Quote is fully typed, pause before showing the author
-          timer = setTimeout(() => {
+        if (displayedQuote.length >= rawQuote.length) {
+          // Already fully typed, move to next phase
+          safeSetTimeout(() => {
             setPhase('pauseAfterQuote')
           }, PAUSE_AFTER_QUOTE)
+        } else {
+          // Start typing the quote character by character
+          typingIntervalRef.current = setInterval(typeNextQuoteCharacter, TYPING_SPEED)
         }
         break
-
+        
       case 'pauseAfterQuote':
-        // Brief pause after quote is displayed, then begin typing author
-        timer = setTimeout(() => {
+        // Brief pause after quote is fully typed before showing author
+        safeSetTimeout(() => {
           setPhase('typingAuthor')
         }, 300)
         break
-
+        
       case 'typingAuthor':
-        if (displayedAuthor.length < rawAuthor.length) {
-          // If we're in a pause, don't add any new characters
-          if (pauseTimer) {
-            break;
-          }
-          
-          // Get the current character that's being typed
-          const currentChar = rawAuthor[displayedAuthor.length]
-          
-          // Add the character immediately
-          setDisplayedAuthor(rawAuthor.slice(0, displayedAuthor.length + 1))
-          
-          // Check if the character is a comma (only pause for commas in author)
-          const isComma = currentChar === ',';
-          
-          if (isComma) {
-            // Get multiplier for consecutive punctuation (debounce effect)
-            const multiplier = getPunctuationDelayMultiplier(rawAuthor, displayedAuthor.length)
-            
-            // Calculate the punctuation pause duration
-            const punctuationDelay = PUNCTUATION_PAUSES[currentChar as keyof typeof PUNCTUATION_PAUSES] * multiplier
-            
-            // Set the pause state for visual indicator
-            setInPunctuationPause(true)
-            
-            // Create a timer that will prevent typing during the pause
-            const newTimer = setTimeout(() => {
-              setInPunctuationPause(false)
-              setPauseTimer(null)
-            }, punctuationDelay)
-            
-            setPauseTimer(newTimer)
-          } else {
-            // No punctuation pause needed, schedule the next character
-            timer = setTimeout(() => {
-              // This will trigger the effect to run again and type the next character
-              setDisplayedAuthor(prev => prev)
-            }, TYPING_SPEED)
-          }
-        } else {
-          // Author is fully typed, pause for reading
-          timer = setTimeout(() => {
+        if (displayedAuthor.length >= rawAuthor.length) {
+          // Already fully typed, move to next phase
+          safeSetTimeout(() => {
             setPhase('pauseAfterAuthor')
           }, PAUSE_AFTER_AUTHOR)
+        } else {
+          // Start typing the author character by character
+          typingIntervalRef.current = setInterval(typeNextAuthorCharacter, TYPING_SPEED)
         }
         break
-
+        
       case 'pauseAfterAuthor':
-        // Longer pause after author is displayed, then begin erasing
-        timer = setTimeout(() => {
+        // Longer pause after author is fully typed for reading time
+        safeSetTimeout(() => {
           setPhase('erasingAuthor')
         }, 500)
         break
-
+        
       case 'erasingAuthor':
         if (displayedAuthor.length > 0) {
-          // Erase author one character at a time from end
-          timer = setTimeout(() => {
-            setDisplayedAuthor(displayedAuthor.slice(0, -1))
+          // Erase author one character at a time from the end
+          safeSetTimeout(() => {
+            setDisplayedAuthor(prev => prev.slice(0, -1))
+            // Continue in the same phase
+            setPhase('erasingAuthor')
           }, ERASE_SPEED)
         } else {
-          // Author is fully erased, begin erasing the quote
+          // Author is fully erased, start erasing the quote
           setPhase('erasingQuote')
         }
         break
-
+        
       case 'erasingQuote':
         if (displayedQuote.length > 0) {
-          // Erase quote one character at a time from end
-          timer = setTimeout(() => {
-            setDisplayedQuote(displayedQuote.slice(0, -1))
+          // Erase quote one character at a time from the end
+          safeSetTimeout(() => {
+            setDisplayedQuote(prev => prev.slice(0, -1))
+            // Continue in the same phase
+            setPhase('erasingQuote')
           }, ERASE_SPEED)
         } else {
           // Quote is fully erased, select a new random quote and start over
@@ -402,22 +453,26 @@ export default function TypewriterQuotes() {
         }
         break
     }
-
-    // Clean up timers on unmount or when dependencies change
+    
+    // Cleanup function to clear any timers when component unmounts or phase changes
     return () => {
-      if (timer) clearTimeout(timer)
-      if (pauseTimer) clearTimeout(pauseTimer)
+      if (typingIntervalRef.current) {
+        clearInterval(typingIntervalRef.current)
+        typingIntervalRef.current = null
+      }
+      clearAllTimeouts()
     }
   }, [
-    phase,
+    phase, 
+    quotes, 
     displayedQuote,
     displayedAuthor,
-    rawQuote,
+    rawQuote, 
     rawAuthor,
-    quoteIndex,
-    quotes,
-    inPunctuationPause,
-    pauseTimer
+    typeNextQuoteCharacter,
+    typeNextAuthorCharacter,
+    clearAllTimeouts,
+    safeSetTimeout
   ])
 
   /**
