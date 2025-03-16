@@ -53,12 +53,12 @@ const PUNCTUATION_BLINK_INTERVAL = 300
  * to create a more natural reading rhythm that mimics human speech patterns.
  */
 const PUNCTUATION_PAUSES = {
-  '.': 600,  // Full stop/period
+  '.': 500,  // Full stop/period
   '!': 600,  // Exclamation mark
   '?': 600,  // Question mark
   ',': 300,  // Comma
-  ';': 450,  // Semicolon
-  ':': 450,  // Colon
+  ';': 400,  // Semicolon
+  ':': 400,  // Colon
 }
 
 /**
@@ -287,10 +287,8 @@ export default function TypewriterQuotes() {
       
       // Check if we should pause after this character
       const isPunctuation = Object.keys(PUNCTUATION_PAUSES).includes(nextChar)
-      const shouldPauseAfter = isPunctuation && (
-        nextChar === '.' || nextChar === '!' || nextChar === '?' || 
-        nextChar === ';' || nextChar === ':'
-      )
+      // For quote text, pause after all punctuation marks
+      const shouldPauseAfter = isPunctuation
       
       // If this is a punctuation mark we should pause after
       if (shouldPauseAfter) {
