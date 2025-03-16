@@ -258,12 +258,32 @@ export default function TypewriterQuotes() {
   /**
    * Types a single character in the quote text,
    * and applies appropriate punctuation pauses
+   * 
+   * This function always references the latest state values 
+   * directly rather than through dependencies.
    */
   const typeNextQuoteCharacter = useCallback(() => {
-    if (displayedQuote.length < rawQuote.length) {
+    // Use functional updates to always work with the latest state
+    setDisplayedQuote(currentDisplayedQuote => {
+      // Check if we're done
+      if (currentDisplayedQuote.length >= rawQuote.length) {
+        // We've finished typing the quote
+        if (typingIntervalRef.current) {
+          clearInterval(typingIntervalRef.current)
+          typingIntervalRef.current = null
+        }
+        
+        // Move to the next phase after a short pause
+        safeSetTimeout(() => {
+          setPhase('pauseAfterQuote')
+        }, PAUSE_AFTER_QUOTE)
+        
+        return currentDisplayedQuote; // No change needed
+      }
+      
       // Add the next character
-      const nextChar = rawQuote[displayedQuote.length]
-      setDisplayedQuote(prev => prev + nextChar)
+      const nextChar = rawQuote[currentDisplayedQuote.length]
+      const newDisplayedQuote = currentDisplayedQuote + nextChar
       
       // Check if we should pause after this character
       const isPunctuation = Object.keys(PUNCTUATION_PAUSES).includes(nextChar)
@@ -275,7 +295,7 @@ export default function TypewriterQuotes() {
       // If this is a punctuation mark we should pause after
       if (shouldPauseAfter) {
         // Get multiplier for consecutive punctuation
-        const multiplier = getPunctuationDelayMultiplier(rawQuote, displayedQuote.length)
+        const multiplier = getPunctuationDelayMultiplier(rawQuote, currentDisplayedQuote.length)
         
         // Calculate punctuation pause duration
         const punctuationDelay = PUNCTUATION_PAUSES[nextChar as keyof typeof PUNCTUATION_PAUSES] * multiplier
@@ -295,31 +315,41 @@ export default function TypewriterQuotes() {
           typingIntervalRef.current = setInterval(typeNextQuoteCharacter, TYPING_SPEED)
         }, punctuationDelay)
       }
-    } else {
-      // We've finished typing the quote
-      if (typingIntervalRef.current) {
-        clearInterval(typingIntervalRef.current)
-        typingIntervalRef.current = null
-      }
       
-      // Move to the next phase after a short pause
-      safeSetTimeout(() => {
-        setPhase('pauseAfterQuote')
-      }, PAUSE_AFTER_QUOTE)
-    }
-  // We intentionally exclude setDisplayedQuote, rawQuote.length, and displayedQuote.length
-  // from the dependency array because we want to reference their latest values each call
-  }, [displayedQuote, rawQuote, getPunctuationDelayMultiplier, safeSetTimeout])
+      return newDisplayedQuote;
+    });
+  // Only depend on the immutable helper functions
+  }, [getPunctuationDelayMultiplier, safeSetTimeout, rawQuote])
 
   /**
    * Types a single character in the author text,
    * and applies appropriate punctuation pauses
+   * 
+   * This function always references the latest state values 
+   * directly rather than through dependencies.
    */
   const typeNextAuthorCharacter = useCallback(() => {
-    if (displayedAuthor.length < rawAuthor.length) {
+    // Use functional updates to always work with the latest state
+    setDisplayedAuthor(currentDisplayedAuthor => {
+      // Check if we're done
+      if (currentDisplayedAuthor.length >= rawAuthor.length) {
+        // We've finished typing the author
+        if (typingIntervalRef.current) {
+          clearInterval(typingIntervalRef.current)
+          typingIntervalRef.current = null
+        }
+        
+        // Move to the next phase after a short pause
+        safeSetTimeout(() => {
+          setPhase('pauseAfterAuthor')
+        }, PAUSE_AFTER_AUTHOR)
+        
+        return currentDisplayedAuthor; // No change needed
+      }
+      
       // Add the next character
-      const nextChar = rawAuthor[displayedAuthor.length]
-      setDisplayedAuthor(prev => prev + nextChar)
+      const nextChar = rawAuthor[currentDisplayedAuthor.length]
+      const newDisplayedAuthor = currentDisplayedAuthor + nextChar
       
       // For author text, we only pause after commas
       const isComma = nextChar === ','
@@ -327,7 +357,7 @@ export default function TypewriterQuotes() {
       // If this is a comma, add a pause
       if (isComma) {
         // Get multiplier for consecutive punctuation
-        const multiplier = getPunctuationDelayMultiplier(rawAuthor, displayedAuthor.length)
+        const multiplier = getPunctuationDelayMultiplier(rawAuthor, currentDisplayedAuthor.length)
         
         // Calculate punctuation pause duration 
         const commaDelay = PUNCTUATION_PAUSES[nextChar as keyof typeof PUNCTUATION_PAUSES] * multiplier
@@ -347,27 +377,19 @@ export default function TypewriterQuotes() {
           typingIntervalRef.current = setInterval(typeNextAuthorCharacter, TYPING_SPEED)
         }, commaDelay)
       }
-    } else {
-      // We've finished typing the author
-      if (typingIntervalRef.current) {
-        clearInterval(typingIntervalRef.current)
-        typingIntervalRef.current = null
-      }
       
-      // Move to the next phase after a short pause
-      safeSetTimeout(() => {
-        setPhase('pauseAfterAuthor')
-      }, PAUSE_AFTER_AUTHOR)
-    }
-  // We intentionally exclude setDisplayedAuthor, rawAuthor.length, and displayedAuthor.length
-  // from the dependency array because we want to reference their latest values each call
-  }, [displayedAuthor, rawAuthor, getPunctuationDelayMultiplier, safeSetTimeout])
+      return newDisplayedAuthor;
+    });
+  // Only depend on the immutable helper functions
+  }, [getPunctuationDelayMultiplier, safeSetTimeout, rawAuthor])
 
   /**
    * Main animation effect
    * 
    * Handles the core logic for the typewriter animation based on the current phase.
    * This effect manages phase transitions and typewriter animation.
+   * 
+   * IMPORTANT: This effect only runs when the phase changes, not on every character update.
    */
   useEffect(() => {
     // Skip if still loading or no quotes available
@@ -386,13 +408,17 @@ export default function TypewriterQuotes() {
     // Phase-specific logic
     switch (phase) {
       case 'typingQuote':
-        if (displayedQuote.length >= rawQuote.length) {
+        // Reset displayed quote if needed
+        if (displayedQuote.length === 0) {
+          // Start typing the quote character by character
+          typingIntervalRef.current = setInterval(typeNextQuoteCharacter, TYPING_SPEED)
+        } else if (displayedQuote.length >= rawQuote.length) {
           // Already fully typed, move to next phase
           safeSetTimeout(() => {
             setPhase('pauseAfterQuote')
           }, PAUSE_AFTER_QUOTE)
         } else {
-          // Start typing the quote character by character
+          // Resume typing from current position
           typingIntervalRef.current = setInterval(typeNextQuoteCharacter, TYPING_SPEED)
         }
         break
@@ -405,13 +431,17 @@ export default function TypewriterQuotes() {
         break
         
       case 'typingAuthor':
-        if (displayedAuthor.length >= rawAuthor.length) {
+        // Reset displayed author if needed
+        if (displayedAuthor.length === 0) {
+          // Start typing the author character by character
+          typingIntervalRef.current = setInterval(typeNextAuthorCharacter, TYPING_SPEED)
+        } else if (displayedAuthor.length >= rawAuthor.length) {
           // Already fully typed, move to next phase
           safeSetTimeout(() => {
             setPhase('pauseAfterAuthor')
           }, PAUSE_AFTER_AUTHOR)
         } else {
-          // Start typing the author character by character
+          // Resume typing from current position
           typingIntervalRef.current = setInterval(typeNextAuthorCharacter, TYPING_SPEED)
         }
         break
@@ -424,33 +454,36 @@ export default function TypewriterQuotes() {
         break
         
       case 'erasingAuthor':
-        if (displayedAuthor.length > 0) {
-          // Erase author one character at a time from the end
-          safeSetTimeout(() => {
+        // Handle erasing author with recursive timeouts
+        const eraseAuthor = () => {
+          if (displayedAuthor.length > 0) {
             setDisplayedAuthor(prev => prev.slice(0, -1))
-            // Continue in the same phase
-            setPhase('erasingAuthor')
-          }, ERASE_SPEED)
-        } else {
-          // Author is fully erased, start erasing the quote
-          setPhase('erasingQuote')
+            safeSetTimeout(eraseAuthor, ERASE_SPEED)
+          } else {
+            setPhase('erasingQuote')
+          }
         }
+        
+        // Start the erasing process
+        safeSetTimeout(eraseAuthor, ERASE_SPEED)
         break
         
       case 'erasingQuote':
-        if (displayedQuote.length > 0) {
-          // Erase quote one character at a time from the end
-          safeSetTimeout(() => {
+        // Handle erasing quote with recursive timeouts
+        const eraseQuote = () => {
+          if (displayedQuote.length > 0) {
             setDisplayedQuote(prev => prev.slice(0, -1))
-            // Continue in the same phase
-            setPhase('erasingQuote')
-          }, ERASE_SPEED)
-        } else {
-          // Quote is fully erased, select a new random quote and start over
-          const nextIndex = Math.floor(Math.random() * quotes.length)
-          setQuoteIndex(nextIndex)
-          setPhase('typingQuote')
+            safeSetTimeout(eraseQuote, ERASE_SPEED)
+          } else {
+            // Quote is fully erased, select a new random quote and start over
+            const nextIndex = Math.floor(Math.random() * quotes.length)
+            setQuoteIndex(nextIndex)
+            setPhase('typingQuote')
+          }
         }
+        
+        // Start the erasing process
+        safeSetTimeout(eraseQuote, ERASE_SPEED)
         break
     }
     
@@ -465,8 +498,8 @@ export default function TypewriterQuotes() {
   }, [
     phase, 
     quotes, 
-    displayedQuote,
-    displayedAuthor,
+    // Removed displayedQuote and displayedAuthor from dependencies
+    // to prevent re-running this effect on every character update
     rawQuote, 
     rawAuthor,
     typeNextQuoteCharacter,

@@ -1,7 +1,8 @@
 # BACKLOG
 
-- modify the typewriter effect to dynamically pause on punctuation
+- ✅ modify the typewriter effect to dynamically pause on punctuation
    * more for periods than commas
+   * completed: fixed React effect dependencies to prevent re-rendering on every character
 - totally redesign readings gallery
 - totally redesign travel page
 - migrate travel location data to neon database
