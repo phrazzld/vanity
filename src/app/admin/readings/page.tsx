@@ -344,7 +344,9 @@ export default function ReadingsManagementPage() {
                       {reading.coverImageSrc ? (
                         <div className="h-14 w-10 flex-shrink-0 rounded overflow-hidden border border-gray-200">
                           <img 
-                            src={reading.coverImageSrc || '/images/projects/book-02.webp'} 
+                            src={reading.coverImageSrc && reading.coverImageSrc.startsWith('/') 
+                              ? reading.coverImageSrc 
+                              : `${process.env.NEXT_PUBLIC_SPACES_BASE_URL}${reading.coverImageSrc}` || '/images/projects/book-02.webp'} 
                             alt={`Cover for ${reading.title}`}
                             className="h-full w-full object-cover"
                             onError={(e) => { e.currentTarget.src = '/images/projects/book-02.webp' }}
@@ -727,7 +729,9 @@ export default function ReadingsManagementPage() {
                         {readingToDelete?.coverImageSrc ? (
                           <div className="h-14 w-10 flex-shrink-0 rounded overflow-hidden border border-gray-200 dark:border-gray-700">
                             <img 
-                              src={readingToDelete.coverImageSrc || '/images/projects/book-02.webp'} 
+                              src={readingToDelete.coverImageSrc && readingToDelete.coverImageSrc.startsWith('/') 
+                                ? readingToDelete.coverImageSrc 
+                                : `${process.env.NEXT_PUBLIC_SPACES_BASE_URL}${readingToDelete.coverImageSrc}` || '/images/projects/book-02.webp'} 
                               alt={`Cover for ${readingToDelete.title}`}
                               className="h-full w-full object-cover"
                               onError={(e) => { e.currentTarget.src = '/images/projects/book-02.webp' }}
