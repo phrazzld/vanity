@@ -5,7 +5,7 @@
  * @module components/TypewriterQuotes
  */
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import type { Quote } from '@/types'
 
 /**
@@ -44,6 +44,23 @@ const PAUSE_AFTER_QUOTE = 1000
 const PAUSE_AFTER_AUTHOR = 2000
 // How fast the cursor blinks
 const CURSOR_BLINK_INTERVAL = 500
+// How fast the cursor blinks during punctuation pauses (faster to indicate activity)
+const PUNCTUATION_BLINK_INTERVAL = 300
+
+/**
+ * Punctuation pause durations (in milliseconds)
+ * These values define how long to pause after each type of punctuation mark
+ * to create a more natural reading rhythm that mimics human speech patterns.
+ */
+const PUNCTUATION_PAUSES = {
+  '.': 600,  // Full stop/period
+  '!': 600,  // Exclamation mark
+  '?': 600,  // Question mark
+  ',': 300,  // Comma
+  ';': 450,  // Semicolon
+  ':': 450,  // Colon
+  // Add more punctuation marks if needed
+}
 
 /**
  * TypewriterQuotes component
@@ -71,6 +88,12 @@ export default function TypewriterQuotes() {
   const [displayedAuthor, setDisplayedAuthor] = useState('')
   // Controls the blinking cursor appearance
   const [cursorVisible, setCursorVisible] = useState(true)
+  
+  // For dynamic text container sizing
+  const [quoteHeight, setQuoteHeight] = useState(0)
+  const [authorHeight, setAuthorHeight] = useState(0)
+  const quoteSizerRef = useRef<HTMLDivElement>(null)
+  const authorSizerRef = useRef<HTMLDivElement>(null)
 
   /**
    * Fetch quotes from the API when the component mounts
@@ -142,20 +165,78 @@ export default function TypewriterQuotes() {
     : ''
 
   /**
+   * Update container heights when quote changes
+   * 
+   * This effect calculates the proper height of the full text
+   * and updates state to prevent layout shifts during typing
+   */
+  useEffect(() => {
+    if (rawQuote && quoteSizerRef.current) {
+      quoteSizerRef.current.textContent = rawQuote;
+      setQuoteHeight(quoteSizerRef.current.clientHeight);
+    }
+    
+    if (rawAuthor && authorSizerRef.current) {
+      authorSizerRef.current.textContent = rawAuthor;
+      setAuthorHeight(authorSizerRef.current.clientHeight);
+    }
+  }, [rawQuote, rawAuthor]);
+
+  // Track whether we're currently in a punctuation pause
+  const [inPunctuationPause, setInPunctuationPause] = useState(false)
+
+  /**
    * Cursor blinking effect
    * 
    * Sets up an interval to toggle cursor visibility state
-   * for the blinking text cursor animation
+   * for the blinking text cursor animation.
+   * Blinks faster during punctuation pauses to indicate activity.
    */
   useEffect(() => {
-    // Setup blinking interval
+    // Setup blinking interval with appropriate speed
+    const blinkInterval = inPunctuationPause 
+      ? PUNCTUATION_BLINK_INTERVAL 
+      : CURSOR_BLINK_INTERVAL
+    
     const blink = setInterval(() => {
       setCursorVisible(v => !v)
-    }, CURSOR_BLINK_INTERVAL)
+    }, blinkInterval)
     
     // Clean up interval on unmount
     return () => clearInterval(blink)
-  }, [])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inPunctuationPause])
+
+  /**
+   * Helper function to optimize consecutive punctuation
+   * 
+   * This creates a debounce effect for consecutive punctuation marks,
+   * reducing the pause time when multiple punctuation marks appear together.
+   * For example, in text like "Wait...what?" the three periods would have
+   * a reduced combined delay rather than three full delays.
+   * 
+   * @param text The full text being analyzed
+   * @param currentIndex The current position in the text
+   * @returns The adjusted delay multiplier (0-1)
+   */
+  const getPunctuationDelayMultiplier = (text: string, currentIndex: number): number => {
+    if (currentIndex === 0) return 1;
+    
+    // Check if previous character was also punctuation
+    const prevChar = text[currentIndex - 1];
+    const currentChar = text[currentIndex];
+    
+    const isPrevCharPunctuation = Object.keys(PUNCTUATION_PAUSES).includes(prevChar);
+    const isCurrentCharPunctuation = Object.keys(PUNCTUATION_PAUSES).includes(currentChar);
+    
+    // If both current and previous characters are punctuation, reduce the delay
+    if (isPrevCharPunctuation && isCurrentCharPunctuation) {
+      // Use 0.3 (30%) of the normal pause for consecutive punctuation
+      return 0.3;
+    }
+    
+    return 1;
+  };
 
   /**
    * Main typewriter animation effect
@@ -165,6 +246,7 @@ export default function TypewriterQuotes() {
    * - Manages pauses between phases
    * - Erases text before moving to next quote
    * - Selects a new random quote when cycle completes
+   * - Optimizes pauses for punctuation marks
    * 
    * The effect runs whenever any of its dependencies change,
    * primarily when the phase or displayed text changes.
@@ -176,14 +258,57 @@ export default function TypewriterQuotes() {
     }
 
     let timer: NodeJS.Timeout
+    let animationFrameId: number
 
     switch (phase) {
       case 'typingQuote':
         if (displayedQuote.length < rawQuote.length) {
-          // Add one character at a time to the displayed quote
-          timer = setTimeout(() => {
-            setDisplayedQuote(rawQuote.slice(0, displayedQuote.length + 1))
-          }, TYPING_SPEED)
+          // Get the current character that's being typed
+          const currentChar = rawQuote[displayedQuote.length]
+          
+          // Check if the current character is a punctuation mark we should pause after
+          const isPunctuation = Object.keys(PUNCTUATION_PAUSES).includes(currentChar)
+          
+          // Get multiplier for consecutive punctuation (debounce effect)
+          const multiplier = isPunctuation 
+            ? getPunctuationDelayMultiplier(rawQuote, displayedQuote.length)
+            : 1
+          
+          // Determine the delay - use punctuation pause if appropriate
+          const punctuationDelay = isPunctuation && (currentChar === '.' || currentChar === '!' || 
+                                                    currentChar === '?' || currentChar === ',' || 
+                                                    currentChar === ';' || currentChar === ':')
+            ? PUNCTUATION_PAUSES[currentChar as keyof typeof PUNCTUATION_PAUSES] * multiplier
+            : 0
+          
+          const delay = TYPING_SPEED + punctuationDelay
+          
+          // If we're pausing for punctuation, set the state
+          if (isPunctuation && punctuationDelay > 0) {
+            setInPunctuationPause(true)
+          }
+          
+          // Use requestAnimationFrame for smoother animations
+          const startTime = performance.now()
+          
+          const animationStep = (timestamp: number) => {
+            const elapsed = timestamp - startTime
+            
+            if (elapsed >= delay) {
+              // Time to update the text
+              setDisplayedQuote(rawQuote.slice(0, displayedQuote.length + 1))
+              
+              // Reset punctuation pause state when we're done with this character
+              if (inPunctuationPause) {
+                setInPunctuationPause(false)
+              }
+            } else {
+              // Not enough time has passed, continue the animation
+              animationFrameId = requestAnimationFrame(animationStep)
+            }
+          }
+          
+          animationFrameId = requestAnimationFrame(animationStep)
         } else {
           // Quote is fully typed, pause before showing the author
           timer = setTimeout(() => {
@@ -201,10 +326,52 @@ export default function TypewriterQuotes() {
 
       case 'typingAuthor':
         if (displayedAuthor.length < rawAuthor.length) {
-          // Add one character at a time to the displayed author
-          timer = setTimeout(() => {
-            setDisplayedAuthor(rawAuthor.slice(0, displayedAuthor.length + 1))
-          }, TYPING_SPEED)
+          // Get the current character that's being typed
+          const currentChar = rawAuthor[displayedAuthor.length]
+          
+          // Check if the current character is a punctuation mark we should pause after
+          const isPunctuation = Object.keys(PUNCTUATION_PAUSES).includes(currentChar)
+          
+          // Get multiplier for consecutive punctuation (debounce effect)
+          const multiplier = isPunctuation 
+            ? getPunctuationDelayMultiplier(rawAuthor, displayedAuthor.length)
+            : 1
+          
+          // Determine the delay - use punctuation pause if appropriate
+          const punctuationDelay = isPunctuation && (currentChar === '.' || currentChar === '!' || 
+                                                    currentChar === '?' || currentChar === ',' || 
+                                                    currentChar === ';' || currentChar === ':')
+            ? PUNCTUATION_PAUSES[currentChar as keyof typeof PUNCTUATION_PAUSES] * multiplier
+            : 0
+          
+          const delay = TYPING_SPEED + punctuationDelay
+          
+          // If we're pausing for punctuation, set the state
+          if (isPunctuation && punctuationDelay > 0) {
+            setInPunctuationPause(true)
+          }
+          
+          // Use requestAnimationFrame for smoother animations
+          const startTime = performance.now()
+          
+          const animationStep = (timestamp: number) => {
+            const elapsed = timestamp - startTime
+            
+            if (elapsed >= delay) {
+              // Time to update the text
+              setDisplayedAuthor(rawAuthor.slice(0, displayedAuthor.length + 1))
+              
+              // Reset punctuation pause state when we're done with this character
+              if (inPunctuationPause) {
+                setInPunctuationPause(false)
+              }
+            } else {
+              // Not enough time has passed, continue the animation
+              animationFrameId = requestAnimationFrame(animationStep)
+            }
+          }
+          
+          animationFrameId = requestAnimationFrame(animationStep)
         } else {
           // Author is fully typed, pause for reading
           timer = setTimeout(() => {
@@ -247,9 +414,10 @@ export default function TypewriterQuotes() {
         break
     }
 
-    // Clean up timer on unmount or when dependencies change
+    // Clean up timer and animation frame on unmount or when dependencies change
     return () => {
       if (timer) clearTimeout(timer)
+      if (animationFrameId) cancelAnimationFrame(animationFrameId)
     }
   }, [
     phase,
@@ -258,7 +426,8 @@ export default function TypewriterQuotes() {
     rawQuote,
     rawAuthor,
     quoteIndex,
-    quotes
+    quotes,
+    inPunctuationPause
   ])
 
   /**
@@ -312,6 +481,22 @@ export default function TypewriterQuotes() {
         alignItems: 'flex-start',
       }}
     >
+      {/* Invisible div containing full quote text to calculate proper height */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          visibility: 'hidden',
+          width: '100%',
+          fontSize: '1.25rem',
+          fontWeight: 500,
+          lineHeight: 1.6,
+          whiteSpace: 'pre-wrap',
+          fontFamily: 'Inter, sans-serif',
+        }}
+        ref={quoteSizerRef}
+      />
+
       {/* Quote text element with blinking cursor when active */}
       <div
         data-testid="quote-text"
@@ -322,14 +507,37 @@ export default function TypewriterQuotes() {
           whiteSpace: 'pre-wrap', // Preserve actual line breaks in text
           marginBottom: '0.75rem',
           fontFamily: 'Inter, sans-serif',
+          minHeight: quoteHeight ? `${quoteHeight}px` : 'auto',
         }}
       >
         {displayedQuote}
         {/* Show cursor in quote element when quote is being manipulated */}
         {isQuoteActive && cursorVisible && (
-          <span style={{ borderRight: '2px solid #444', marginLeft: '2px' }} />
+          <span 
+            style={{ 
+              borderRight: inPunctuationPause ? '3px solid #444' : '2px solid #444', 
+              marginLeft: '2px',
+              transition: 'border-width 0.1s ease-in-out'
+            }} 
+          />
         )}
       </div>
+
+      {/* Invisible div containing full author text to calculate proper height */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          visibility: 'hidden',
+          width: '100%',
+          fontSize: '1rem',
+          fontWeight: 400,
+          lineHeight: 1.4,
+          whiteSpace: 'pre-wrap',
+          fontFamily: 'Inter, sans-serif',
+        }}
+        ref={authorSizerRef}
+      />
 
       {/* Author attribution with blinking cursor when active */}
       <div
@@ -340,12 +548,19 @@ export default function TypewriterQuotes() {
           lineHeight: 1.4,
           whiteSpace: 'pre-wrap',
           fontFamily: 'Inter, sans-serif',
+          minHeight: authorHeight ? `${authorHeight}px` : 'auto',
         }}
       >
         {displayedAuthor}
         {/* Show cursor in author element when author is being manipulated */}
         {!isQuoteActive && cursorVisible && (
-          <span style={{ borderRight: '2px solid #444', marginLeft: '2px' }} />
+          <span 
+            style={{ 
+              borderRight: inPunctuationPause ? '3px solid #444' : '2px solid #444', 
+              marginLeft: '2px',
+              transition: 'border-width 0.1s ease-in-out'
+            }} 
+          />
         )}
       </div>
     </div>

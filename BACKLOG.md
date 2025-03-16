@@ -8,3 +8,5 @@
 - migrate project data to neon database
 - migrate book covers and other static assets to vercel blob
 - add search to admin readings / quotes management pages
+- i'm getting logged out too much on the admin page
+- writing experience for adding quotes (and, to a lesser degree, readings) should be more dank
