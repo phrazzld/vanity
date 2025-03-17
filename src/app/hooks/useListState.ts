@@ -204,7 +204,7 @@ export function useListState<TItem, TFilter extends Record<string, any> = Record
         offset
       };
 
-      console.log('Fetching data with params:', params);
+      console.log(`Fetching data for page ${state.pagination.currentPage} with params:`, params);
 
       // Fetch data using the provided function
       const result = await fetchItems(params);
@@ -213,13 +213,9 @@ export function useListState<TItem, TFilter extends Record<string, any> = Record
       dispatch({ type: 'SET_ITEMS', payload: result.data });
       dispatch({ type: 'SET_TOTAL_ITEMS', payload: result.totalCount });
       
-      // If the paginated response includes page info, use it
-      if (result.currentPage && result.totalPages && result.pageSize) {
-        dispatch({
-          type: 'SET_PAGE',
-          payload: result.currentPage
-        });
-
+      // Only update page size if provided by API - don't override current page
+      // This prevents the pagination from resetting to page 1 when fetching next pages
+      if (result.pageSize && result.pageSize !== state.pagination.pageSize) {
         dispatch({
           type: 'SET_PAGE_SIZE',
           payload: result.pageSize

@@ -178,7 +178,10 @@ export async function getReadingsWithFilters(params: ReadingsQueryParams): Promi
     
     // Calculate pagination metadata
     const totalPages = Math.ceil(totalCount / limit);
+    // Calculate current page correctly based on the provided offset
     const currentPage = Math.floor(offset / limit) + 1;
+    
+    console.log(`Returning data for page ${currentPage} (offset: ${offset}, limit: ${limit})`);
     
     return {
       data: readings,
