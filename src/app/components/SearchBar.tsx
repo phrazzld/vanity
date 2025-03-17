@@ -44,12 +44,14 @@ export interface SearchBarProps {
   debounceMs?: number;
   /** Whether to search automatically as user types (false means search only on button click) */
   searchAsYouType?: boolean;
-  /** Text to display on the search button */
+  /** Text to display on the search button (if showButton is true) */
   searchButtonText?: string;
   /** Whether to update filters automatically or only on search button click */
   filtersUpdateOnChange?: boolean;
   /** Button variant: 'primary', 'secondary', or 'minimal' */
   buttonVariant?: 'primary' | 'secondary' | 'minimal';
+  /** Whether to show the search button */
+  showButton?: boolean;
 }
 
 export default function SearchBar({
@@ -154,7 +156,12 @@ export default function SearchBar({
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    triggerSearch(query, activeFilters);
+    
+    // Only trigger search on form submission if searchAsYouType is false
+    // When searchAsYouType is true, search is already triggered on input change
+    if (!searchAsYouType) {
+      triggerSearch(query, activeFilters);
+    }
   };
   
   // Handle clearing the search
@@ -190,7 +197,12 @@ export default function SearchBar({
   
   return (
     <div className={`w-full ${className}`}>
-      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2">
+      <form 
+        onSubmit={handleSubmit} 
+        className="flex flex-col sm:flex-row gap-2"
+        // When searchAsYouType is true, we suppress the Enter key to prevent accidental form submissions
+        onKeyDown={searchAsYouType ? (e) => e.key === 'Enter' && e.preventDefault() : undefined}
+      >
         {/* Search input with icon and clear button */}
         <div className="relative flex-grow">
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -268,21 +280,23 @@ export default function SearchBar({
           </div>
         ))}
         
-        {/* Search button - always show, but highlight when there are changes */}
-        <button
-          type="submit"
-          className={`${getButtonClasses()} ${hasUnsearchedChanges ? 'ring-2 ring-offset-2 ring-blue-500 dark:ring-offset-gray-900' : ''}`}
-          aria-label="Submit search"
-        >
-          {searchButtonText}
-          {hasUnsearchedChanges && (
-            <span className="flex h-2 w-2 ml-1.5">
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-400">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-300 opacity-75"></span>
+        {/* Search button - only show when searchAsYouType is false */}
+        {!searchAsYouType && (
+          <button
+            type="submit"
+            className={`${getButtonClasses()} ${hasUnsearchedChanges ? 'ring-2 ring-offset-2 ring-blue-500 dark:ring-offset-gray-900' : ''}`}
+            aria-label="Submit search"
+          >
+            {searchButtonText}
+            {hasUnsearchedChanges && (
+              <span className="flex h-2 w-2 ml-1.5">
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-400">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-300 opacity-75"></span>
+                </span>
               </span>
-            </span>
-          )}
-        </button>
+            )}
+          </button>
+        )}
       </form>
     </div>
   );

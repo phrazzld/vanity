@@ -336,7 +336,6 @@ export default function ReadingsManagementPage() {
                       debounceMs={300}
                       searchAsYouType={true} 
                       filtersUpdateOnChange={true}
-                      buttonVariant="minimal"
                     />
                   </div>
                   {isLoading && (
