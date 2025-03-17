@@ -32,7 +32,7 @@ A personal website built with Next.js, featuring a collection of readings, trave
 
 1. Clone the repository
    ```
-   git clone https://github.com/yourusername/vanity.git
+   git clone https://github.com/phrazzld/vanity.git
    cd vanity
    ```
 

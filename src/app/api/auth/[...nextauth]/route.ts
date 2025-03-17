@@ -115,8 +115,9 @@ export async function POST(request: NextRequest) {
     
     console.log('Authentication failed, redirecting to login page with error');
     // Redirect to login with error on failure
+    const errorMessage = result.message || 'CredentialsSignin';
     return NextResponse.redirect(
-      new URL('/admin/login?error=CredentialsSignin', request.url)
+      new URL(`/admin/login?error=${encodeURIComponent(errorMessage)}`, request.url)
     );
   } catch (error) {
     console.error('Login error:', error);

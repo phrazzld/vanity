@@ -102,7 +102,8 @@ function LoginForm() {
                   </div>
                   <div className="ml-3">
                     <h3 className="text-sm font-medium text-red-800 dark:text-red-300">
-                      {error === 'CredentialsSignin' ? 'Invalid credentials' : errorMessage}
+                      {error === 'CredentialsSignin' ? 'Invalid credentials' : 
+                       error && error.includes('Lol you really thought') ? error : errorMessage}
                     </h3>
                   </div>
                 </div>
