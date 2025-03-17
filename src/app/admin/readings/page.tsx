@@ -11,14 +11,62 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import type { Reading, ReadingInput } from '@/types';
+import { useReadingsList } from '@/app/hooks';
+import { 
+  SearchBar, 
+  Pagination, 
+  ReadingListSkeleton, 
+  SearchLoadingIndicator,
+  ReadingsList
+} from '@/app/components';
+import type { FilterConfig } from '@/app/components/SearchBar';
 
 export default function ReadingsManagementPage() {
   const router = useRouter();
   
-  // State for readings list and loading status
-  const [readings, setReadings] = useState<Reading[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Use the readings list hook for search, filter, and pagination
+  const {
+    items: readings,
+    search,
+    filters,
+    sort,
+    pagination,
+    isLoading,
+    error,
+    setSearch,
+    updateFilter,
+    setSort,
+    toggleSort,
+    setPage,
+    setPageSize,
+    refreshData
+  } = useReadingsList({
+    initialFilters: { status: 'all' },
+    initialSort: { field: 'date', order: 'desc' },
+    fetchOnMount: true
+  });
+  
+  // Filter configuration for the search bar
+  const filterConfig: FilterConfig[] = [
+    {
+      name: 'status',
+      label: 'Status',
+      options: [
+        { value: 'all', label: 'All' },
+        { value: 'read', label: 'Read' },
+        { value: 'dropped', label: 'Dropped' }
+      ],
+      defaultValue: filters.status || 'all'
+    }
+  ];
+  
+  // Handle search and filter changes
+  const handleSearch = (query: string, searchFilters: Record<string, string>) => {
+    setSearch(query);
+    if (searchFilters.status) {
+      updateFilter('status', searchFilters.status);
+    }
+  };
   
   // State for selected reading and form
   const [selectedReading, setSelectedReading] = useState<Reading | null>(null);
@@ -41,32 +89,6 @@ export default function ReadingsManagementPage() {
   // Modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [readingToDelete, setReadingToDelete] = useState<Reading | null>(null);
-  
-  // Fetch readings when component mounts
-  useEffect(() => {
-    fetchReadings();
-  }, []);
-  
-  const fetchReadings = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      const response = await fetch('/api/readings');
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch readings: ${response.status} ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      setReadings(data);
-    } catch (err) {
-      console.error('Error fetching readings:', err);
-      setError('Failed to load readings. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
   
   const handleSelectReading = (reading: Reading) => {
     setSelectedReading(reading);
@@ -174,7 +196,7 @@ export default function ReadingsManagementPage() {
       setSuccessMessage(isCreating ? 'Reading created successfully!' : 'Reading updated successfully!');
       
       // Refresh readings list
-      fetchReadings();
+      refreshData();
       
       if (isCreating) {
         // Switch to edit mode for the new reading
@@ -217,7 +239,7 @@ export default function ReadingsManagementPage() {
       }
       
       // Refresh readings list
-      fetchReadings();
+      refreshData();
       
       // Reset form if we were editing the deleted reading
       if (selectedReading?.slug === readingToDelete.slug) {
@@ -252,6 +274,7 @@ export default function ReadingsManagementPage() {
       setFormData(prev => ({ ...prev, slug }));
     }
   };
+  
 
   return (
     <div className="space-y-6">
@@ -296,18 +319,38 @@ export default function ReadingsManagementPage() {
                 <h2 className="text-lg font-medium text-gray-900 dark:text-white">All Readings</h2>
                 {!isLoading && readings.length > 0 && (
                   <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
-                    {readings.length} {readings.length === 1 ? 'book' : 'books'}
+                    {pagination.totalItems} {pagination.totalItems === 1 ? 'book' : 'books'}
                   </span>
                 )}
               </div>
+              
+              {/* Search Bar */}
+              <div className="mt-3">
+                <div className="flex items-center">
+                  <div className="flex-grow">
+                    <SearchBar
+                      onSearch={handleSearch}
+                      initialQuery={search}
+                      placeholder="Search by title, author, or content..."
+                      filters={filterConfig}
+                      debounceMs={300}
+                      searchAsYouType={true} 
+                      filtersUpdateOnChange={true}
+                    />
+                  </div>
+                  {isLoading && (
+                    <div className="ml-3">
+                      <SearchLoadingIndicator isLoading={isLoading} />
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
             
-            {isLoading ? (
-              <div className="py-12 flex justify-center">
-                <svg className="animate-spin h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
+            {/* Initial loading state (only for first load) */}
+            {isLoading && readings.length === 0 ? (
+              <div className="transition-opacity duration-300">
+                <ReadingListSkeleton count={5} />
               </div>
             ) : error ? (
               <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-t border-b border-red-100 dark:border-red-800">
@@ -322,77 +365,60 @@ export default function ReadingsManagementPage() {
                   </svg>
                 </div>
                 <p className="text-sm font-medium text-gray-900 dark:text-white">No readings found</p>
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Start building your literary collection</p>
-                <button
-                  onClick={handleNewReading}
-                  className="mt-4 inline-flex items-center px-3 py-1.5 text-sm text-blue-600 font-medium"
-                >
-                  <svg className="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                  Add your first reading
-                </button>
+                {search || filters.status !== 'all' ? (
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Try adjusting your search criteria or filters
+                  </p>
+                ) : (
+                  <>
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Start building your literary collection</p>
+                    <button
+                      onClick={handleNewReading}
+                      className="mt-4 inline-flex items-center px-3 py-1.5 text-sm text-blue-600 font-medium"
+                    >
+                      <svg className="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      Add your first reading
+                    </button>
+                  </>
+                )}
               </div>
             ) : (
-              <ul className="item-list-body">
-                {readings.map(reading => (
-                  <li 
-                    key={reading.slug}
-                    className={`item-list-item ${selectedReading?.slug === reading.slug ? 'item-list-item-selected' : ''}`}
-                    onClick={() => handleSelectReading(reading)}
+              <>
+                {/* Inline loading state (for subsequent loads after initial data is fetched) */}
+                {isLoading && readings.length > 0 ? (
+                  <div 
+                    className="transition-opacity duration-300"
+                    aria-live="polite"
+                    aria-busy="true"
                   >
-                    <div className="flex items-start gap-3">
-                      {reading.coverImageSrc ? (
-                        <div className="h-14 w-10 flex-shrink-0 rounded overflow-hidden border border-gray-200">
-                          {process.env.NEXT_PUBLIC_SPACES_BASE_URL ? (
-                            <Image 
-                              src={`${process.env.NEXT_PUBLIC_SPACES_BASE_URL}${reading.coverImageSrc}`}
-                              alt={`Cover for ${reading.title}`}
-                              width={40}
-                              height={56}
-                              className="h-full w-full object-cover"
-                              onError={(e) => {
-                                e.currentTarget.src = '/images/projects/book-02.webp';
-                              }}
-                            />
-                          ) : (
-                            <img 
-                              src="/images/projects/book-02.webp"
-                              alt={`Cover for ${reading.title}`}
-                              className="h-full w-full object-cover"
-                            />
-                          )}
-                        </div>
-                      ) : (
-                        <div className="h-14 w-10 flex-shrink-0 rounded bg-gray-100 dark:bg-gray-700 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                          <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} 
-                              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                          </svg>
-                        </div>
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate">{reading.title}</h3>
-                        <div className="mt-1 text-xs text-gray-600 dark:text-gray-300 truncate">{reading.author}</div>
-                        <div className="mt-1 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                          <span className="flex items-center">
-                            <svg className="h-3 w-3 text-gray-400 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            {reading.finishedDate ? new Date(reading.finishedDate).toLocaleDateString() : 'Unfinished'}
-                          </span>
-                          {reading.dropped && (
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300">
-                              Dropped
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                    <ReadingListSkeleton count={5} />
+                  </div>
+                ) : (
+                  <ReadingsList
+                    readings={readings}
+                    sort={sort}
+                    onSortChange={toggleSort}
+                    searchQuery={search}
+                    onSelectReading={handleSelectReading}
+                    selectedReading={selectedReading}
+                  />
+                )}
+              
+                {/* Pagination */}
+                {!isLoading && readings.length > 0 && (
+                  <Pagination
+                    currentPage={pagination.currentPage}
+                    totalPages={pagination.totalPages}
+                    totalItems={pagination.totalItems}
+                    pageSize={pagination.pageSize}
+                    onPageChange={setPage}
+                    onPageSizeChange={setPageSize}
+                    showPageSizeSelector={false}
+                  />
+                )}
+              </>
             )}
           </div>
         </div>
@@ -751,9 +777,11 @@ export default function ReadingsManagementPage() {
                                 }}
                               />
                             ) : (
-                              <img 
+                              <Image 
                                 src="/images/projects/book-02.webp"
                                 alt={`Cover for ${readingToDelete.title}`}
+                                width={40}
+                                height={56}
                                 className="h-full w-full object-cover"
                               />
                             )}

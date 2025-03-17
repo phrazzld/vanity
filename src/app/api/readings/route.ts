@@ -12,9 +12,9 @@
  * and error messages when necessary.
  */
 
-import { getReadings, getReading, createReading, updateReading, deleteReading } from '@/lib/db';
+import { getReadings, getReading, createReading, updateReading, deleteReading, getReadingsWithFilters } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
-import type { ReadingInput } from '@/types';
+import type { ReadingInput, ReadingsQueryParams } from '@/types';
 
 /**
  * Next.js configuration options to disable caching for this API route
@@ -98,20 +98,26 @@ const validateReadingInput = (data: any, requireAllFields = true): { valid: bool
 /**
  * GET handler for readings API
  * 
- * Handles two types of requests:
- * 1. GET /api/readings - Returns all readings
- * 2. GET /api/readings?slug={slug} - Returns a specific reading by slug
+ * Handles these request patterns:
+ * 1. GET /api/readings?slug={slug} - Returns a specific reading by slug
+ * 2. GET /api/readings - Returns all readings (default ordering, no filtering)
+ * 3. GET /api/readings?search={search}&status={status}&sortBy={field}&sortOrder={asc|desc}&limit={n}&offset={n}
+ *    - Returns filtered, sorted, and paginated readings
  * 
  * @param {NextRequest} request - The incoming HTTP request
  * @returns {Promise<NextResponse>} JSON response with reading data or error details
  * 
  * @example
- * // Fetch all readings
+ * // Fetch all readings (legacy/simple mode)
  * fetch('/api/readings')
  * 
  * @example
  * // Fetch a specific reading
  * fetch('/api/readings?slug=some-book-title')
+ * 
+ * @example
+ * // Fetch filtered and paginated readings
+ * fetch('/api/readings?search=tolkien&status=read&sortBy=title&sortOrder=asc&limit=10&offset=0')
  */
 export async function GET(request: NextRequest) {
   try {
@@ -121,11 +127,10 @@ export async function GET(request: NextRequest) {
     const url = new URL(request.url);
     const slug = url.searchParams.get('slug');
     
-    let data;
+    // Single reading request with slug parameter
     if (slug) {
-      // Single reading request with slug parameter
       console.log(`API Route: Fetching reading with slug: ${slug}`);
-      data = await getReading(slug);
+      const data = await getReading(slug);
       
       // Return 404 if reading not found
       if (!data) {
@@ -134,15 +139,50 @@ export async function GET(request: NextRequest) {
           { status: 404 }
         ));
       }
+      
+      console.log(`API Route: Successfully fetched reading: ${data.title}`);
+      return setCacheHeaders(NextResponse.json(data));
+    } 
+    
+    // Check if any search/filter/sort/pagination params are present
+    const hasAdvancedParams = url.searchParams.has('search') || 
+                             url.searchParams.has('status') || 
+                             url.searchParams.has('sortBy') || 
+                             url.searchParams.has('sortOrder') ||
+                             url.searchParams.has('limit') ||
+                             url.searchParams.has('offset');
+    
+    if (hasAdvancedParams) {
+      // Extract query parameters
+      const queryParams: ReadingsQueryParams = {
+        search: url.searchParams.get('search') || '',
+        status: url.searchParams.get('status') as 'read' | 'dropped' | 'all' || undefined,
+        sortBy: url.searchParams.get('sortBy') as 'date' | 'title' | 'author' || 'date',
+        sortOrder: url.searchParams.get('sortOrder') as 'asc' | 'desc' || 'desc',
+        limit: url.searchParams.has('limit') 
+          ? Math.max(1, Math.min(100, parseInt(url.searchParams.get('limit') || '10', 10))) 
+          : 10,
+        offset: url.searchParams.has('offset')
+          ? Math.max(0, parseInt(url.searchParams.get('offset') || '0', 10))
+          : 0
+      };
+      
+      console.log('API Route: Using advanced query with filters:', queryParams);
+      
+      // Fetch filtered, sorted, and paginated readings
+      const paginatedResult = await getReadingsWithFilters(queryParams);
+      
+      console.log(`API Route: Successfully fetched ${paginatedResult.data.length} readings (page ${paginatedResult.currentPage} of ${paginatedResult.totalPages})`);
+      
+      return setCacheHeaders(NextResponse.json(paginatedResult));
     } else {
-      // Multiple readings request (no slug parameter)
-      data = await getReadings();
+      // Legacy mode: fetch all readings with default ordering
+      console.log('API Route: Fetching all readings (legacy mode)');
+      const readings = await getReadings();
+      
+      console.log(`API Route: Successfully fetched ${readings.length} readings`);
+      return setCacheHeaders(NextResponse.json(readings));
     }
-    
-    console.log(`API Route: Successfully fetched ${slug ? 'single reading' : `${Array.isArray(data) ? data.length : 0} readings`}`);
-    
-    // Return successful response with data
-    return setCacheHeaders(NextResponse.json(data));
   } catch (error) {
     // Handle and log any errors that occur
     console.error('API Route: Error fetching readings:', error);

@@ -21,7 +21,7 @@ jest.mock('next/image', () => ({
       }
       return acc;
     }, {});
-    return <img {...imgProps} />;
+    return <div data-testid="mock-image" style={{ width: imgProps.width, height: imgProps.height }}>Mock Image: {imgProps.alt || ""}</div>;
   },
 }));
 

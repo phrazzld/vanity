@@ -1,6 +1,6 @@
-import { getQuotes, getQuote, createQuote, updateQuote, deleteQuote } from '@/lib/db';
+import { getQuotes, getQuote, createQuote, updateQuote, deleteQuote, getQuotesWithFilters } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
-import type { QuoteInput } from '@/types';
+import type { QuoteInput, QuotesQueryParams } from '@/types';
 
 // Disable caching
 export const dynamic = 'force-dynamic';
@@ -43,17 +43,22 @@ const validateQuoteInput = (data: any, requireAllFields = true): { valid: boolea
 };
 
 /**
- * GET - Fetch all quotes or a specific quote by ID
+ * GET - Fetch quotes with various query patterns:
+ * 
+ * 1. GET /api/quotes?id={id} - Returns a specific quote by ID
+ * 2. GET /api/quotes - Returns all quotes (default behavior, no filtering)
+ * 3. GET /api/quotes?search={term}&sortBy={field}&sortOrder={asc|desc}&limit={n}&offset={n}
+ *    - Returns filtered, sorted, and paginated quotes
  */
 export async function GET(request: NextRequest) {
   try {
     console.log('API Route: Fetching quotes from database...');
     
-    // Check if there's an ID parameter
+    // Parse the URL to check for query parameters
     const url = new URL(request.url);
     const id = url.searchParams.get('id');
     
-    let data;
+    // Single quote request with ID parameter
     if (id) {
       // Convert ID to number
       const quoteId = parseInt(id, 10);
@@ -65,7 +70,7 @@ export async function GET(request: NextRequest) {
       }
       
       console.log(`API Route: Fetching quote with ID: ${quoteId}`);
-      data = await getQuote(quoteId);
+      const data = await getQuote(quoteId);
       
       if (!data) {
         return setCacheHeaders(NextResponse.json(
@@ -73,13 +78,48 @@ export async function GET(request: NextRequest) {
           { status: 404 }
         ));
       }
-    } else {
-      data = await getQuotes();
+
+      console.log(`API Route: Successfully fetched quote with ID: ${quoteId}`);
+      return setCacheHeaders(NextResponse.json(data));
     }
     
-    console.log(`API Route: Successfully fetched ${id ? 'single quote' : `${Array.isArray(data) ? data.length : 0} quotes`}`);
+    // Check if any search/filter/sort/pagination params are present
+    const hasAdvancedParams = url.searchParams.has('search') || 
+                             url.searchParams.has('sortBy') || 
+                             url.searchParams.has('sortOrder') ||
+                             url.searchParams.has('limit') ||
+                             url.searchParams.has('offset');
     
-    return setCacheHeaders(NextResponse.json(data));
+    if (hasAdvancedParams) {
+      // Extract query parameters
+      const queryParams: QuotesQueryParams = {
+        search: url.searchParams.get('search') || '',
+        sortBy: url.searchParams.get('sortBy') as 'author' | 'id' || 'id',
+        sortOrder: url.searchParams.get('sortOrder') as 'asc' | 'desc' || 'desc',
+        limit: url.searchParams.has('limit') 
+          ? Math.max(1, Math.min(100, parseInt(url.searchParams.get('limit') || '10', 10))) 
+          : 10,
+        offset: url.searchParams.has('offset')
+          ? Math.max(0, parseInt(url.searchParams.get('offset') || '0', 10))
+          : 0
+      };
+      
+      console.log('API Route: Using advanced query with filters:', queryParams);
+      
+      // Fetch filtered, sorted, and paginated quotes
+      const paginatedResult = await getQuotesWithFilters(queryParams);
+      
+      console.log(`API Route: Successfully fetched ${paginatedResult.data.length} quotes (page ${paginatedResult.currentPage} of ${paginatedResult.totalPages})`);
+      
+      return setCacheHeaders(NextResponse.json(paginatedResult));
+    } else {
+      // Legacy mode: fetch all quotes without filtering
+      console.log('API Route: Fetching all quotes (legacy mode)');
+      const quotes = await getQuotes();
+      
+      console.log(`API Route: Successfully fetched ${quotes.length} quotes`);
+      return setCacheHeaders(NextResponse.json(quotes));
+    }
   } catch (error) {
     console.error('API Route: Error fetching quotes:', error);
     return setCacheHeaders(NextResponse.json(

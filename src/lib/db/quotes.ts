@@ -5,7 +5,7 @@
  */
 
 import prisma from '../prisma';
-import type { Quote, QuoteInput } from '@/types';
+import type { Quote, QuoteInput, QuotesQueryParams, PaginationResult } from '@/types';
 
 /**
  * Fetches all quotes from the database
@@ -29,6 +29,119 @@ export async function getQuotes(): Promise<Quote[]> {
   } catch (error) {
     console.error('Error fetching quotes:', error)
     return []
+  }
+}
+
+/**
+ * Fetches quotes with search, filtering, sorting, and pagination
+ * 
+ * @param params - Query parameters for filtering quotes
+ * @returns Paginated result with quotes and metadata
+ */
+export async function getQuotesWithFilters(params: QuotesQueryParams): Promise<PaginationResult<Quote>> {
+  try {
+    console.log('Getting filtered quotes from database...')
+    
+    // Extract parameters with defaults
+    const {
+      search = '',
+      sortBy = 'id',
+      sortOrder = 'desc',
+      limit = 10,
+      offset = 0
+    } = params;
+    
+    // Build WHERE conditions
+    const whereConditions: string[] = [];
+    const queryParams: any[] = [];
+    let paramIndex = 1;
+    
+    // Search in quote text or author
+    if (search && search.trim() !== '') {
+      whereConditions.push(`(
+        text ILIKE $${paramIndex} OR 
+        author ILIKE $${paramIndex}
+      )`);
+      queryParams.push(`%${search.trim()}%`);
+      paramIndex++;
+    }
+    
+    // Construct WHERE clause
+    const whereClause = whereConditions.length > 0 
+      ? `WHERE ${whereConditions.join(' AND ')}` 
+      : '';
+    
+    // Construct ORDER BY clause based on sortBy and sortOrder
+    let orderByClause = '';
+    
+    if (sortBy === 'author') {
+      orderByClause = `
+        author ${sortOrder === 'asc' ? 'ASC' : 'DESC'} NULLS LAST,
+        id DESC
+      `;
+    } else {  // Default is 'id'
+      orderByClause = `
+        id ${sortOrder === 'asc' ? 'ASC' : 'DESC'}
+      `;
+    }
+    
+    // Get total count for pagination
+    // Build the count query with parameters
+    let countQuery = 'SELECT COUNT(*) as total FROM "Quote"';
+    if (whereClause) {
+      countQuery += ` ${whereClause}`;
+    }
+    
+    // Execute count query with parameters
+    const countResult = await prisma.$queryRawUnsafe(
+      countQuery,
+      ...queryParams
+    ) as { total: number | bigint }[];
+    
+    const totalCount = parseInt(countResult[0].total.toString(), 10);
+    console.log(`Total matching quotes: ${totalCount}`);
+    
+    // Build the main query with parameters
+    let mainQuery = `
+      SELECT id, text, author
+      FROM "Quote"
+    `;
+    
+    if (whereClause) {
+      mainQuery += ` ${whereClause}`;
+    }
+    
+    mainQuery += ` ORDER BY ${orderByClause}`;
+    mainQuery += ` LIMIT ${limit} OFFSET ${offset}`;
+    
+    // Execute main query with parameters
+    const quotes = await prisma.$queryRawUnsafe(
+      mainQuery,
+      ...queryParams
+    ) as Quote[];
+    
+    console.log(`Found ${quotes.length} quotes for current page`);
+    
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(totalCount / limit);
+    const currentPage = Math.floor(offset / limit) + 1;
+    
+    return {
+      data: quotes,
+      totalCount,
+      currentPage,
+      totalPages,
+      pageSize: limit
+    };
+  } catch (error) {
+    console.error('Error fetching filtered quotes:', error);
+    return {
+      data: [],
+      totalCount: 0,
+      currentPage: 1,
+      totalPages: 0,
+      pageSize: 10
+    };
   }
 }
 

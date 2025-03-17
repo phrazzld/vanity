@@ -12,6 +12,7 @@
 // Import entity-specific type definitions
 import type { Reading, ReadingInput, ReadingListItem } from './reading';
 import type { Quote, QuoteInput } from './quote';
+import type { ReadingsQueryParams, QuotesQueryParams, PaginationResult } from './api';
 
 // Re-export all type definitions
 export type {
@@ -22,5 +23,10 @@ export type {
   
   // Quote types
   Quote,
-  QuoteInput
+  QuoteInput,
+  
+  // API types
+  ReadingsQueryParams,
+  QuotesQueryParams,
+  PaginationResult
 };
