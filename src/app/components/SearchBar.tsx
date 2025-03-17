@@ -6,10 +6,12 @@
  * A reusable search input component with optional filters.
  * Features:
  * - Text input for search
+ * - Search button for explicit search triggering
  * - Clear button to reset search
  * - Optional filter dropdowns
  * - Responsive design
  * - Dark mode support
+ * - Support for both button-triggered and automatic searching
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -40,8 +42,14 @@ export interface SearchBarProps {
   filters?: FilterConfig[];
   /** Debounce delay in milliseconds (0 to disable) */
   debounceMs?: number;
-  /** Whether search is triggered as you type */
+  /** Whether to search automatically as user types (false means search only on button click) */
   searchAsYouType?: boolean;
+  /** Text to display on the search button */
+  searchButtonText?: string;
+  /** Whether to update filters automatically or only on search button click */
+  filtersUpdateOnChange?: boolean;
+  /** Button variant: 'primary', 'secondary', or 'minimal' */
+  buttonVariant?: 'primary' | 'secondary' | 'minimal';
 }
 
 export default function SearchBar({
@@ -51,15 +59,21 @@ export default function SearchBar({
   className = '',
   filters = [],
   debounceMs = 300,
-  searchAsYouType = true,
+  searchAsYouType = false, // Changed default to false
+  searchButtonText = 'Search',
+  filtersUpdateOnChange = false,
+  buttonVariant = 'primary',
 }: SearchBarProps) {
   // Access theme context
   const { isDarkMode } = useTheme();
   
-  // Search input state
+  // Search input state (current value in input)
   const [query, setQuery] = useState(initialQuery);
   
-  // Filters state
+  // The last search query that was actually submitted/triggered
+  const [submittedQuery, setSubmittedQuery] = useState(initialQuery);
+  
+  // Filters state in UI
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>(() => {
     // Initialize with default values from filter configs
     return filters.reduce((acc, filter) => {
@@ -67,6 +81,14 @@ export default function SearchBar({
       return acc;
     }, {} as Record<string, string>);
   });
+  
+  // The last set of filters that were actually submitted/triggered
+  const [submittedFilters, setSubmittedFilters] = useState<Record<string, string>>(
+    filters.reduce((acc, filter) => {
+      acc[filter.name] = filter.defaultValue || '';
+      return acc;
+    }, {} as Record<string, string>)
+  );
   
   // For debouncing search
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -80,7 +102,7 @@ export default function SearchBar({
     };
   }, []);
   
-  // Handle input change with optional debounce
+  // Handle input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newQuery = e.target.value;
     setQuery(newQuery);
@@ -93,10 +115,10 @@ export default function SearchBar({
       
       if (debounceMs > 0) {
         searchTimeoutRef.current = setTimeout(() => {
-          onSearch(newQuery, activeFilters);
+          triggerSearch(newQuery, activeFilters);
         }, debounceMs);
       } else {
-        onSearch(newQuery, activeFilters);
+        triggerSearch(newQuery, activeFilters);
       }
     }
   };
@@ -106,30 +128,64 @@ export default function SearchBar({
     const newFilters = { ...activeFilters, [filterName]: value };
     setActiveFilters(newFilters);
     
-    // Trigger search when filter changes
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current);
+    // If filtersUpdateOnChange is true, trigger search
+    if (filtersUpdateOnChange) {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+      
+      if (debounceMs > 0) {
+        searchTimeoutRef.current = setTimeout(() => {
+          triggerSearch(query, newFilters);
+        }, debounceMs);
+      } else {
+        triggerSearch(query, newFilters);
+      }
     }
-    
-    if (debounceMs > 0) {
-      searchTimeoutRef.current = setTimeout(() => {
-        onSearch(query, newFilters);
-      }, debounceMs);
-    } else {
-      onSearch(query, newFilters);
-    }
+  };
+  
+  // Centralized function to trigger search and update submitted state
+  const triggerSearch = (searchQuery: string, searchFilters: Record<string, string>) => {
+    setSubmittedQuery(searchQuery);
+    setSubmittedFilters(searchFilters);
+    onSearch(searchQuery, searchFilters);
   };
   
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSearch(query, activeFilters);
+    triggerSearch(query, activeFilters);
   };
   
   // Handle clearing the search
   const handleClear = () => {
     setQuery('');
-    onSearch('', activeFilters);
+    
+    // If searchAsYouType is enabled, also trigger the search with empty query
+    if (searchAsYouType) {
+      triggerSearch('', activeFilters);
+    }
+  };
+  
+  // Determine if current input differs from last submitted search
+  const hasUnsearchedChanges = query !== submittedQuery || 
+    Object.entries(activeFilters).some(
+      ([key, value]) => value !== submittedFilters[key]
+    );
+  
+  // Generate button class based on variant
+  const getButtonClasses = () => {
+    const baseClasses = "inline-flex items-center px-4 py-2 border text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2";
+    
+    switch (buttonVariant) {
+      case 'secondary':
+        return `${baseClasses} border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:ring-blue-500 dark:focus:ring-offset-gray-900`;
+      case 'minimal':
+        return `${baseClasses} border-transparent bg-transparent text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:ring-blue-500 dark:focus:ring-offset-gray-900`;
+      case 'primary':
+      default:
+        return `${baseClasses} border-transparent bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white focus:ring-blue-500 dark:focus:ring-offset-gray-900`;
+    }
   };
   
   return (
@@ -212,18 +268,21 @@ export default function SearchBar({
           </div>
         ))}
         
-        {/* Search button - only show if not searchAsYouType */}
-        {!searchAsYouType && (
-          <button
-            type="submit"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md
-              shadow-sm text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800
-              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900"
-            aria-label="Submit search"
-          >
-            Search
-          </button>
-        )}
+        {/* Search button - always show, but highlight when there are changes */}
+        <button
+          type="submit"
+          className={`${getButtonClasses()} ${hasUnsearchedChanges ? 'ring-2 ring-offset-2 ring-blue-500 dark:ring-offset-gray-900' : ''}`}
+          aria-label="Submit search"
+        >
+          {searchButtonText}
+          {hasUnsearchedChanges && (
+            <span className="flex h-2 w-2 ml-1.5">
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-400">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-300 opacity-75"></span>
+              </span>
+            </span>
+          )}
+        </button>
       </form>
     </div>
   );

@@ -334,7 +334,10 @@ export default function ReadingsManagementPage() {
                       placeholder="Search by title, author, or content..."
                       filters={filterConfig}
                       debounceMs={300}
-                      searchAsYouType={true}
+                      searchAsYouType={false} 
+                      searchButtonText="Find Readings"
+                      filtersUpdateOnChange={false}
+                      buttonVariant="primary"
                     />
                   </div>
                   {isLoading && (
