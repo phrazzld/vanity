@@ -24,14 +24,14 @@ jest.mock('next/image', () => ({
     className?: string;
     onError?: (e: any) => void;
   }) => (
-    <img 
-      src={src} 
-      alt={alt} 
-      width={width} 
-      height={height} 
+    <div 
+      data-testid="mock-image" 
+      style={{ width, height }} 
       className={className}
-      data-testid="mock-image"
-    />
+    >
+      {/* Replace img with div to avoid ESLint warnings */}
+      Mock Image: {alt}
+    </div>
   )
 }));
 

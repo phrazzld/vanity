@@ -96,7 +96,7 @@ export async function getQuotesWithFilters(params: QuotesQueryParams): Promise<P
     const countResult = await prisma.$queryRawUnsafe(
       countQuery,
       ...queryParams
-    );
+    ) as { total: number | bigint }[];
     
     const totalCount = parseInt(countResult[0].total.toString(), 10);
     console.log(`Total matching quotes: ${totalCount}`);

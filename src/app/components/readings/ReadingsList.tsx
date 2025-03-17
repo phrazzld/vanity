@@ -202,9 +202,11 @@ export default function ReadingsList({
                         }}
                       />
                     ) : (
-                      <img 
+                      <Image 
                         src="/images/projects/book-02.webp"
                         alt={`Cover for ${reading.title}`}
+                        width={40}
+                        height={56}
                         className="h-full w-full object-cover"
                       />
                     )}

@@ -776,9 +776,11 @@ export default function ReadingsManagementPage() {
                                 }}
                               />
                             ) : (
-                              <img 
+                              <Image 
                                 src="/images/projects/book-02.webp"
                                 alt={`Cover for ${readingToDelete.title}`}
+                                width={40}
+                                height={56}
                                 className="h-full w-full object-cover"
                               />
                             )}
