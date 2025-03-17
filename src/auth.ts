@@ -24,6 +24,17 @@ const auth = {
     console.log(`Expected admin username: ${adminUsername}`);
     console.log(`Environment variables present: ${!!process.env.ADMIN_USERNAME}, ${!!process.env.ADMIN_PASSWORD}`);
     
+    // Check if someone is trying to use the demo credentials shown on the page
+    if (username === 'admin' && password === 'password123' && 
+        (adminUsername !== 'admin' || adminPassword !== 'password123')) {
+      console.log('Authentication failed: someone tried using the demo credentials');
+      return {
+        success: false,
+        user: null,
+        message: "lol i can't believe you thought that would work"
+      };
+    }
+    
     // Check credentials against environment variables
     if (username === adminUsername && password === adminPassword) {
       console.log('Authentication successful');
