@@ -145,8 +145,11 @@ export default function QuotesManagementPage() {
       refreshData();
       
       if (isCreating) {
-        // Switch to edit mode for the new quote
-        handleSelectQuote(savedQuote);
+        // Stay in create mode and clear the form for the next quote
+        setFormData({
+          text: '',
+          author: ''
+        });
       } else {
         // Update the selected quote
         setSelectedQuote(savedQuote);
