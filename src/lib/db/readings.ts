@@ -17,15 +17,22 @@ export async function getReading(slug: string): Promise<Reading | null> {
   try {
     console.log(`Fetching reading with slug: ${slug}`)
     
-    // Use raw query for maximum compatibility
-    const readings = await prisma.$queryRaw`
-      SELECT id, slug, title, author, "finishedDate", "coverImageSrc", thoughts, dropped
-      FROM "Reading"
-      WHERE slug = ${slug}
-      LIMIT 1;
-    `
-    
-    const reading = Array.isArray(readings) && readings.length > 0 ? readings[0] as Reading : null
+    // Use Prisma's type-safe query builder (instead of raw SQL) to prevent SQL injection
+    const reading = await prisma.reading.findUnique({
+      where: {
+        slug: slug
+      },
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        author: true,
+        finishedDate: true,
+        coverImageSrc: true,
+        thoughts: true,
+        dropped: true
+      }
+    })
     
     console.log(reading ? `Found reading: ${reading.title}` : `No reading found for slug: ${slug}`)
     return reading

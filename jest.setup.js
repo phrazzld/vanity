@@ -22,5 +22,20 @@ jest.mock('next/image', () => ({
   },
 }));
 
+// Mock window.matchMedia - used by ThemeContext
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(), // deprecated
+    removeListener: jest.fn(), // deprecated
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
+
 // Mock environment variables
 process.env.NEXT_PUBLIC_SPACES_BASE_URL = 'https://test-space.com';
