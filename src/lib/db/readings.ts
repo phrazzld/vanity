@@ -50,11 +50,11 @@ export async function getReadings(): Promise<Reading[]> {
       FROM "Reading"
       ORDER BY 
         -- Group 1: Unfinished and not dropped (priority 1)
-        -- Group 2: Unfinished and dropped (priority 2)
-        -- Group 3: Finished books (priority 3)
+        -- Group 2: Finished books (priority 2)
+        -- Group 3: Dropped books (priority 3)
         CASE 
           WHEN "finishedDate" IS NULL AND dropped = false THEN 1
-          WHEN "finishedDate" IS NULL AND dropped = true THEN 2
+          WHEN "finishedDate" IS NOT NULL THEN 2
           ELSE 3
         END,
         -- Sort finished books by recency
@@ -132,11 +132,11 @@ export async function getReadingsWithFilters(params: ReadingsQueryParams): Promi
     if (sortBy === 'date') {
       orderByClause = `
         -- Group 1: Unfinished and not dropped (priority 1)
-        -- Group 2: Unfinished and dropped (priority 2)
-        -- Group 3: Finished books (priority 3)
+        -- Group 2: Finished books (priority 2)
+        -- Group 3: Dropped books (priority 3)
         CASE 
           WHEN "finishedDate" IS NULL AND dropped = false THEN 1
-          WHEN "finishedDate" IS NULL AND dropped = true THEN 2
+          WHEN "finishedDate" IS NOT NULL THEN 2
           ELSE 3
         END,
         -- Sort finished books by recency
