@@ -49,7 +49,15 @@ export async function getReadings(): Promise<Reading[]> {
       SELECT id, slug, title, author, "finishedDate", "coverImageSrc", thoughts, dropped
       FROM "Reading"
       ORDER BY 
-        CASE WHEN "finishedDate" IS NULL THEN 1 ELSE 0 END,
+        -- Group 1: Unfinished and not dropped (priority 1)
+        -- Group 2: Unfinished and dropped (priority 2)
+        -- Group 3: Finished books (priority 3)
+        CASE 
+          WHEN "finishedDate" IS NULL AND dropped = false THEN 1
+          WHEN "finishedDate" IS NULL AND dropped = true THEN 2
+          ELSE 3
+        END,
+        -- Sort finished books by recency
         "finishedDate" DESC,
         id DESC;
     `
@@ -123,7 +131,15 @@ export async function getReadingsWithFilters(params: ReadingsQueryParams): Promi
     
     if (sortBy === 'date') {
       orderByClause = `
-        CASE WHEN "finishedDate" IS NULL THEN 1 ELSE 0 END,
+        -- Group 1: Unfinished and not dropped (priority 1)
+        -- Group 2: Unfinished and dropped (priority 2)
+        -- Group 3: Finished books (priority 3)
+        CASE 
+          WHEN "finishedDate" IS NULL AND dropped = false THEN 1
+          WHEN "finishedDate" IS NULL AND dropped = true THEN 2
+          ELSE 3
+        END,
+        -- Sort finished books by recency
         "finishedDate" ${sortOrder === 'asc' ? 'ASC' : 'DESC'},
         id DESC
       `;
