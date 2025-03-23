@@ -172,9 +172,10 @@ function LoginForm() {
                 </button>
               </div>
               
+              {/* Admin credentials guidance */}
               <div className="text-center pt-2 border-t border-gray-200 dark:border-gray-700">
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Demo credentials: <span className="font-medium">admin / password123</span>
+                  Enter your admin credentials to access the dashboard
                 </p>
               </div>
             </form>

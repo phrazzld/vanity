@@ -1,11 +1,11 @@
 /**
  * Auth configuration
  * 
- * This is a simple placeholder for the NextAuth configuration.
- * In a real implementation, we would include the full NextAuth configuration.
+ * This module handles authentication validation against environment variables.
+ * Future implementation will use NextAuth for more robust authentication.
  */
 
-// Simple placeholder for authentication functions
+// Authentication functions
 const auth = {
   /**
    * Validates credentials against environment variables
@@ -15,25 +15,25 @@ const auth = {
    * @returns Success status and user object if valid
    */
   validateCredentials(username: string, password: string) {
-    // Get environment variables with fallbacks for development
-    const adminUsername = process.env.ADMIN_USERNAME || 'admin';
-    const adminPassword = process.env.ADMIN_PASSWORD || 'password123';
+    // Get environment variables without fallbacks for security
+    const adminUsername = process.env.ADMIN_USERNAME;
+    const adminPassword = process.env.ADMIN_PASSWORD;
     
-    // Log auth attempt (without printing actual passwords)
-    console.log(`Auth attempt for user: ${username}`);
-    console.log(`Expected admin username: ${adminUsername}`);
-    console.log(`Environment variables present: ${!!process.env.ADMIN_USERNAME}, ${!!process.env.ADMIN_PASSWORD}`);
-    
-    // Check if someone is trying to use the demo credentials shown on the page
-    if (username === 'admin' && password === 'password123' && 
-        (adminUsername !== 'admin' || adminPassword !== 'password123')) {
-      console.log('Authentication failed: someone tried using the demo credentials');
+    // Check if environment variables are properly configured
+    if (!adminUsername || !adminPassword) {
+      console.error('Authentication configuration error: Missing environment variables');
       return {
         success: false,
         user: null,
-        message: "lol i can't believe you thought that would work"
+        message: "Authentication system is not properly configured"
       };
     }
+    
+    // Log auth attempt (masking username for privacy)
+    const maskedUsername = username.length > 2 
+      ? `${username.substring(0, 2)}${'*'.repeat(username.length - 2)}`
+      : '***';
+    console.log(`Auth attempt for user: ${maskedUsername}`);
     
     // Check credentials against environment variables
     if (username === adminUsername && password === adminPassword) {
