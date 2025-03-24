@@ -4,14 +4,16 @@
  * Login page for admin section
  * 
  * This page provides a login form for admin users to access the protected admin area.
- * It uses a direct form submission to the auth API endpoint.
+ * It uses NextAuth's signIn function for secure authentication with CSRF protection.
  */
 
 import { useState, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 // Component for the login form with search params
 function LoginForm() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
   const callbackUrl = searchParams.get("callbackUrl") || "/admin";
@@ -19,7 +21,7 @@ function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   
-  // Handle form validation before submission
+  // Handle form submission using NextAuth signIn function
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
@@ -36,27 +38,20 @@ function LoginForm() {
     setErrorMessage('');
     
     try {
-      // Use fetch to manually submit the form
-      const response = await fetch('/api/auth/signin', {
-        method: 'POST',
-        body: formData,
-        redirect: 'follow'
+      // Use NextAuth's signIn function which includes CSRF protection
+      const result = await signIn('credentials', {
+        username,
+        password,
+        redirect: false,
+        callbackUrl
       });
       
-      // If we get here, check if it's a redirect (success)
-      if (response.redirected) {
-        // Navigate to the redirect location
-        window.location.href = response.url;
-        return;
-      }
-      
-      // If not a redirect, parse response for potential error
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        const data = await response.json();
-        setErrorMessage(data.error || 'Authentication failed');
-      } else {
-        setErrorMessage('Authentication failed. Please try again.');
+      if (result?.error) {
+        console.error('Login failed:', result.error);
+        setErrorMessage(result.error);
+      } else if (result?.url) {
+        // Successful login, redirect to callback URL
+        router.push(result.url);
       }
     } catch (error) {
       console.error('Login error:', error);

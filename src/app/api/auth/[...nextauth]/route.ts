@@ -1,132 +1,87 @@
 /**
- * Auth route handler
+ * NextAuth configuration and route handler
  * 
- * This file handles authentication routes for the admin section.
+ * This file implements secure session-based authentication for the admin interface
+ * using Next-Auth with a credentials provider.
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import auth from "@/auth";
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { NextRequest } from "next/server";
 
-/**
- * Handlers for authentication routes
- */
-
-// Handle GET requests to auth endpoints
-export async function GET(request: NextRequest) {
-  const url = new URL(request.url);
-  const pathSegments = url.pathname.split('/');
-  const authAction = pathSegments[pathSegments.length - 1];
-  
-  switch (authAction) {
-    case 'signin':
-      return NextResponse.redirect(new URL('/admin/login', request.url));
-    case 'signout': {
-      // Clear the authentication cookie when signing out
-      const response = NextResponse.redirect(new URL('/', request.url));
-      response.cookies.delete('admin_authenticated');
-      response.cookies.delete('admin_user');
-      return response;
-    }
-    case 'session': {
-      // Check if user is authenticated from cookie
-      const isAuthenticated = request.cookies.has('admin_authenticated');
-      const userStr = request.cookies.get('admin_user')?.value;
-      let user = null;
-      
-      if (isAuthenticated && userStr) {
-        try {
-          user = JSON.parse(userStr);
-        } catch (e) {
-          console.error('Failed to parse user cookie:', e);
+export const authOptions = {
+  providers: [
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        username: { label: "Username", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        // Get environment variables with fallbacks for development
+        const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+        const adminPassword = process.env.ADMIN_PASSWORD || 'password123';
+        
+        // Log auth attempt (without printing actual passwords)
+        console.log(`Auth attempt for user: ${credentials?.username}`);
+        console.log(`Expected admin username: ${adminUsername}`);
+        console.log(`Environment variables present: ${!!process.env.ADMIN_USERNAME}, ${!!process.env.ADMIN_PASSWORD}`);
+        
+        // Check if someone is trying to use the demo credentials shown on the page
+        if (credentials?.username === 'admin' && credentials?.password === 'password123' && 
+            (adminUsername !== 'admin' || adminPassword !== 'password123')) {
+          console.log('Authentication failed: someone tried using the demo credentials');
+          throw new Error("lol i can't believe you thought that would work");
         }
+        
+        if (
+          credentials?.username === adminUsername &&
+          credentials?.password === adminPassword
+        ) {
+          console.log('Authentication successful');
+          return {
+            id: "1",
+            name: "Admin",
+            email: "admin@example.com",
+            role: "admin"
+          };
+        }
+        
+        // Invalid credentials
+        console.log('Authentication failed: invalid credentials');
+        return null;
+      },
+    }),
+  ],
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 60, // 30 minutes session expiration
+  },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
       }
-      
-      return NextResponse.json({ 
-        user,
-        isAuthenticated,
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString() 
-      });
-    }
-    default:
-      return new Response(`Auth endpoint: ${authAction}`, { status: 200 });
-  }
-}
+      return token;
+    },
+    async session({ session, token }) {
+      if (token && session.user) {
+        session.user.id = token.id;
+        // Add role to session
+        session.user.role = token.role;
+      }
+      return session;
+    },
+  },
+  pages: {
+    signIn: '/admin/login',
+    signOut: '/admin/login',
+    error: '/admin/login', 
+  },
+  debug: process.env.NODE_ENV === 'development',
+};
 
-// Handle POST requests for login actions
-export async function POST(request: NextRequest) {
-  try {
-    console.log('POST request to auth endpoint received');
-    
-    const formData = await request.formData();
-    const username = formData.get('username') as string;
-    const password = formData.get('password') as string;
-    const callbackUrl = formData.get('callbackUrl') as string || '/admin';
-    
-    console.log(`Login attempt: username=${username}, callbackUrl=${callbackUrl}`);
-    console.log(`Current environment: ${process.env.NODE_ENV}`);
-    
-    // Use our auth utility to validate credentials
-    const result = auth.validateCredentials(username, password);
-    
-    if (result.success) {
-      console.log('Credentials validated successfully, setting cookies...');
-      
-      // Build the callback URL
-      const redirectUrl = new URL(callbackUrl, request.url);
-      console.log(`Redirecting to: ${redirectUrl.toString()}`);
-      
-      // Set authentication cookie and redirect to callback URL
-      const response = NextResponse.redirect(redirectUrl);
-      
-      // Set a cookie to track authentication status
-      response.cookies.set({
-        name: 'admin_authenticated',
-        value: 'true',
-        path: '/',
-        maxAge: 60 * 60 * 24, // 24 hours
-        httpOnly: true,
-        // In Vercel preview deployments, we should allow non-secure cookies
-        secure: process.env.NODE_ENV === 'production' && !process.env.VERCEL_ENV?.includes('preview'),
-        sameSite: 'lax'
-      });
-      
-      // Store user info in a cookie for display purposes
-      if (result.user) {
-        console.log('Setting user cookie...');
-        response.cookies.set({
-          name: 'admin_user',
-          value: JSON.stringify({
-            name: result.user.name,
-            email: result.user.email,
-            role: result.user.role
-          }),
-          path: '/',
-          maxAge: 60 * 60 * 24, // 24 hours
-          httpOnly: true,
-          // In Vercel preview deployments, we should allow non-secure cookies
-          secure: process.env.NODE_ENV === 'production' && !process.env.VERCEL_ENV?.includes('preview'),
-          sameSite: 'lax'
-        });
-      }
-      
-      console.log('Returning redirect response...');
-      return response;
-    }
-    
-    console.log('Authentication failed, redirecting to login page with error');
-    // Redirect to login with error on failure
-    const errorMessage = result.message || 'CredentialsSignin';
-    return NextResponse.redirect(
-      new URL(`/admin/login?error=${encodeURIComponent(errorMessage)}`, request.url)
-    );
-  } catch (error) {
-    console.error('Login error:', error);
-    // Provide more detailed error information for debugging
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error(`Error details: ${errorMessage}`);
-    
-    return NextResponse.redirect(
-      new URL(`/admin/login?error=InternalError&message=${encodeURIComponent(errorMessage)}`, request.url)
-    );
-  }
-}
+// Use NextAuth handler for GET and POST requests
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };

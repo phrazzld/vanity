@@ -4,6 +4,7 @@ import Link from 'next/link'
 import './globals.css'
 import { ThemeProvider } from './context/ThemeContext'
 import { Suspense } from 'react'
+import { Providers } from './providers'
 
 export const metadata: Metadata = {
   title: 'phaedrus | software engineer and general tinkerer',
@@ -34,7 +35,7 @@ function Header() {
   );
 }
 
-// Use a client component with ThemeProvider
+// Use a client component with ThemeProvider and SessionProvider
 export default function RootLayout({
   children,
 }: {
@@ -43,12 +44,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
-        <ThemeProvider>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Header />
-          </Suspense>
-          <main className="bg-white dark:bg-gray-900">{children}</main>
-        </ThemeProvider>
+        <Providers>
+          <ThemeProvider>
+            <Suspense fallback={<div>Loading...</div>}>
+              <Header />
+            </Suspense>
+            <main className="bg-white dark:bg-gray-900">{children}</main>
+          </ThemeProvider>
+        </Providers>
       </body>
     </html>
   )

@@ -7,6 +7,7 @@
  * - Consistent UI structure for the admin section
  * - Navigation menu for admin features
  * - Dark mode support
+ * - Integration with NextAuth session management
  */
 
 import Link from "next/link";
@@ -14,6 +15,7 @@ import { usePathname } from "next/navigation";
 import { ReactNode, useState, useEffect } from "react";
 import './admin.css';
 import { useTheme } from '../context/ThemeContext';
+import { useSession, signOut } from "next-auth/react";
 
 export default function AdminLayout({
   children,
@@ -21,29 +23,12 @@ export default function AdminLayout({
   children: ReactNode;
 }) {
   const pathname = usePathname();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const { data: session, status } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isDarkMode } = useTheme();
   
-  // Check authentication status on mount
-  useEffect(() => {
-    async function checkAuth() {
-      try {
-        const response = await fetch('/api/auth/session');
-        const data = await response.json();
-        setIsAuthenticated(data.isAuthenticated || false);
-      } catch (error) {
-        console.error('Error checking auth status:', error);
-        setIsAuthenticated(false);
-      }
-    }
-    
-    if (pathname !== '/admin/login') {
-      checkAuth();
-    } else {
-      setIsAuthenticated(false);
-    }
-  }, [pathname]);
+  const isAuthenticated = status === 'authenticated';
+  const isLoading = status === 'loading';
   
   // Generate nav item classes based on active state
   const getNavItemClasses = (href: string) => {
@@ -59,6 +44,12 @@ export default function AdminLayout({
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
+  
+  // Handle sign out
+  const handleSignOut = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    await signOut({ callbackUrl: '/admin/login' });
+  };
   
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col admin-layout">
@@ -103,9 +94,16 @@ export default function AdminLayout({
               </Link>
               
               {isAuthenticated && (
-                <Link href="/api/auth/signout" className="text-sm text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400">
+                <button 
+                  onClick={handleSignOut}
+                  className="text-sm text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400"
+                >
                   Sign Out
-                </Link>
+                </button>
+              )}
+              
+              {isLoading && (
+                <span className="text-sm text-gray-400">Loading...</span>
               )}
             </nav>
           </div>
@@ -139,6 +137,20 @@ export default function AdminLayout({
                   <span>Quotes</span>
                 </Link>
               </nav>
+              {session?.user?.name && (
+                <div className="px-4 pt-4 mt-auto border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                        {session.user.name}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        Signed in
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </aside>
         )}

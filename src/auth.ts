@@ -1,59 +1,79 @@
 /**
- * Auth configuration
+ * Auth helpers for NextAuth
  * 
- * This is a simple placeholder for the NextAuth configuration.
- * In a real implementation, we would include the full NextAuth configuration.
+ * This file provides helper functions and types for authentication.
  */
 
-// Simple placeholder for authentication functions
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
+/**
+ * Type for user session information
+ */
+export interface UserSession {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+  } | null;
+  expires: string;
+}
+
+/**
+ * Gets the current session on the server
+ * 
+ * @returns The user session or null if not authenticated
+ */
+export async function getSession() {
+  const session = await getServerSession(authOptions) as UserSession | null;
+  return session;
+}
+
+/**
+ * Checks if the current user is authenticated
+ * 
+ * @returns Boolean indicating if user is authenticated
+ */
+export async function isAuthenticated() {
+  const session = await getSession();
+  return !!session?.user;
+}
+
+/**
+ * Checks if the current user has admin role
+ * 
+ * @returns Boolean indicating if user is an admin
+ */
+export async function isAdmin() {
+  const session = await getSession();
+  return session?.user?.role === 'admin';
+}
+
+/**
+ * Auth helper functions for client components
+ */
 const auth = {
   /**
-   * Validates credentials against environment variables
-   * 
-   * @param username - Username to validate
-   * @param password - Password to validate
-   * @returns Success status and user object if valid
+   * Helper for validating environment variables
+   * This is used by the NextAuth configuration
    */
-  validateCredentials(username: string, password: string) {
+  getAuthEnv() {
     // Get environment variables with fallbacks for development
     const adminUsername = process.env.ADMIN_USERNAME || 'admin';
     const adminPassword = process.env.ADMIN_PASSWORD || 'password123';
     
-    // Log auth attempt (without printing actual passwords)
-    console.log(`Auth attempt for user: ${username}`);
-    console.log(`Expected admin username: ${adminUsername}`);
-    console.log(`Environment variables present: ${!!process.env.ADMIN_USERNAME}, ${!!process.env.ADMIN_PASSWORD}`);
-    
-    // Check if someone is trying to use the demo credentials shown on the page
-    if (username === 'admin' && password === 'password123' && 
-        (adminUsername !== 'admin' || adminPassword !== 'password123')) {
-      console.log('Authentication failed: someone tried using the demo credentials');
-      return {
-        success: false,
-        user: null,
-        message: "lol i can't believe you thought that would work"
-      };
+    // Check for insecure defaults in production
+    if (process.env.NODE_ENV === 'production') {
+      if (adminUsername === 'admin' || adminPassword === 'password123') {
+        console.warn('WARNING: Using default admin credentials in production environment!');
+      }
     }
     
-    // Check credentials against environment variables
-    if (username === adminUsername && password === adminPassword) {
-      console.log('Authentication successful');
-      return {
-        success: true,
-        user: {
-          id: "1",
-          name: "Admin",
-          email: "admin@example.com",
-          role: "admin"
-        }
-      };
-    }
-    
-    // Invalid credentials
-    console.log('Authentication failed: invalid credentials');
     return {
-      success: false,
-      user: null
+      adminUsername,
+      adminPassword,
+      isConfigured: !!(process.env.ADMIN_USERNAME && process.env.ADMIN_PASSWORD)
     };
   }
 };

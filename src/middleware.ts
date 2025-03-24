@@ -1,55 +1,43 @@
 /**
  * NextAuth.js Middleware
  * 
- * This middleware protects admin routes by checking for authentication.
+ * This middleware protects admin routes by checking for valid NextAuth sessions.
  * It redirects unauthenticated users to the login page.
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { withAuth } from "next-auth/middleware";
 
-// Simple middleware to protect admin routes
-export function middleware(request: NextRequest) {
-  console.log(`Middleware running for: ${request.nextUrl.pathname}`);
-  
-  // Skip the login page - it should be accessible
-  if (request.nextUrl.pathname === '/admin/login') {
-    console.log('Allowing access to login page');
+// The withAuth function replaces our custom middleware with NextAuth's middleware
+// It automatically checks for valid sessions for protected routes
+export default withAuth(
+  // Augment the basic withAuth function with custom logic
+  function middleware(request: NextRequest) {
+    console.log(`Middleware running for: ${request.nextUrl.pathname}`);
     return NextResponse.next();
+  },
+  {
+    callbacks: {
+      // This callback runs before the middleware logic
+      // You can customize authentication rules here
+      authorized({ token }) {
+        // Only allow authenticated users with valid tokens
+        return !!token;
+      },
+    },
+    // Protected pages redirect to login page if unauthorized
+    pages: {
+      signIn: "/admin/login",
+    },
   }
+);
 
-  // Also skip auth API endpoints to prevent redirect loops
-  if (request.nextUrl.pathname.startsWith('/api/auth')) {
-    console.log('Allowing access to auth API endpoints');
-    return NextResponse.next();
-  }
-
-  // Check if the path is an admin route
-  if (request.nextUrl.pathname.startsWith('/admin')) {
-    console.log('Admin route detected, checking authentication...');
-    
-    // Use a simple cookie check for demo purposes
-    const isAuthenticated = request.cookies.has('admin_authenticated');
-    console.log(`Authentication status: ${isAuthenticated}`);
-    
-    if (!isAuthenticated) {
-      console.log('Not authenticated, redirecting to login page');
-      const url = new URL('/admin/login', request.url);
-      // Add the original URL as a callback parameter
-      url.searchParams.set('callbackUrl', request.nextUrl.pathname);
-      return NextResponse.redirect(url);
-    }
-    
-    console.log('Authenticated, allowing access to admin route');
-  }
-  
-  // Allow all other routes
-  return NextResponse.next();
-}
-
-// Specify which routes this middleware should run on
+// Configure which routes the middleware should run on
 export const config = {
+  // Only run on admin routes, excluding the login page and auth API endpoints
   matcher: [
-    // Match all routes under /admin
-    '/admin/:path*',
+    "/admin/:path*",
+    // Exclude login page and auth API endpoints from middleware checks
+    "/((?!admin/login|api/auth).*)",
   ],
 };
