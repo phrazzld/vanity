@@ -1,6 +1,7 @@
 import { getQuotes, getQuote, createQuote, updateQuote, deleteQuote, getQuotesWithFilters } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import type { QuoteInput, QuotesQueryParams } from '@/types';
+import { csrfProtection } from '../middleware/csrf';
 
 // Disable caching
 export const dynamic = 'force-dynamic';
@@ -136,6 +137,12 @@ export async function POST(request: NextRequest) {
   try {
     console.log('API Route: Creating new quote');
     
+    // Validate CSRF token
+    const csrfError = await csrfProtection(request);
+    if (csrfError) {
+      return csrfError;
+    }
+    
     // Check if user is authenticated
     const authToken = request.headers.get('Authorization');
     if (!authToken || !authToken.startsWith('Bearer ')) {
@@ -192,6 +199,12 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     console.log('API Route: Updating quote');
+    
+    // Validate CSRF token
+    const csrfError = await csrfProtection(request);
+    if (csrfError) {
+      return csrfError;
+    }
     
     // Check if user is authenticated
     const authToken = request.headers.get('Authorization');
@@ -268,6 +281,12 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     console.log('API Route: Deleting quote');
+    
+    // Validate CSRF token
+    const csrfError = await csrfProtection(request);
+    if (csrfError) {
+      return csrfError;
+    }
     
     // Check if user is authenticated
     const authToken = request.headers.get('Authorization');

@@ -6,6 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { getSecureCookieName, AUTH_COOKIE_NAME } from "@/app/utils/cookie-security";
 
 // Simple middleware to protect admin routes
 export function middleware(request: NextRequest) {
@@ -27,9 +28,10 @@ export function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/admin')) {
     console.log('Admin route detected, checking authentication...');
     
-    // Use a simple cookie check for demo purposes
-    const isAuthenticated = request.cookies.has('admin_authenticated');
-    console.log(`Authentication status: ${isAuthenticated}`);
+    // Check for the correct cookie name based on environment using our utility
+    const cookieName = getSecureCookieName(AUTH_COOKIE_NAME);
+    const isAuthenticated = request.cookies.has(cookieName);
+    console.log(`Authentication status: ${isAuthenticated} (checked ${cookieName})`);
     
     if (!isAuthenticated) {
       console.log('Not authenticated, redirecting to login page');

@@ -53,7 +53,7 @@
   - Dependencies: CSRF token generation utility
   - Priority: High
 
-- [ ] Add CSRF validation to auth endpoints
+- [x] Add CSRF validation to auth endpoints
   - Description: Add validation to ensure CSRF token is valid for form submissions
   - Dependencies: CSRF token generation utility
   - Priority: High
@@ -64,12 +64,12 @@
   - Priority: High
 
 ## Cookie Security
-- [ ] Improve cookie configuration for admin_authenticated
+- [x] Improve cookie configuration for admin_authenticated
   - Description: Set more secure cookie attributes (path, secure, sameSite)
   - Dependencies: None
   - Priority: Medium
 
-- [ ] Improve cookie configuration for admin_user
+- [x] Improve cookie configuration for admin_user
   - Description: Set more secure cookie attributes (path, secure, sameSite)
   - Dependencies: None
   - Priority: Medium

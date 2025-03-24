@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import auth from "@/auth";
 import { validateFormToken, CSRF_TOKEN_COOKIE } from "@/app/utils/csrf";
+import cookieSecurity, { getSecureCookieName, getSecureCookieOptions } from "@/app/utils/cookie-security";
 
 /**
  * Handlers for authentication routes
@@ -22,16 +23,25 @@ export async function GET(request: NextRequest) {
     case 'signin':
       return NextResponse.redirect(new URL('/admin/login', request.url));
     case 'signout': {
-      // Clear the authentication cookie when signing out
+      // Clear the authentication cookies when signing out
       const response = NextResponse.redirect(new URL('/', request.url));
-      response.cookies.delete('admin_authenticated');
-      response.cookies.delete('admin_user');
+      
+      // Delete cookies with the correct name based on environment and with proper path attribute
+      const cookieName = getSecureCookieName(cookieSecurity.AUTH_COOKIE_NAME);
+      const userCookieName = getSecureCookieName(cookieSecurity.USER_COOKIE_NAME);
+      
+      response.cookies.delete(cookieName, { path: '/admin' });
+      response.cookies.delete(userCookieName, { path: '/admin' });
+      
       return response;
     }
     case 'session': {
-      // Check if user is authenticated from cookie
-      const isAuthenticated = request.cookies.has('admin_authenticated');
-      const userStr = request.cookies.get('admin_user')?.value;
+      // Check if user is authenticated from cookie using the correct name based on environment
+      const cookieName = getSecureCookieName(cookieSecurity.AUTH_COOKIE_NAME);
+      const userCookieName = getSecureCookieName(cookieSecurity.USER_COOKIE_NAME);
+      
+      const isAuthenticated = request.cookies.has(cookieName);
+      const userStr = request.cookies.get(userCookieName)?.value;
       let user = null;
       
       if (isAuthenticated && userStr) {
@@ -45,7 +55,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ 
         user,
         isAuthenticated,
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString() 
+        expires: new Date(Date.now() + 1000 * cookieSecurity.COOKIE_MAX_AGE).toISOString() // Matching cookie expiration
       });
     }
     default:
@@ -99,34 +109,24 @@ export async function POST(request: NextRequest) {
       // Set authentication cookie and redirect to callback URL
       const response = NextResponse.redirect(redirectUrl);
       
-      // Set a cookie to track authentication status
+      // Set a cookie to track authentication status with enhanced security
       response.cookies.set({
-        name: 'admin_authenticated',
+        name: getSecureCookieName(cookieSecurity.AUTH_COOKIE_NAME),
         value: 'true',
-        path: '/',
-        maxAge: 60 * 60 * 24, // 24 hours
-        httpOnly: true,
-        // In Vercel preview deployments, we should allow non-secure cookies
-        secure: process.env.NODE_ENV === 'production' && !process.env.VERCEL_ENV?.includes('preview'),
-        sameSite: 'lax'
+        ...getSecureCookieOptions()
       });
       
       // Store user info in a cookie for display purposes
       if (result.user) {
         console.log('Setting user cookie...');
         response.cookies.set({
-          name: 'admin_user',
+          name: getSecureCookieName(cookieSecurity.USER_COOKIE_NAME),
           value: JSON.stringify({
             name: result.user.name,
             email: result.user.email,
             role: result.user.role
           }),
-          path: '/',
-          maxAge: 60 * 60 * 24, // 24 hours
-          httpOnly: true,
-          // In Vercel preview deployments, we should allow non-secure cookies
-          secure: process.env.NODE_ENV === 'production' && !process.env.VERCEL_ENV?.includes('preview'),
-          sameSite: 'lax'
+          ...getSecureCookieOptions()
         });
       }
       

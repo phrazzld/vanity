@@ -15,6 +15,7 @@
 import { getReadings, getReading, createReading, updateReading, deleteReading, getReadingsWithFilters } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import type { ReadingInput, ReadingsQueryParams } from '@/types';
+import { csrfProtection } from '../middleware/csrf';
 
 /**
  * Next.js configuration options to disable caching for this API route
@@ -222,6 +223,12 @@ export async function POST(request: NextRequest) {
   try {
     console.log('API Route: Creating new reading');
     
+    // Validate CSRF token
+    const csrfError = await csrfProtection(request);
+    if (csrfError) {
+      return csrfError;
+    }
+    
     // Verify authentication via Authorization header
     // In a production app, this would use NextAuth or similar for session validation
     const authToken = request.headers.get('Authorization');
@@ -299,6 +306,12 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     console.log('API Route: Updating reading');
+    
+    // Validate CSRF token
+    const csrfError = await csrfProtection(request);
+    if (csrfError) {
+      return csrfError;
+    }
     
     // Check if user is authenticated
     const authToken = request.headers.get('Authorization');
@@ -381,6 +394,12 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     console.log('API Route: Deleting reading');
+    
+    // Validate CSRF token
+    const csrfError = await csrfProtection(request);
+    if (csrfError) {
+      return csrfError;
+    }
     
     // Check if user is authenticated
     const authToken = request.headers.get('Authorization');
