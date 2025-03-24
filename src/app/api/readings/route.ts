@@ -41,55 +41,127 @@ const setCacheHeaders = (response: NextResponse) => {
 /**
  * Validates reading input data for API operations
  * 
- * Performs validation checks on reading data to ensure it meets requirements:
+ * Enhanced validation that performs extensive checks on reading data:
  * - Verifies presence of required fields when creating a new reading
- * - Validates data types and formats (e.g., URL-friendly slugs)
- * - Checks that strings are non-empty and dates are valid
+ * - Validates data types for all fields
+ * - Enforces format requirements (e.g., URL-friendly slugs)
+ * - Sets maximum lengths for string fields
+ * - Validates dates and boolean values
+ * - Verifies that coverImageSrc is a valid URL structure if provided
+ * - Returns detailed validation errors with specific field information
  *
  * @param {any} data - The data to validate, typically from request body
  * @param {boolean} requireAllFields - Whether to require all mandatory fields (for POST vs PUT)
- * @returns {{ valid: boolean; message?: string }} Validation result with error message if invalid
+ * @returns {{ valid: boolean; message?: string; errors?: Record<string, string> }} Validation result with detailed errors
  */
-const validateReadingInput = (data: any, requireAllFields = true): { valid: boolean; message?: string } => {
+const validateReadingInput = (data: any, requireAllFields = true): { 
+  valid: boolean; 
+  message?: string;
+  errors?: Record<string, string>;
+} => {
   if (!data) {
     return { valid: false, message: 'Request body is required' };
   }
   
+  const errors: Record<string, string> = {};
+  
   // Validate required fields for new readings (POST requests)
   if (requireAllFields) {
-    if (!data.slug) return { valid: false, message: 'Slug is required' };
-    if (!data.title) return { valid: false, message: 'Title is required' };
-    if (!data.author) return { valid: false, message: 'Author is required' };
+    if (!data.slug) errors.slug = 'Slug is required';
+    if (!data.title) errors.title = 'Title is required';
+    if (!data.author) errors.author = 'Author is required';
   }
   
   // Validate slug format if provided
   if (data.slug !== undefined) {
     if (typeof data.slug !== 'string') {
-      return { valid: false, message: 'Slug must be a string' };
-    }
-    // Ensure slugs are URL-friendly (lowercase, alphanumeric, hyphens only)
-    if (!/^[a-z0-9-]+$/.test(data.slug)) {
-      return { valid: false, message: 'Slug must contain only lowercase letters, numbers, and hyphens' };
+      errors.slug = 'Slug must be a string';
+    } else {
+      if (data.slug.length === 0) {
+        errors.slug = 'Slug cannot be empty';
+      } else if (data.slug.length > 100) {
+        errors.slug = 'Slug must be less than 100 characters';
+      } else if (!/^[a-z0-9][a-z0-9-]*[a-z0-9]$/.test(data.slug)) {
+        errors.slug = 'Slug must contain only lowercase letters, numbers, and hyphens, must start and end with a letter or number, and cannot have consecutive hyphens';
+      }
     }
   }
   
-  // Validate title is a non-empty string if provided
-  if (data.title !== undefined && (typeof data.title !== 'string' || data.title.length < 1)) {
-    return { valid: false, message: 'Title must be a non-empty string' };
-  }
-  
-  // Validate author is a non-empty string if provided
-  if (data.author !== undefined && (typeof data.author !== 'string' || data.author.length < 1)) {
-    return { valid: false, message: 'Author must be a non-empty string' };
-  }
-  
-  // Validate finishedDate can be parsed as a date if provided
-  if (data.finishedDate !== undefined && data.finishedDate !== null) {
-    try {
-      new Date(data.finishedDate);
-    } catch (error) {
-      return { valid: false, message: 'Invalid date format for finishedDate' };
+  // Validate title if provided
+  if (data.title !== undefined) {
+    if (typeof data.title !== 'string') {
+      errors.title = 'Title must be a string';
+    } else if (data.title.length === 0) {
+      errors.title = 'Title cannot be empty';
+    } else if (data.title.length > 200) {
+      errors.title = 'Title must be less than 200 characters';
     }
+  }
+  
+  // Validate author if provided
+  if (data.author !== undefined) {
+    if (typeof data.author !== 'string') {
+      errors.author = 'Author must be a string';
+    } else if (data.author.length === 0) {
+      errors.author = 'Author cannot be empty';
+    } else if (data.author.length > 100) {
+      errors.author = 'Author must be less than 100 characters';
+    }
+  }
+  
+  // Validate finishedDate if provided
+  if (data.finishedDate !== undefined) {
+    if (data.finishedDate !== null) {
+      try {
+        const date = new Date(data.finishedDate);
+        
+        // Check if date is valid and not in the future
+        if (isNaN(date.getTime())) {
+          errors.finishedDate = 'Invalid date format for finishedDate';
+        } else if (date > new Date()) {
+          errors.finishedDate = 'finishedDate cannot be in the future';
+        }
+      } catch (error) {
+        errors.finishedDate = 'Invalid date format for finishedDate';
+      }
+    }
+  }
+  
+  // Validate coverImageSrc if provided
+  if (data.coverImageSrc !== undefined && data.coverImageSrc !== null) {
+    if (typeof data.coverImageSrc !== 'string') {
+      errors.coverImageSrc = 'coverImageSrc must be a string';
+    } else if (data.coverImageSrc.length > 0) {  // Only validate non-empty strings
+      // Basic URL path validation
+      if (!/^(\/[a-zA-Z0-9_-]+)+(\.[a-zA-Z0-9]+)?$/.test(data.coverImageSrc)) {
+        errors.coverImageSrc = 'coverImageSrc must be a valid path (e.g., /covers/image.jpg)';
+      }
+    }
+  }
+  
+  // Validate thoughts if provided
+  if (data.thoughts !== undefined) {
+    if (typeof data.thoughts !== 'string') {
+      errors.thoughts = 'Thoughts must be a string';
+    } else if (data.thoughts.length > 10000) {
+      errors.thoughts = 'Thoughts must be less than 10,000 characters';
+    }
+  }
+  
+  // Validate dropped if provided
+  if (data.dropped !== undefined) {
+    if (typeof data.dropped !== 'boolean') {
+      errors.dropped = 'Dropped must be a boolean value';
+    }
+  }
+  
+  // Check if there are any validation errors
+  if (Object.keys(errors).length > 0) {
+    return {
+      valid: false,
+      message: 'Validation failed',
+      errors
+    };
   }
   
   // All validations passed
@@ -255,7 +327,10 @@ export async function POST(request: NextRequest) {
     const validation = validateReadingInput(data, true);
     if (!validation.valid) {
       return setCacheHeaders(NextResponse.json(
-        { error: validation.message },
+        { 
+          error: validation.message,
+          validationErrors: validation.errors 
+        },
         { status: 400 }
       ));
     }
@@ -348,7 +423,10 @@ export async function PUT(request: NextRequest) {
     const validation = validateReadingInput(data, false);
     if (!validation.valid) {
       return setCacheHeaders(NextResponse.json(
-        { error: validation.message },
+        { 
+          error: validation.message,
+          validationErrors: validation.errors 
+        },
         { status: 400 }
       ));
     }

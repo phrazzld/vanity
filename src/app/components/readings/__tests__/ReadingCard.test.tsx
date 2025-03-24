@@ -12,17 +12,20 @@ jest.mock('../placeholderUtils', () => ({
 jest.mock('next/image', () => ({
   __esModule: true,
   default: (props) => {
+    // Using a div instead of img to avoid eslint warning
     return (
-      <img 
+      <div 
         data-testid="mock-image" 
-        alt={props.alt} 
-        src={props.src} 
+        data-alt={props.alt} 
+        data-src={props.src} 
         style={{ 
           width: props.width, 
           height: props.height,
           filter: props.style?.filter || 'none'
         }} 
-      />
+      >
+        {props.alt}
+      </div>
     );
   },
 }));
@@ -54,7 +57,7 @@ describe('ReadingCard', () => {
     
     const image = screen.getByTestId('mock-image');
     expect(image).toBeInTheDocument();
-    expect(image).toHaveAttribute('alt', 'Test Book cover');
+    expect(image).toHaveAttribute('data-alt', 'Test Book cover');
     
     // Should show date in the status badge - use regex for flexibility
     const dateLabel = screen.getByText(/Dec 2022|Jan 2023/);
@@ -72,8 +75,10 @@ describe('ReadingCard', () => {
     const card = screen.getByTitle('Test Book');
     expect(card).toBeInTheDocument();
     
-    // No image should be rendered with alt text
-    expect(screen.queryByAltText('Test Book cover')).not.toBeInTheDocument();
+    // No image should be rendered with the book's alt text
+    const images = screen.queryAllByTestId('mock-image');
+    const bookCoverImage = images.find(img => img.getAttribute('data-alt') === 'Test Book cover');
+    expect(bookCoverImage).toBeUndefined();
   });
 
   it('shows paused indicator when dropped is true', () => {

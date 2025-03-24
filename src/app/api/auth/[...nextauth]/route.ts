@@ -30,8 +30,9 @@ export async function GET(request: NextRequest) {
       const cookieName = getSecureCookieName(cookieSecurity.AUTH_COOKIE_NAME);
       const userCookieName = getSecureCookieName(cookieSecurity.USER_COOKIE_NAME);
       
-      response.cookies.delete(cookieName, { path: '/admin' });
-      response.cookies.delete(userCookieName, { path: '/admin' });
+      // Only pass the name to delete for Next.js cookies
+      response.cookies.delete(cookieName);
+      response.cookies.delete(userCookieName);
       
       return response;
     }

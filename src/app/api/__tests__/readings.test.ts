@@ -12,6 +12,11 @@ jest.mock('@/lib/db', () => ({
   deleteReading: jest.fn(),
 }));
 
+// Mock the CSRF middleware
+jest.mock('../middleware/csrf', () => ({
+  csrfProtection: jest.fn().mockResolvedValue(null),
+}));
+
 // Mock the NextResponse and NextRequest
 jest.mock('next/server', () => {
   return {
@@ -225,7 +230,7 @@ describe('/api/readings endpoint', () => {
       expect(db.createReading).not.toHaveBeenCalled();
     });
 
-    it('validates input data', async () => {
+    it('validates required fields', async () => {
       // Create invalid input (missing title)
       const invalidInput = {
         slug: 'test-slug',
@@ -247,12 +252,90 @@ describe('/api/readings endpoint', () => {
       // Verify error message
       const data = await response.json();
       expect(data).toHaveProperty('error');
+      expect(data).toHaveProperty('validationErrors');
+      expect(data.validationErrors).toHaveProperty('title', 'Title is required');
+
+      // Verify database function was not called
+      expect(db.createReading).not.toHaveBeenCalled();
+    });
+
+    it('validates field formats and lengths', async () => {
+      // Create input with multiple validation issues
+      const invalidInput = {
+        slug: 'INVALID-SLUG-WITH-UPPERCASE',  // Invalid format
+        title: 'A'.repeat(201),               // Too long
+        author: '',                           // Empty string
+        finishedDate: '2030-01-01',           // Date in future
+        coverImageSrc: 'invalid-path',        // Invalid path format
+        thoughts: { some: 'object' },         // Wrong type
+        dropped: 'not-a-boolean'              // Wrong type
+      };
+
+      // Mock request with auth header and invalid body
+      const req = new NextRequest('http://localhost:3000/api/readings');
+      req.headers.set('Authorization', 'Bearer test-token');
+      req.json = jest.fn().mockResolvedValueOnce(invalidInput);
+
+      // Call the handler
+      const response = await POST(req);
+
+      // Check the response
+      expect(response.status).toBe(400);
+
+      // Verify error message and validation errors
+      const data = await response.json();
+      expect(data).toHaveProperty('error', 'Validation failed');
+      expect(data).toHaveProperty('validationErrors');
+      
+      // Check specific field errors
+      const errors = data.validationErrors;
+      expect(errors).toHaveProperty('slug');
+      expect(errors).toHaveProperty('title');
+      expect(errors).toHaveProperty('author');
+      expect(errors).toHaveProperty('finishedDate');
+      expect(errors).toHaveProperty('coverImageSrc');
+      expect(errors).toHaveProperty('thoughts');
+      expect(errors).toHaveProperty('dropped');
 
       // Verify database function was not called
       expect(db.createReading).not.toHaveBeenCalled();
     });
   });
 
-  // Tests for PUT and DELETE would follow a similar pattern
+  describe('PUT', () => {
+    it('validates input data for updates', async () => {
+      // Create input with validation issues
+      const invalidInput = {
+        title: '',  // Empty title
+        thoughts: { invalid: 'object' }  // Wrong type
+      };
+
+      // Mock request with auth header and invalid body
+      const req = new NextRequest('http://localhost:3000/api/readings?slug=existing-book');
+      req.headers.set('Authorization', 'Bearer test-token');
+      req.json = jest.fn().mockResolvedValueOnce(invalidInput);
+
+      // Call the handler
+      const response = await PUT(req);
+
+      // Check the response
+      expect(response.status).toBe(400);
+
+      // Verify error message and validation errors
+      const data = await response.json();
+      expect(data).toHaveProperty('error', 'Validation failed');
+      expect(data).toHaveProperty('validationErrors');
+      
+      // Check specific field errors
+      const errors = data.validationErrors;
+      expect(errors).toHaveProperty('title');
+      expect(errors).toHaveProperty('thoughts');
+
+      // Verify database function was not called
+      expect(db.updateReading).not.toHaveBeenCalled();
+    });
+  });
+
+  // Tests for DELETE would follow a similar pattern
   // These are just representative examples to demonstrate the approach
 });

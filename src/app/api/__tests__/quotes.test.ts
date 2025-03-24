@@ -12,6 +12,11 @@ jest.mock('@/lib/db', () => ({
   deleteQuote: jest.fn(),
 }));
 
+// Mock the CSRF middleware
+jest.mock('../middleware/csrf', () => ({
+  csrfProtection: jest.fn().mockResolvedValue(null),
+}));
+
 // Mock the NextResponse and NextRequest
 jest.mock('next/server', () => {
   return {
