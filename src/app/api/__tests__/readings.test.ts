@@ -145,7 +145,8 @@ describe('/api/readings endpoint', () => {
 
       // Verify error message
       const data = await response.json();
-      expect(data).toHaveProperty('error', 'Reading not found');
+      expect(data).toHaveProperty('error', 'NOT_FOUND_ERROR');
+      expect(data).toHaveProperty('message', 'Reading not found');
     });
 
     it('handles database errors', async () => {

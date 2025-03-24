@@ -17,6 +17,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import type { ReadingInput, ReadingsQueryParams } from '@/types';
 import { csrfProtection } from '../middleware/csrf';
 import { tokenProtection } from '../middleware/token';
+import { 
+  createErrorResponse, 
+  createValidationErrorResponse,
+  ErrorType 
+} from '@/app/utils/error-handler';
 
 /**
  * Next.js configuration options to disable caching for this API route
@@ -208,10 +213,13 @@ export async function GET(request: NextRequest) {
       
       // Return 404 if reading not found
       if (!data) {
-        return setCacheHeaders(NextResponse.json(
-          { error: 'Reading not found' },
-          { status: 404 }
-        ));
+        return setCacheHeaders(
+          createErrorResponse(
+            new Error(`Reading with slug '${slug}' not found`),
+            ErrorType.NOT_FOUND,
+            'Reading not found'
+          )
+        );
       }
       
       console.log(`API Route: Successfully fetched reading: ${data.title}`);
@@ -258,12 +266,14 @@ export async function GET(request: NextRequest) {
       return setCacheHeaders(NextResponse.json(readings));
     }
   } catch (error) {
-    // Handle and log any errors that occur
-    console.error('API Route: Error fetching readings:', error);
-    return setCacheHeaders(NextResponse.json(
-      { error: 'Failed to fetch readings', details: String(error) },
-      { status: 500 }
-    ));
+    // Handle and log any errors with standardized error handling
+    return setCacheHeaders(
+      createErrorResponse(
+        error,
+        ErrorType.SERVER,
+        'Failed to fetch readings'
+      )
+    );
   }
 }
 
@@ -313,42 +323,46 @@ export async function POST(request: NextRequest) {
     try {
       data = await request.json();
     } catch (error) {
-      console.error('API Route: Error parsing JSON:', error);
-      return setCacheHeaders(NextResponse.json(
-        { error: 'Invalid JSON in request body' },
-        { status: 400 }
-      ));
+      return setCacheHeaders(
+        createErrorResponse(
+          error,
+          ErrorType.VALIDATION,
+          'Invalid JSON in request body'
+        )
+      );
     }
     
     // Validate the reading data (requiring all mandatory fields)
     const validation = validateReadingInput(data, true);
     if (!validation.valid) {
-      return setCacheHeaders(NextResponse.json(
-        { 
-          error: validation.message,
-          validationErrors: validation.errors 
-        },
-        { status: 400 }
-      ));
+      return setCacheHeaders(
+        createValidationErrorResponse(validation.message || 'Validation failed', validation.errors || {})
+      );
     }
     
     // Attempt to create the reading in the database
     const reading = await createReading(data);
     if (!reading) {
-      return setCacheHeaders(NextResponse.json(
-        { error: 'Failed to create reading, slug may already exist' },
-        { status: 409 } // Conflict status code for duplicate resource
-      ));
+      return setCacheHeaders(
+        createErrorResponse(
+          new Error('Database conflict - reading with this slug may already exist'),
+          ErrorType.DATABASE,
+          'Failed to create reading, slug may already exist',
+          { 'X-Status-Reason': 'Duplicate resource' }
+        )
+      );
     }
     
     console.log(`API Route: Successfully created reading: ${reading.title}`);
     return setCacheHeaders(NextResponse.json(reading, { status: 201 }));
   } catch (error) {
-    console.error('API Route: Error creating reading:', error);
-    return setCacheHeaders(NextResponse.json(
-      { error: 'Failed to create reading', details: String(error) },
-      { status: 500 }
-    ));
+    return setCacheHeaders(
+      createErrorResponse(
+        error,
+        ErrorType.SERVER,
+        'Failed to create reading'
+      )
+    );
   }
 }
 
@@ -395,10 +409,13 @@ export async function PUT(request: NextRequest) {
     const url = new URL(request.url);
     const slug = url.searchParams.get('slug');
     if (!slug) {
-      return setCacheHeaders(NextResponse.json(
-        { error: 'Slug parameter is required' },
-        { status: 400 }
-      ));
+      return setCacheHeaders(
+        createErrorResponse(
+          new Error('Missing required slug parameter'),
+          ErrorType.VALIDATION,
+          'Slug parameter is required'
+        )
+      );
     }
     
     // Parse request body
@@ -406,42 +423,45 @@ export async function PUT(request: NextRequest) {
     try {
       data = await request.json();
     } catch (error) {
-      console.error('API Route: Error parsing JSON:', error);
-      return setCacheHeaders(NextResponse.json(
-        { error: 'Invalid JSON in request body' },
-        { status: 400 }
-      ));
+      return setCacheHeaders(
+        createErrorResponse(
+          error,
+          ErrorType.VALIDATION,
+          'Invalid JSON in request body'
+        )
+      );
     }
     
     // Validate data
     const validation = validateReadingInput(data, false);
     if (!validation.valid) {
-      return setCacheHeaders(NextResponse.json(
-        { 
-          error: validation.message,
-          validationErrors: validation.errors 
-        },
-        { status: 400 }
-      ));
+      return setCacheHeaders(
+        createValidationErrorResponse(validation.message || 'Validation failed', validation.errors || {})
+      );
     }
     
     // Update reading
     const reading = await updateReading(slug, data);
     if (!reading) {
-      return setCacheHeaders(NextResponse.json(
-        { error: 'Reading not found or slug conflict' },
-        { status: 404 }
-      ));
+      return setCacheHeaders(
+        createErrorResponse(
+          new Error(`Reading with slug '${slug}' not found or slug conflict`),
+          ErrorType.NOT_FOUND,
+          'Reading not found or slug conflict'
+        )
+      );
     }
     
     console.log(`API Route: Successfully updated reading: ${reading.title}`);
     return setCacheHeaders(NextResponse.json(reading));
   } catch (error) {
-    console.error('API Route: Error updating reading:', error);
-    return setCacheHeaders(NextResponse.json(
-      { error: 'Failed to update reading', details: String(error) },
-      { status: 500 }
-    ));
+    return setCacheHeaders(
+      createErrorResponse(
+        error,
+        ErrorType.SERVER,
+        'Failed to update reading'
+      )
+    );
   }
 }
 
@@ -483,19 +503,25 @@ export async function DELETE(request: NextRequest) {
     const url = new URL(request.url);
     const slug = url.searchParams.get('slug');
     if (!slug) {
-      return setCacheHeaders(NextResponse.json(
-        { error: 'Slug parameter is required' },
-        { status: 400 }
-      ));
+      return setCacheHeaders(
+        createErrorResponse(
+          new Error('Missing required slug parameter'),
+          ErrorType.VALIDATION,
+          'Slug parameter is required'
+        )
+      );
     }
     
     // Delete reading
     const success = await deleteReading(slug);
     if (!success) {
-      return setCacheHeaders(NextResponse.json(
-        { error: 'Reading not found' },
-        { status: 404 }
-      ));
+      return setCacheHeaders(
+        createErrorResponse(
+          new Error(`Reading with slug '${slug}' not found`),
+          ErrorType.NOT_FOUND,
+          'Reading not found'
+        )
+      );
     }
     
     console.log(`API Route: Successfully deleted reading with slug: ${slug}`);
@@ -503,10 +529,12 @@ export async function DELETE(request: NextRequest) {
       { success: true, message: `Reading with slug '${slug}' deleted successfully` }
     ));
   } catch (error) {
-    console.error('API Route: Error deleting reading:', error);
-    return setCacheHeaders(NextResponse.json(
-      { error: 'Failed to delete reading', details: String(error) },
-      { status: 500 }
-    ));
+    return setCacheHeaders(
+      createErrorResponse(
+        error,
+        ErrorType.SERVER,
+        'Failed to delete reading'
+      )
+    );
   }
 }

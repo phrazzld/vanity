@@ -230,7 +230,8 @@ describe('/api/quotes endpoint', () => {
 
       // Verify error message and validation errors
       const data = await response.json();
-      expect(data).toHaveProperty('error', 'Validation failed');
+      expect(data).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(data).toHaveProperty('message', 'Validation failed');
       expect(data).toHaveProperty('validationErrors');
       
       // Check specific field errors
@@ -391,7 +392,8 @@ describe('/api/quotes endpoint', () => {
 
       // Verify error message and validation errors
       const data = await response.json();
-      expect(data).toHaveProperty('error', 'Validation failed');
+      expect(data).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(data).toHaveProperty('message', 'Validation failed');
       expect(data).toHaveProperty('validationErrors');
       
       // Check specific field errors
@@ -417,7 +419,8 @@ describe('/api/quotes endpoint', () => {
 
       // Verify error message
       const data = await response.json();
-      expect(data).toHaveProperty('error', 'Invalid quote ID');
+      expect(data).toHaveProperty('error', 'VALIDATION_ERROR');
+      expect(data).toHaveProperty('message', 'Invalid quote ID');
 
       // Verify database function was not called
       expect(db.updateQuote).not.toHaveBeenCalled();

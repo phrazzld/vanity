@@ -3,6 +3,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import type { QuoteInput, QuotesQueryParams } from '@/types';
 import { csrfProtection } from '../middleware/csrf';
 import { tokenProtection } from '../middleware/token';
+import { 
+  createErrorResponse, 
+  createValidationErrorResponse,
+  ErrorType 
+} from '@/app/utils/error-handler';
 
 // Disable caching
 export const dynamic = 'force-dynamic';
@@ -135,20 +140,26 @@ export async function GET(request: NextRequest) {
       // Convert ID to number
       const quoteId = parseInt(id, 10);
       if (isNaN(quoteId)) {
-        return setCacheHeaders(NextResponse.json(
-          { error: 'Invalid quote ID' },
-          { status: 400 }
-        ));
+        return setCacheHeaders(
+          createErrorResponse(
+            new Error(`Invalid quote ID: ${id}`),
+            ErrorType.VALIDATION,
+            'Invalid quote ID'
+          )
+        );
       }
       
       console.log(`API Route: Fetching quote with ID: ${quoteId}`);
       const data = await getQuote(quoteId);
       
       if (!data) {
-        return setCacheHeaders(NextResponse.json(
-          { error: 'Quote not found' },
-          { status: 404 }
-        ));
+        return setCacheHeaders(
+          createErrorResponse(
+            new Error(`Quote with ID ${quoteId} not found`),
+            ErrorType.NOT_FOUND,
+            'Quote not found'
+          )
+        );
       }
 
       console.log(`API Route: Successfully fetched quote with ID: ${quoteId}`);
@@ -193,11 +204,13 @@ export async function GET(request: NextRequest) {
       return setCacheHeaders(NextResponse.json(quotes));
     }
   } catch (error) {
-    console.error('API Route: Error fetching quotes:', error);
-    return setCacheHeaders(NextResponse.json(
-      { error: 'Failed to fetch quotes', details: String(error) },
-      { status: 500 }
-    ));
+    return setCacheHeaders(
+      createErrorResponse(
+        error,
+        ErrorType.SERVER,
+        'Failed to fetch quotes'
+      )
+    );
   }
 }
 
@@ -235,32 +248,33 @@ export async function POST(request: NextRequest) {
     // Validate data
     const validation = validateQuoteInput(data, true);
     if (!validation.valid) {
-      return setCacheHeaders(NextResponse.json(
-        { 
-          error: validation.message,
-          validationErrors: validation.errors 
-        },
-        { status: 400 }
-      ));
+      return setCacheHeaders(
+        createValidationErrorResponse(validation.message || 'Validation failed', validation.errors || {})
+      );
     }
     
     // Create quote
     const quote = await createQuote(data);
     if (!quote) {
-      return setCacheHeaders(NextResponse.json(
-        { error: 'Failed to create quote' },
-        { status: 500 }
-      ));
+      return setCacheHeaders(
+        createErrorResponse(
+          new Error('Database operation failed to return a quote'), 
+          ErrorType.DATABASE,
+          'Failed to create quote'
+        )
+      );
     }
     
     console.log(`API Route: Successfully created quote with ID: ${quote.id}`);
     return setCacheHeaders(NextResponse.json(quote, { status: 201 }));
   } catch (error) {
-    console.error('API Route: Error creating quote:', error);
-    return setCacheHeaders(NextResponse.json(
-      { error: 'Failed to create quote', details: String(error) },
-      { status: 500 }
-    ));
+    return setCacheHeaders(
+      createErrorResponse(
+        error, 
+        ErrorType.SERVER, 
+        'Failed to create quote'
+      )
+    );
   }
 }
 
@@ -287,19 +301,25 @@ export async function PUT(request: NextRequest) {
     const url = new URL(request.url);
     const id = url.searchParams.get('id');
     if (!id) {
-      return setCacheHeaders(NextResponse.json(
-        { error: 'ID parameter is required' },
-        { status: 400 }
-      ));
+      return setCacheHeaders(
+        createErrorResponse(
+          new Error('Missing required ID parameter'),
+          ErrorType.VALIDATION,
+          'ID parameter is required'
+        )
+      );
     }
     
     // Convert ID to number
     const quoteId = parseInt(id, 10);
     if (isNaN(quoteId)) {
-      return setCacheHeaders(NextResponse.json(
-        { error: 'Invalid quote ID' },
-        { status: 400 }
-      ));
+      return setCacheHeaders(
+        createErrorResponse(
+          new Error(`Invalid quote ID: ${id}`),
+          ErrorType.VALIDATION,
+          'Invalid quote ID'
+        )
+      );
     }
     
     // Parse request body
@@ -317,32 +337,33 @@ export async function PUT(request: NextRequest) {
     // Validate data
     const validation = validateQuoteInput(data, false);
     if (!validation.valid) {
-      return setCacheHeaders(NextResponse.json(
-        { 
-          error: validation.message,
-          validationErrors: validation.errors 
-        },
-        { status: 400 }
-      ));
+      return setCacheHeaders(
+        createValidationErrorResponse(validation.message || 'Validation failed', validation.errors || {})
+      );
     }
     
     // Update quote
     const quote = await updateQuote(quoteId, data);
     if (!quote) {
-      return setCacheHeaders(NextResponse.json(
-        { error: 'Quote not found' },
-        { status: 404 }
-      ));
+      return setCacheHeaders(
+        createErrorResponse(
+          new Error(`Quote with ID ${quoteId} not found`),
+          ErrorType.NOT_FOUND,
+          'Quote not found'
+        )
+      );
     }
     
     console.log(`API Route: Successfully updated quote with ID: ${quote.id}`);
     return setCacheHeaders(NextResponse.json(quote));
   } catch (error) {
-    console.error('API Route: Error updating quote:', error);
-    return setCacheHeaders(NextResponse.json(
-      { error: 'Failed to update quote', details: String(error) },
-      { status: 500 }
-    ));
+    return setCacheHeaders(
+      createErrorResponse(
+        error,
+        ErrorType.SERVER,
+        'Failed to update quote'
+      )
+    );
   }
 }
 
@@ -369,28 +390,37 @@ export async function DELETE(request: NextRequest) {
     const url = new URL(request.url);
     const id = url.searchParams.get('id');
     if (!id) {
-      return setCacheHeaders(NextResponse.json(
-        { error: 'ID parameter is required' },
-        { status: 400 }
-      ));
+      return setCacheHeaders(
+        createErrorResponse(
+          new Error('Missing required ID parameter'),
+          ErrorType.VALIDATION,
+          'ID parameter is required'
+        )
+      );
     }
     
     // Convert ID to number
     const quoteId = parseInt(id, 10);
     if (isNaN(quoteId)) {
-      return setCacheHeaders(NextResponse.json(
-        { error: 'Invalid quote ID' },
-        { status: 400 }
-      ));
+      return setCacheHeaders(
+        createErrorResponse(
+          new Error(`Invalid quote ID: ${id}`),
+          ErrorType.VALIDATION,
+          'Invalid quote ID'
+        )
+      );
     }
     
     // Delete quote
     const success = await deleteQuote(quoteId);
     if (!success) {
-      return setCacheHeaders(NextResponse.json(
-        { error: 'Quote not found' },
-        { status: 404 }
-      ));
+      return setCacheHeaders(
+        createErrorResponse(
+          new Error(`Quote with ID ${quoteId} not found`),
+          ErrorType.NOT_FOUND,
+          'Quote not found'
+        )
+      );
     }
     
     console.log(`API Route: Successfully deleted quote with ID: ${quoteId}`);
@@ -398,10 +428,12 @@ export async function DELETE(request: NextRequest) {
       { success: true, message: `Quote with ID ${quoteId} deleted successfully` }
     ));
   } catch (error) {
-    console.error('API Route: Error deleting quote:', error);
-    return setCacheHeaders(NextResponse.json(
-      { error: 'Failed to delete quote', details: String(error) },
-      { status: 500 }
-    ));
+    return setCacheHeaders(
+      createErrorResponse(
+        error,
+        ErrorType.SERVER,
+        'Failed to delete quote'
+      )
+    );
   }
 }
