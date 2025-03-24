@@ -32,7 +32,7 @@
   - Dependencies: None
   - Priority: High
 
-- [ ] Implement password hashing in auth.ts
+- [x] Implement password hashing in auth.ts
   - Description: Modify auth.ts to use bcrypt for comparing passwords against stored hash
   - Dependencies: bcrypt package
   - Priority: High

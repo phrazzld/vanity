@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     console.log(`Current environment: ${process.env.NODE_ENV}`);
     
     // Use our auth utility to validate credentials
-    const result = auth.validateCredentials(username, password);
+    const result = await auth.validateCredentials(username, password);
     
     if (result.success) {
       console.log('Credentials validated successfully, setting cookies...');
