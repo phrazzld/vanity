@@ -58,7 +58,7 @@
   - Dependencies: CSRF token generation utility
   - Priority: High
 
-- [ ] Add CSRF protection to API routes
+- [x] Add CSRF protection to API routes
   - Description: Protect API routes that modify data with CSRF validation
   - Dependencies: CSRF token generation utility
   - Priority: High
@@ -113,7 +113,7 @@
   - Dependencies: SQL injection fixes
   - Priority: Medium
 
-- [ ] Create tests for CSRF protection
+- [x] Create tests for CSRF protection
   - Description: Verify CSRF protection is working
   - Dependencies: CSRF implementation
   - Priority: Medium
