@@ -86,12 +86,12 @@
   - Priority: Medium
 
 ## API Authorization
-- [ ] Implement API token validation
+- [x] Implement API token validation
   - Description: Add validation for API Bearer tokens using environment variable
   - Dependencies: New API_TOKEN environment variable
   - Priority: Low
 
-- [ ] Update environment variables for API token
+- [x] Update environment variables for API token
   - Description: Add API_TOKEN to environment variables
   - Dependencies: None
   - Priority: Low

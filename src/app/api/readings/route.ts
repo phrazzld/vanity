@@ -16,6 +16,7 @@ import { getReadings, getReading, createReading, updateReading, deleteReading, g
 import { NextRequest, NextResponse } from 'next/server';
 import type { ReadingInput, ReadingsQueryParams } from '@/types';
 import { csrfProtection } from '../middleware/csrf';
+import { tokenProtection } from '../middleware/token';
 
 /**
  * Next.js configuration options to disable caching for this API route
@@ -301,14 +302,10 @@ export async function POST(request: NextRequest) {
       return csrfError;
     }
     
-    // Verify authentication via Authorization header
-    // In a production app, this would use NextAuth or similar for session validation
-    const authToken = request.headers.get('Authorization');
-    if (!authToken || !authToken.startsWith('Bearer ')) {
-      return setCacheHeaders(NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      ));
+    // Validate API token
+    const tokenError = await tokenProtection(request);
+    if (tokenError) {
+      return setCacheHeaders(tokenError);
     }
     
     // Parse and validate the request body
@@ -388,13 +385,10 @@ export async function PUT(request: NextRequest) {
       return csrfError;
     }
     
-    // Check if user is authenticated
-    const authToken = request.headers.get('Authorization');
-    if (!authToken || !authToken.startsWith('Bearer ')) {
-      return setCacheHeaders(NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      ));
+    // Validate API token
+    const tokenError = await tokenProtection(request);
+    if (tokenError) {
+      return setCacheHeaders(tokenError);
     }
     
     // Get slug from query parameters
@@ -479,13 +473,10 @@ export async function DELETE(request: NextRequest) {
       return csrfError;
     }
     
-    // Check if user is authenticated
-    const authToken = request.headers.get('Authorization');
-    if (!authToken || !authToken.startsWith('Bearer ')) {
-      return setCacheHeaders(NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      ));
+    // Validate API token
+    const tokenError = await tokenProtection(request);
+    if (tokenError) {
+      return setCacheHeaders(tokenError);
     }
     
     // Get slug from query parameters

@@ -2,6 +2,7 @@ import { getQuotes, getQuote, createQuote, updateQuote, deleteQuote, getQuotesWi
 import { NextRequest, NextResponse } from 'next/server';
 import type { QuoteInput, QuotesQueryParams } from '@/types';
 import { csrfProtection } from '../middleware/csrf';
+import { tokenProtection } from '../middleware/token';
 
 // Disable caching
 export const dynamic = 'force-dynamic';
@@ -213,13 +214,10 @@ export async function POST(request: NextRequest) {
       return csrfError;
     }
     
-    // Check if user is authenticated
-    const authToken = request.headers.get('Authorization');
-    if (!authToken || !authToken.startsWith('Bearer ')) {
-      return setCacheHeaders(NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      ));
+    // Validate API token
+    const tokenError = await tokenProtection(request);
+    if (tokenError) {
+      return setCacheHeaders(tokenError);
     }
     
     // Parse request body
@@ -279,13 +277,10 @@ export async function PUT(request: NextRequest) {
       return csrfError;
     }
     
-    // Check if user is authenticated
-    const authToken = request.headers.get('Authorization');
-    if (!authToken || !authToken.startsWith('Bearer ')) {
-      return setCacheHeaders(NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      ));
+    // Validate API token
+    const tokenError = await tokenProtection(request);
+    if (tokenError) {
+      return setCacheHeaders(tokenError);
     }
     
     // Get ID from query parameters
@@ -364,13 +359,10 @@ export async function DELETE(request: NextRequest) {
       return csrfError;
     }
     
-    // Check if user is authenticated
-    const authToken = request.headers.get('Authorization');
-    if (!authToken || !authToken.startsWith('Bearer ')) {
-      return setCacheHeaders(NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      ));
+    // Validate API token
+    const tokenError = await tokenProtection(request);
+    if (tokenError) {
+      return setCacheHeaders(tokenError);
     }
     
     // Get ID from query parameters
