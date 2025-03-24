@@ -180,5 +180,247 @@ describe('/api/quotes endpoint', () => {
       // Verify database function was not called
       expect(db.createQuote).not.toHaveBeenCalled();
     });
+    
+    it('validates required fields', async () => {
+      // Create invalid input (missing text)
+      const invalidInput = {
+        author: 'Test Author'
+        // Missing required text
+      };
+
+      // Mock request with auth header and invalid body
+      const req = new NextRequest('http://localhost:3000/api/quotes');
+      req.headers.set('Authorization', 'Bearer test-token');
+      req.json = jest.fn().mockResolvedValueOnce(invalidInput);
+
+      // Call the handler
+      const response = await POST(req);
+
+      // Check the response
+      expect(response.status).toBe(400);
+
+      // Verify error message
+      const data = await response.json();
+      expect(data).toHaveProperty('error');
+      expect(data).toHaveProperty('validationErrors');
+      expect(data.validationErrors).toHaveProperty('text', 'Quote text is required');
+
+      // Verify database function was not called
+      expect(db.createQuote).not.toHaveBeenCalled();
+    });
+
+    it('validates field formats and lengths', async () => {
+      // Create input with multiple validation issues
+      const invalidInput = {
+        text: 'A'.repeat(1001), // Text too long
+        author: { name: 'Not a string' }, // Wrong author type
+        unexpectedField: 'This field should not be here' // Unexpected field
+      };
+
+      // Mock request with auth header and invalid body
+      const req = new NextRequest('http://localhost:3000/api/quotes');
+      req.headers.set('Authorization', 'Bearer test-token');
+      req.json = jest.fn().mockResolvedValueOnce(invalidInput);
+
+      // Call the handler
+      const response = await POST(req);
+
+      // Check the response
+      expect(response.status).toBe(400);
+
+      // Verify error message and validation errors
+      const data = await response.json();
+      expect(data).toHaveProperty('error', 'Validation failed');
+      expect(data).toHaveProperty('validationErrors');
+      
+      // Check specific field errors
+      const errors = data.validationErrors;
+      expect(errors).toHaveProperty('text', 'Quote text must be less than 1000 characters');
+      expect(errors).toHaveProperty('author', 'Author must be a string or null');
+      expect(errors).toHaveProperty('_unexpected'); // Should catch unexpected fields
+
+      // Verify database function was not called
+      expect(db.createQuote).not.toHaveBeenCalled();
+    });
+    
+    it('detects and blocks potentially unsafe content', async () => {
+      // Create input with unsafe HTML/script content
+      const unsafeInput = {
+        text: 'Normal text <script>alert("XSS")</script> more text',
+        author: 'Normal author'
+      };
+
+      // Mock request with auth header and unsafe body
+      const req = new NextRequest('http://localhost:3000/api/quotes');
+      req.headers.set('Authorization', 'Bearer test-token');
+      req.json = jest.fn().mockResolvedValueOnce(unsafeInput);
+
+      // Call the handler
+      const response = await POST(req);
+
+      // Check the response
+      expect(response.status).toBe(400);
+
+      // Verify validation errors
+      const data = await response.json();
+      expect(data).toHaveProperty('validationErrors');
+      expect(data.validationErrors).toHaveProperty(
+        'text', 'Quote text contains potentially unsafe content'
+      );
+
+      // Verify database function was not called
+      expect(db.createQuote).not.toHaveBeenCalled();
+    });
+    
+    it('handles empty strings in author field by converting to null', async () => {
+      // Create input with empty author string
+      const input = {
+        text: 'Valid quote text',
+        author: ''  // Empty string should be converted to null
+      };
+
+      const mockCreatedQuote: Quote = {
+        id: 3,
+        text: 'Valid quote text',
+        author: null // Should be stored as null
+      };
+
+      // Mock database function
+      (db.createQuote as jest.Mock).mockResolvedValueOnce(mockCreatedQuote);
+
+      // Mock request
+      const req = new NextRequest('http://localhost:3000/api/quotes');
+      req.headers.set('Authorization', 'Bearer test-token');
+      req.json = jest.fn().mockResolvedValueOnce(input);
+
+      // Call the handler
+      const response = await POST(req);
+
+      // Check the response
+      expect(response.status).toBe(201);
+      
+      // Verify the author was converted to null in the database call
+      expect(db.createQuote).toHaveBeenCalledWith(expect.objectContaining({
+        text: 'Valid quote text',
+        author: null
+      }));
+    });
+    
+    it('rejects whitespace-only strings in author field', async () => {
+      // Create input with whitespace-only author
+      const input = {
+        text: 'Valid quote text',
+        author: '   '  // Whitespace-only string
+      };
+
+      // Mock request
+      const req = new NextRequest('http://localhost:3000/api/quotes');
+      req.headers.set('Authorization', 'Bearer test-token');
+      req.json = jest.fn().mockResolvedValueOnce(input);
+
+      // Call the handler
+      const response = await POST(req);
+
+      // Check the response
+      expect(response.status).toBe(400);
+      
+      // Verify validation errors
+      const data = await response.json();
+      expect(data.validationErrors).toHaveProperty(
+        'author', 'Author cannot be empty or only whitespace'
+      );
+      
+      // Verify database function was not called
+      expect(db.createQuote).not.toHaveBeenCalled();
+    });
+  });
+  
+  describe('PUT', () => {
+    it('updates a quote successfully with valid authentication', async () => {
+      // Mock quote input and updated quote
+      const mockInput: Partial<QuoteInput> = {
+        text: 'Updated Quote Text'
+      };
+
+      const mockUpdatedQuote: Quote = {
+        id: 1,
+        text: 'Updated Quote Text',
+        author: 'Original Author'
+      };
+
+      // Mock database function and request json
+      (db.updateQuote as jest.Mock).mockResolvedValueOnce(mockUpdatedQuote);
+
+      // Create request with auth header and mock body
+      const req = new NextRequest('http://localhost:3000/api/quotes?id=1');
+      req.headers.set('Authorization', 'Bearer test-token');
+      req.json = jest.fn().mockResolvedValueOnce(mockInput);
+
+      // Call the handler
+      const response = await PUT(req);
+
+      // Check the response
+      expect(response.status).toBe(200);
+
+      // Verify correct data was returned
+      const data = await response.json();
+      expect(data).toEqual(mockUpdatedQuote);
+
+      // Verify database function was called with correct data
+      expect(db.updateQuote).toHaveBeenCalledTimes(1);
+      expect(db.updateQuote).toHaveBeenCalledWith(1, mockInput);
+    });
+
+    it('validates input data for updates', async () => {
+      // Create input with validation issues
+      const invalidInput = {
+        text: '',  // Empty text
+        author: 123  // Wrong type
+      };
+
+      // Mock request with auth header and invalid body
+      const req = new NextRequest('http://localhost:3000/api/quotes?id=1');
+      req.headers.set('Authorization', 'Bearer test-token');
+      req.json = jest.fn().mockResolvedValueOnce(invalidInput);
+
+      // Call the handler
+      const response = await PUT(req);
+
+      // Check the response
+      expect(response.status).toBe(400);
+
+      // Verify error message and validation errors
+      const data = await response.json();
+      expect(data).toHaveProperty('error', 'Validation failed');
+      expect(data).toHaveProperty('validationErrors');
+      
+      // Check specific field errors
+      const errors = data.validationErrors;
+      expect(errors).toHaveProperty('text');
+      expect(errors).toHaveProperty('author');
+
+      // Verify database function was not called
+      expect(db.updateQuote).not.toHaveBeenCalled();
+    });
+    
+    it('validates ID parameter', async () => {
+      // Mock request with invalid ID
+      const req = new NextRequest('http://localhost:3000/api/quotes?id=invalid');
+      req.headers.set('Authorization', 'Bearer test-token');
+      req.json = jest.fn().mockResolvedValueOnce({ text: 'Valid text' });
+
+      // Call the handler
+      const response = await PUT(req);
+
+      // Check the response
+      expect(response.status).toBe(400);
+
+      // Verify error message
+      const data = await response.json();
+      expect(data).toHaveProperty('error', 'Invalid quote ID');
+
+      // Verify database function was not called
+      expect(db.updateQuote).not.toHaveBeenCalled();
+    });
   });
 });

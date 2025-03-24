@@ -80,7 +80,7 @@
   - Dependencies: None
   - Priority: Medium
 
-- [ ] Add input validation for quotes API
+- [x] Add input validation for quotes API
   - Description: Create or enhance validation for quote inputs
   - Dependencies: None
   - Priority: Medium
@@ -118,7 +118,7 @@
   - Dependencies: CSRF implementation
   - Priority: Medium
 
-- [ ] Create tests for password hashing
+- [x] Create tests for password hashing
   - Description: Verify password hashing works correctly
   - Dependencies: Password hashing implementation
   - Priority: Medium

@@ -41,7 +41,8 @@ const auth = {
       console.log('Authentication failed: invalid username');
       return {
         success: false,
-        user: null
+        user: null,
+        message: "Invalid credentials"
       };
     }
     
@@ -88,7 +89,8 @@ const auth = {
     console.log('Authentication failed: invalid password');
     return {
       success: false,
-      user: null
+      user: null,
+      message: "Invalid credentials"
     };
   },
 

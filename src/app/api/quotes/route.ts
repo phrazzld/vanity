@@ -16,27 +16,97 @@ const setCacheHeaders = (response: NextResponse) => {
   return response;
 };
 
-// Helper for validating quote input data
-const validateQuoteInput = (data: any, requireAllFields = true): { valid: boolean; message?: string } => {
+/**
+ * Validates quote input data for API operations
+ * 
+ * Enhanced validation that performs comprehensive checks on quote data:
+ * - Verifies presence of required fields (text) when creating a new quote
+ * - Validates data types for all fields
+ * - Enforces format and length requirements
+ * - Prevents XSS by disallowing HTML/script tags in text
+ * - Validates against empty or whitespace-only strings
+ * - Provides detailed field-specific error messages
+ * - Returns structured validation errors for API response
+ *
+ * @param {any} data - The data to validate, typically from request body
+ * @param {boolean} requireAllFields - Whether to require all mandatory fields (for POST vs PUT)
+ * @returns {{ valid: boolean; message?: string; errors?: Record<string, string> }} Validation result with detailed errors
+ */
+const validateQuoteInput = (data: any, requireAllFields = true): { 
+  valid: boolean; 
+  message?: string;
+  errors?: Record<string, string>;
+} => {
   if (!data) {
     return { valid: false, message: 'Request body is required' };
   }
   
-  // Validate required fields
+  const errors: Record<string, string> = {};
+  
+  // Validate required fields for new quotes (POST requests)
   if (requireAllFields) {
-    if (!data.text) return { valid: false, message: 'Quote text is required' };
+    if (!data.text) errors.text = 'Quote text is required';
   }
   
   // Validate text if provided
   if (data.text !== undefined) {
-    if (typeof data.text !== 'string' || data.text.trim().length === 0) {
-      return { valid: false, message: 'Quote text must be a non-empty string' };
+    // Type validation
+    if (typeof data.text !== 'string') {
+      errors.text = 'Quote text must be a string';
+    } else {
+      // Content validation
+      if (data.text.trim().length === 0) {
+        errors.text = 'Quote text cannot be empty';
+      } else if (data.text.length > 1000) {
+        errors.text = 'Quote text must be less than 1000 characters';
+      }
+      
+      // Security validation - simple check for script tags or suspicious HTML
+      if (/<script|javascript:|on\w+\s*=|<iframe|<img|<svg|alert\s*\(|eval\s*\(/.test(data.text)) {
+        errors.text = 'Quote text contains potentially unsafe content';
+      }
     }
   }
   
   // Validate author if provided (can be null or a string)
-  if (data.author !== undefined && data.author !== null && typeof data.author !== 'string') {
-    return { valid: false, message: 'Author must be a string or null' };
+  if (data.author !== undefined) {
+    if (data.author === '') {
+      // Empty strings should be converted to null for consistency
+      data.author = null;
+    } else if (data.author !== null) {
+      // Type validation
+      if (typeof data.author !== 'string') {
+        errors.author = 'Author must be a string or null';
+      } else {
+        // Content validation
+        if (data.author.trim().length === 0) {
+          errors.author = 'Author cannot be empty or only whitespace';
+        } else if (data.author.length > 100) {
+          errors.author = 'Author must be less than 100 characters';
+        }
+        
+        // Security validation - simple check for script tags or suspicious HTML
+        if (/<script|javascript:|on\w+\s*=|<iframe|<img|<svg|alert\s*\(|eval\s*\(/.test(data.author)) {
+          errors.author = 'Author contains potentially unsafe content';
+        }
+      }
+    }
+  }
+  
+  // Check for any additional unexpected fields (optional security measure)
+  const allowedFields = ['text', 'author'];
+  const unexpectedFields = Object.keys(data).filter(key => !allowedFields.includes(key));
+  if (unexpectedFields.length > 0) {
+    errors._unexpected = `Unexpected fields found: ${unexpectedFields.join(', ')}`;
+  }
+  
+  // Check if there are any validation errors
+  if (Object.keys(errors).length > 0) {
+    return {
+      valid: false,
+      message: 'Validation failed',
+      errors
+    };
   }
   
   // All validations passed
@@ -168,7 +238,10 @@ export async function POST(request: NextRequest) {
     const validation = validateQuoteInput(data, true);
     if (!validation.valid) {
       return setCacheHeaders(NextResponse.json(
-        { error: validation.message },
+        { 
+          error: validation.message,
+          validationErrors: validation.errors 
+        },
         { status: 400 }
       ));
     }
@@ -250,7 +323,10 @@ export async function PUT(request: NextRequest) {
     const validation = validateQuoteInput(data, false);
     if (!validation.valid) {
       return setCacheHeaders(NextResponse.json(
-        { error: validation.message },
+        { 
+          error: validation.message,
+          validationErrors: validation.errors 
+        },
         { status: 400 }
       ));
     }
