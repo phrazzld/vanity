@@ -91,11 +91,14 @@ export function createSecureFetch() {
 // Export a singleton secure fetch instance
 export const secureFetch = createSecureFetch();
 
-// Default export for convenient importing
-export default {
+// Create a named object for exporting
+const csrfClient = {
   fetchCsrfToken,
   getCsrfToken,
   addSecurityHeaders,
   createSecureFetch,
   secureFetch
 };
+
+// Default export
+export default csrfClient;
