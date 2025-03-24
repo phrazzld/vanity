@@ -43,7 +43,7 @@
   - Priority: Medium
 
 ## CSRF Protection
-- [ ] Create CSRF token generation utility
+- [x] Create CSRF token generation utility
   - Description: Create a simple utility to generate and validate CSRF tokens
   - Dependencies: None
   - Priority: High
