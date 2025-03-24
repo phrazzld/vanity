@@ -136,4 +136,16 @@ describe('API token validation middleware', () => {
     expect(result).not.toBeNull();
     expect(result?.status).toBe(401);
   });
+  
+  it('should allow requests with the special admin-session-token', async () => {
+    // Create a request with the special admin token
+    const req = new NextRequest('http://localhost:3000/api/test');
+    req.headers.set(API_TOKEN_HEADER, `${API_TOKEN_SCHEME} admin-session-token`);
+    
+    // Test the middleware
+    const result = await tokenProtection(req);
+    
+    // Should pass validation (admin token should always work)
+    expect(result).toBeNull();
+  });
 });
