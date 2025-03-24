@@ -45,40 +45,93 @@ export async function getReading(slug: string): Promise<Reading | null> {
 /**
  * Fetches all readings from the database
  * 
- * @returns Array of reading objects ordered by finished date (desc)
+ * @returns Array of reading objects ordered by reading status and finished date
  */
 export async function getReadings(): Promise<Reading[]> {
   try {
     console.log('Getting readings from database...')
     
-    // Use raw query for maximum compatibility
-    const readings = await prisma.$queryRaw`
-      SELECT id, slug, title, author, "finishedDate", "coverImageSrc", thoughts, dropped
-      FROM "Reading"
-      ORDER BY 
-        -- Group 1: Unfinished and not dropped (priority 1)
-        -- Group 2: Unfinished and dropped (priority 2)
-        -- Group 3: Finished books (priority 3)
-        CASE 
-          WHEN "finishedDate" IS NULL AND dropped = false THEN 1
-          WHEN "finishedDate" IS NULL AND dropped = true THEN 2
-          ELSE 3
-        END,
-        -- Sort finished books by recency
-        "finishedDate" DESC,
-        id DESC;
-    `
+    // Use Prisma's findMany with orderBy
+    // For the complex ordering requirements, use a hybrid approach
     
-    console.log(`Found ${Array.isArray(readings) ? readings.length : 0} readings`)
-    
-    if (!readings || (Array.isArray(readings) && readings.length === 0)) {
-      console.warn('No readings found in database')
+    // First, try to accomplish this with standard Prisma operations
+    try {
+      // Attempt to use prisma.findMany with sorting logic implemented in code
+      const allReadings = await prisma.reading.findMany({
+        select: {
+          id: true,
+          slug: true,
+          title: true,
+          author: true,
+          finishedDate: true,
+          coverImageSrc: true,
+          thoughts: true,
+          dropped: true
+        }
+      });
+      
+      // Sort the readings in memory according to our priority logic
+      const sortedReadings = [...allReadings].sort((a, b) => {
+        // Determine priority groups
+        let groupA = 3; // Default: finished books (group 3)
+        let groupB = 3;
+        
+        // Group 1: Unfinished and not dropped
+        if (a.finishedDate === null && !a.dropped) groupA = 1;
+        if (b.finishedDate === null && !b.dropped) groupB = 1;
+        
+        // Group 2: Unfinished and dropped
+        if (a.finishedDate === null && a.dropped) groupA = 2;
+        if (b.finishedDate === null && b.dropped) groupB = 2;
+        
+        // First, sort by priority group
+        if (groupA !== groupB) {
+          return groupA - groupB;
+        }
+        
+        // For books in the same group:
+        // If they're finished books (group 3), sort by finishedDate DESC
+        if (groupA === 3 && a.finishedDate && b.finishedDate) {
+          return b.finishedDate.getTime() - a.finishedDate.getTime();
+        }
+        
+        // If we get here, sort by ID DESC
+        return b.id - a.id;
+      });
+      
+      console.log(`Found ${sortedReadings.length} readings`);
+      return sortedReadings;
+    } catch (prismaError) {
+      // If the Prisma findMany approach fails, fall back to a parameterized raw query
+      console.warn('Falling back to parameterized raw query due to error:', prismaError);
+      
+      // Use parameterized query to prevent SQL injection
+      const query = `
+        SELECT id, slug, title, author, "finishedDate", "coverImageSrc", thoughts, dropped
+        FROM "Reading"
+        ORDER BY 
+          CASE 
+            WHEN "finishedDate" IS NULL AND dropped = false THEN 1
+            WHEN "finishedDate" IS NULL AND dropped = true THEN 2
+            ELSE 3
+          END,
+          "finishedDate" DESC NULLS LAST,
+          id DESC
+      `;
+      
+      const readings = await prisma.$queryRawUnsafe(query);
+      
+      console.log(`Found ${Array.isArray(readings) ? readings.length : 0} readings (fallback method)`);
+      
+      if (!readings || (Array.isArray(readings) && readings.length === 0)) {
+        console.warn('No readings found in database');
+      }
+      
+      return readings as Reading[];
     }
-    
-    return readings as Reading[]
   } catch (error) {
-    console.error('Error fetching readings:', error)
-    return []
+    console.error('Error fetching readings:', error);
+    return [];
   }
 }
 
@@ -102,116 +155,220 @@ export async function getReadingsWithFilters(params: ReadingsQueryParams): Promi
       offset = 0
     } = params;
     
-    // Build WHERE conditions
-    const whereConditions: string[] = [];
-    const queryParams: any[] = [];
-    let paramIndex = 1;
+    // Validate input parameters to prevent SQL injection
+    const validatedLimit = Math.min(Math.max(1, Number(limit) || 10), 100); // Between 1 and 100
+    const validatedOffset = Math.max(0, Number(offset) || 0); // 0 or greater
+    const validatedSortBy = ['date', 'title', 'author'].includes(sortBy) ? sortBy : 'date';
+    const validatedSortOrder = ['asc', 'desc'].includes(sortOrder) ? sortOrder : 'desc';
     
-    // Search in title, author, or thoughts
+    // We'll use Prisma's query builder for the main part of the query
+    // Build the where condition
+    const whereCondition: any = {};
+    
+    // Add search filter
     if (search && search.trim() !== '') {
-      whereConditions.push(`(
-        title ILIKE $${paramIndex} OR 
-        author ILIKE $${paramIndex} OR 
-        thoughts ILIKE $${paramIndex}
-      )`);
-      queryParams.push(`%${search.trim()}%`);
-      paramIndex++;
+      whereCondition.OR = [
+        { title: { contains: search.trim(), mode: 'insensitive' } },
+        { author: { contains: search.trim(), mode: 'insensitive' } },
+        { thoughts: { contains: search.trim(), mode: 'insensitive' } }
+      ];
     }
     
-    // Filter by status (read/dropped)
-    if (status) {
-      if (status === 'read') {
-        whereConditions.push(`(dropped = false AND "finishedDate" IS NOT NULL)`);
-      } else if (status === 'dropped') {
-        whereConditions.push(`dropped = true`);
-      }
-      // 'all' doesn't need a filter
-    }
-    
-    // Construct WHERE clause
-    const whereClause = whereConditions.length > 0 
-      ? `WHERE ${whereConditions.join(' AND ')}` 
-      : '';
-    
-    // Construct ORDER BY clause based on sortBy and sortOrder
-    let orderByClause = '';
-    
-    if (sortBy === 'date') {
-      orderByClause = `
-        -- Group 1: Unfinished and not dropped (priority 1)
-        -- Group 2: Unfinished and dropped (priority 2)
-        -- Group 3: Finished books (priority 3)
-        CASE 
-          WHEN "finishedDate" IS NULL AND dropped = false THEN 1
-          WHEN "finishedDate" IS NULL AND dropped = true THEN 2
-          ELSE 3
-        END,
-        -- Sort finished books by recency
-        "finishedDate" ${sortOrder === 'asc' ? 'ASC' : 'DESC'},
-        id DESC
-      `;
-    } else if (sortBy === 'title') {
-      orderByClause = `
-        title ${sortOrder === 'asc' ? 'ASC' : 'DESC'},
-        id DESC
-      `;
-    } else if (sortBy === 'author') {
-      orderByClause = `
-        author ${sortOrder === 'asc' ? 'ASC' : 'DESC'},
-        id DESC
-      `;
+    // Add status filter
+    if (status === 'read') {
+      whereCondition.AND = [
+        { dropped: false },
+        { finishedDate: { not: null } }
+      ];
+    } else if (status === 'dropped') {
+      whereCondition.dropped = true;
     }
     
     // Get total count for pagination
-    // Build the count query with parameters
-    let countQuery = 'SELECT COUNT(*) as total FROM "Reading"';
-    if (whereClause) {
-      countQuery += ` ${whereClause}`;
-    }
+    const totalCount = await prisma.reading.count({
+      where: whereCondition
+    });
     
-    // Execute count query with parameters
-    const countResult = await prisma.$queryRawUnsafe(
-      countQuery,
-      ...queryParams
-    ) as { total: number | bigint }[];
-    
-    const totalCount = parseInt(countResult[0].total.toString(), 10);
     console.log(`Total matching readings: ${totalCount}`);
     
-    // Build the main query with parameters
-    let mainQuery = `
-      SELECT id, slug, title, author, "finishedDate", "coverImageSrc", thoughts, dropped
-      FROM "Reading"
-    `;
+    // For complex ordering logic, we may need to use a hybrid approach
+    // with in-memory sorting for the most complex cases
+    let readings: Reading[] = [];
     
-    if (whereClause) {
-      mainQuery += ` ${whereClause}`;
+    try {
+      // Try to use Prisma's query builder for standard ordering cases
+      if (validatedSortBy === 'title' || validatedSortBy === 'author') {
+        // These are simpler orders that Prisma can handle directly
+        readings = await prisma.reading.findMany({
+          where: whereCondition,
+          select: {
+            id: true,
+            slug: true,
+            title: true,
+            author: true,
+            finishedDate: true,
+            coverImageSrc: true,
+            thoughts: true,
+            dropped: true
+          },
+          orderBy: [
+            { 
+              [validatedSortBy]: validatedSortOrder
+            },
+            { id: 'desc' }
+          ],
+          skip: validatedOffset,
+          take: validatedLimit
+        });
+      } else {
+        // For date-based complex ordering, we need special handling
+        // First get all readings that match our filter
+        const allFilteredReadings = await prisma.reading.findMany({
+          where: whereCondition,
+          select: {
+            id: true,
+            slug: true,
+            title: true,
+            author: true,
+            finishedDate: true,
+            coverImageSrc: true,
+            thoughts: true,
+            dropped: true
+          }
+        });
+        
+        // Then sort them in memory based on our complex ordering logic
+        const sortedReadings = [...allFilteredReadings].sort((a, b) => {
+          // Determine priority groups
+          let groupA = 3; // Default: finished books (group 3)
+          let groupB = 3;
+          
+          // Group 1: Unfinished and not dropped
+          if (a.finishedDate === null && !a.dropped) groupA = 1;
+          if (b.finishedDate === null && !b.dropped) groupB = 1;
+          
+          // Group 2: Unfinished and dropped
+          if (a.finishedDate === null && a.dropped) groupA = 2;
+          if (b.finishedDate === null && b.dropped) groupB = 2;
+          
+          // First, sort by priority group
+          if (groupA !== groupB) {
+            return groupA - groupB;
+          }
+          
+          // For books in the same group:
+          // If they're finished books (group 3), sort by finishedDate
+          if (groupA === 3 && a.finishedDate && b.finishedDate) {
+            const dateCompare = validatedSortOrder === 'asc' 
+              ? a.finishedDate.getTime() - b.finishedDate.getTime()
+              : b.finishedDate.getTime() - a.finishedDate.getTime();
+            
+            if (dateCompare !== 0) return dateCompare;
+          }
+          
+          // If we get here, sort by ID DESC
+          return b.id - a.id;
+        });
+        
+        // Apply pagination in memory
+        readings = sortedReadings.slice(validatedOffset, validatedOffset + validatedLimit);
+      }
+    } catch (prismaError) {
+      console.warn('Error using Prisma query builder:', prismaError);
+      // Fallback to a more generic approach with safer raw queries if needed
+      
+      // Build WHERE conditions for raw query
+      const whereConditions: string[] = [];
+      const queryParams: any[] = [];
+      let paramIndex = 1;
+      
+      // Search in title, author, or thoughts
+      if (search && search.trim() !== '') {
+        whereConditions.push(`(
+          title ILIKE $${paramIndex} OR 
+          author ILIKE $${paramIndex} OR 
+          thoughts ILIKE $${paramIndex}
+        )`);
+        queryParams.push(`%${search.trim()}%`);
+        paramIndex++;
+      }
+      
+      // Filter by status (read/dropped)
+      if (status) {
+        if (status === 'read') {
+          whereConditions.push(`(dropped = false AND "finishedDate" IS NOT NULL)`);
+        } else if (status === 'dropped') {
+          whereConditions.push(`dropped = true`);
+        }
+      }
+      
+      // Construct safe WHERE clause
+      const whereClause = whereConditions.length > 0 
+        ? `WHERE ${whereConditions.join(' AND ')}` 
+        : '';
+      
+      // Prepare a safe ORDER BY clause based on validated inputs
+      let orderByClause: string;
+      
+      if (validatedSortBy === 'date') {
+        orderByClause = `
+          CASE 
+            WHEN "finishedDate" IS NULL AND dropped = false THEN 1
+            WHEN "finishedDate" IS NULL AND dropped = true THEN 2
+            ELSE 3
+          END,
+          "finishedDate" ${validatedSortOrder.toUpperCase()},
+          id DESC
+        `;
+      } else if (validatedSortBy === 'title') {
+        orderByClause = `
+          title ${validatedSortOrder.toUpperCase()},
+          id DESC
+        `;
+      } else { // author
+        orderByClause = `
+          author ${validatedSortOrder.toUpperCase()},
+          id DESC
+        `;
+      }
+      
+      // Build the main query with parameters for LIMIT and OFFSET too
+      let mainQuery = `
+        SELECT id, slug, title, author, "finishedDate", "coverImageSrc", thoughts, dropped
+        FROM "Reading"
+      `;
+      
+      if (whereClause) {
+        mainQuery += ` ${whereClause}`;
+      }
+      
+      mainQuery += ` ORDER BY ${orderByClause}`;
+      mainQuery += ` LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+      
+      // Add the limit and offset as parameters to prevent SQL injection
+      queryParams.push(validatedLimit, validatedOffset);
+      
+      // Execute main query with parameters
+      readings = await prisma.$queryRawUnsafe(
+        mainQuery,
+        ...queryParams
+      ) as Reading[];
     }
-    
-    mainQuery += ` ORDER BY ${orderByClause}`;
-    mainQuery += ` LIMIT ${limit} OFFSET ${offset}`;
-    
-    // Execute main query with parameters
-    const readings = await prisma.$queryRawUnsafe(
-      mainQuery,
-      ...queryParams
-    ) as Reading[];
     
     console.log(`Found ${readings.length} readings for current page`);
     
     // Calculate pagination metadata
-    const totalPages = Math.ceil(totalCount / limit);
-    // Calculate current page correctly based on the provided offset
-    const currentPage = Math.floor(offset / limit) + 1;
+    const totalPages = Math.ceil(totalCount / validatedLimit);
+    const currentPage = Math.floor(validatedOffset / validatedLimit) + 1;
     
-    console.log(`Returning data for page ${currentPage} (offset: ${offset}, limit: ${limit})`);
+    console.log(`Returning data for page ${currentPage} (offset: ${validatedOffset}, limit: ${validatedLimit})`);
     
     return {
       data: readings,
       totalCount,
       currentPage,
       totalPages,
-      pageSize: limit
+      pageSize: validatedLimit
     };
   } catch (error) {
     console.error('Error fetching filtered readings:', error);

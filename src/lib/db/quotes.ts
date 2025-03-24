@@ -16,16 +16,22 @@ export async function getQuotes(): Promise<Quote[]> {
   try {
     console.log('Getting quotes from database...')
     
-    // Use raw query for maximum compatibility
-    const quotes = await prisma.$queryRaw`SELECT id, text, author FROM "Quote";`
+    // Use Prisma's type-safe query builder to prevent SQL injection
+    const quotes = await prisma.quote.findMany({
+      select: {
+        id: true,
+        text: true,
+        author: true
+      }
+    })
     
-    console.log(`Found ${Array.isArray(quotes) ? quotes.length : 0} quotes`)
+    console.log(`Found ${quotes.length} quotes`)
     
-    if (!quotes || (Array.isArray(quotes) && quotes.length === 0)) {
+    if (quotes.length === 0) {
       console.warn('No quotes found in database')
     }
     
-    return quotes as Quote[]
+    return quotes
   } catch (error) {
     console.error('Error fetching quotes:', error)
     return []
@@ -155,15 +161,17 @@ export async function getQuote(id: number): Promise<Quote | null> {
   try {
     console.log(`Fetching quote with ID: ${id}`)
     
-    // Use raw query for maximum compatibility
-    const quotes = await prisma.$queryRaw`
-      SELECT id, text, author
-      FROM "Quote"
-      WHERE id = ${id}
-      LIMIT 1;
-    `
-    
-    const quote = Array.isArray(quotes) && quotes.length > 0 ? quotes[0] as Quote : null
+    // Use Prisma's type-safe query builder to prevent SQL injection
+    const quote = await prisma.quote.findUnique({
+      where: {
+        id: id
+      },
+      select: {
+        id: true,
+        text: true,
+        author: true
+      }
+    })
     
     console.log(quote ? `Found quote with ID ${id}` : `No quote found with ID ${id}`)
     return quote
