@@ -25,7 +25,7 @@
     "@types/react-leaflet": "^3.0.0",
     "bcrypt": "^5.1.1",
     "leaflet": "^1.9.4",
-    "next": "15.1.4",
+    "next": "15.2.3",
     "next-auth": "^5.0.0-beta.25",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

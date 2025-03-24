@@ -73,16 +73,16 @@ export async function getReadings(): Promise<Reading[]> {
       // Sort the readings in memory according to our priority logic
       const sortedReadings = [...allReadings].sort((a, b) => {
         // Determine priority groups
-        let groupA = 3; // Default: finished books (group 3)
+        let groupA = 3; // Default: dropped books (group 3)
         let groupB = 3;
         
-        // Group 1: Unfinished and not dropped
+        // Group 1: Unfinished and not dropped (in progress)
         if (a.finishedDate === null && !a.dropped) groupA = 1;
         if (b.finishedDate === null && !b.dropped) groupB = 1;
         
-        // Group 2: Unfinished and dropped
-        if (a.finishedDate === null && a.dropped) groupA = 2;
-        if (b.finishedDate === null && b.dropped) groupB = 2;
+        // Group 2: Finished books
+        if (a.finishedDate !== null) groupA = 2;
+        if (b.finishedDate !== null) groupB = 2;
         
         // First, sort by priority group
         if (groupA !== groupB) {
@@ -90,8 +90,8 @@ export async function getReadings(): Promise<Reading[]> {
         }
         
         // For books in the same group:
-        // If they're finished books (group 3), sort by finishedDate DESC
-        if (groupA === 3 && a.finishedDate && b.finishedDate) {
+        // If they're finished books (group 2), sort by finishedDate DESC
+        if (groupA === 2 && a.finishedDate && b.finishedDate) {
           return b.finishedDate.getTime() - a.finishedDate.getTime();
         }
         
@@ -112,7 +112,7 @@ export async function getReadings(): Promise<Reading[]> {
         ORDER BY 
           CASE 
             WHEN "finishedDate" IS NULL AND dropped = false THEN 1
-            WHEN "finishedDate" IS NULL AND dropped = true THEN 2
+            WHEN "finishedDate" IS NOT NULL THEN 2
             ELSE 3
           END,
           "finishedDate" DESC NULLS LAST,
@@ -239,17 +239,17 @@ export async function getReadingsWithFilters(params: ReadingsQueryParams): Promi
         
         // Then sort them in memory based on our complex ordering logic
         const sortedReadings = [...allFilteredReadings].sort((a, b) => {
-          // Determine priority groups
-          let groupA = 3; // Default: finished books (group 3)
+          // Determine priority groups based on the updated sorting logic
+          let groupA = 3; // Default: dropped books (group 3)
           let groupB = 3;
           
-          // Group 1: Unfinished and not dropped
+          // Group 1: Unfinished and not dropped (in progress)
           if (a.finishedDate === null && !a.dropped) groupA = 1;
           if (b.finishedDate === null && !b.dropped) groupB = 1;
           
-          // Group 2: Unfinished and dropped
-          if (a.finishedDate === null && a.dropped) groupA = 2;
-          if (b.finishedDate === null && b.dropped) groupB = 2;
+          // Group 2: Finished books
+          if (a.finishedDate !== null) groupA = 2;
+          if (b.finishedDate !== null) groupB = 2;
           
           // First, sort by priority group
           if (groupA !== groupB) {
@@ -257,8 +257,8 @@ export async function getReadingsWithFilters(params: ReadingsQueryParams): Promi
           }
           
           // For books in the same group:
-          // If they're finished books (group 3), sort by finishedDate
-          if (groupA === 3 && a.finishedDate && b.finishedDate) {
+          // If they're finished books (group 2), sort by finishedDate
+          if (groupA === 2 && a.finishedDate && b.finishedDate) {
             const dateCompare = validatedSortOrder === 'asc' 
               ? a.finishedDate.getTime() - b.finishedDate.getTime()
               : b.finishedDate.getTime() - a.finishedDate.getTime();
@@ -314,7 +314,7 @@ export async function getReadingsWithFilters(params: ReadingsQueryParams): Promi
         orderByClause = `
           CASE 
             WHEN "finishedDate" IS NULL AND dropped = false THEN 1
-            WHEN "finishedDate" IS NULL AND dropped = true THEN 2
+            WHEN "finishedDate" IS NOT NULL THEN 2
             ELSE 3
           END,
           "finishedDate" ${validatedSortOrder.toUpperCase()},
