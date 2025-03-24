@@ -123,11 +123,13 @@ export default function QuotesManagementPage() {
       const endpoint = isCreating ? '/api/quotes' : `/api/quotes?id=${selectedQuote?.id}`;
       const method = isCreating ? 'POST' : 'PUT';
       
-      const response = await fetch(endpoint, {
+      // Import secure fetch to include CSRF token
+      const { secureFetch } = await import('@/app/utils/csrf-client');
+      
+      const response = await secureFetch(endpoint, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer token' // In a real app, use a real token
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
       });
@@ -175,11 +177,11 @@ export default function QuotesManagementPage() {
       setIsSaving(true);
       setFormError(null);
       
-      const response = await fetch(`/api/quotes?id=${quoteToDelete.id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': 'Bearer token' // In a real app, use a real token
-        }
+      // Import secure fetch to include CSRF token
+      const { secureFetch } = await import('@/app/utils/csrf-client');
+      
+      const response = await secureFetch(`/api/quotes?id=${quoteToDelete.id}`, {
+        method: 'DELETE'
       });
       
       if (!response.ok) {

@@ -31,8 +31,12 @@ async function fetchReadings(params: any) {
   
   const url = `/api/readings${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
   
-  // Fetch data
-  const response = await fetch(url);
+  // Import the secure fetch dynamically to avoid server-side issues
+  // (Next.js can try to import this on the server side when pre-rendering)
+  const { secureFetch } = await import('../utils/csrf-client');
+  
+  // Fetch data with CSRF token included
+  const response = await secureFetch(url);
   
   if (!response.ok) {
     throw new Error(`Error fetching readings: ${response.statusText}`);
