@@ -37,7 +37,7 @@
   - Dependencies: bcrypt package
   - Priority: High
 
-- [ ] Update environment variable documentation
+- [x] Update environment variable documentation
   - Description: Update .env.example to indicate ADMIN_PASSWORD should be hashed
   - Dependencies: Password hashing implementation
   - Priority: Medium

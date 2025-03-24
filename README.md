@@ -49,6 +49,15 @@ A personal website built with Next.js, featuring a collection of readings, trave
    ADMIN_PASSWORD="your_admin_password"
    NEXT_PUBLIC_SPACES_BASE_URL="your_image_hosting_url"
    ```
+   
+   For better security, use a bcrypt hashed password instead of plaintext:
+   ```
+   # Generate a secure password hash
+   node scripts/generate-hash.js your_secure_password
+   
+   # Then use the generated hash in your .env file
+   ADMIN_PASSWORD="$2b$10$hash_value_here"
+   ```
 
 4. Generate Prisma client
    ```
@@ -100,3 +109,4 @@ Additional documentation can be found in the `/docs` directory:
 - `DATABASE.md` - Database setup instructions
 - `TEST_STRATEGY.md` - Testing approach and guidelines
 - `MIGRATION_STEPS.md` - Data migration procedures
+- `SECURITY.md` - Security features and configuration
