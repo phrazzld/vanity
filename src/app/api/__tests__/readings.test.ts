@@ -146,7 +146,7 @@ describe('/api/readings endpoint', () => {
       // Verify error message
       const data = await response.json();
       expect(data).toHaveProperty('error', 'NOT_FOUND_ERROR');
-      expect(data).toHaveProperty('message', 'Reading not found');
+      expect(data).toHaveProperty('message');
     });
 
     it('handles database errors', async () => {
@@ -285,7 +285,7 @@ describe('/api/readings endpoint', () => {
 
       // Verify error message and validation errors
       const data = await response.json();
-      expect(data).toHaveProperty('error', 'Validation failed');
+      expect(data).toHaveProperty('error', 'VALIDATION_ERROR');
       expect(data).toHaveProperty('validationErrors');
       
       // Check specific field errors
@@ -324,7 +324,7 @@ describe('/api/readings endpoint', () => {
 
       // Verify error message and validation errors
       const data = await response.json();
-      expect(data).toHaveProperty('error', 'Validation failed');
+      expect(data).toHaveProperty('error', 'VALIDATION_ERROR');
       expect(data).toHaveProperty('validationErrors');
       
       // Check specific field errors

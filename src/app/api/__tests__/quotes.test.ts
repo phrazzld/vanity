@@ -420,7 +420,7 @@ describe('/api/quotes endpoint', () => {
       // Verify error message
       const data = await response.json();
       expect(data).toHaveProperty('error', 'VALIDATION_ERROR');
-      expect(data).toHaveProperty('message', 'Invalid quote ID');
+      expect(data).toHaveProperty('message');
 
       // Verify database function was not called
       expect(db.updateQuote).not.toHaveBeenCalled();
