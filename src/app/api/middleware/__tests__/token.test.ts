@@ -14,6 +14,10 @@ jest.mock('next/server', () => {
         url: actualUrl,
         method: 'POST',
         headers: new Map(),
+        cookies: {
+          has: jest.fn().mockReturnValue(false), // By default, no cookies
+          get: jest.fn().mockReturnValue(undefined)
+        },
         clone: function() { return this; }
       };
     }),
@@ -137,15 +141,19 @@ describe('API token validation middleware', () => {
     expect(result?.status).toBe(401);
   });
   
-  it('should allow requests with the special admin-session-token', async () => {
-    // Create a request with the special admin token
+  it('should allow requests with admin cookie even without authorization header', async () => {
+    // Create a request with no auth header but with admin cookie
     const req = new NextRequest('http://localhost:3000/api/test');
-    req.headers.set(API_TOKEN_HEADER, `${API_TOKEN_SCHEME} admin-session-token`);
+    
+    // Add cookie check ability to the mock
+    req.cookies = {
+      has: jest.fn().mockReturnValue(true) // Simulate having the admin cookie
+    };
     
     // Test the middleware
     const result = await tokenProtection(req);
     
-    // Should pass validation (admin token should always work)
+    // Should pass validation with admin cookie
     expect(result).toBeNull();
   });
 });

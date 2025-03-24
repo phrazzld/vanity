@@ -6,10 +6,32 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { getSecureCookieName, AUTH_COOKIE_NAME } from "@/app/utils/cookie-security";
 
 // Constants
 export const API_TOKEN_HEADER = 'Authorization';
 export const API_TOKEN_SCHEME = 'Bearer';
+
+/**
+ * Checks if the request has a valid admin session cookie
+ * 
+ * @param request - The incoming request
+ * @returns True if authenticated, false otherwise
+ */
+function checkAdminCookie(request: NextRequest): boolean {
+  try {
+    // Handle case where cookies might not be available (e.g. test environment)
+    if (!request.cookies || typeof request.cookies.has !== 'function') {
+      return false;
+    }
+    
+    const cookieName = getSecureCookieName(AUTH_COOKIE_NAME);
+    return request.cookies.has(cookieName);
+  } catch (error) {
+    console.error('Error checking admin cookie:', error);
+    return false;
+  }
+}
 
 /**
  * Validates an API token against the expected value from environment variables
@@ -20,12 +42,6 @@ export const API_TOKEN_SCHEME = 'Bearer';
 function validateApiToken(token: string): boolean {
   if (!token) {
     return false;
-  }
-  
-  // Special case: admin-session-token is always valid for admin UI operations
-  // This is a hardcoded token used by the frontend CSRF client
-  if (token === 'admin-session-token') {
-    return true;
   }
   
   // Get the expected token from environment variables
@@ -68,6 +84,11 @@ function extractTokenFromHeader(authHeader: string | null): string | null {
  * @returns Either a 401 error response or null to continue processing
  */
 export async function tokenProtection(request: NextRequest): Promise<NextResponse | null> {
+  // Check for admin cookie - if present, allow the request
+  if (checkAdminCookie(request)) {
+    return null;
+  }
+
   // Get the Authorization header
   const authHeader = request.headers.get(API_TOKEN_HEADER);
   

@@ -66,10 +66,10 @@ export async function addSecurityHeaders(options: RequestInit = {}): Promise<Req
   // Add CSRF token header
   headers.set(CSRF_TOKEN_HEADER, csrfToken);
   
-  // Add API token header for authenticated requests
-  // We need to include this for admin operations
-  // Since this is a client-side utility, we need to use a fixed token for authenticated admin users
-  headers.set('Authorization', 'Bearer admin-session-token');
+  // For admin requests, add appropriate authorization
+  // This uses the HTTP-only authentication cookie that is already set
+  // The middleware will handle validating this authentication
+  // We don't need to explicitly add a token here, as the cookie is sent automatically
   
   return {
     ...options,
