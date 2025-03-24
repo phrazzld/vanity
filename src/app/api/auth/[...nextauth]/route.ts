@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import auth from "@/auth";
+import { validateFormToken, CSRF_TOKEN_COOKIE } from "@/app/utils/csrf";
 
 /**
  * Handlers for authentication routes
@@ -61,6 +62,26 @@ export async function POST(request: NextRequest) {
     const username = formData.get('username') as string;
     const password = formData.get('password') as string;
     const callbackUrl = formData.get('callbackUrl') as string || '/admin';
+    
+    // Validate CSRF token
+    const csrfToken = request.cookies.get(CSRF_TOKEN_COOKIE)?.value;
+    
+    if (!csrfToken) {
+      console.error('CSRF validation failed: No token found in cookies');
+      return NextResponse.redirect(
+        new URL(`/admin/login?error=${encodeURIComponent('CSRF token missing')}`, request.url)
+      );
+    }
+    
+    // Validate the token from the form against the cookie
+    const isValidCsrf = validateFormToken(formData, csrfToken);
+    
+    if (!isValidCsrf) {
+      console.error('CSRF validation failed: Invalid token');
+      return NextResponse.redirect(
+        new URL(`/admin/login?error=${encodeURIComponent('Invalid security token')}`, request.url)
+      );
+    }
     
     console.log(`Login attempt: username=${username}, callbackUrl=${callbackUrl}`);
     console.log(`Current environment: ${process.env.NODE_ENV}`);

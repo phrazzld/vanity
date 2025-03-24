@@ -48,7 +48,7 @@
   - Dependencies: None
   - Priority: High
 
-- [ ] Add CSRF token to login form
+- [x] Add CSRF token to login form
   - Description: Modify login page to include CSRF token in form submission
   - Dependencies: CSRF token generation utility
   - Priority: High

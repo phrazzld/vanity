@@ -5,10 +5,12 @@
  * 
  * This page provides a login form for admin users to access the protected admin area.
  * It uses a direct form submission to the auth API endpoint.
+ * CSRF protection is implemented to prevent cross-site request forgery attacks.
  */
 
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { CSRF_TOKEN_FIELD } from '@/app/utils/csrf';
 
 // Component for the login form with search params
 function LoginForm() {
@@ -18,6 +20,26 @@ function LoginForm() {
   
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [csrfToken, setCsrfToken] = useState('');
+  
+  // Fetch CSRF token when component mounts
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      try {
+        const response = await fetch('/api/auth/csrf');
+        if (response.ok) {
+          const data = await response.json();
+          setCsrfToken(data.csrfToken);
+        } else {
+          console.error('Failed to fetch CSRF token');
+        }
+      } catch (error) {
+        console.error('Error fetching CSRF token:', error);
+      }
+    };
+    
+    fetchCsrfToken();
+  }, []);
   
   // Handle form validation before submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -26,6 +48,12 @@ function LoginForm() {
     const formData = new FormData(e.currentTarget);
     const username = formData.get('username') as string;
     const password = formData.get('password') as string;
+    
+    // Ensure CSRF token is available
+    if (!csrfToken) {
+      setErrorMessage('Security token not available. Please refresh the page and try again.');
+      return;
+    }
     
     if (!username || !password) {
       setErrorMessage('Please enter both username and password');
@@ -112,6 +140,7 @@ function LoginForm() {
             
             <form onSubmit={handleSubmit} className="space-y-6">
               <input type="hidden" name="callbackUrl" value={callbackUrl} />
+              <input type="hidden" name={CSRF_TOKEN_FIELD} value={csrfToken} />
               
               <div>
                 <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
