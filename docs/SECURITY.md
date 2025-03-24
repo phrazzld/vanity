@@ -1,35 +1,70 @@
-# Security Overview
+# Vanity Security Architecture
 
-This document provides a comprehensive overview of the security features implemented in the Vanity application, serving as the central reference for all security-related aspects of the system.
+## Overview
+
+This document provides a comprehensive overview of the security architecture in the Vanity application. It serves as the central reference for all security-related aspects of the system and provides links to implementation details where relevant.
 
 ## Table of Contents
 
-1. [Security Architecture](#security-architecture)
-2. [Authentication and Access Control](#authentication-and-access-control)
+1. [Security Principles](#security-principles)
+2. [Authentication and Authorization](#authentication-and-authorization)
+   - [Admin Authentication](#admin-authentication)
+   - [API Token Authentication](#api-token-authentication)
    - [Password Security](#password-security)
-   - [API Token Validation](#api-token-validation)
 3. [Data Protection](#data-protection)
-   - [SQL Injection Prevention](#sql-injection-prevention)
    - [CSRF Protection](#csrf-protection)
+   - [SQL Injection Prevention](#sql-injection-prevention)
    - [Input Validation](#input-validation)
 4. [Error Handling and Logging](#error-handling-and-logging)
 5. [Cookie Security](#cookie-security)
-6. [Security Testing](#security-testing)
-7. [Environment Configuration](#environment-configuration)
+6. [Security Configuration](#security-configuration)
+7. [Security Testing](#security-testing)
 8. [Security Best Practices](#security-best-practices)
-9. [Detailed Documentation](#detailed-documentation)
 
-## Security Architecture
+## Security Principles
 
-The Vanity application's security architecture is designed around several key principles:
+The Vanity application's security architecture is built on these key principles:
 
-1. **Defense in Depth**: Multiple layers of security controls are implemented to protect against various threats.
-2. **Least Privilege**: Components are given only the permissions necessary to function.
-3. **Secure by Default**: Security features are enabled by default and require explicit configuration to disable.
-4. **Fail Securely**: When errors occur, the system defaults to a secure state.
-5. **Environment-Aware Security**: Security controls adapt based on the runtime environment (development vs. production).
+1. **Defense in Depth**: Multiple layers of security controls to protect against various threats
+2. **Least Privilege**: Components only have permissions necessary to function
+3. **Secure by Default**: Security features enabled by default
+4. **Fail Securely**: System defaults to a secure state when errors occur
+5. **Environment-Aware Security**: Controls adapt based on the runtime environment
 
-## Authentication and Access Control
+## Authentication and Authorization
+
+### Admin Authentication
+
+The application uses cookie-based authentication for admin users with the following features:
+
+- HTTP-only cookies to prevent JavaScript access
+- Secure cookie attributes in production environments
+- Session-based authentication with configurable timeouts
+- CSRF protection for all authenticated requests
+
+**Admin Login Process:**
+
+1. Admin credentials are validated against environment variables
+2. Session cookie is created with secure attributes
+3. CSRF token is generated for subsequent requests
+
+### API Token Authentication
+
+For server-to-server authentication, the application uses API token validation:
+
+- Bearer token authentication scheme
+- Environment variable-based token storage
+- Middleware approach for consistent application
+- Development mode bypass for easier local development
+
+**Token Generation:**
+
+Generate a secure token with:
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+For implementation details, see the token validation middleware in the codebase.
 
 ### Password Security
 
@@ -37,7 +72,7 @@ The application uses bcrypt for secure password hashing, providing:
 
 - Protection against database breaches
 - Defense against rainbow table attacks
-- Configurable work factor to adjust security as hardware improves
+- Configurable work factor for future security adjustments
 
 **Setting Up a Hashed Password:**
 
@@ -51,56 +86,73 @@ The application uses bcrypt for secure password hashing, providing:
    ADMIN_PASSWORD="$2b$10$your_hash_will_look_like_this"
    ```
 
-For more details, see [Password Hashing Documentation](./password-hashing.md).
-
-### API Token Validation
-
-API routes are protected using an API token validation middleware that implements:
-
-- Bearer token authentication
-- Environment-aware validation
-- Secure error handling
-
-**Token Generation:**
-
-Generate a secure token with:
-```bash
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-```
-
-For more details, see [API Token Validation Documentation](./api-token-validation.md).
-
 ## Data Protection
-
-### SQL Injection Prevention
-
-All database operations in the application are protected against SQL injection attacks through:
-
-- Parameterized queries via Prisma's query builder
-- Elimination of raw SQL where possible
-- Proper parameter sanitization
-
-For more details, see [SQL Injection Prevention Documentation](./sql-injection-prevention.md).
 
 ### CSRF Protection
 
-The application implements Cross-Site Request Forgery protection using the double-submit cookie pattern:
+Cross-Site Request Forgery protection uses the double-submit cookie pattern:
 
 - Secure random token generation
 - Token validation on all state-changing operations
 - Client-side implementation with automatic token inclusion
 
-For more details, see [CSRF Protection Documentation](./csrf-protection.md).
+**Key Implementation Features:**
+
+- CSRF tokens are stored as HTTP-only cookies
+- Tokens are validated for all POST, PUT, and DELETE operations
+- Client-side utility simplifies token inclusion in requests
+
+**Developer Usage:**
+
+For API requests, include the CSRF token in the X-CSRF-Token header:
+```javascript
+fetch('/api/resource', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-CSRF-Token': csrfToken
+  },
+  body: JSON.stringify(data)
+});
+```
+
+### SQL Injection Prevention
+
+SQL injection protection is implemented through:
+
+- Prisma ORM for automatic parameter sanitization
+- Parameterized queries for raw SQL operations
+- Input validation before database operations
+
+**Best Practices:**
+
+1. Use Prisma's query builder methods instead of raw SQL when possible
+2. If raw SQL is necessary, always use parameterized queries
+3. Validate all user inputs before using them in queries
+
+**Example of Secure Database Access:**
+
+```typescript
+// SAFE: Using Prisma's query builder
+const reading = await prisma.reading.findUnique({
+  where: { slug },
+  select: { id: true, title: true, author: true }
+});
+```
 
 ### Input Validation
 
-All user inputs are validated before processing to prevent injection attacks and data corruption:
+All user inputs are validated to prevent security vulnerabilities and data corruption:
 
 - Field-specific validation rules
 - Standardized error responses
 - Different validation for creation vs. update operations
 
-For more details, see [Input Validation Documentation](./input-validation.md).
+**Input Validation Process:**
+
+1. Define validation schema for each resource type
+2. Validate incoming data against the schema
+3. Return standardized validation errors when validation fails
 
 ## Error Handling and Logging
 
@@ -124,8 +176,6 @@ The application implements a centralized error handling approach that:
 | `EXTERNAL_SERVICE_ERROR` | 503 | Issues with external services/APIs |
 | `UNKNOWN_ERROR` | 500 | Unclassified errors |
 
-For more details, see [Error Handling Documentation](./error-handling.md).
-
 ## Cookie Security
 
 Authentication cookies are configured with secure attributes:
@@ -136,16 +186,7 @@ Authentication cookies are configured with secure attributes:
 - **path**: Limits cookie access to specific paths
 - **maxAge**: Sets appropriate cookie lifetimes
 
-## Security Testing
-
-The application includes comprehensive security tests:
-
-1. **Unit Tests**: Verify security utility functions work correctly
-2. **Integration Tests**: Verify security middleware correctly validates inputs
-3. **API Tests**: Verify API routes are protected by security middleware
-4. **Client Tests**: Verify client-side code correctly implements security features
-
-## Environment Configuration
+## Security Configuration
 
 Security-related environment variables:
 
@@ -163,6 +204,15 @@ NEXTAUTH_SECRET="..." # For session encryption
 DATABASE_URL="..." # Connection string (keep private)
 ```
 
+## Security Testing
+
+The application includes comprehensive security tests:
+
+1. **Unit Tests**: Verify security utility functions work correctly
+2. **Integration Tests**: Verify security middleware correctly validates inputs
+3. **API Tests**: Verify API routes are protected by security middleware
+4. **Client Tests**: Verify client-side code correctly implements security features
+
 ## Security Best Practices
 
 When working on the Vanity application, follow these security best practices:
@@ -177,14 +227,3 @@ When working on the Vanity application, follow these security best practices:
 8. **Regularly** update dependencies to address security vulnerabilities
 9. **Always** use parameterized queries for database operations
 10. **Never** log sensitive information
-
-## Detailed Documentation
-
-For more detailed information about specific security features, refer to these documents:
-
-- [Password Hashing](./password-hashing.md)
-- [API Token Validation](./api-token-validation.md)
-- [SQL Injection Prevention](./sql-injection-prevention.md)
-- [CSRF Protection](./csrf-protection.md)
-- [Input Validation](./input-validation.md)
-- [Error Handling](./error-handling.md)

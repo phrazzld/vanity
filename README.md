@@ -104,9 +104,11 @@ A personal website built with Next.js, featuring a collection of readings, trave
 
 ## Documentation
 
-Additional documentation can be found in the `/docs` directory:
+Core documentation can be found in these key files:
 
-- `DATABASE.md` - Database setup instructions
-- `TEST_STRATEGY.md` - Testing approach and guidelines
-- `MIGRATION_STEPS.md` - Data migration procedures
-- `SECURITY.md` - Security features and configuration
+- `BEST-PRACTICES.md` - Development and security best practices
+- `/docs/SECURITY.md` - Comprehensive security architecture and implementation
+- `/docs/DATABASE.md` - Database setup and management instructions
+- `/docs/TEST_STRATEGY.md` - Testing approach and guidelines
+
+Additional technical documentation can be found in the `/docs` directory for specific implementation details.
