@@ -231,7 +231,7 @@ export default function AdminDashboardPage() {
                     <div className="flex items-center">
                       <span className="h-2.5 w-2.5 bg-green-400 rounded-full mr-2"></span>
                       <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                        Active as {session?.user?.role || 'Admin'}
+                        Active as {(session?.user as any)?.role || 'Admin'}
                       </span>
                     </div>
                     <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">

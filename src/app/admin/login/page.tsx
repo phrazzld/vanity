@@ -15,8 +15,8 @@ import { signIn } from 'next-auth/react';
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const error = searchParams.get("error");
-  const callbackUrl = searchParams.get("callbackUrl") || "/admin";
+  const error = searchParams?.get("error") || null;
+  const callbackUrl = searchParams?.get("callbackUrl") || "/admin";
   
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');

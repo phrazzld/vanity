@@ -145,7 +145,7 @@ export default function AdminLayout({
                         {session.user.name}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                        Signed in
+                        Signed in as {(session.user as any)?.role || 'Admin'}
                       </p>
                     </div>
                   </div>
