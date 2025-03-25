@@ -22,8 +22,11 @@ export interface Reading {
   /** Author of the book or article */
   author: string;
   
-  /** Date when the reading was completed, or null if still in progress */
-  finishedDate: Date | null;
+  /** Date when the reading was completed, or null if still in progress
+   * Note: This can be a Date object when used directly with Prisma models,
+   * or a string when coming from API responses (especially with raw SQL queries)
+   */
+  finishedDate: Date | string | null;
   
   /** URL to the cover image, or null if not available */
   coverImageSrc: string | null;
@@ -45,7 +48,7 @@ export interface ReadingInput {
   slug: string;
   title: string;
   author: string;
-  finishedDate?: Date | null;
+  finishedDate?: Date | string | null;
   coverImageSrc?: string | null;
   thoughts?: string;
   dropped?: boolean;
@@ -55,12 +58,13 @@ export interface ReadingInput {
  * ReadingListItem interface
  * 
  * A simplified version of Reading used for list views.
+ * Note: finishedDate can be a Date object or a string when coming from API responses
  */
 export interface ReadingListItem {
   slug: string;
   title: string;
   author: string;
-  finishedDate: Date | null;
+  finishedDate: Date | string | null;
   coverImageSrc: string | null;
   dropped: boolean;
 }

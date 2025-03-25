@@ -19,12 +19,19 @@ type ReadingCardProps = Omit<ReadingListItem, 'author'>
 
 /**
  * Formats a date to a human-readable format (e.g., "Jan 2023")
- * @param date The date to format
+ * @param date The date to format, can be a Date object, ISO string, or null
  */
-function formatDate(date: Date | null): string {
+function formatDate(date: Date | string | null): string {
   if (!date) return '';
   
-  return date.toLocaleDateString('en-US', {
+  // BUG FIX: When using API data from raw SQL queries, 
+  // dates are returned as strings and not automatically converted to Date objects.
+  // We need to handle both Date objects and date strings.
+  
+  // Convert string date to Date object if needed
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  
+  return dateObj.toLocaleDateString('en-US', {
     month: 'short',
     year: 'numeric'
   });
