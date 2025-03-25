@@ -144,15 +144,21 @@ describe('ReadingCard', () => {
     
     // Get the ribbon container before hover
     const ribbonContainer = screen.getByTestId('ribbon-container');
-    expect(ribbonContainer).toHaveStyle('width: 0');
-    expect(ribbonContainer).toHaveStyle('height: 0');
+    expect(ribbonContainer).toHaveStyle('opacity: 0');
+    expect(ribbonContainer).toHaveStyle('visibility: hidden');
+    // The transform now combines translateY and scale for a more refined animation
+    expect(ribbonContainer).toHaveStyle('transform: translateY(15px) scale(0.98)');
+    expect(ribbonContainer).toHaveStyle('minHeight: 0');
     
     // Simulate mouse enter
     fireEvent.mouseEnter(card);
     
     // Check that the ribbon expands
-    expect(ribbonContainer).toHaveStyle('width: 100%');
-    expect(ribbonContainer).toHaveStyle('minHeight: 90px'); // Check expanded state
+    expect(ribbonContainer).toHaveStyle('opacity: 1');
+    expect(ribbonContainer).toHaveStyle('visibility: visible');
+    // The transform now combines translateY and scale for a more refined animation
+    expect(ribbonContainer).toHaveStyle('transform: translateY(0) scale(1)');
+    expect(ribbonContainer).toHaveStyle('minHeight: 100px'); // Check expanded state
     
     // Check that the main card has hover styles
     expect(card).toHaveStyle('transform: translateY(-4px) scale(1.01)');
@@ -177,7 +183,9 @@ describe('ReadingCard', () => {
     
     // Get the ribbon container after hover
     const ribbonContainer = screen.getByTestId('ribbon-container');
-    expect(ribbonContainer).toHaveStyle('width: 0');
+    expect(ribbonContainer).toHaveStyle('opacity: 0');
+    // The transform now combines translateY and scale for a more refined animation
+    expect(ribbonContainer).toHaveStyle('transform: translateY(15px) scale(0.98)');
     
     // Check that the main card hover state has been reset
     expect(card).toHaveStyle('transform: translateY(0) scale(1)');

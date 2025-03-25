@@ -348,28 +348,45 @@ export default function ReadingCard({
         )}
       </div>
       
-      {/* Meta ribbon container - restructured for glass morphism and better animations */}
+      {/* Meta ribbon container - refined with transform-based animations */}
       <div
         className="ribbon-container"
         style={{
           position: 'absolute',
           bottom: 0,
           left: 0,
-          width: '100%', // Always full width, but revealed through transform
+          width: '100%', // Always full width
           opacity: isHovered ? 1 : 0,
           visibility: isHovered ? 'visible' : 'hidden', // Hide when not hovered for accessibility
-          transform: isHovered ? 'translateY(0)' : 'translateY(15px)',
-          // Combined animation for all properties
+          // Transform-based animations create more elegant motion
+          transform: isHovered 
+            ? 'translateY(0) scale(1)' 
+            : 'translateY(15px) scale(0.98)',
+          transformOrigin: 'center bottom', // Scale from bottom center for a natural reveal
+          // Refined animation timing with better sequencing
           transition: isHovered
-            ? `transform 0.55s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}, opacity 0.5s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}, min-height 0.5s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}, max-height 0.5s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}, visibility 0s`
-            : `transform 0.5s ${ANIMATION_TIMING.STANDARD_EXIT}, opacity 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}, min-height 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}, max-height 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}, visibility 0s linear 0.5s`,
+            ? `transform 0.5s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}, 
+               opacity 0.45s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}, 
+               min-height 0.5s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}, 
+               max-height 0.5s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}, 
+               visibility 0s`
+            : `transform 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}, 
+               opacity 0.35s ${ANIMATION_TIMING.STANDARD_EXIT}, 
+               min-height 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}, 
+               max-height 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}, 
+               visibility 0s linear 0.4s`,
           borderRadius: '0 0 8px 8px', // Match card's border radius
           overflow: 'hidden',
           // Reserve space for ribbon even when not visible
           height: 'auto',
           minHeight: isHovered ? '100px' : '0',
           maxHeight: isHovered ? '160px' : '0',
-          willChange: 'transform, opacity, min-height, max-height',
+          // Performance optimizations
+          willChange: 'transform, opacity',
+          // Add a subtle shadow to enhance depth perception during animation
+          boxShadow: isHovered 
+            ? '0 -10px 20px -10px rgba(0, 0, 0, 0.1)' 
+            : 'none',
         }}
         data-testid="ribbon-container"
         aria-hidden={!isHovered}
@@ -392,11 +409,15 @@ export default function ReadingCard({
             // Add a subtle noise texture for realism
             backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")',
             backgroundBlendMode: 'overlay',
+            // Animation additions
             opacity: isHovered ? 1 : 0,
+            transform: isHovered ? 'scale(1)' : 'scale(0.98)',
+            transformOrigin: 'center bottom',
             transition: isHovered 
-              ? 'opacity 0.4s ease 0.1s' 
-              : 'opacity 0.3s ease',
+              ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.1s, transform 0.5s ${ANIMATION_TIMING.ELEGANT_ENTRANCE} 0.05s` 
+              : `opacity 0.3s ${ANIMATION_TIMING.SIMPLE}, transform 0.35s ${ANIMATION_TIMING.STANDARD_EXIT}`,
             zIndex: 1,
+            willChange: 'opacity, transform',
           }}
         />
         
@@ -411,11 +432,15 @@ export default function ReadingCard({
               rgba(${hexToRgb(statusColor.light)}, 0.75) 0%, 
               rgba(${hexToRgb(statusColor.main)}, 0.82) 50%, 
               rgba(${hexToRgb(statusColor.dark)}, 0.88) 100%)`,
+            // Animation additions
             opacity: isHovered ? 0.92 : 0,
+            transform: isHovered ? 'scale(1) translateY(0)' : 'scale(0.97) translateY(5px)',
+            transformOrigin: 'center bottom',
             transition: isHovered 
-              ? 'opacity 0.4s ease 0.05s' 
-              : 'opacity 0.3s ease',
+              ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.05s, transform 0.55s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}` 
+              : `opacity 0.3s ${ANIMATION_TIMING.SIMPLE}, transform 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}`,
             zIndex: 2,
+            willChange: 'opacity, transform',
           }}
         />
         
@@ -437,11 +462,15 @@ export default function ReadingCard({
               radial-gradient(circle at 85% 75%, rgba(${hexToRgb(statusColor.darker)}, 0.12) 0%, transparent 50%)
             `,
             backgroundBlendMode: 'overlay',
+            // Animation additions 
             opacity: isHovered ? 1 : 0,
+            transform: isHovered ? 'scale(1) translateY(0)' : 'scale(0.96) translateY(8px)',
+            transformOrigin: 'center bottom',
             transition: isHovered 
-              ? 'opacity 0.5s ease 0.1s' 
-              : 'opacity 0.3s ease',
+              ? `opacity 0.5s ${ANIMATION_TIMING.SIMPLE} 0.1s, transform 0.6s ${ANIMATION_TIMING.ELEGANT_ENTRANCE} 0.05s` 
+              : `opacity 0.3s ${ANIMATION_TIMING.SIMPLE}, transform 0.45s ${ANIMATION_TIMING.STANDARD_EXIT}`,
             zIndex: 3,
+            willChange: 'opacity, transform',
           }}
         />
         
@@ -461,12 +490,18 @@ export default function ReadingCard({
               rgba(255, 255, 255, 0.18) 50%, 
               rgba(${hexToRgb(statusColor.lighter)}, 0.2) 80%, 
               rgba(255, 255, 255, 0) 100%)`,
+            // Enhanced animation
             opacity: isHovered ? 0.85 : 0,
-            transform: isHovered ? 'scaleX(1)' : 'scaleX(0.92)',
+            // Combine horizontal and vertical motion for more refined animation
+            transform: isHovered 
+              ? 'scaleX(1) translateY(0)' 
+              : 'scaleX(0.92) translateY(-3px)', // Slight upward motion when hidden
+            transformOrigin: 'center top',
             transition: isHovered
-              ? 'opacity 0.4s ease 0.2s, transform 0.5s ease 0.2s'
-              : 'opacity 0.3s ease, transform 0.4s ease',
+              ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.25s, transform 0.5s ${ANIMATION_TIMING.ELEGANT_ENTRANCE} 0.2s`
+              : `opacity 0.3s ${ANIMATION_TIMING.SIMPLE}, transform 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}`,
             zIndex: 4,
+            willChange: 'opacity, transform',
           }}
         />
         
@@ -483,12 +518,18 @@ export default function ReadingCard({
             background: `linear-gradient(to bottom, 
               rgba(0, 0, 0, 0) 0%, 
               rgba(${hexToRgb(statusColor.darker)}, 0.15) 100%)`,
+            // Enhanced animation
             opacity: isHovered ? 0.7 : 0,
+            transform: isHovered 
+              ? 'scaleY(1)' 
+              : 'scaleY(0.5)', // Subtle scale effect on the shadow
+            transformOrigin: 'center bottom',
             transition: isHovered
-              ? 'opacity 0.4s ease 0.15s'
-              : 'opacity 0.3s ease',
+              ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.15s, transform 0.5s ${ANIMATION_TIMING.ELEGANT_ENTRANCE} 0.1s`
+              : `opacity 0.3s ${ANIMATION_TIMING.SIMPLE}, transform 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}`,
             zIndex: 4,
             borderRadius: '0 0 8px 8px', // Match container's bottom corners
+            willChange: 'opacity, transform',
           }}
         />
         
@@ -503,13 +544,16 @@ export default function ReadingCard({
               rgba(${hexToRgb(statusColor.darker)}, 0.08) 0%, 
               rgba(0, 0, 0, 0.03) 40%, 
               rgba(0, 0, 0, 0) 100%)`,
+            // Enhanced animation
             opacity: isHovered ? 1 : 0,
+            transform: isHovered ? 'translateY(0)' : 'translateY(5px)', 
             transition: isHovered
-              ? 'opacity 0.4s ease 0.15s'
-              : 'opacity 0.3s ease',
+              ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.15s, transform 0.45s ${ANIMATION_TIMING.ELEGANT_ENTRANCE} 0.1s`
+              : `opacity 0.3s ${ANIMATION_TIMING.SIMPLE}, transform 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}`,
             pointerEvents: 'none',
             zIndex: 5,
             borderRadius: '0 0 8px 8px', // Match container's border radius
+            willChange: 'opacity, transform',
           }}
         />
         
@@ -534,13 +578,17 @@ export default function ReadingCard({
                 rgba(${hexToRgb(statusColor.lighter)}, 0) 100%)
             `,
             backgroundBlendMode: 'overlay',
+            // Enhanced animation
             opacity: isHovered ? 1 : 0,
+            transform: isHovered ? 'scale(1) translateY(0)' : 'scale(0.98) translateY(10px)', 
+            transformOrigin: 'center bottom',
             transition: isHovered
-              ? 'opacity 0.5s ease 0.2s'
-              : 'opacity 0.3s ease',
+              ? `opacity 0.5s ${ANIMATION_TIMING.SIMPLE} 0.2s, transform 0.65s ${ANIMATION_TIMING.ELEGANT_ENTRANCE} 0.15s`
+              : `opacity 0.3s ${ANIMATION_TIMING.SIMPLE}, transform 0.45s ${ANIMATION_TIMING.STANDARD_EXIT}`,
             pointerEvents: 'none',
             zIndex: 6,
             borderRadius: '0 0 8px 8px', // Match container's border radius
+            willChange: 'opacity, transform',
           }}
         />
       
@@ -562,17 +610,21 @@ export default function ReadingCard({
                 rgba(${hexToRgb(statusColor.main)}, 0.02) 50%, 
                 rgba(${hexToRgb(statusColor.darker)}, 0.07) 100%)
             `,
+            // Enhanced animation
             opacity: isHovered ? 1 : 0,
+            transform: isHovered ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(12px)',
+            transformOrigin: 'center bottom',
             // Note: This fallback will show in browsers that don't support backdrop-filter
             // In browsers with backdrop-filter support, the glass effect will take precedence visually
             transition: isHovered
-              ? 'opacity 0.4s ease 0.05s'
-              : 'opacity 0.3s ease',
+              ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.05s, transform 0.55s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}`
+              : `opacity 0.3s ${ANIMATION_TIMING.SIMPLE}, transform 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}`,
             zIndex: 8,
             // Extra depth and polish for the fallback
             boxShadow: `inset 0 1px 0 rgba(255, 255, 255, 0.15), 
               inset 0 -1px 0 rgba(${hexToRgb(statusColor.darker)}, 0.1)`,
             borderRadius: '0 0 8px 8px',
+            willChange: 'opacity, transform',
           }}
         />
 
