@@ -1,38 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import ReadingCard from '../components/readings/ReadingCard'
-import { getReadingsWithFilters } from '@/lib/db/readings'
-import type { Reading } from '@/types'
-
-/**
- * Helper function to check if a reading is "currently reading"
- * Currently reading = no finishedDate and not dropped
- */
-function isCurrentlyReading(reading: Reading): boolean {
-  return reading.finishedDate === null && !reading.dropped;
-}
-
-/**
- * Sorts readings to prioritize currently reading items first
- */
-function sortReadings(readings: Reading[]): Reading[] {
-  return [...readings].sort((a, b) => {
-    // If a is currently reading and b is not, a comes first
-    if (isCurrentlyReading(a) && !isCurrentlyReading(b)) {
-      return -1;
-    }
-    // If b is currently reading and a is not, b comes first
-    if (!isCurrentlyReading(a) && isCurrentlyReading(b)) {
-      return 1;
-    }
-    // Otherwise, keep original order
-    return 0;
-  });
-}
+import YearSection from '../components/readings/YearSection';
+import type { Reading } from '@/types';
+import { groupReadingsByYear, getSortedYearKeys, sortReadingsWithinCategory } from '@/lib/utils/readingUtils';
 
 export default function ReadingsPage() {
   const [readings, setReadings] = useState<Reading[]>([]);
+  const [yearGroups, setYearGroups] = useState<Record<string, Reading[]>>({});
+  const [years, setYears] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
@@ -45,18 +21,29 @@ export default function ReadingsPage() {
   // Fetch readings data with pagination
   const fetchReadings = useCallback(async (pageNum: number) => {
     try {
-      setIsLoading(true);
+      // The loadMore function now handles setting isLoading, 
+      // so we only set it here for the initial page load
+      if (pageNum === 1) {
+        setIsLoading(true);
+      }
+      
       setError(null);
       
       const offset = (pageNum - 1) * ITEMS_PER_PAGE;
       
-      const response = await fetch(`/api/readings?limit=${ITEMS_PER_PAGE}&offset=${offset}&sortBy=date&sortOrder=desc`);
+      // Add a cache-busting parameter to prevent browser caching issues
+      const cacheBuster = new Date().getTime();
+      const response = await fetch(
+        `/api/readings?limit=${ITEMS_PER_PAGE}&offset=${offset}&sortBy=date&sortOrder=desc&_=${cacheBuster}`
+      );
       
       if (!response.ok) {
         throw new Error('Failed to fetch readings');
       }
       
       const result = await response.json();
+      
+      console.log(`Fetched page ${pageNum} with offset ${offset}. Got ${result.data?.length} items.`);
       
       return {
         data: result.data || [],
@@ -84,18 +71,43 @@ export default function ReadingsPage() {
 
   // Load more data when user scrolls to bottom
   const loadMore = useCallback(async () => {
+    // Guard clause to prevent duplicate requests
     if (isLoading || !hasMore) return;
+    
+    // Set loading state before fetching to prevent multiple triggers
+    setIsLoading(true);
     
     const nextPage = page + 1;
     const { data, hasMore: moreAvailable } = await fetchReadings(nextPage);
     
-    setReadings(prev => [...prev, ...data]);
+    // Use a function to update state based on previous state to avoid race conditions
+    setReadings(prev => {
+      // Check for duplicates by slug to ensure we don't add the same reading twice
+      const existingSlugs = new Set(prev.map(r => r.slug));
+      const uniqueNewData = data.filter((item: Reading) => !existingSlugs.has(item.slug));
+      
+      return [...prev, ...uniqueNewData];
+    });
+    
     setPage(nextPage);
     setHasMore(moreAvailable);
+    // Note: fetchReadings already sets isLoading to false in its finally block
   }, [fetchReadings, hasMore, isLoading, page]);
+
+  // Group readings by year whenever they change
+  useEffect(() => {
+    if (readings.length === 0) return;
+    
+    const grouped = groupReadingsByYear(readings);
+    setYearGroups(grouped);
+    
+    const sortedYears = getSortedYearKeys(grouped);
+    setYears(sortedYears);
+  }, [readings]);
 
   // Setup intersection observer for infinite scrolling
   useEffect(() => {
+    // Don't set up observer while loading to prevent race conditions
     if (isLoading) return;
     
     const currentObserver = observer.current;
@@ -107,7 +119,11 @@ export default function ReadingsPage() {
     
     // Create new observer
     observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
+      // Only trigger loadMore if:
+      // 1. The loading element is intersecting
+      // 2. We're not already loading
+      // 3. There are more items to load
+      if (entries[0].isIntersecting && !isLoading && hasMore) {
         loadMore();
       }
     }, { threshold: 0.5 });
@@ -126,26 +142,30 @@ export default function ReadingsPage() {
   }, [hasMore, isLoading, loadMore]);
 
   return (
-    <section style={{ maxWidth: '1200px', margin: '0 auto', padding: '1rem' }}>
-      <div
-        style={{
-          display: 'grid',
-          gap: '1rem',
-          // auto-fill ensures as many columns as fit in the container
-          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-        }}
-      >
-        {readings.map((reading) => (
-          <ReadingCard
-            key={reading.slug}
-            slug={reading.slug}
-            title={reading.title}
-            coverImageSrc={reading.coverImageSrc}
-            dropped={reading.dropped}
-            finishedDate={reading.finishedDate}
+    <section className="max-w-7xl mx-auto px-4 py-8">
+      {/* Year-based sections */}
+      {years.length > 0 ? (
+        years.map(year => (
+          <YearSection
+            key={year}
+            year={year}
+            readings={sortReadingsWithinCategory(yearGroups[year], year)}
           />
-        ))}
-      </div>
+        ))
+      ) : (
+        // Show loading state for initial load
+        <div className="flex justify-center items-center py-16">
+          {isLoading && (
+            <div className="w-10 h-10 border-t-2 border-b-2 border-indigo-500 rounded-full animate-spin"></div>
+          )}
+          
+          {!isLoading && readings.length === 0 && (
+            <div className="text-gray-500 text-center">
+              <p>No readings found.</p>
+            </div>
+          )}
+        </div>
+      )}
       
       {/* Loading indicator */}
       <div 
@@ -172,5 +192,5 @@ export default function ReadingsPage() {
         </div>
       )}
     </section>
-  )
+  );
 }
