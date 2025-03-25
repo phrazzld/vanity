@@ -13,6 +13,34 @@ jest.mock('../../../context/ThemeContext', () => ({
   ThemeProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>
 }));
 
+// Mock the ReadingCard component to prevent Next.js Image issues in tests
+jest.mock('../ReadingCard', () => {
+  return {
+    __esModule: true,
+    default: ({ 
+      slug, 
+      title, 
+      author, 
+      dropped, 
+      finishedDate 
+    }: { 
+      slug: string; 
+      title: string; 
+      author: string; 
+      coverImageSrc?: string | null; 
+      dropped?: boolean; 
+      finishedDate?: string | Date | null;
+    }) => (
+      <div data-testid="reading-card" className="mocked-reading-card">
+        <div>{title}</div>
+        <div>{author}</div>
+        <div>{slug}</div>
+        <div>{dropped ? 'Dropped' : finishedDate ? 'Finished' : 'Reading'}</div>
+      </div>
+    ),
+  };
+});
+
 describe('YearSection Component', () => {
   // Sample reading data for tests
   const sampleReadings: Reading[] = [
@@ -78,7 +106,8 @@ describe('YearSection Component', () => {
   it('displays "Currently Reading" section with appropriate styling', () => {
     render(<YearSection year="Currently Reading" readings={[currentlyReadingBook]} />);
     
-    const heading = screen.getByText('Currently Reading');
+    // More specific selection to avoid ambiguity
+    const heading = screen.getByRole('heading', { name: /currently reading/i });
     expect(heading).toBeInTheDocument();
     
     // Find the parent section and check for data attribute
@@ -89,7 +118,8 @@ describe('YearSection Component', () => {
   it('displays "Dropped" section with appropriate styling', () => {
     render(<YearSection year="Dropped" readings={[droppedBook]} />);
     
-    const heading = screen.getByText('Dropped');
+    // More specific selection to avoid ambiguity, use h2 tag selector
+    const heading = screen.getByRole('heading', { name: /dropped/i });
     expect(heading).toBeInTheDocument();
     
     // Find the parent section and check for data attribute
