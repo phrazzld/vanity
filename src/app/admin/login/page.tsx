@@ -13,8 +13,8 @@ import { useSearchParams } from 'next/navigation';
 // Component for the login form with search params
 function LoginForm() {
   const searchParams = useSearchParams();
-  const error = searchParams.get("error");
-  const callbackUrl = searchParams.get("callbackUrl") || "/admin";
+  const error = searchParams?.get("error") || null;
+  const callbackUrl = searchParams?.get("callbackUrl") || "/admin";
   
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
