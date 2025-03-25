@@ -123,6 +123,9 @@ export default function ReadingCard({
             src={`${process.env.NEXT_PUBLIC_SPACES_BASE_URL}${coverImageSrc}`}
             alt={`${title} cover`}
             fill={true}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            priority={false}
+            loading="lazy"
             style={{
               objectFit: 'cover',
               filter: isPaused 
