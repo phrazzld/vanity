@@ -17,6 +17,44 @@ import type { Reading } from '@/types';
 import type { ListSortOption } from '@/app/hooks';
 import { useTheme } from '@/app/context/ThemeContext';
 
+/**
+ * Format a date without timezone issues
+ * This solves the problem where dates appear off by one day due to timezone conversion
+ */
+function formatDateWithoutTimezoneIssue(dateInput: string | Date): string {
+  if (!dateInput) return '';
+  
+  try {
+    // For string inputs, handle ISO format directly to avoid timezone conversion issues
+    if (typeof dateInput === 'string') {
+      // Extract date parts directly from the ISO string (YYYY-MM-DD)
+      // This approach prevents any timezone adjustments
+      const parts = dateInput.split('T')[0].split('-');
+      if (parts.length === 3) {
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10);
+        const day = parseInt(parts[2], 10);
+        return `${month}/${day}/${year}`;
+      }
+    }
+    
+    // For Date objects or if string parsing fails, use UTC methods to avoid timezone issues
+    const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+    
+    // Use UTC methods to prevent timezone offset issues
+    const year = date.getUTCFullYear();
+    const month = date.getUTCMonth() + 1; // Months are 0-indexed
+    const day = date.getUTCDate();
+    
+    // Format the date as MM/DD/YYYY
+    return `${month}/${day}/${year}`;
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    // Fallback to showing the raw date as a string
+    return String(dateInput);
+  }
+}
+
 // Icons for sort indicators
 const SortAscIcon = () => (
   <svg 
@@ -244,7 +282,7 @@ export default function ReadingsList({
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                           d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
-                      {reading.finishedDate ? new Date(reading.finishedDate).toLocaleDateString() : 'Unfinished'}
+                      {reading.finishedDate ? formatDateWithoutTimezoneIssue(reading.finishedDate) : 'Unfinished'}
                     </span>
                     
                     {reading.dropped && (
