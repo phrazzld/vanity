@@ -100,6 +100,7 @@ export default function YearSection({
               key={reading.slug}
               slug={reading.slug}
               title={reading.title}
+              author={reading.author}
               coverImageSrc={reading.coverImageSrc}
               dropped={reading.dropped}
               finishedDate={reading.finishedDate}
