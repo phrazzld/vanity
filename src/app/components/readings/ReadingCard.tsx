@@ -24,6 +24,23 @@ import { getSeededPlaceholderStyles } from './placeholderUtils'
 import { useTheme } from '@/app/context/ThemeContext'
 
 /**
+ * Animation timing constants for consistent, reusable animations across the component
+ */
+const ANIMATION_TIMING = {
+  // Dramatic, elegant timing for hover/enter states with a pronounced overshoot
+  ELEGANT_ENTRANCE: 'cubic-bezier(0.19, 1, 0.22, 1)',
+  
+  // Standard material design timing for exits/non-hover states
+  STANDARD_EXIT: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  
+  // Refined timing for content elements with subtle acceleration and deceleration
+  CONTENT_ENTRANCE: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+  
+  // Simple ease timing for basic transitions
+  SIMPLE: 'ease'
+}
+
+/**
  * Icon component for a book that is currently being read
  * Renders an open book SVG icon
  * 
@@ -123,6 +140,29 @@ function formatDate(date: Date | string | null): string {
 }
 
 /**
+ * Converts a hex color to RGB components string
+ * @param hex Hex color string (e.g. "#ff0000" or "#f00")
+ * @returns RGB components as string (e.g. "255, 0, 0")
+ */
+function hexToRgb(hex: string): string {
+  // Remove the # if present
+  const cleanHex = hex.replace('#', '');
+  
+  // Convert shorthand (3 chars) to full form (6 chars)
+  const fullHex = cleanHex.length === 3 
+    ? cleanHex.split('').map(c => c + c).join('')
+    : cleanHex;
+    
+  // Parse the hex values
+  const r = parseInt(fullHex.substring(0, 2), 16);
+  const g = parseInt(fullHex.substring(2, 4), 16);
+  const b = parseInt(fullHex.substring(4, 6), 16);
+  
+  // Return as RGB string
+  return `${r}, ${g}, ${b}`;
+}
+
+/**
  * ReadingCard component that displays a book cover with ribbon unfurl animation on hover
  * The component uses a modern card design with smooth transitions and status-colored ribbon
  * 
@@ -189,11 +229,29 @@ export default function ReadingCard({
   // Format finish date for display
   const formattedFinishDate = formatDate(finishedDate)
   
-  // Status colors
+  // Status colors - expanded with variations for gradients
   const colors = {
-    current: '#3b82f6', // blue
-    finished: '#10b981', // green
-    paused: '#6b7280'    // gray
+    current: {
+      main: '#3b82f6',      // blue
+      light: '#60a5fa',     // lighter blue for highlights
+      dark: '#2563eb',      // darker blue for shadows
+      lighter: '#93c5fd',   // very light blue for edge highlights
+      darker: '#1d4ed8'     // very dark blue for deep shadows
+    },
+    finished: {
+      main: '#10b981',      // green
+      light: '#34d399',     // lighter green for highlights
+      dark: '#059669',      // darker green for shadows
+      lighter: '#6ee7b7',   // very light green for edge highlights
+      darker: '#047857'     // very dark green for deep shadows
+    },
+    paused: {
+      main: '#6b7280',      // gray
+      light: '#9ca3af',     // lighter gray for highlights
+      dark: '#4b5563',      // darker gray for shadows
+      lighter: '#d1d5db',   // very light gray for edge highlights
+      darker: '#374151'     // very dark gray for deep shadows
+    }
   }
   
   // Status badge text
@@ -203,12 +261,15 @@ export default function ReadingCard({
       ? formattedFinishDate 
       : 'Paused'
       
-  // Status color
+  // Status color object for the current status
   const statusColor = isCurrentlyReading 
     ? colors.current 
     : isFinished 
       ? colors.finished 
       : colors.paused
+      
+  // Main color for simple uses (string)
+  const statusMainColor = statusColor.main
 
   return (
     <div
@@ -220,8 +281,8 @@ export default function ReadingCard({
         position: 'relative',
         // Smooth transitions in both directions
         transition: isHovered
-          ? 'transform 0.6s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.6s cubic-bezier(0.19, 1, 0.22, 1)'
-          : 'transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.7s cubic-bezier(0.4, 0, 0.2, 1)',
+          ? `transform 0.6s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}, box-shadow 0.6s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}`
+          : `transform 0.7s ${ANIMATION_TIMING.STANDARD_EXIT}, box-shadow 0.7s ${ANIMATION_TIMING.STANDARD_EXIT}`,
         aspectRatio: '2 / 3', // Lock the shape
         borderRadius: '8px',
         overflow: 'hidden',
@@ -278,8 +339,8 @@ export default function ReadingCard({
                   : 'none',
               // Subtle zoom with smoother animations in both directions
               transition: isHovered
-                ? 'transform 0.7s cubic-bezier(0.19, 1, 0.22, 1), filter 0.5s ease'
-                : 'transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), filter 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+                ? `transform 0.7s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}, filter 0.5s ${ANIMATION_TIMING.SIMPLE}`
+                : `transform 0.7s ${ANIMATION_TIMING.STANDARD_EXIT}, filter 0.6s ${ANIMATION_TIMING.STANDARD_EXIT}`,
               transform: isHovered ? 'scale(1.05)' : 'scale(1)', // Slightly more pronounced zoom
               willChange: 'transform', // Performance hint
             }}
@@ -287,138 +348,327 @@ export default function ReadingCard({
         )}
       </div>
       
-      {/* Ribbon that unfurls across the bottom */}
+      {/* Meta ribbon container - restructured for glass morphism and better animations */}
       <div
+        className="ribbon-container"
         style={{
           position: 'absolute',
           bottom: 0,
           left: 0,
-          width: isHovered ? '100%' : '0', // Unfurl/refurl horizontally (0 without units to ensure complete collapse)
-          height: isHovered ? 'auto' : '0', // Complete collapse when not hovered
-          minHeight: isHovered ? '90px' : '0', // Remove all height when not hovered
-          maxHeight: isHovered ? '150px' : '0', // Increased maximum height for very long content
-          backgroundColor: statusColor, // Use the status color
-          color: 'white',
-          overflow: 'hidden',
-          // Perfectly symmetrical animation in both directions
+          width: '100%', // Always full width, but revealed through transform
+          opacity: isHovered ? 1 : 0,
+          visibility: isHovered ? 'visible' : 'hidden', // Hide when not hovered for accessibility
+          transform: isHovered ? 'translateY(0)' : 'translateY(15px)',
+          // Combined animation for all properties
           transition: isHovered
-            // Enter: First expand width, then height
-            ? 'width 0.65s cubic-bezier(0.19, 1, 0.22, 1), min-height 0.5s cubic-bezier(0.215, 0.61, 0.355, 1) 0.3s, max-height 0.5s cubic-bezier(0.215, 0.61, 0.355, 1) 0.3s'
-            // Exit: First collapse height, then width
-            : 'min-height 0.5s cubic-bezier(0.215, 0.61, 0.355, 1), max-height 0.5s cubic-bezier(0.215, 0.61, 0.355, 1), width 0.65s cubic-bezier(0.19, 1, 0.22, 1) 0.3s', 
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          padding: isHovered ? '14px 16px' : '0', // No padding when collapsed
-          opacity: isHovered ? 1 : 0, // Completely transparent when not hovered
-          // Create a cleaner edge with a subtle shadow
-          boxShadow: isHovered 
-            ? '0 -4px 10px -4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)' 
-            : 'none',
-          transformOrigin: 'bottom left',
+            ? `transform 0.55s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}, opacity 0.5s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}, min-height 0.5s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}, max-height 0.5s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}, visibility 0s`
+            : `transform 0.5s ${ANIMATION_TIMING.STANDARD_EXIT}, opacity 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}, min-height 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}, max-height 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}, visibility 0s linear 0.5s`,
+          borderRadius: '0 0 8px 8px', // Match card's border radius
+          overflow: 'hidden',
+          // Reserve space for ribbon even when not visible
+          height: 'auto',
+          minHeight: isHovered ? '100px' : '0',
+          maxHeight: isHovered ? '160px' : '0',
+          willChange: 'transform, opacity, min-height, max-height',
         }}
         data-testid="ribbon-container"
+        aria-hidden={!isHovered}
       >
-        {/* Layered semi-transparent overlay for depth */}
-        <div 
+        {/* Glass morphism background layer */}
+        <div
+          className="ribbon-glass-bg"
+          style={{
+            position: 'absolute',
+            inset: 0, // Cover entire container
+            // Create a semi-transparent base that matches the status
+            backgroundColor: `${statusMainColor}08`, // Very low opacity base (3%)
+            // Glass effect with backdrop filter - blurs what's behind the element
+            backdropFilter: 'blur(10px) saturate(160%)',
+            WebkitBackdropFilter: 'blur(10px) saturate(160%)', // For Safari
+            // Subtle border effect for depth
+            borderTop: '1px solid rgba(255, 255, 255, 0.12)',
+            // Complex shadow for depth - outer shadow and inner highlight
+            boxShadow: 'rgba(0, 0, 0, 0.15) 0px 10px 15px -3px, rgba(0, 0, 0, 0.1) 0px 4px 6px -4px, inset 0 0 0 1px rgba(255, 255, 255, 0.08)',
+            // Add a subtle noise texture for realism
+            backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")',
+            backgroundBlendMode: 'overlay',
+            opacity: isHovered ? 1 : 0,
+            transition: isHovered 
+              ? 'opacity 0.4s ease 0.1s' 
+              : 'opacity 0.3s ease',
+            zIndex: 1,
+          }}
+        />
+        
+        {/* Gradient background layer - primary color layer */}
+        <div
+          className="ribbon-gradient-bg"
+          style={{
+            position: 'absolute',
+            inset: 0, // Cover entire container
+            // Rich, sophisticated multi-color gradients using our expanded color palette
+            background: `linear-gradient(135deg, 
+              rgba(${hexToRgb(statusColor.light)}, 0.75) 0%, 
+              rgba(${hexToRgb(statusColor.main)}, 0.82) 50%, 
+              rgba(${hexToRgb(statusColor.dark)}, 0.88) 100%)`,
+            opacity: isHovered ? 0.92 : 0,
+            transition: isHovered 
+              ? 'opacity 0.4s ease 0.05s' 
+              : 'opacity 0.3s ease',
+            zIndex: 2,
+          }}
+        />
+        
+        {/* Accent gradient layer - adds depth with diagonal highlights */}
+        <div
+          className="ribbon-accent-gradient"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            // Diagonal highlight that adds dimensionality
+            background: `linear-gradient(145deg, 
+              rgba(${hexToRgb(statusColor.lighter)}, 0.15) 0%, 
+              rgba(${hexToRgb(statusColor.lighter)}, 0.05) 25%, 
+              rgba(${hexToRgb(statusColor.darker)}, 0.05) 75%, 
+              rgba(${hexToRgb(statusColor.darker)}, 0.10) 100%)`,
+            // Add subtle texture gradient for more dimension
+            backgroundImage: `
+              radial-gradient(circle at 15% 15%, rgba(${hexToRgb(statusColor.lighter)}, 0.18) 0%, transparent 35%),
+              radial-gradient(circle at 85% 75%, rgba(${hexToRgb(statusColor.darker)}, 0.12) 0%, transparent 50%)
+            `,
+            backgroundBlendMode: 'overlay',
+            opacity: isHovered ? 1 : 0,
+            transition: isHovered 
+              ? 'opacity 0.5s ease 0.1s' 
+              : 'opacity 0.3s ease',
+            zIndex: 3,
+          }}
+        />
+        
+        {/* Top edge highlight - creates a glossy edge effect with status-specific color */}
+        <div
+          className="ribbon-edge-highlight"
           style={{
             position: 'absolute',
             top: 0,
+            left: '5%',
+            right: '5%',
+            height: '1px',
+            // Subtle color-specific highlight that reinforces the status color
+            background: `linear-gradient(90deg, 
+              rgba(255, 255, 255, 0) 0%, 
+              rgba(${hexToRgb(statusColor.lighter)}, 0.2) 20%, 
+              rgba(255, 255, 255, 0.18) 50%, 
+              rgba(${hexToRgb(statusColor.lighter)}, 0.2) 80%, 
+              rgba(255, 255, 255, 0) 100%)`,
+            opacity: isHovered ? 0.85 : 0,
+            transform: isHovered ? 'scaleX(1)' : 'scaleX(0.92)',
+            transition: isHovered
+              ? 'opacity 0.4s ease 0.2s, transform 0.5s ease 0.2s'
+              : 'opacity 0.3s ease, transform 0.4s ease',
+            zIndex: 4,
+          }}
+        />
+        
+        {/* Bottom edge shadow - adds depth with status-specific darker color */}
+        <div
+          className="ribbon-edge-shadow"
+          style={{
+            position: 'absolute',
+            bottom: 0,
             left: 0,
             right: 0,
-            bottom: 0,
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%)',
+            height: '4px',
+            // Use status darker color for the shadow to create cohesive design
+            background: `linear-gradient(to bottom, 
+              rgba(0, 0, 0, 0) 0%, 
+              rgba(${hexToRgb(statusColor.darker)}, 0.15) 100%)`,
+            opacity: isHovered ? 0.7 : 0,
+            transition: isHovered
+              ? 'opacity 0.4s ease 0.15s'
+              : 'opacity 0.3s ease',
+            zIndex: 4,
+            borderRadius: '0 0 8px 8px', // Match container's bottom corners
+          }}
+        />
+        
+        {/* Layered semi-transparent overlay for depth */}
+        <div 
+          className="ribbon-overlay"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            // Create a subtle gradient overlay that enhances depth perception
+            background: `linear-gradient(to bottom, 
+              rgba(${hexToRgb(statusColor.darker)}, 0.08) 0%, 
+              rgba(0, 0, 0, 0.03) 40%, 
+              rgba(0, 0, 0, 0) 100%)`,
             opacity: isHovered ? 1 : 0,
             transition: isHovered
-              // Enter: Fade in with the ribbon expansion
-              ? 'opacity 0.3s ease 0.3s'
-              // Exit: Fade out before the ribbon collapses
-              : 'opacity 0.2s ease',
-            pointerEvents: 'none', // Ensure it doesn't interfere with interactions
+              ? 'opacity 0.4s ease 0.15s'
+              : 'opacity 0.3s ease',
+            pointerEvents: 'none',
+            zIndex: 5,
+            borderRadius: '0 0 8px 8px', // Match container's border radius
+          }}
+        />
+        
+        {/* Status-specific light reflections - subtle shine effect with color tint */}
+        <div 
+          className="ribbon-reflections"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            // Create two reflection points with subtle color tint
+            background: `
+              radial-gradient(circle at 15% 15%, rgba(${hexToRgb(statusColor.lighter)}, 0.15) 0%, transparent 30%),
+              radial-gradient(circle at 85% 25%, rgba(255, 255, 255, 0.08) 0%, transparent 40%)
+            `,
+            // Add a subtle horizontal sweep effect
+            backgroundImage: `
+              linear-gradient(90deg, 
+                rgba(${hexToRgb(statusColor.lighter)}, 0) 0%,
+                rgba(${hexToRgb(statusColor.lighter)}, 0.03) 20%, 
+                rgba(255, 255, 255, 0.05) 50%,
+                rgba(${hexToRgb(statusColor.lighter)}, 0.03) 80%,
+                rgba(${hexToRgb(statusColor.lighter)}, 0) 100%)
+            `,
+            backgroundBlendMode: 'overlay',
+            opacity: isHovered ? 1 : 0,
+            transition: isHovered
+              ? 'opacity 0.5s ease 0.2s'
+              : 'opacity 0.3s ease',
+            pointerEvents: 'none',
+            zIndex: 6,
+            borderRadius: '0 0 8px 8px', // Match container's border radius
           }}
         />
       
-        {/* Ribbon content container */}
+        {/* Fallback for browsers without backdrop-filter support */}
         <div
+          className="ribbon-fallback"
           style={{
-            // Content must disappear before the ribbon collapses
+            position: 'absolute',
+            inset: 0,
+            // Rich gradient for browsers without backdrop-filter support
+            background: `linear-gradient(135deg, 
+              rgba(${hexToRgb(statusColor.light)}, 0.92) 0%, 
+              rgba(${hexToRgb(statusColor.main)}, 0.95) 50%, 
+              rgba(${hexToRgb(statusColor.dark)}, 0.97) 100%)`,
+            // Add a subtle texture overlay for interest
+            backgroundImage: `
+              linear-gradient(135deg, 
+                rgba(${hexToRgb(statusColor.lighter)}, 0.07) 0%, 
+                rgba(${hexToRgb(statusColor.main)}, 0.02) 50%, 
+                rgba(${hexToRgb(statusColor.darker)}, 0.07) 100%)
+            `,
+            opacity: isHovered ? 1 : 0,
+            // Note: This fallback will show in browsers that don't support backdrop-filter
+            // In browsers with backdrop-filter support, the glass effect will take precedence visually
+            transition: isHovered
+              ? 'opacity 0.4s ease 0.05s'
+              : 'opacity 0.3s ease',
+            zIndex: 8,
+            // Extra depth and polish for the fallback
+            boxShadow: `inset 0 1px 0 rgba(255, 255, 255, 0.15), 
+              inset 0 -1px 0 rgba(${hexToRgb(statusColor.darker)}, 0.1)`,
+            borderRadius: '0 0 8px 8px',
+          }}
+        />
+
+        {/* Ribbon content container - position-based layout to prevent status overflow issues */}
+        <div
+          className="ribbon-content"
+          style={{
             opacity: isHovered ? 1 : 0,
             transform: isHovered ? 'translateY(0)' : 'translateY(5px)',
-            // Synchronized transitions
             transition: isHovered
-              // Enter: Content fades in after ribbon appears
-              ? 'opacity 0.4s ease 0.5s, transform 0.4s cubic-bezier(0.215, 0.61, 0.355, 1) 0.5s'
-              // Exit: Content fades out quickly before ribbon collapses 
-              : 'opacity 0.25s ease, transform 0.25s cubic-bezier(0.215, 0.61, 0.355, 1)',
-            // Full height container
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            position: 'relative', // For positioning elements
-            zIndex: 2, // Above the gradient overlay
+              ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.15s, transform 0.4s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.15s`
+              : `opacity 0.25s ${ANIMATION_TIMING.SIMPLE}, transform 0.25s ${ANIMATION_TIMING.CONTENT_ENTRANCE}`,
+            width: '100%',
+            // Use position relative for containing absolutely positioned elements
+            position: 'relative',
+            zIndex: 10, // Highest z-index to ensure content is always on top
+            // Set a minimum height to guarantee space for all elements
+            minHeight: '120px', 
+            // Refined padding with more space at top and extra space at bottom to ensure room for status
+            padding: '18px 20px 48px', // Extra bottom padding reserves space for status badge
+            // Remove any default margins
+            margin: 0,
+            boxSizing: 'border-box',
+            // Hide overflow to prevent content from spilling out
+            overflow: 'hidden',
           }}
         >
-          {/* Book metadata section (title and author) */}
-          <div style={{ marginBottom: '10px' }}>
-            {/* Book title - can now span multiple lines as needed */}
+          {/* Book metadata section (title and author) - height-constrained layout */}
+          <div 
+            className="book-metadata" 
+            style={{ 
+              marginBottom: '14px', // Vertical spacing
+              display: 'flex',
+              flexDirection: 'column',
+              width: '100%', // Ensure full width
+              // Remove flexGrow to prevent excessive expansion
+              // Set maximum height with overflow handling
+              maxHeight: '85px', // Constrain height to prevent pushing the status off-screen
+              overflow: 'hidden', // Hide overflow content
+            }}
+          >
+            {/* Book title with refined typography and spacing */}
             <div 
+              className="book-title"
               style={{ 
-                fontWeight: 700,
-                fontSize: '12.5px',
-                lineHeight: 1.3,
-                marginBottom: '6px',
-                letterSpacing: '0.02em',
-                color: 'rgba(255,255,255,1)',
+                fontWeight: 600,
+                fontSize: '13px',
+                lineHeight: 1.4,
+                marginBottom: '8px', // Spacing after title
+                letterSpacing: '-0.01em',
+                color: 'rgba(255,255,255,0.95)',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                // Allow up to 4 lines with ellipsis for extra-long titles
                 display: '-webkit-box',
-                WebkitLineClamp: 4,
+                // Limit to 3 lines to ensure space for author + status
+                WebkitLineClamp: 3, 
                 WebkitBoxOrient: 'vertical',
-                // For non-webkit browsers
-                maxHeight: '65px', // 4 lines x 12.5px font x 1.3 line height
-                textShadow: '0 1px 1px rgba(0,0,0,0.5)',
-                // Symmetrical entrance and exit animations
+                // Reduced max height to ensure enough space
+                maxHeight: '54.6px', // 3 lines x 13px font x 1.4 line height
+                textShadow: '0 1px 2px rgba(0,0,0,0.15)',
                 transform: isHovered ? 'translateY(0)' : 'translateY(-5px)',
                 transition: isHovered
-                  // Enter: Fade in after ribbon expands
-                  ? 'transform 0.5s cubic-bezier(0.215, 0.61, 0.355, 1) 0.5s, opacity 0.4s ease 0.5s'
-                  // Exit: Fade out quickly first (title leads the exit)
-                  : 'transform 0.25s cubic-bezier(0.215, 0.61, 0.355, 1), opacity 0.25s ease',
+                  ? `transform 0.5s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.2s, opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.2s`
+                  : `transform 0.25s ${ANIMATION_TIMING.CONTENT_ENTRANCE}, opacity 0.25s ${ANIMATION_TIMING.SIMPLE}`,
+                width: '100%', // Full width utilization
               }}
               data-testid="book-title"
             >
               {title}
             </div>
             
-            {/* Author name with better handling for long names */}
+            {/* Author name with refined typography and spacing */}
             <div 
+              className="book-author"
               style={{ 
-                fontSize: '11px',
+                fontSize: '11.5px',
                 fontWeight: 500,
-                fontStyle: 'italic',
-                lineHeight: 1.2,
+                fontStyle: 'normal',
+                lineHeight: 1.3, // Good readability
                 overflow: 'hidden',
-                // Allow for wrapping of very long author names
                 display: '-webkit-box',
-                WebkitLineClamp: 2,
+                // Limit to 1 line to ensure consistent spacing
+                WebkitLineClamp: 1,
                 WebkitBoxOrient: 'vertical',
-                maxHeight: '27px', // 2 lines of text
-                marginTop: '2px', // Add space between title and author
-                opacity: 0.85,
-                color: 'rgba(255,255,255,0.92)',
-                paddingBottom: '2px',
-                // Subtle bottom border for separation
-                borderBottom: '1px solid rgba(255,255,255,0.1)',
-                marginBottom: '4px', // Add space after author
-                // Symmetrical entrance and exit animations
+                // Fixed height based on one line
+                maxHeight: '15px', // 1 line x 11.5px font x 1.3 line height
+                marginTop: '2px',
+                color: 'rgba(255,255,255,0.78)',
+                letterSpacing: '0.01em',
+                paddingBottom: '4px', // Reduced to save space
+                // Remove bottom border to save space
                 transform: isHovered ? 'translateY(0)' : 'translateY(5px)', 
                 transition: isHovered
-                  // Enter: Fade in slightly after title
-                  ? 'transform 0.5s cubic-bezier(0.215, 0.61, 0.355, 1) 0.6s, opacity 0.4s ease 0.6s'
-                  // Exit: Fade out after title (sequence matters)
-                  : 'transform 0.25s cubic-bezier(0.215, 0.61, 0.355, 1) 0.05s, opacity 0.25s ease 0.05s',
+                  ? `transform 0.5s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.25s, opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.25s, color 0.2s ${ANIMATION_TIMING.SIMPLE}`
+                  : `transform 0.25s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.05s, opacity 0.25s ${ANIMATION_TIMING.SIMPLE} 0.05s, color 0.2s ${ANIMATION_TIMING.SIMPLE}`,
+                width: '100%', // Full width
               }}
               data-testid="book-author"
             >
@@ -426,51 +676,88 @@ export default function ReadingCard({
             </div>
           </div>
           
-          {/* Status badge - now a standalone element at the bottom */}
+          {/* Divider line with gradient - improved spacing */}
           <div 
+            className="ribbon-divider"
             style={{
-              // Reset to prevent inheritance issues
-              display: 'inline-flex',
-              alignItems: 'center',
-              alignSelf: 'flex-start',
-              // Clean badge styling
-              background: 'rgba(255,255,255,0.15)',
-              backdropFilter: 'blur(4px)',
-              borderRadius: '12px',
-              padding: '4px 9px 4px 7px', // Slightly larger for better readability
-              marginTop: '2px', // Ensure spacing from author text
-              gap: '4px',
-              // Symmetrical entrance and exit animations
-              transform: isHovered ? 'translateY(0)' : 'translateY(8px)',
+              height: '1px',
+              background: 'linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.05) 100%)',
+              // Centered with more space above and below
+              margin: '2px 8px 10px',
+              width: 'calc(100% - 16px)', // Inset from edges for elegance
+              alignSelf: 'center', // Center horizontally
               opacity: isHovered ? 1 : 0,
+              transform: 'scaleX(0.96)', // Slightly wider than before
               transition: isHovered
-                // Enter: Fade in last 
-                ? 'transform 0.5s cubic-bezier(0.215, 0.61, 0.355, 1) 0.7s, opacity 0.4s ease 0.7s'
-                // Exit: Fade out last (badge exits last, just like it entered last)
-                : 'transform 0.25s cubic-bezier(0.215, 0.61, 0.355, 1) 0.1s, opacity 0.25s ease 0.1s',
-              // Clean shadow
-              boxShadow: '0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.15)',
-              // Make sure it can handle long status text
-              maxWidth: '100%',
+                ? 'opacity 0.4s ease 0.3s, transform 0.5s ease 0.3s'
+                : 'opacity 0.2s ease, transform 0.4s ease',
+              // Ensure consistent appearance
+              padding: 0,
+              border: 0,
             }}
-            data-testid="status-text"
+          />
+          
+          {/* Status container - absolutely positioned at bottom to prevent overflow issues */}
+          <div
+            className="status-container"
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between', // Allows for future elements on the right
+              alignItems: 'center',
+              width: 'calc(100% - 40px)', // Full width minus the horizontal padding
+              // Position at the bottom regardless of content
+              position: 'absolute',
+              bottom: '16px', // Match the bottom padding
+              left: '20px', // Match the left padding
+              right: '20px', // Match the right padding
+              // Layout styles
+              zIndex: 5, // Above content if needed
+              height: '24px', // Fixed height
+            }}
           >
-            {/* Status icon with gentler animation */}
+            {/* Status badge with refined styling */}
+            <div 
+              className={`reading-status ${isCurrentlyReading ? 'currently-reading-status' : isFinished ? 'finished-status' : 'paused-status'}`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                alignSelf: 'flex-start',
+                background: 'rgba(255,255,255,0.12)',
+                borderRadius: '4px',
+                padding: '4px 10px', // Increased padding for better proportions
+                marginTop: '2px',
+                gap: '5px', // Slightly increased gap between icon and text
+                transform: isHovered ? 'translateY(0)' : 'translateY(8px)',
+                opacity: isHovered ? 1 : 0,
+                transition: isHovered
+                  ? `transform 0.5s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.3s, opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.3s`
+                  : `transform 0.25s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.1s, opacity 0.25s ${ANIMATION_TIMING.SIMPLE} 0.1s`,
+                boxShadow: '0 1px 2px rgba(0, 0, 0, 0.08)',
+                maxWidth: 'calc(100% - 4px)', // Prevent overflow
+                height: '22px', // Fixed height for consistency
+              }}
+              data-testid="status-text"
+              role="status"
+            >
+            {/* Status icon with improved positioning and animation */}
             <span 
+              className="status-icon"
               style={{ 
+                transform: isHovered ? 'scale(1.05)' : 'scale(0.9)',
+                transition: isHovered
+                  ? `transform 0.4s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.35s`
+                  : `transform 0.25s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.1s`,
+                marginRight: '5px', // Consistent with the gap
+                position: 'relative',
+                // Adjusted for perfect vertical alignment
+                top: '0px',
+                // Maintain size consistency
+                width: '14px',
+                height: '14px',
+                // Center icon content
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                // Symmetrical scale animation
-                transform: isHovered ? 'scale(1.05)' : 'scale(0.9)',
-                transition: isHovered
-                  // Enter: Scale up last with slight delay
-                  ? 'transform 0.4s cubic-bezier(0.215, 0.61, 0.355, 1) 0.8s'
-                  // Exit: Scale back quickly with badge
-                  : 'transform 0.25s cubic-bezier(0.215, 0.61, 0.355, 1) 0.1s',
-                marginRight: '4px', // More space between icon and text
-                position: 'relative',
-                top: '-1px', // Slight visual adjustment for better alignment
               }}
               data-testid="status-icon"
             >
@@ -479,23 +766,36 @@ export default function ReadingCard({
               {isPaused && <PausedIcon color="rgba(255,255,255,0.95)" />}
             </span>
             
-            {/* Status text with better sizing */}
-            <span style={{ 
-              fontSize: '10px',
-              fontWeight: 600,
-              letterSpacing: '0.02em',
-              whiteSpace: 'nowrap',
-              // Ensure text is visible even if long
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              maxWidth: '180px', // Cap the width to prevent extreme stretching
-              color: 'rgba(255,255,255,0.95)'
-            }}>
+            {/* Status text with improved alignment and spacing */}
+            <span 
+              className="status-label"
+              style={{ 
+                fontSize: '10px',
+                fontWeight: 600, // Slightly increased for better readability
+                letterSpacing: '0.02em',
+                textTransform: 'uppercase',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                maxWidth: '180px',
+                color: 'rgba(255,255,255,0.95)', // Slightly brighter for better contrast
+                // Improve vertical alignment
+                lineHeight: 1.2,
+                // Prevent layout shifts
+                height: '12px',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
               {isFinished && `Finished ${formattedFinishDate}`}
               {isCurrentlyReading && 'Currently reading'}
               {isPaused && 'Reading paused'}
             </span>
           </div>
+          
+          {/* Space for future right-aligned elements if needed */}
+          <div className="reading-actions" style={{ opacity: 0 }}></div>
+        </div>
         </div>
       </div>
     </div>
