@@ -43,7 +43,7 @@
   - Dependencies: Refactored container structure
   - Priority: Medium
 
-- [ ] Refine author typography
+- [x] Refine author typography
   - Description: Improve author name style and readability
   - Dependencies: Refactored container structure
   - Priority: Medium

@@ -659,7 +659,7 @@ export default function ReadingCard({
               marginBottom: '12px', // Increased bottom margin
               width: '100%', // Ensure full width
               // More generous height for better spacing
-              height: '95px', 
+              height: '100px', 
               overflow: 'hidden', // Hide any overflow
               position: 'relative', // For children positioning
             }}
@@ -705,23 +705,36 @@ export default function ReadingCard({
               {title}
             </div>
             
-            {/* Author name - single line, clean formatting */}
+            {/* Author name - elegant, refined typography */}
             <div 
               className="book-author"
               style={{ 
-                fontSize: '11.5px',
-                fontWeight: 500,
-                fontStyle: 'normal',
-                lineHeight: 1.4, // Slightly increased for readability
+                // Refined typography for author
+                fontSize: '11.8px', // Slightly larger for better readability
+                fontWeight: 450, // Lighter weight for contrast with title
+                fontStyle: 'italic', // Traditional styling for author names
+                lineHeight: 1.3, // Tighter for elegant appearance
                 // Single line for consistent layout
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
-                color: 'rgba(255,255,255,0.78)',
-                letterSpacing: '0.01em',
+                // Subtle gradient for author text
+                background: 'linear-gradient(to bottom, rgba(255,255,255,0.82), rgba(255,255,255,0.74))',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                color: 'rgba(255,255,255,0.78)', // Fallback
+                letterSpacing: '0.03em', // Slightly looser for italic styling
+                // Subtle text decoration
+                borderBottom: '1px solid rgba(255,255,255,0.1)',
+                paddingBottom: '2px',
                 // Fixed height for consistency
-                height: '16px',
-                // Animation
+                height: '20px',
+                // Light text shadow for legibility
+                textShadow: '0 1px 2px rgba(0,0,0,0.15)',
+                // Font smoothing for cleaner text
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+                // Animation 
                 transform: isHovered ? 'translateY(0)' : 'translateY(5px)', 
                 opacity: isHovered ? 1 : 0, // Make explicit for animation
                 transformOrigin: 'left center', // Scale from left for text elements
