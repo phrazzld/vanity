@@ -628,7 +628,7 @@ export default function ReadingCard({
           }}
         />
 
-        {/* Ribbon content container - position-based layout with refined staggered animation */}
+        {/* Ribbon content container - fixed height with predictable layout */}
         <div
           className="ribbon-content"
           style={{
@@ -638,54 +638,52 @@ export default function ReadingCard({
               ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.2s, transform 0.4s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.2s`
               : `opacity 0.25s ${ANIMATION_TIMING.SIMPLE}, transform 0.25s ${ANIMATION_TIMING.CONTENT_ENTRANCE}`,
             width: '100%',
-            // Use position relative for containing absolutely positioned elements
-            position: 'relative',
-            zIndex: 10, // Highest z-index to ensure content is always on top
-            // Set a minimum height to guarantee space for all elements
-            minHeight: '120px', 
-            // Refined padding with more space at top and extra space at bottom to ensure room for status
-            padding: '18px 20px 48px', // Extra bottom padding reserves space for status badge
+            // Increased fixed height for better spacing
+            height: '160px',
+            // More generous top padding
+            padding: '20px 20px 16px', 
             // Remove any default margins
             margin: 0,
             boxSizing: 'border-box',
             // Hide overflow to prevent content from spilling out
             overflow: 'hidden',
+            // Use position relative for child positioning
+            position: 'relative',
+            zIndex: 10, // Highest z-index to ensure content is always on top
           }}
         >
-          {/* Book metadata section (title and author) - height-constrained layout */}
+          {/* Book metadata section - with more generous height */}
           <div 
             className="book-metadata" 
             style={{ 
-              marginBottom: '14px', // Vertical spacing
-              display: 'flex',
-              flexDirection: 'column',
+              marginBottom: '12px', // Increased bottom margin
               width: '100%', // Ensure full width
-              // Remove flexGrow to prevent excessive expansion
-              // Set maximum height with overflow handling
-              maxHeight: '85px', // Constrain height to prevent pushing the status off-screen
-              overflow: 'hidden', // Hide overflow content
+              // More generous height for better spacing
+              height: '95px', 
+              overflow: 'hidden', // Hide any overflow
+              position: 'relative', // For children positioning
             }}
           >
-            {/* Book title with refined typography and spacing */}
+            {/* Book title - clean, precisely line-clamped at 3 lines */}
             <div 
               className="book-title"
               style={{ 
                 fontWeight: 600,
                 fontSize: '13px',
-                lineHeight: 1.4,
-                marginBottom: '8px', // Spacing after title
+                lineHeight: 1.5,
+                marginBottom: '10px', // Increased spacing after title
                 letterSpacing: '-0.01em',
                 color: 'rgba(255,255,255,0.95)',
+                // Line clamp at exactly 3 lines
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 display: '-webkit-box',
-                // Limit to 3 lines to ensure space for author + status
-                WebkitLineClamp: 3, 
+                WebkitLineClamp: 3,
                 WebkitBoxOrient: 'vertical',
-                // Reduced max height to ensure enough space
-                maxHeight: '54.6px', // 3 lines x 13px font x 1.4 line height
+                // Fixed max height based on 3 lines
+                maxHeight: '58.5px', // 3 lines × 13px × 1.5 line height
                 textShadow: '0 1px 2px rgba(0,0,0,0.15)',
-                transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(-5px) scale(0.98)',
+                transform: isHovered ? 'translateY(0)' : 'translateY(-5px)',
                 opacity: isHovered ? 1 : 0, // Make explicit for animation
                 transformOrigin: 'left center', // Scale from left for text elements
                 transition: isHovered
@@ -698,27 +696,24 @@ export default function ReadingCard({
               {title}
             </div>
             
-            {/* Author name with refined typography and spacing */}
+            {/* Author name - single line, clean formatting */}
             <div 
               className="book-author"
               style={{ 
                 fontSize: '11.5px',
                 fontWeight: 500,
                 fontStyle: 'normal',
-                lineHeight: 1.3, // Good readability
+                lineHeight: 1.4, // Slightly increased for readability
+                // Single line for consistent layout
                 overflow: 'hidden',
-                display: '-webkit-box',
-                // Limit to 1 line to ensure consistent spacing
-                WebkitLineClamp: 1,
-                WebkitBoxOrient: 'vertical',
-                // Fixed height based on one line
-                maxHeight: '15px', // 1 line x 11.5px font x 1.3 line height
-                marginTop: '2px',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
                 color: 'rgba(255,255,255,0.78)',
                 letterSpacing: '0.01em',
-                paddingBottom: '4px', // Reduced to save space
-                // Remove bottom border to save space
-                transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(5px) scale(0.98)', 
+                // Fixed height for consistency
+                height: '16px',
+                // Animation
+                transform: isHovered ? 'translateY(0)' : 'translateY(5px)', 
                 opacity: isHovered ? 1 : 0, // Make explicit for animation
                 transformOrigin: 'left center', // Scale from left for text elements
                 transition: isHovered
@@ -732,16 +727,15 @@ export default function ReadingCard({
             </div>
           </div>
           
-          {/* Divider line with gradient - improved spacing */}
+          {/* Simple divider line for visual separation */}
           <div 
             className="ribbon-divider"
             style={{
               height: '1px',
               background: 'linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.05) 100%)',
-              // Centered with more space above and below
-              margin: '2px 8px 10px',
+              // Centered with proper margin and vertical spacing
+              margin: '5px 8px 20px',
               width: 'calc(100% - 16px)', // Inset from edges for elegance
-              alignSelf: 'center', // Center horizontally
               opacity: isHovered ? 1 : 0,
               transform: isHovered ? 'scaleX(0.96)' : 'scaleX(0.7)', // More pronounced scale effect
               transition: isHovered
@@ -753,22 +747,23 @@ export default function ReadingCard({
             }}
           />
           
-          {/* Status container - absolutely positioned at bottom to prevent overflow issues */}
+          {/* Status container - fixed position at bottom with exact spacing */}
           <div
             className="status-container"
             style={{
               display: 'flex',
               justifyContent: 'space-between', // Allows for future elements on the right
               alignItems: 'center',
-              width: 'calc(100% - 40px)', // Full width minus the horizontal padding
-              // Position at the bottom regardless of content
+              width: '100%', // Full width 
+              // Absolutely positioned at the bottom with more space
               position: 'absolute',
-              bottom: '16px', // Match the bottom padding
-              left: '20px', // Match the left padding
-              right: '20px', // Match the right padding
+              bottom: '25px',
+              left: '20px',
+              right: '20px',
+              // Fixed height for badge
+              height: '22px',
               // Layout styles
               zIndex: 5, // Above content if needed
-              height: '24px', // Fixed height
             }}
           >
             {/* Status badge with refined styling */}
