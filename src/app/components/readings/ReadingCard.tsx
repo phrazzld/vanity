@@ -664,25 +664,34 @@ export default function ReadingCard({
               position: 'relative', // For children positioning
             }}
           >
-            {/* Book title - clean, precisely line-clamped at 3 lines */}
+            {/* Book title - refined typography with precise line clamping */}
             <div 
               className="book-title"
               style={{ 
-                fontWeight: 600,
-                fontSize: '13px',
-                lineHeight: 1.5,
+                // Refined typography for more elegant appearance
+                fontWeight: 650, // Slightly increased for better definition
+                fontSize: '13.5px', // Slightly larger for better readability
+                lineHeight: 1.45, // Tightened line height for cleaner look
                 marginBottom: '10px', // Increased spacing after title
-                letterSpacing: '-0.01em',
-                color: 'rgba(255,255,255,0.95)',
+                letterSpacing: '-0.015em', // Slightly tighter letter spacing for elegance
+                // Subtle gradient for depth in text coloring
+                background: 'linear-gradient(to bottom, rgba(255,255,255,0.98), rgba(255,255,255,0.92))',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                color: 'rgba(255,255,255,0.95)', // Fallback for browsers without gradient text support
                 // Line clamp at exactly 3 lines
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 display: '-webkit-box',
                 WebkitLineClamp: 3,
                 WebkitBoxOrient: 'vertical',
-                // Fixed max height based on 3 lines
-                maxHeight: '58.5px', // 3 lines × 13px × 1.5 line height
-                textShadow: '0 1px 2px rgba(0,0,0,0.15)',
+                // Fixed max height based on refined line height and font size
+                maxHeight: '58.7px', // 3 lines × 13.5px × 1.45 line height
+                // Enhanced text shadow for better legibility against glass backgrounds
+                textShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                // Subtle font smoothing for crisper text
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
                 transform: isHovered ? 'translateY(0)' : 'translateY(-5px)',
                 opacity: isHovered ? 1 : 0, // Make explicit for animation
                 transformOrigin: 'left center', // Scale from left for text elements

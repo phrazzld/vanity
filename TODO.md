@@ -38,7 +38,7 @@
   - Priority: Medium
 
 ## Typography & Content Styling
-- [ ] Refine title typography
+- [x] Refine title typography
   - Description: Update font weight, size, line height and other text properties
   - Dependencies: Refactored container structure
   - Priority: Medium
