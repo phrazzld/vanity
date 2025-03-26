@@ -48,7 +48,7 @@
   - Dependencies: Refactored container structure
   - Priority: Medium
 
-- [ ] Redesign status indicator
+- [x] Redesign status indicator
   - Description: Create more elegant status badge with improved typography
   - Dependencies: Refactored container structure
   - Priority: Medium
@@ -64,7 +64,7 @@
   - Dependencies: Glass morphism effect
   - Priority: Low
 
-- [ ] Create status-specific treatments
+- [x] Create status-specific treatments
   - Description: Add unique visual elements for each reading status (reading, finished, paused)
   - Dependencies: Status indicator redesign
   - Priority: Medium

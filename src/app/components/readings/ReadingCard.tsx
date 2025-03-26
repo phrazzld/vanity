@@ -332,11 +332,12 @@ export default function ReadingCard({
             loading="lazy" // BUG FIX: Removed conflicting priority="false" prop. Next.js Image component cannot use both priority and loading props.
             style={{
               objectFit: 'cover',
+              // Enhanced status-specific image treatments
               filter: isPaused 
                 ? 'grayscale(50%) brightness(0.95)' 
                 : isFinished 
-                  ? 'brightness(1.03)' 
-                  : 'none',
+                  ? 'brightness(1.03) contrast(1.02) saturate(1.05)' 
+                  : 'brightness(1.02) contrast(1.01)',
               // Subtle zoom with smoother animations in both directions
               transition: isHovered
                 ? `transform 0.7s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}, filter 0.5s ${ANIMATION_TIMING.SIMPLE}`
@@ -749,12 +750,26 @@ export default function ReadingCard({
             </div>
           </div>
           
-          {/* Simple divider line for visual separation */}
+          {/* Status-specific divider line for visual separation */}
           <div 
             className="ribbon-divider"
             style={{
               height: '1px',
-              background: 'linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.05) 100%)',
+              // Status-specific gradient for subtle differentiation
+              background: isCurrentlyReading
+                ? `linear-gradient(90deg, 
+                    rgba(255, 255, 255, 0.05) 0%, 
+                    rgba(${hexToRgb(colors.current.lighter)}, 0.2) 50%, 
+                    rgba(255, 255, 255, 0.05) 100%)`
+                : isFinished
+                  ? `linear-gradient(90deg, 
+                      rgba(255, 255, 255, 0.05) 0%, 
+                      rgba(${hexToRgb(colors.finished.lighter)}, 0.2) 50%, 
+                      rgba(255, 255, 255, 0.05) 100%)`
+                  : `linear-gradient(90deg, 
+                      rgba(255, 255, 255, 0.05) 0%, 
+                      rgba(255, 255, 255, 0.15) 50%, 
+                      rgba(255, 255, 255, 0.05) 100%)`,
               // Centered with proper margin and vertical spacing
               margin: '5px 8px 20px',
               width: 'calc(100% - 16px)', // Inset from edges for elegance
@@ -788,91 +803,162 @@ export default function ReadingCard({
               zIndex: 5, // Above content if needed
             }}
           >
-            {/* Status badge with refined styling */}
+            {/* Status indicator with status-specific treatments */}
             <div 
               className={`reading-status ${isCurrentlyReading ? 'currently-reading-status' : isFinished ? 'finished-status' : 'paused-status'}`}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 alignSelf: 'flex-start',
-                background: 'rgba(255,255,255,0.12)',
-                borderRadius: '4px',
-                padding: '4px 10px', // Increased padding for better proportions
-                marginTop: '2px',
-                gap: '5px', // Slightly increased gap between icon and text
-                transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(10px) scale(0.96)',
+                // Status-specific subtle styling while keeping minimalist approach
+                padding: '2px 0',
+                marginTop: '0',
+                gap: '5px',
+                // Simple fade in/out
                 opacity: isHovered ? 1 : 0,
-                transformOrigin: 'center center',
+                transform: isHovered ? 'translateY(0)' : 'translateY(5px)',
                 transition: isHovered
-                  ? `transform 0.5s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.45s, opacity 0.45s ${ANIMATION_TIMING.SIMPLE} 0.45s`
-                  : `transform 0.25s ${ANIMATION_TIMING.CONTENT_ENTRANCE}, opacity 0.2s ${ANIMATION_TIMING.SIMPLE}`,
-                boxShadow: '0 1px 2px rgba(0, 0, 0, 0.08)',
-                maxWidth: 'calc(100% - 4px)', // Prevent overflow
-                height: '22px', // Fixed height for consistency
+                  ? `opacity 0.3s ease 0.4s, transform 0.3s ease 0.4s`
+                  : `opacity 0.2s ease, transform 0.2s ease`,
+                // Minimal dimensions
+                height: '16px',
+                // Status-specific styling
+                position: 'relative',
+                // For currently reading, add subtle left line
+                ...(isCurrentlyReading && {
+                  paddingLeft: '7px',
+                  borderLeft: '2px solid rgba(255, 255, 255, 0.35)',
+                }),
+                // For finished, slightly different styling
+                ...(isFinished && {
+                  paddingLeft: '0',
+                }),
+                // For paused, slightly dimmed appearance
+                ...(isPaused && {
+                  opacity: isHovered ? 0.85 : 0,
+                }),
               }}
               data-testid="status-text"
               role="status"
             >
-            {/* Status icon with improved positioning and animation */}
-            <span 
-              className="status-icon"
-              style={{ 
-                transform: isHovered ? 'scale(1.1) rotate(0deg)' : 'scale(0.85) rotate(-10deg)',
-                opacity: isHovered ? 1 : 0,
-                transition: isHovered
-                  ? `transform 0.5s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.55s, opacity 0.3s ${ANIMATION_TIMING.SIMPLE} 0.5s`
-                  : `transform 0.3s ${ANIMATION_TIMING.CONTENT_ENTRANCE}, opacity 0.15s ${ANIMATION_TIMING.SIMPLE}`,
-                marginRight: '5px', // Consistent with the gap
-                position: 'relative',
-                // Adjusted for perfect vertical alignment
-                top: '0px',
-                // Maintain size consistency
-                width: '14px',
-                height: '14px',
-                // Center icon content
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              data-testid="status-icon"
-            >
-              {isCurrentlyReading && <ReadingIcon color="rgba(255,255,255,0.95)" />}
-              {isFinished && <FinishedIcon color="rgba(255,255,255,0.95)" />}
-              {isPaused && <PausedIcon color="rgba(255,255,255,0.95)" />}
-            </span>
+              {/* Status-specific icon styling */}
+              <span 
+                className="status-icon"
+                style={{
+                  opacity: isHovered ? 1 : 0,
+                  transition: `opacity 0.2s ease ${isHovered ? '0.45s' : '0s'}`,
+                  width: '12px',
+                  height: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  // Status-specific icon styles
+                  ...(isCurrentlyReading && {
+                    // Add subtle animation for currently reading
+                    animation: isHovered ? 'pulseReading 2s infinite' : 'none',
+                  }),
+                  ...(isFinished && {
+                    // Slight emphasis for finished
+                    transform: isHovered ? 'scale(1.2)' : 'scale(1)',
+                    transition: isHovered 
+                      ? `opacity 0.2s ease ${isHovered ? '0.45s' : '0s'}, transform 0.3s ease ${isHovered ? '0.5s' : '0s'}`
+                      : `opacity 0.2s ease, transform 0.2s ease`,
+                  }),
+                }}
+                data-testid="status-icon"
+              >
+                {isCurrentlyReading && <ReadingIcon color="#ffffff" />}
+                {isFinished && <FinishedIcon color="#ffffff" />}
+                {isPaused && <PausedIcon color="#ffffff" />}
+              </span>
+              
+              {/* Status-specific text styling */}
+              <span 
+                className="status-label"
+                style={{ 
+                  fontSize: '10px',
+                  fontWeight: 600,
+                  letterSpacing: '0.01em',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  maxWidth: '180px',
+                  // Pure white for maximum contrast
+                  color: '#ffffff',
+                  // No text effects
+                  lineHeight: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  // Simple fade in
+                  opacity: isHovered ? 1 : 0,
+                  transition: `opacity 0.2s ease ${isHovered ? '0.5s' : '0s'}`,
+                  // Status-specific text styles
+                  ...(isCurrentlyReading && {
+                    fontWeight: 600,
+                  }),
+                  ...(isFinished && {
+                    // Add slight emphasis to finished date
+                    fontWeight: 600,
+                  }),
+                  ...(isPaused && {
+                    // For paused books, slightly de-emphasized
+                    fontWeight: 500,
+                  }),
+                }}
+              >
+                {isFinished && `Finished ${formattedFinishDate}`}
+                {isCurrentlyReading && 'Currently reading'}
+                {isPaused && 'Reading paused'}
+              </span>
+              
+              {/* Status-specific decorative elements */}
+              {isCurrentlyReading && (
+                <span
+                  className="reading-indicator"
+                  style={{
+                    position: 'absolute',
+                    left: '0',
+                    top: '0',
+                    width: '2px',
+                    height: '0%',
+                    background: 'rgba(255, 255, 255, 0.9)',
+                    animation: isHovered ? 'readingProgress 2s infinite' : 'none',
+                    opacity: isHovered ? 1 : 0,
+                    transition: `opacity 0.2s ease ${isHovered ? '0.55s' : '0s'}`,
+                  }}
+                />
+              )}
+              
+              {isFinished && (
+                <span
+                  className="finished-mark"
+                  style={{
+                    marginLeft: '5px',
+                    fontSize: '10px',
+                    opacity: isHovered ? 0.8 : 0,
+                    transition: `opacity 0.2s ease ${isHovered ? '0.6s' : '0s'}`,
+                  }}
+                >
+                  ✓
+                </span>
+              )}
+            </div>
             
-            {/* Status text with improved alignment and spacing */}
-            <span 
-              className="status-label"
-              style={{ 
-                fontSize: '10px',
-                fontWeight: 600, // Slightly increased for better readability
-                letterSpacing: '0.02em',
-                textTransform: 'uppercase',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                maxWidth: '180px',
-                color: 'rgba(255,255,255,0.95)', // Slightly brighter for better contrast
-                // Improve vertical alignment
-                lineHeight: 1.2,
-                // Prevent layout shifts
-                height: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                // Add staggered animation
-                opacity: isHovered ? 1 : 0,
-                transform: isHovered ? 'translateX(0)' : 'translateX(-5px)',
-                transition: isHovered
-                  ? `opacity 0.35s ${ANIMATION_TIMING.SIMPLE} 0.6s, transform 0.45s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.6s`
-                  : `opacity 0.2s ${ANIMATION_TIMING.SIMPLE}, transform 0.3s ${ANIMATION_TIMING.CONTENT_ENTRANCE}`,
-              }}
-            >
-              {isFinished && `Finished ${formattedFinishDate}`}
-              {isCurrentlyReading && 'Currently reading'}
-              {isPaused && 'Reading paused'}
-            </span>
-          </div>
+            {/* Define animations for status indicators */}
+            <style jsx global>{`
+              @keyframes readingProgress {
+                0% { top: 0; height: 20%; }
+                50% { top: 40%; height: 20%; }
+                100% { top: 80%; height: 20%; }
+              }
+              
+              @keyframes pulseReading {
+                0% { opacity: 1; }
+                50% { opacity: 0.6; }
+                100% { opacity: 1; }
+              }
+            `}</style>
           
           {/* Space for future right-aligned elements if needed */}
           <div className="reading-actions" style={{ opacity: 0 }}></div>

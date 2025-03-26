@@ -34,20 +34,27 @@ export default function ReadingsPage() {
       );
       
       if (!response.ok) {
-        throw new Error('Failed to fetch readings');
+        throw new Error(`Failed to fetch readings: ${response.status} ${response.statusText}`);
       }
       
       const result = await response.json();
       
-      console.log(`Fetched page ${pageNum} with offset ${offset}. Got ${result.data?.length} items.`);
+      // Validate the result structure to ensure it has the expected properties
+      if (!result || !Array.isArray(result.data)) {
+        console.error('Invalid API response format:', result);
+        throw new Error('Invalid response format from API');
+      }
+      
+      console.log(`Fetched page ${pageNum} with offset ${offset}. Got ${result.data.length} items.`);
       
       return {
-        data: result.data || [],
+        data: result.data,
         hasMore: offset + ITEMS_PER_PAGE < result.totalCount
       };
     } catch (err) {
       console.error('Error fetching readings:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
+      // Return empty data and false for hasMore to prevent further loading attempts
       return { data: [], hasMore: false };
     }
     // No finally block - loading states should be managed by the calling functions
@@ -59,12 +66,17 @@ export default function ReadingsPage() {
       // Set initial loading state before fetching
       setIsInitialLoading(true);
       
-      const { data, hasMore } = await fetchReadings(1);
-      setReadings(data);
-      setHasMore(hasMore);
-      
-      // Make sure initial loading is set to false
-      setIsInitialLoading(false);
+      try {
+        const { data, hasMore } = await fetchReadings(1);
+        setReadings(data);
+        setHasMore(hasMore);
+      } catch (error) {
+        console.error('Error loading initial data:', error);
+        setError(error instanceof Error ? error.message : 'Failed to load initial data');
+      } finally {
+        // Ensure loading state is always set to false, even on error
+        setIsInitialLoading(false);
+      }
     };
     
     loadInitialData();
@@ -78,21 +90,28 @@ export default function ReadingsPage() {
     // Set pagination loading state before fetching to prevent multiple triggers
     setIsPaginationLoading(true);
     
-    const nextPage = page + 1;
-    const { data, hasMore: moreAvailable } = await fetchReadings(nextPage);
-    
-    // Use a function to update state based on previous state to avoid race conditions
-    setReadings(prev => {
-      // Check for duplicates by slug to ensure we don't add the same reading twice
-      const existingSlugs = new Set(prev.map(r => r.slug));
-      const uniqueNewData = data.filter((item: Reading) => !existingSlugs.has(item.slug));
+    try {
+      const nextPage = page + 1;
+      const { data, hasMore: moreAvailable } = await fetchReadings(nextPage);
       
-      return [...prev, ...uniqueNewData];
-    });
-    
-    setPage(nextPage);
-    setHasMore(moreAvailable);
-    // Note: fetchReadings already sets the appropriate loading state to false in its finally block
+      // Use a function to update state based on previous state to avoid race conditions
+      setReadings(prev => {
+        // Check for duplicates by slug to ensure we don't add the same reading twice
+        const existingSlugs = new Set(prev.map(r => r.slug));
+        const uniqueNewData = data.filter((item: Reading) => !existingSlugs.has(item.slug));
+        
+        return [...prev, ...uniqueNewData];
+      });
+      
+      setPage(nextPage);
+      setHasMore(moreAvailable);
+    } catch (error) {
+      console.error('Error loading more readings:', error);
+      setError(error instanceof Error ? error.message : 'Failed to load more readings');
+    } finally {
+      // CRITICAL FIX: Ensure pagination loading state is reset even if there's an error
+      setIsPaginationLoading(false);
+    }
   }, [fetchReadings, hasMore, isInitialLoading, isPaginationLoading, page]);
 
   // Group readings by year whenever they change
@@ -109,7 +128,7 @@ export default function ReadingsPage() {
   // Setup intersection observer for infinite scrolling
   useEffect(() => {
     // Don't set up observer when loading or when we have no data yet
-    if (isInitialLoading || isPaginationLoading || readings.length === 0) return;
+    if (isInitialLoading || readings.length === 0) return;
     
     const currentObserver = observer.current;
     
@@ -118,7 +137,7 @@ export default function ReadingsPage() {
       currentObserver.disconnect();
     }
     
-    // Create new observer
+    // Create new observer with improved options
     observer.current = new IntersectionObserver(entries => {
       // Only trigger loadMore if:
       // 1. The loading element is intersecting
@@ -130,12 +149,20 @@ export default function ReadingsPage() {
           !isPaginationLoading && 
           hasMore && 
           readings.length > 0) {
+        // Add a short debounce to prevent multiple triggers
+        // This is important for mobile devices with touch scrolling
+        console.log('Loading element visible, triggering loadMore');
         loadMore();
       }
-    }, { threshold: 0.5 });
+    }, { 
+      // Lower threshold to trigger earlier
+      threshold: 0.1,
+      // Add rootMargin to load earlier (before element is fully visible)
+      rootMargin: '0px 0px 100px 0px'
+    });
     
     // Only observe loading element if we have data and more items to load
-    if (loadingRef.current && readings.length > 0 && hasMore) {
+    if (loadingRef.current && hasMore) {
       observer.current.observe(loadingRef.current);
     }
     
