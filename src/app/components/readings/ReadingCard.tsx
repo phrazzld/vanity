@@ -628,14 +628,14 @@ export default function ReadingCard({
           }}
         />
 
-        {/* Ribbon content container - position-based layout to prevent status overflow issues */}
+        {/* Ribbon content container - position-based layout with refined staggered animation */}
         <div
           className="ribbon-content"
           style={{
             opacity: isHovered ? 1 : 0,
             transform: isHovered ? 'translateY(0)' : 'translateY(5px)',
             transition: isHovered
-              ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.15s, transform 0.4s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.15s`
+              ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.2s, transform 0.4s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.2s`
               : `opacity 0.25s ${ANIMATION_TIMING.SIMPLE}, transform 0.25s ${ANIMATION_TIMING.CONTENT_ENTRANCE}`,
             width: '100%',
             // Use position relative for containing absolutely positioned elements
@@ -685,10 +685,12 @@ export default function ReadingCard({
                 // Reduced max height to ensure enough space
                 maxHeight: '54.6px', // 3 lines x 13px font x 1.4 line height
                 textShadow: '0 1px 2px rgba(0,0,0,0.15)',
-                transform: isHovered ? 'translateY(0)' : 'translateY(-5px)',
+                transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(-5px) scale(0.98)',
+                opacity: isHovered ? 1 : 0, // Make explicit for animation
+                transformOrigin: 'left center', // Scale from left for text elements
                 transition: isHovered
-                  ? `transform 0.5s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.2s, opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.2s`
-                  : `transform 0.25s ${ANIMATION_TIMING.CONTENT_ENTRANCE}, opacity 0.25s ${ANIMATION_TIMING.SIMPLE}`,
+                  ? `transform 0.45s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.25s, opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.25s`
+                  : `transform 0.25s ${ANIMATION_TIMING.CONTENT_ENTRANCE}, opacity 0.2s ${ANIMATION_TIMING.SIMPLE}`,
                 width: '100%', // Full width utilization
               }}
               data-testid="book-title"
@@ -716,10 +718,12 @@ export default function ReadingCard({
                 letterSpacing: '0.01em',
                 paddingBottom: '4px', // Reduced to save space
                 // Remove bottom border to save space
-                transform: isHovered ? 'translateY(0)' : 'translateY(5px)', 
+                transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(5px) scale(0.98)', 
+                opacity: isHovered ? 1 : 0, // Make explicit for animation
+                transformOrigin: 'left center', // Scale from left for text elements
                 transition: isHovered
-                  ? `transform 0.5s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.25s, opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.25s, color 0.2s ${ANIMATION_TIMING.SIMPLE}`
-                  : `transform 0.25s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.05s, opacity 0.25s ${ANIMATION_TIMING.SIMPLE} 0.05s, color 0.2s ${ANIMATION_TIMING.SIMPLE}`,
+                  ? `transform 0.45s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.35s, opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.35s, color 0.2s ${ANIMATION_TIMING.SIMPLE} 0.3s`
+                  : `transform 0.25s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.05s, opacity 0.2s ${ANIMATION_TIMING.SIMPLE}, color 0.2s ${ANIMATION_TIMING.SIMPLE}`,
                 width: '100%', // Full width
               }}
               data-testid="book-author"
@@ -739,10 +743,10 @@ export default function ReadingCard({
               width: 'calc(100% - 16px)', // Inset from edges for elegance
               alignSelf: 'center', // Center horizontally
               opacity: isHovered ? 1 : 0,
-              transform: 'scaleX(0.96)', // Slightly wider than before
+              transform: isHovered ? 'scaleX(0.96)' : 'scaleX(0.7)', // More pronounced scale effect
               transition: isHovered
-                ? 'opacity 0.4s ease 0.3s, transform 0.5s ease 0.3s'
-                : 'opacity 0.2s ease, transform 0.4s ease',
+                ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.4s, transform 0.5s ${ANIMATION_TIMING.ELEGANT_ENTRANCE} 0.4s`
+                : `opacity 0.2s ${ANIMATION_TIMING.SIMPLE}, transform 0.3s ${ANIMATION_TIMING.STANDARD_EXIT}`,
               // Ensure consistent appearance
               padding: 0,
               border: 0,
@@ -779,11 +783,12 @@ export default function ReadingCard({
                 padding: '4px 10px', // Increased padding for better proportions
                 marginTop: '2px',
                 gap: '5px', // Slightly increased gap between icon and text
-                transform: isHovered ? 'translateY(0)' : 'translateY(8px)',
+                transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(10px) scale(0.96)',
                 opacity: isHovered ? 1 : 0,
+                transformOrigin: 'center center',
                 transition: isHovered
-                  ? `transform 0.5s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.3s, opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.3s`
-                  : `transform 0.25s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.1s, opacity 0.25s ${ANIMATION_TIMING.SIMPLE} 0.1s`,
+                  ? `transform 0.5s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.45s, opacity 0.45s ${ANIMATION_TIMING.SIMPLE} 0.45s`
+                  : `transform 0.25s ${ANIMATION_TIMING.CONTENT_ENTRANCE}, opacity 0.2s ${ANIMATION_TIMING.SIMPLE}`,
                 boxShadow: '0 1px 2px rgba(0, 0, 0, 0.08)',
                 maxWidth: 'calc(100% - 4px)', // Prevent overflow
                 height: '22px', // Fixed height for consistency
@@ -795,10 +800,11 @@ export default function ReadingCard({
             <span 
               className="status-icon"
               style={{ 
-                transform: isHovered ? 'scale(1.05)' : 'scale(0.9)',
+                transform: isHovered ? 'scale(1.1) rotate(0deg)' : 'scale(0.85) rotate(-10deg)',
+                opacity: isHovered ? 1 : 0,
                 transition: isHovered
-                  ? `transform 0.4s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.35s`
-                  : `transform 0.25s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.1s`,
+                  ? `transform 0.5s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.55s, opacity 0.3s ${ANIMATION_TIMING.SIMPLE} 0.5s`
+                  : `transform 0.3s ${ANIMATION_TIMING.CONTENT_ENTRANCE}, opacity 0.15s ${ANIMATION_TIMING.SIMPLE}`,
                 marginRight: '5px', // Consistent with the gap
                 position: 'relative',
                 // Adjusted for perfect vertical alignment
@@ -837,6 +843,12 @@ export default function ReadingCard({
                 height: '12px',
                 display: 'flex',
                 alignItems: 'center',
+                // Add staggered animation
+                opacity: isHovered ? 1 : 0,
+                transform: isHovered ? 'translateX(0)' : 'translateX(-5px)',
+                transition: isHovered
+                  ? `opacity 0.35s ${ANIMATION_TIMING.SIMPLE} 0.6s, transform 0.45s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.6s`
+                  : `opacity 0.2s ${ANIMATION_TIMING.SIMPLE}, transform 0.3s ${ANIMATION_TIMING.CONTENT_ENTRANCE}`,
               }}
             >
               {isFinished && `Finished ${formattedFinishDate}`}
