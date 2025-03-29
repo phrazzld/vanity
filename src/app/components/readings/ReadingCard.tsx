@@ -199,6 +199,9 @@ export default function ReadingCard({
   // State for hover effects
   const [isHovered, setIsHovered] = useState(false)
   
+  // State for performance optimization - tracks if animation is active
+  const [isAnimating, setIsAnimating] = useState(false)
+  
   // State to detect if device is touch-capable
   // We'll use this to adjust behavior for touch devices
   const [isTouchDevice, setIsTouchDevice] = useState(false)
@@ -220,6 +223,26 @@ export default function ReadingCard({
       setIsTouchDevice(hasTouchCapability);
     }
   }, []);
+  
+  // Manage animation state for performance optimization
+  useEffect(() => {
+    // When hover state changes, update animation state
+    if (isHovered) {
+      // Set animating state to true when animation starts
+      setIsAnimating(true);
+    } else {
+      // When hover ends, delay cleanup until animations complete
+      // Use a timeout slightly longer than the longest animation duration
+      const animationCleanupDelay = 700; // Slightly longer than our longest animation (0.6s)
+      
+      const cleanupTimer = setTimeout(() => {
+        setIsAnimating(false);
+      }, animationCleanupDelay);
+      
+      // Clean up timer if component unmounts or hover state changes again
+      return () => clearTimeout(cleanupTimer);
+    }
+  }, [isHovered]);
   
   // Determine reading status
   const isCurrentlyReading = finishedDate === null && !dropped
@@ -299,7 +322,9 @@ export default function ReadingCard({
         // Responsive adaptations
         minHeight: '240px', // Minimum height for very small screens
         maxHeight: '400px', // Maximum height on large screens
-        willChange: 'transform, box-shadow', // Hint to browser for optimization
+        // Only apply will-change when animation is active
+        // This prevents unnecessary memory consumption when idle
+        willChange: isAnimating ? 'transform, box-shadow' : 'auto',
       }}
       onMouseEnter={() => !isTouchDevice && setIsHovered(true)}
       onMouseLeave={() => !isTouchDevice && setIsHovered(false)}
@@ -343,7 +368,8 @@ export default function ReadingCard({
                 ? `transform 0.7s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}, filter 0.5s ${ANIMATION_TIMING.SIMPLE}`
                 : `transform 0.7s ${ANIMATION_TIMING.STANDARD_EXIT}, filter 0.6s ${ANIMATION_TIMING.STANDARD_EXIT}`,
               transform: isHovered ? 'scale(1.05)' : 'scale(1)', // Slightly more pronounced zoom
-              willChange: 'transform', // Performance hint
+              // Conditionally apply will-change for better performance
+              willChange: isAnimating ? 'transform' : 'auto',
             }}
           />
         )}
@@ -382,8 +408,8 @@ export default function ReadingCard({
           height: 'auto',
           minHeight: isHovered ? '100px' : '0',
           maxHeight: isHovered ? '160px' : '0',
-          // Performance optimizations
-          willChange: 'transform, opacity',
+          // Performance optimizations - only when actually animating
+          willChange: isAnimating ? 'transform, opacity, min-height, max-height' : 'auto',
           // Add a subtle shadow to enhance depth perception during animation
           boxShadow: isHovered 
             ? '0 -10px 20px -10px rgba(0, 0, 0, 0.1)' 
@@ -418,7 +444,7 @@ export default function ReadingCard({
               ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.1s, transform 0.5s ${ANIMATION_TIMING.ELEGANT_ENTRANCE} 0.05s` 
               : `opacity 0.3s ${ANIMATION_TIMING.SIMPLE}, transform 0.35s ${ANIMATION_TIMING.STANDARD_EXIT}`,
             zIndex: 1,
-            willChange: 'opacity, transform',
+            willChange: isAnimating ? 'opacity, transform' : 'auto',
           }}
         />
         
@@ -441,7 +467,7 @@ export default function ReadingCard({
               ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.05s, transform 0.55s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}` 
               : `opacity 0.3s ${ANIMATION_TIMING.SIMPLE}, transform 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}`,
             zIndex: 2,
-            willChange: 'opacity, transform',
+            willChange: isAnimating ? 'opacity, transform' : 'auto',
           }}
         />
         
@@ -471,7 +497,7 @@ export default function ReadingCard({
               ? `opacity 0.5s ${ANIMATION_TIMING.SIMPLE} 0.1s, transform 0.6s ${ANIMATION_TIMING.ELEGANT_ENTRANCE} 0.05s` 
               : `opacity 0.3s ${ANIMATION_TIMING.SIMPLE}, transform 0.45s ${ANIMATION_TIMING.STANDARD_EXIT}`,
             zIndex: 3,
-            willChange: 'opacity, transform',
+            willChange: isAnimating ? 'opacity, transform' : 'auto',
           }}
         />
         
@@ -502,7 +528,7 @@ export default function ReadingCard({
               ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.25s, transform 0.5s ${ANIMATION_TIMING.ELEGANT_ENTRANCE} 0.2s`
               : `opacity 0.3s ${ANIMATION_TIMING.SIMPLE}, transform 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}`,
             zIndex: 4,
-            willChange: 'opacity, transform',
+            willChange: isAnimating ? 'opacity, transform' : 'auto',
           }}
         />
         
@@ -530,7 +556,7 @@ export default function ReadingCard({
               : `opacity 0.3s ${ANIMATION_TIMING.SIMPLE}, transform 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}`,
             zIndex: 4,
             borderRadius: '0 0 8px 8px', // Match container's bottom corners
-            willChange: 'opacity, transform',
+            willChange: isAnimating ? 'opacity, transform' : 'auto',
           }}
         />
         
@@ -554,7 +580,7 @@ export default function ReadingCard({
             pointerEvents: 'none',
             zIndex: 5,
             borderRadius: '0 0 8px 8px', // Match container's border radius
-            willChange: 'opacity, transform',
+            willChange: isAnimating ? 'opacity, transform' : 'auto',
           }}
         />
         
@@ -589,7 +615,7 @@ export default function ReadingCard({
             pointerEvents: 'none',
             zIndex: 6,
             borderRadius: '0 0 8px 8px', // Match container's border radius
-            willChange: 'opacity, transform',
+            willChange: isAnimating ? 'opacity, transform' : 'auto',
           }}
         />
       
@@ -625,7 +651,7 @@ export default function ReadingCard({
             boxShadow: `inset 0 1px 0 rgba(255, 255, 255, 0.15), 
               inset 0 -1px 0 rgba(${hexToRgb(statusColor.darker)}, 0.1)`,
             borderRadius: '0 0 8px 8px',
-            willChange: 'opacity, transform',
+            willChange: isAnimating ? 'opacity, transform' : 'auto',
           }}
         />
 
@@ -651,6 +677,8 @@ export default function ReadingCard({
             // Use position relative for child positioning
             position: 'relative',
             zIndex: 10, // Highest z-index to ensure content is always on top
+            // Apply will-change only during animation
+            willChange: isAnimating ? 'opacity, transform' : 'auto',
           }}
         >
           {/* Book metadata section - with more generous height */}
@@ -700,6 +728,7 @@ export default function ReadingCard({
                   ? `transform 0.45s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.25s, opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.25s`
                   : `transform 0.25s ${ANIMATION_TIMING.CONTENT_ENTRANCE}, opacity 0.2s ${ANIMATION_TIMING.SIMPLE}`,
                 width: '100%', // Full width utilization
+                willChange: isAnimating ? 'opacity, transform' : 'auto' // Only apply during animation
               }}
               data-testid="book-title"
             >
@@ -743,6 +772,7 @@ export default function ReadingCard({
                   ? `transform 0.45s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.35s, opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.35s, color 0.2s ${ANIMATION_TIMING.SIMPLE} 0.3s`
                   : `transform 0.25s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.05s, opacity 0.2s ${ANIMATION_TIMING.SIMPLE}, color 0.2s ${ANIMATION_TIMING.SIMPLE}`,
                 width: '100%', // Full width
+                willChange: isAnimating ? 'opacity, transform' : 'auto' // Only apply during animation
               }}
               data-testid="book-author"
             >
@@ -781,6 +811,8 @@ export default function ReadingCard({
               // Ensure consistent appearance
               padding: 0,
               border: 0,
+              // Performance optimization
+              willChange: isAnimating ? 'opacity, transform' : 'auto',
             }}
           />
           
@@ -822,6 +854,8 @@ export default function ReadingCard({
                   : `opacity 0.2s ease, transform 0.2s ease`,
                 // Minimal dimensions
                 height: '16px',
+                // Performance optimization
+                willChange: isAnimating ? 'opacity, transform' : 'auto',
                 // Status-specific styling
                 position: 'relative',
                 // For currently reading, add subtle left line
@@ -912,47 +946,11 @@ export default function ReadingCard({
                 {isPaused && 'Reading paused'}
               </span>
               
-              {/* Status-specific decorative elements */}
-              {isCurrentlyReading && (
-                <span
-                  className="reading-indicator"
-                  style={{
-                    position: 'absolute',
-                    left: '0',
-                    top: '0',
-                    width: '2px',
-                    height: '0%',
-                    background: 'rgba(255, 255, 255, 0.9)',
-                    animation: isHovered ? 'readingProgress 2s infinite' : 'none',
-                    opacity: isHovered ? 1 : 0,
-                    transition: `opacity 0.2s ease ${isHovered ? '0.55s' : '0s'}`,
-                  }}
-                />
-              )}
-              
-              {isFinished && (
-                <span
-                  className="finished-mark"
-                  style={{
-                    marginLeft: '5px',
-                    fontSize: '10px',
-                    opacity: isHovered ? 0.8 : 0,
-                    transition: `opacity 0.2s ease ${isHovered ? '0.6s' : '0s'}`,
-                  }}
-                >
-                  ✓
-                </span>
-              )}
+              {/* Status-specific decorative elements removed */}
             </div>
             
             {/* Define animations for status indicators */}
-            <style jsx global>{`
-              @keyframes readingProgress {
-                0% { top: 0; height: 20%; }
-                50% { top: 40%; height: 20%; }
-                100% { top: 80%; height: 20%; }
-              }
-              
+            <style jsx global>{`              
               @keyframes pulseReading {
                 0% { opacity: 1; }
                 50% { opacity: 0.6; }
