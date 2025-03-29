@@ -253,24 +253,25 @@ export default function ReadingCard({
   const formattedFinishDate = formatDate(finishedDate)
   
   // Status colors - expanded with variations for gradients
+  // Colors adjusted for better text contrast on ribbons
   const colors = {
     current: {
       main: '#3b82f6',      // blue
-      light: '#60a5fa',     // lighter blue for highlights
+      light: '#4b93f7',     // slightly darker blue for highlights (darkened for better text contrast)
       dark: '#2563eb',      // darker blue for shadows
       lighter: '#93c5fd',   // very light blue for edge highlights
       darker: '#1d4ed8'     // very dark blue for deep shadows
     },
     finished: {
       main: '#10b981',      // green
-      light: '#34d399',     // lighter green for highlights
+      light: '#0ea974',     // slightly darker green for highlights (darkened for better text contrast)
       dark: '#059669',      // darker green for shadows
       lighter: '#6ee7b7',   // very light green for edge highlights
       darker: '#047857'     // very dark green for deep shadows
     },
     paused: {
       main: '#6b7280',      // gray
-      light: '#9ca3af',     // lighter gray for highlights
+      light: '#7c8490',     // slightly darker gray for highlights (darkened for better text contrast)
       dark: '#4b5563',      // darker gray for shadows
       lighter: '#d1d5db',   // very light gray for edge highlights
       darker: '#374151'     // very dark gray for deep shadows
@@ -455,12 +456,13 @@ export default function ReadingCard({
             position: 'absolute',
             inset: 0, // Cover entire container
             // Rich, sophisticated multi-color gradients using our expanded color palette
+            // Darkened background gradient for better text contrast
             background: `linear-gradient(135deg, 
-              rgba(${hexToRgb(statusColor.light)}, 0.75) 0%, 
-              rgba(${hexToRgb(statusColor.main)}, 0.82) 50%, 
-              rgba(${hexToRgb(statusColor.dark)}, 0.88) 100%)`,
+              rgba(${hexToRgb(statusColor.light)}, 0.85) 0%, 
+              rgba(${hexToRgb(statusColor.main)}, 0.90) 50%, 
+              rgba(${hexToRgb(statusColor.dark)}, 0.95) 100%)`,
             // Animation additions
-            opacity: isHovered ? 0.92 : 0,
+            opacity: isHovered ? 0.95 : 0,
             transform: isHovered ? 'scale(1) translateY(0)' : 'scale(0.97) translateY(5px)',
             transformOrigin: 'center bottom',
             transition: isHovered 
@@ -626,10 +628,13 @@ export default function ReadingCard({
             position: 'absolute',
             inset: 0,
             // Rich gradient for browsers without backdrop-filter support
+            // Darkened background for better text contrast
             background: `linear-gradient(135deg, 
-              rgba(${hexToRgb(statusColor.light)}, 0.92) 0%, 
-              rgba(${hexToRgb(statusColor.main)}, 0.95) 50%, 
-              rgba(${hexToRgb(statusColor.dark)}, 0.97) 100%)`,
+              rgba(${hexToRgb(statusColor.light)}, 0.95) 0%, 
+              rgba(${hexToRgb(statusColor.main)}, 0.97) 50%, 
+              rgba(${hexToRgb(statusColor.dark)}, 0.99) 100%)`,
+            // Add semi-transparent black overlay for text contrast
+            boxShadow: 'inset 0 0 0 1000px rgba(0, 0, 0, 0.1)',
             // Add a subtle texture overlay for interest
             backgroundImage: `
               linear-gradient(135deg, 
@@ -881,12 +886,14 @@ export default function ReadingCard({
                 style={{
                   opacity: isHovered ? 1 : 0,
                   transition: `opacity 0.2s ease ${isHovered ? '0.45s' : '0s'}`,
-                  width: '12px',
-                  height: '12px',
+                  width: '13px', 
+                  height: '13px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: 'white',
+                  // Add drop shadow to status icon for better visibility
+                  filter: 'drop-shadow(0 1px 1px rgba(0,0,0,0.3))',
                   // Status-specific icon styles
                   ...(isCurrentlyReading && {
                     // Add subtle animation for currently reading
@@ -911,16 +918,17 @@ export default function ReadingCard({
               <span 
                 className="status-label"
                 style={{ 
-                  fontSize: '10px',
-                  fontWeight: 600,
+                  fontSize: '10.5px',
+                  fontWeight: 650,
                   letterSpacing: '0.01em',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   maxWidth: '180px',
-                  // Pure white for maximum contrast
+                  // Pure white with text shadow for improved readability
                   color: '#ffffff',
-                  // No text effects
+                  // Add text shadow for better contrast against light backgrounds
+                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.35), 0 0 1px rgba(0, 0, 0, 0.2)',
                   lineHeight: 1,
                   display: 'flex',
                   alignItems: 'center',
