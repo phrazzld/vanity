@@ -1,0 +1,63 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Pre-push hook: Runs before pushing to the remote repository
+# This hook ensures code quality by:
+# 1. Running the complete test suite
+# 2. Enforcing branch naming conventions
+
+echo "🚀 Running pre-push checks..."
+
+# Get the current branch name
+BRANCH_NAME=$(git symbolic-ref --short HEAD)
+echo "🌿 Current branch: $BRANCH_NAME"
+
+# ========================================
+# Branch naming convention check
+# ========================================
+
+# Define allowed branch name patterns
+MAIN_PATTERN="^(main|master)$"
+FEATURE_PATTERN="^feature/[a-z0-9]+([-/][a-z0-9]+)*$"
+FIX_PATTERN="^fix/[a-z0-9]+([-/][a-z0-9]+)*$"
+DOCS_PATTERN="^docs/[a-z0-9]+([-/][a-z0-9]+)*$"
+REFACTOR_PATTERN="^refactor/[a-z0-9]+([-/][a-z0-9]+)*$"
+RELEASE_PATTERN="^release/v[0-9]+\.[0-9]+\.[0-9]+$"
+DEV_PATTERN="^dev(elop)?$"
+PLAN_PATTERN="^plan/[a-z0-9]+([-/][a-z0-9]+)*$"  # Support existing plan branches
+
+# Check if branch name follows the conventions
+if [[ $BRANCH_NAME =~ $MAIN_PATTERN ]] || \
+   [[ $BRANCH_NAME =~ $FEATURE_PATTERN ]] || \
+   [[ $BRANCH_NAME =~ $FIX_PATTERN ]] || \
+   [[ $BRANCH_NAME =~ $DOCS_PATTERN ]] || \
+   [[ $BRANCH_NAME =~ $REFACTOR_PATTERN ]] || \
+   [[ $BRANCH_NAME =~ $RELEASE_PATTERN ]] || \
+   [[ $BRANCH_NAME =~ $DEV_PATTERN ]] || \
+   [[ $BRANCH_NAME =~ $PLAN_PATTERN ]]; then
+  echo "✅ Branch naming convention check passed"
+else
+  echo "❌ ERROR: Branch naming convention check failed"
+  echo "Branch names must follow one of these patterns:"
+  echo "  • main, master (for main branches)"
+  echo "  • feature/feature-name (for new features)"
+  echo "  • fix/bug-description (for bug fixes)"
+  echo "  • docs/what-was-documented (for documentation)"
+  echo "  • refactor/what-was-refactored (for refactoring)"
+  echo "  • release/vX.Y.Z (for release branches)"
+  echo "  • dev, develop (for development branches)"
+  echo "  • plan/plan-description (for planning branches)"
+  echo ""
+  echo "Please rename your branch and try again."
+  exit 1
+fi
+
+# ========================================
+# Run the complete test suite
+# ========================================
+echo "🧪 Running the complete test suite..."
+npm test
+
+# If tests failed, the hook will exit with the npm test exit code
+# If tests passed, continue with the push
+echo "✅ All pre-push checks passed! Pushing to remote..."

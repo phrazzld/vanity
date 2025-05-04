@@ -13,9 +13,9 @@ This plan focuses on setting up local developer tooling (Git hooks) and enforcin
 - [x] Configure post-commit hooks
   - [x] Set up `glance ./` to run async
   - [x] Generate documentation updates if needed
-- [ ] Configure pre-push hooks
-  - [ ] Run complete test suite
-  - [ ] Enforce branch naming conventions
+- [x] Configure pre-push hooks
+  - [x] Run complete test suite
+  - [x] Enforce branch naming conventions
 
 ## Quality Standards
 

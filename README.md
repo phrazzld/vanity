@@ -117,6 +117,25 @@ This project uses Git hooks to enforce code quality and prevent sensitive data f
   - Code Documentation Generation - Runs `glance ./` to update directory overview files
   - Documentation is only regenerated when necessary (based on file changes)
 
+- **Pre-push Hooks**: Before pushing to the remote repository:
+  - Complete Test Suite - Runs all tests to ensure code quality
+  - Branch Naming Convention - Enforces standardized branch naming
+
+### Branch Naming Conventions
+
+The pre-push hook enforces the following branch naming patterns:
+
+- Main branches: `main` or `master`
+- Feature branches: `feature/feature-name`
+- Bug fix branches: `fix/bug-description`
+- Documentation branches: `docs/what-was-documented`
+- Refactoring branches: `refactor/what-was-refactored`
+- Release branches: `release/vX.Y.Z` (semantic versioning)
+- Development branches: `dev` or `develop`
+- Planning branches: `plan/plan-description`
+
+This ensures consistent naming across the project and improves integration with tools that rely on branch names.
+
 ### Working with Large Files
 
 For files exceeding 5MB:
