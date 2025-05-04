@@ -4,12 +4,12 @@ This plan focuses on setting up local developer tooling (Git hooks) and enforcin
 
 ## Git Hooks
 
-- [ ] Configure pre-commit hooks
-  - [ ] Install pre-commit framework
-  - [ ] Configure linting and formatting checks
+- [x] Configure pre-commit hooks
+  - [x] Install pre-commit framework
+  - [x] Configure linting and formatting checks
   - [ ] Add type checking
   - [ ] Prevent commit of sensitive data and large files
-  - [ ] Enforce conventional commit format
+  - [x] Enforce conventional commit format
 - [ ] Configure post-commit hooks
   - [ ] Set up `glance ./` to run async
   - [ ] Generate documentation updates if needed
@@ -19,9 +19,9 @@ This plan focuses on setting up local developer tooling (Git hooks) and enforcin
 
 ## Quality Standards
 
-- [ ] Implement file length enforcement
-  - [ ] Configure warning at 500 lines
-  - [ ] Configure error at 1000 lines
+- [x] Implement file length enforcement
+  - [x] Configure warning at 500 lines
+  - [x] Configure error at 1000 lines
 - [x] Set up conventional commits
   - [x] Add commitlint configuration
   - [x] Document commit message standards
