@@ -2,6 +2,65 @@
   "name": "vanity",
   "version": "0.1.0",
   "private": true,
+  "standard-version": {
+    "types": [
+      {
+        "type": "feat",
+        "section": "Features",
+        "hidden": false
+      },
+      {
+        "type": "fix",
+        "section": "Bug Fixes",
+        "hidden": false
+      },
+      {
+        "type": "chore",
+        "section": "Maintenance",
+        "hidden": false
+      },
+      {
+        "type": "docs",
+        "section": "Documentation",
+        "hidden": false
+      },
+      {
+        "type": "style",
+        "section": "Styling",
+        "hidden": false
+      },
+      {
+        "type": "refactor",
+        "section": "Code Refactoring",
+        "hidden": false
+      },
+      {
+        "type": "perf",
+        "section": "Performance Improvements",
+        "hidden": false
+      },
+      {
+        "type": "test",
+        "section": "Tests",
+        "hidden": false
+      },
+      {
+        "type": "ci",
+        "section": "CI/CD",
+        "hidden": false
+      }
+    ],
+    "releaseCommitMessageFormat": "chore(release): {{currentTag}} [skip ci]",
+    "bumpFiles": [
+      {
+        "filename": "package.json",
+        "type": "json"
+      }
+    ],
+    "skip": {
+      "tag": false
+    }
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "dev:log": "./scripts/rotate-logs.sh && next dev --turbopack 2>&1 | tee -a logs/dev.log",
@@ -22,7 +81,12 @@
     "migrate:data": "node scripts/migrate-data.js",
     "migrate:quotes": "node scripts/migrate-quotes.js",
     "migrate:all": "./scripts/migration-deploy.sh",
-    "prepare": "husky"
+    "prepare": "husky",
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "release:patch": "standard-version --release-as patch",
+    "release:dry-run": "standard-version --dry-run"
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",
@@ -56,6 +120,7 @@
     "postcss": "^8",
     "prettier": "^3.5.3",
     "prisma": "^6.5.0",
+    "standard-version": "^9.5.0",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }

@@ -84,6 +84,11 @@ A personal website built with Next.js, featuring a collection of readings, trave
 - `npm run format:check` - Check formatting without making changes
 - `npm run typecheck` - Run TypeScript type checking
 - `npm run lint-staged` - Run pre-commit checks (formatting, linting, type checking, sensitive data detection, and large file detection)
+- `npm run release` - Generate a new version based on conventional commits
+- `npm run release:patch` - Generate a new patch version (0.0.x)
+- `npm run release:minor` - Generate a new minor version (0.x.0)
+- `npm run release:major` - Generate a new major version (x.0.0)
+- `npm run release:dry-run` - Preview what the next version release would look like
 
 ## Data Management
 
@@ -107,6 +112,7 @@ A personal website built with Next.js, featuring a collection of readings, trave
 This project uses Git hooks to enforce code quality and prevent sensitive data from being committed:
 
 - **Pre-commit Hooks**: Before each commit, the following checks are run:
+
   - ESLint - Ensures code adheres to project standards
   - Prettier - Verifies consistent code formatting
   - TypeScript - Checks for type errors
@@ -114,6 +120,7 @@ This project uses Git hooks to enforce code quality and prevent sensitive data f
   - Large File Detection - Blocks files > 5MB to keep the repository lean
 
 - **Post-commit Hooks**: After each commit, these tasks run asynchronously:
+
   - Code Documentation Generation - Runs `glance ./` to update directory overview files
   - Documentation is only regenerated when necessary (based on file changes)
 
@@ -139,6 +146,7 @@ This ensures consistent naming across the project and improves integration with 
 ### Working with Large Files
 
 For files exceeding 5MB:
+
 - Consider using Git LFS (Large File Storage)
 - Store assets externally and reference their URLs
 - Split large data files into smaller chunks
@@ -146,15 +154,43 @@ For files exceeding 5MB:
 ### Avoiding Sensitive Data
 
 Never commit:
+
 - API keys or tokens
 - Passwords or secrets
 - Private keys or certificates
 - Environment files (except example templates)
 
 Instead:
+
 - Use environment variables
 - Store secrets in a secure vault
 - Document required environment variables in `.env.example`
+
+## Versioning
+
+This project uses semantic versioning based on [Conventional Commits](https://www.conventionalcommits.org/):
+
+- **Patch Version (0.0.x)**: Automatically incremented for `fix:` commits
+- **Minor Version (0.x.0)**: Automatically incremented for `feat:` commits
+- **Major Version (x.0.0)**: Automatically incremented for commits with `BREAKING CHANGE:` or `feat!:`
+
+The versioning system is managed by [standard-version](https://github.com/conventional-changelog/standard-version), which:
+
+1. Increments the version in package.json based on commit types
+2. Generates/updates the CHANGELOG.md file
+3. Creates a git tag for the new version
+
+### Release Process
+
+To create a new release:
+
+1. Make sure all changes are committed with conventional commit messages
+2. Run one of the following commands:
+   - `npm run release` - Let the system determine the version increment
+   - `npm run release:patch` - Force a patch version increment
+   - `npm run release:minor` - Force a minor version increment
+   - `npm run release:major` - Force a major version increment
+3. Push changes and tags to the repository with `git push --follow-tags origin <branch>`
 
 ## Documentation
 
@@ -163,6 +199,7 @@ Instead:
 This project uses the `glance` tool to automatically generate technical overviews of code directories:
 
 - **What it does**: Analyzes code directories and creates `glance.md` files with summaries of:
+
   - High-level purpose and architecture
   - Key file roles and responsibilities
   - Major dependencies and patterns
@@ -171,6 +208,7 @@ This project uses the `glance` tool to automatically generate technical overview
   - Recommendations for improvement
 
 - **When it runs**: Automatically after each commit through a post-commit hook
+
   - Runs asynchronously (won't block your workflow)
   - Only regenerates when necessary based on file changes
 

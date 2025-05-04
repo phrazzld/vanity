@@ -25,9 +25,9 @@ This plan focuses on setting up local developer tooling (Git hooks) and enforcin
 - [x] Set up conventional commits
   - [x] Add commitlint configuration
   - [x] Document commit message standards
-- [ ] Configure semantic versioning
-  - [ ] Set up automated versioning based on commits
-  - [ ] Configure CHANGELOG generation
+- [x] Configure semantic versioning
+  - [x] Set up automated versioning based on commits
+  - [x] Configure CHANGELOG generation
 - [x] Configure Prettier for consistent formatting
 - [ ] Fix lint-staged integration in pre-commit hook
   - [ ] Debug and fix lint-staged configuration
