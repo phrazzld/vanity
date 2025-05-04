@@ -8,7 +8,7 @@ This plan focuses on setting up local developer tooling (Git hooks) and enforcin
   - [x] Install pre-commit framework
   - [x] Configure linting and formatting checks
   - [x] Add type checking
-  - [ ] Prevent commit of sensitive data and large files
+  - [x] Prevent commit of sensitive data and large files
   - [x] Enforce conventional commit format
 - [ ] Configure post-commit hooks
   - [ ] Set up `glance ./` to run async

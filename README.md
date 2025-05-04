@@ -83,6 +83,7 @@ A personal website built with Next.js, featuring a collection of readings, trave
 - `npm run format` - Format all files with Prettier
 - `npm run format:check` - Check formatting without making changes
 - `npm run typecheck` - Run TypeScript type checking
+- `npm run lint-staged` - Run pre-commit checks (formatting, linting, type checking, sensitive data detection, and large file detection)
 
 ## Data Management
 
@@ -100,6 +101,37 @@ A personal website built with Next.js, featuring a collection of readings, trave
 - `/prisma` - Database schema and migrations
 - `/docs` - Project documentation
 - `/public` - Static assets
+
+## Git Hooks and Security
+
+This project uses Git hooks to enforce code quality and prevent sensitive data from being committed:
+
+- **Pre-commit Hooks**: Before each commit, the following checks are run:
+  - ESLint - Ensures code adheres to project standards
+  - Prettier - Verifies consistent code formatting
+  - TypeScript - Checks for type errors
+  - Sensitive Data Detection - Prevents accidental commit of API keys, tokens, or secrets
+  - Large File Detection - Blocks files > 5MB to keep the repository lean
+
+### Working with Large Files
+
+For files exceeding 5MB:
+- Consider using Git LFS (Large File Storage)
+- Store assets externally and reference their URLs
+- Split large data files into smaller chunks
+
+### Avoiding Sensitive Data
+
+Never commit:
+- API keys or tokens
+- Passwords or secrets
+- Private keys or certificates
+- Environment files (except example templates)
+
+Instead:
+- Use environment variables
+- Store secrets in a secure vault
+- Document required environment variables in `.env.example`
 
 ## Documentation
 

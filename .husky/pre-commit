@@ -1,11 +1,5 @@
 #\!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Run ESLint
-npm run lint || exit 1
-
-# Run Prettier
-npm run format:check || exit 1
-
-# Run TypeScript type checking
-npm run typecheck || exit 1
+# Run lint-staged to check for sensitive data, large files, and run other checks
+npx lint-staged
