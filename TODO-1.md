@@ -10,9 +10,9 @@ This plan focuses on setting up local developer tooling (Git hooks) and enforcin
   - [x] Add type checking
   - [x] Prevent commit of sensitive data and large files
   - [x] Enforce conventional commit format
-- [ ] Configure post-commit hooks
-  - [ ] Set up `glance ./` to run async
-  - [ ] Generate documentation updates if needed
+- [x] Configure post-commit hooks
+  - [x] Set up `glance ./` to run async
+  - [x] Generate documentation updates if needed
 - [ ] Configure pre-push hooks
   - [ ] Run complete test suite
   - [ ] Enforce branch naming conventions

@@ -113,6 +113,10 @@ This project uses Git hooks to enforce code quality and prevent sensitive data f
   - Sensitive Data Detection - Prevents accidental commit of API keys, tokens, or secrets
   - Large File Detection - Blocks files > 5MB to keep the repository lean
 
+- **Post-commit Hooks**: After each commit, these tasks run asynchronously:
+  - Code Documentation Generation - Runs `glance ./` to update directory overview files
+  - Documentation is only regenerated when necessary (based on file changes)
+
 ### Working with Large Files
 
 For files exceeding 5MB:
@@ -135,7 +139,29 @@ Instead:
 
 ## Documentation
 
-Additional documentation can be found in the repository:
+### Automatically Generated Documentation
+
+This project uses the `glance` tool to automatically generate technical overviews of code directories:
+
+- **What it does**: Analyzes code directories and creates `glance.md` files with summaries of:
+  - High-level purpose and architecture
+  - Key file roles and responsibilities
+  - Major dependencies and patterns
+  - Implementation details
+  - Special gotchas and constraints
+  - Recommendations for improvement
+
+- **When it runs**: Automatically after each commit through a post-commit hook
+  - Runs asynchronously (won't block your workflow)
+  - Only regenerates when necessary based on file changes
+
+- **Viewing documentation**: Look for `glance.md` files in major directories
+  - These provide up-to-date technical overviews of each module
+  - Great for onboarding new developers or understanding unfamiliar areas of the codebase
+
+### Additional Documentation
+
+More documentation can be found in the repository:
 
 - `DATABASE.md` - Database setup instructions
 - `TEST_STRATEGY.md` - Testing approach and guidelines

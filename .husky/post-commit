@@ -1,0 +1,33 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# This post-commit hook runs asynchronously and won't block the commit process
+# It runs glance to generate documentation overview files for the project
+
+# Function to run glance asynchronously
+run_glance_async() {
+  # Get the list of modified files in the last commit
+  CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r HEAD)
+
+  # Check if any documentation-related files need to be updated
+  # We'll update glance.md files if:
+  # 1. Any source files changed (not just documentation)
+  # 2. No glance.md files changed in this commit (to avoid loops)
+  if echo "$CHANGED_FILES" | grep -qE '\.(js|jsx|ts|tsx|css|json|md|prisma)$' && ! echo "$CHANGED_FILES" | grep -q 'glance\.md'; then
+    echo "📝 Running glance asynchronously to update documentation..."
+    
+    # Run glance in the background and redirect output to a log file
+    nohup sh -c "glance ./ > /tmp/glance_post_commit.log 2>&1" &
+    
+    # Inform the user that glance is running in the background
+    echo "📝 Documentation generation started in the background."
+    echo "   Check /tmp/glance_post_commit.log for details."
+  else
+    echo "📝 No code changes requiring documentation updates."
+  fi
+}
+
+# Execute the function asynchronously
+run_glance_async > /dev/null 2>&1 &
+
+exit 0
