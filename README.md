@@ -31,17 +31,20 @@ A personal website built with Next.js, featuring a collection of readings, trave
 ### Installation
 
 1. Clone the repository
+
    ```
    git clone https://github.com/phrazzld/vanity.git
    cd vanity
    ```
 
 2. Install dependencies
+
    ```
    npm install
    ```
 
 3. Set up environment variables
+
    ```
    # Create a .env file with:
    DATABASE_URL="your_neon_connection_string"
@@ -51,11 +54,13 @@ A personal website built with Next.js, featuring a collection of readings, trave
    ```
 
 4. Generate Prisma client
+
    ```
    npm run prisma:generate
    ```
 
 5. Run database migrations
+
    ```
    npm run migrate:deploy
    ```
@@ -75,6 +80,8 @@ A personal website built with Next.js, featuring a collection of readings, trave
 - `npm run test:watch` - Run tests in watch mode
 - `npm run test:coverage` - Run tests with coverage
 - `npm run lint` - Run ESLint
+- `npm run format` - Format all files with Prettier
+- `npm run format:check` - Check formatting without making changes
 
 ## Data Management
 
