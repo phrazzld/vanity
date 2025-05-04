@@ -102,8 +102,9 @@ A personal website built with Next.js, featuring a collection of readings, trave
 
 ## Documentation
 
-Additional documentation can be found in the `/docs` directory:
+Additional documentation can be found in the repository:
 
 - `DATABASE.md` - Database setup instructions
 - `TEST_STRATEGY.md` - Testing approach and guidelines
 - `MIGRATION_STEPS.md` - Data migration procedures
+- `COMMIT_CONVENTION.md` - Commit message guidelines and standards

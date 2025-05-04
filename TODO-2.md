@@ -1,31 +1,13 @@
-# Plan 2: Local Tooling & Core Quality Standards
+# Plan 2: Infrastructure & CI/CD Setup
 
-This plan focuses on setting up local developer tooling (Git hooks) and enforcing core quality standards like formatting, commit conventions, and semantic versioning.
+This plan focuses on establishing the automated CI pipeline using GitHub Actions.
 
-## Git Hooks
+## Infrastructure
 
-- [ ] Configure pre-commit hooks
-  - [ ] Install pre-commit framework
-  - [ ] Configure linting and formatting checks
-  - [ ] Add type checking
-  - [ ] Prevent commit of sensitive data and large files
-  - [ ] Enforce conventional commit format
-- [ ] Configure post-commit hooks
-  - [ ] Set up `glance ./` to run async
-  - [ ] Generate documentation updates if needed
-- [ ] Configure pre-push hooks
-  - [ ] Run complete test suite
-  - [ ] Enforce branch naming conventions
-
-## Quality Standards
-
-- [ ] Implement file length enforcement
-  - [ ] Configure warning at 500 lines
-  - [ ] Configure error at 1000 lines
-- [ ] Set up conventional commits
-  - [ ] Add commitlint configuration
-  - [ ] Document commit message standards
-- [ ] Configure semantic versioning
-  - [ ] Set up automated versioning based on commits
-  - [ ] Configure CHANGELOG generation
-- [x] Configure Prettier for consistent formatting
+- [ ] Set up GitHub Actions CI
+  - [ ] Create .github/workflows directory
+  - [ ] Create CI workflow for running on push and pull requests
+  - [ ] Configure tests to run in CI
+  - [ ] Configure linters and type checking
+  - [ ] Set up test coverage reporting
+  - [ ] Add badge to README.md

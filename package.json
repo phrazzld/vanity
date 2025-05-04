@@ -19,7 +19,8 @@
     "migrate:deploy": "prisma migrate deploy",
     "migrate:data": "node scripts/migrate-data.js",
     "migrate:quotes": "node scripts/migrate-quotes.js",
-    "migrate:all": "./scripts/migration-deploy.sh"
+    "migrate:all": "./scripts/migration-deploy.sh",
+    "prepare": "husky"
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",
@@ -33,6 +34,8 @@
     "react-leaflet": "^5.0.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.6.1",
@@ -43,6 +46,7 @@
     "eslint": "^9.22.0",
     "eslint-config-next": "^15.2.2",
     "eslint-config-prettier": "^10.1.2",
+    "husky": "^9.1.7",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8",

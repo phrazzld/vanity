@@ -1,0 +1,8 @@
+#\!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run ESLint
+npm run lint || exit 1
+
+# Run Prettier
+npm run format:check || exit 1
