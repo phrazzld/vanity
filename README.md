@@ -82,6 +82,7 @@ A personal website built with Next.js, featuring a collection of readings, trave
 - `npm run lint` - Run ESLint
 - `npm run format` - Format all files with Prettier
 - `npm run format:check` - Check formatting without making changes
+- `npm run typecheck` - Run TypeScript type checking
 
 ## Data Management
 

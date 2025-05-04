@@ -6,3 +6,6 @@ npm run lint || exit 1
 
 # Run Prettier
 npm run format:check || exit 1
+
+# Run TypeScript type checking
+npm run typecheck || exit 1
