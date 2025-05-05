@@ -29,6 +29,6 @@ This plan focuses on setting up local developer tooling (Git hooks) and enforcin
   - [x] Set up automated versioning based on commits
   - [x] Configure CHANGELOG generation
 - [x] Configure Prettier for consistent formatting
-- [ ] Fix lint-staged integration in pre-commit hook
-  - [ ] Debug and fix lint-staged configuration
-  - [ ] Re-enable comprehensive pre-commit checks
+- [x] Fix lint-staged integration in pre-commit hook
+  - [x] Debug and fix lint-staged configuration
+  - [x] Re-enable comprehensive pre-commit checks

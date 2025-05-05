@@ -1,5 +1,7 @@
 # Vanity
 
+[![CI](https://github.com/phrazzld/vanity/actions/workflows/ci.yml/badge.svg)](https://github.com/phrazzld/vanity/actions/workflows/ci.yml)
+
 A personal website built with Next.js, featuring a collection of readings, travel map, and quotes with a minimalist design aesthetic.
 
 ## Features
@@ -111,13 +113,18 @@ A personal website built with Next.js, featuring a collection of readings, trave
 
 This project uses Git hooks to enforce code quality and prevent sensitive data from being committed:
 
-- **Pre-commit Hooks**: Before each commit, the following checks are run:
+- **Pre-commit Hooks**: Before each commit, the following checks are run via `lint-staged`:
 
   - ESLint - Ensures code adheres to project standards
   - Prettier - Verifies consistent code formatting
   - TypeScript - Checks for type errors
   - Sensitive Data Detection - Prevents accidental commit of API keys, tokens, or secrets
   - Large File Detection - Blocks files > 5MB to keep the repository lean
+
+  The pre-commit process is optimized to only run relevant checks on the files being committed:
+
+  - JavaScript/TypeScript files are checked with ESLint and TypeScript
+  - All files are checked for formatting, sensitive data, and size limits
 
 - **Post-commit Hooks**: After each commit, these tasks run asynchronously:
 
@@ -191,6 +198,39 @@ To create a new release:
    - `npm run release:minor` - Force a minor version increment
    - `npm run release:major` - Force a major version increment
 3. Push changes and tags to the repository with `git push --follow-tags origin <branch>`
+
+## Continuous Integration
+
+This project uses GitHub Actions for continuous integration, which automatically runs on each push to main and on pull requests:
+
+- **What it checks**:
+
+  - Code formatting (Prettier)
+  - Linting (ESLint)
+  - Type checking (TypeScript)
+  - Test suite (Jest)
+  - Build process
+
+- **Benefits**:
+
+  - Catches issues early before they reach production
+  - Ensures consistent code quality
+  - Validates that new changes don't break existing functionality
+  - Provides confidence when merging pull requests
+
+- **CI Badge**: The status badge at the top of this README shows the current status of the CI pipeline
+
+### How to Use CI
+
+- **For Contributors**:
+
+  - CI will automatically run when you create a pull request
+  - Check the "Checks" tab on your PR to see detailed results
+  - Fix any issues identified before requesting a review
+
+- **For Maintainers**:
+  - Verify CI passes before merging pull requests
+  - The master branch should always have a passing build
 
 ## Documentation
 
