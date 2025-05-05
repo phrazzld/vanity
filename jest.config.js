@@ -14,28 +14,37 @@ const customJestConfig = {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   collectCoverageFrom: [
-    'src/app/api/quotes/**/*.{js,jsx,ts,tsx}',
-    'src/app/components/readings/ReadingCard.tsx',
-    'src/app/components/TypewriterQuotes.tsx',
-    'src/app/readings/page.tsx',
-    'src/lib/prisma.ts',
+    'src/**/*.{js,jsx,ts,tsx}',
     '!src/**/*.d.ts',
     '!src/**/_*.{js,jsx,ts,tsx}',
     '!src/**/*.stories.{js,jsx,ts,tsx}',
+    '!src/**/__tests__/**',
+    '!src/**/__mocks__/**',
     '!**/node_modules/**',
+    '!.next/**',
   ],
   coverageThreshold: {
     global: {
-      statements: 75,
-      branches: 65,
-      functions: 70,
-      lines: 75,
+      statements: 85,
+      branches: 85,
+      functions: 85,
+      lines: 85,
+    },
+    'src/app/api/': {
+      statements: 90,
+      branches: 90,
+      functions: 90,
+      lines: 90,
+    },
+    'src/lib/': {
+      statements: 90,
+      branches: 90,
+      functions: 90,
+      lines: 90,
     },
   },
-  testPathIgnorePatterns: [
-    '<rootDir>/node_modules/', 
-    '<rootDir>/.next/'
-  ],
+  coverageReporters: ['json', 'lcov', 'text', 'clover', 'html'],
+  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
   transform: {
     // Use babel-jest to transpile tests with the next/babel preset
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],

@@ -15,10 +15,11 @@ This plan focuses on configuring the strict TypeScript environment, backend test
   - [x] Forbid `any` type
   - [x] Enforce explicit return types
   - [ ] Fix ESLint integration with lint-staged for ESLint v9
-- [ ] Set up testing framework
-  - [ ] Choose Jest or Vitest
-  - [ ] Configure test coverage thresholds (>85%)
-  - [ ] Set up consistent test patterns
+- [x] Set up testing framework
+  - [x] Choose Jest (already in use)
+  - [x] Configure test coverage thresholds (>85%)
+  - [x] Set up consistent test patterns
+  - [x] Create test utilities for common testing tasks
 - [ ] Implement structured logging
   - [ ] Add Winston or Pino
   - [ ] Configure JSON format for production
