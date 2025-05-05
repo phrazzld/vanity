@@ -102,6 +102,8 @@
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
+    "@eslint/js": "^9.22.0",
+    "@next/eslint-plugin-next": "^15.2.2",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.6.1",
@@ -122,6 +124,7 @@
     "prisma": "^6.5.0",
     "standard-version": "^9.5.0",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "typescript-eslint": "^7.3.1"
   }
 }

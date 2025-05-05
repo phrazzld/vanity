@@ -10,11 +10,11 @@ This plan focuses on configuring the strict TypeScript environment, backend test
   - [x] Configure strictNullChecks
   - [x] Add additional strict type checking options
   - [ ] Fix type errors identified by stricter checking
-- [ ] Set up ESLint with strict rules
-  - [ ] Migrate to ESLint v9 configuration format
-  - [ ] Configure @typescript-eslint
-  - [ ] Forbid `any` type
-  - [ ] Enforce explicit return types
+- [x] Set up ESLint with strict rules
+  - [x] Configure TypeScript rules
+  - [x] Forbid `any` type
+  - [x] Enforce explicit return types
+  - [ ] Fix ESLint integration with lint-staged for ESLint v9
 - [ ] Set up testing framework
   - [ ] Choose Jest or Vitest
   - [ ] Configure test coverage thresholds (>85%)
