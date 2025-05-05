@@ -9,19 +9,21 @@
   html {
     @apply h-full;
   }
-  
+
   html.dark {
     color-scheme: dark;
   }
-  
+
   body {
     @apply h-full bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-inter leading-relaxed;
   }
-  
-  h1, h2, h3 {
+
+  h1,
+  h2,
+  h3 {
     @apply font-space-grotesk mb-3;
   }
-  
+
   p {
     @apply mb-4;
   }
@@ -31,52 +33,52 @@
   .site-header {
     @apply flex items-center justify-between p-8 border-b border-gray-200 dark:border-gray-700;
   }
-  
+
   .nav-list {
     @apply flex gap-4 list-none;
   }
-  
+
   .nav-list a {
     @apply relative no-underline text-gray-900 dark:text-white font-semibold transition-colors duration-200 hover:text-blue-600 dark:hover:text-blue-400;
   }
-  
+
   .nav-list a::after {
     @apply content-[''] absolute left-0 -bottom-2.5 h-0.5 w-full bg-gray-900 dark:bg-white scale-x-0 origin-left transition-transform duration-200;
   }
-  
+
   .nav-list a:hover::after {
     @apply scale-x-100;
   }
-  
+
   main {
     @apply p-8 relative;
   }
-  
+
   .big-heading {
     @apply text-5xl font-bold;
   }
-  
+
   .medium-heading {
     @apply text-3xl font-semibold mb-8;
   }
-  
+
   /* Content link styles */
   .content-link {
     @apply relative no-underline text-gray-900 dark:text-white transition-colors duration-200;
   }
-  
+
   .content-link::after {
     @apply content-[''] absolute left-0 -bottom-0.5 h-px w-full bg-gray-900 dark:bg-white scale-x-0 origin-left transition-transform duration-200;
   }
-  
+
   .content-link:hover::after {
     @apply scale-x-100;
   }
-  
+
   .secondary-link {
     @apply text-sm border-b border-dashed border-gray-900 dark:border-white pb-0.5 transition-colors duration-200;
   }
-  
+
   .secondary-link:hover {
     @apply border-gray-900 dark:border-white;
   }
@@ -85,46 +87,46 @@
   .projects-grid {
     @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8;
   }
-  
+
   .project-card {
     @apply border border-gray-200 dark:border-gray-700 relative overflow-hidden flex flex-col transition-all duration-300 
     animate-fade-in opacity-0 translate-y-2.5 hover:shadow-lg dark:hover:shadow-gray-900/70 hover:scale-[1.01] 
     bg-white dark:bg-gray-800 dark:text-white;
   }
-  
+
   .project-image-container {
     @apply relative w-full h-44;
   }
-  
+
   .project-content {
     @apply p-4 flex flex-col justify-between h-[59%];
   }
-  
+
   .project-links {
     @apply mt-4 flex gap-4;
   }
-  
+
   .tech-stack {
     @apply list-none flex flex-wrap gap-2 mt-2 p-0;
   }
-  
+
   .tech-stack li {
     @apply bg-gray-100 dark:bg-gray-700 dark:text-gray-200 py-1 px-2 rounded text-xs;
   }
-  
+
   /* About section */
   .about-section {
     @apply flex flex-col gap-4;
   }
-  
+
   .about-content p {
     @apply mb-4;
   }
-  
+
   .about-image-container {
     @apply flex justify-center mt-4;
   }
-  
+
   /* Typewriter */
   .typewriter-container {
     @apply font-space-grotesk font-semibold text-gray-800 dark:text-white transition-colors duration-300;
@@ -157,7 +159,7 @@
   .nav-list {
     @apply flex-col;
   }
-  
+
   .big-heading {
     @apply text-3xl;
   }

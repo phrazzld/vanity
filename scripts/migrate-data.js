@@ -13,31 +13,33 @@ function extractArrayFromFile(filePath, arrayName) {
     console.log('Migration has likely already been completed.');
     return [];
   }
-  
+
   const content = fs.readFileSync(filePath, 'utf8');
-  
+
   // Special case for the READINGS array which is at the end of the file
   if (arrayName === 'READINGS') {
     console.log('Attempting to parse READINGS from:', filePath);
-    
+
     // Extract all objects between curly braces that have slug, title, and author properties
     const allReadings = [];
     const objPattern = /{[\s\S]*?slug:[\s\S]*?title:[\s\S]*?author:[\s\S]*?}/g;
     const matches = content.match(objPattern) || [];
-    
+
     console.log(`Found ${matches.length} raw reading objects`);
-    
+
     for (const objText of matches) {
       try {
         // Extract properties from the object text
         const slugMatch = objText.match(/slug:\s*['"]([^'"]*)['"]/);
         const titleMatch = objText.match(/title:\s*['"]([^'"]*)['"]/);
         const authorMatch = objText.match(/author:\s*['"]([^'"]*)['"]/);
-        const finishedDateMatch = objText.match(/finishedDate:\s*(?:new Date\(['"]([^'"]*)['"]\)|null)/);
+        const finishedDateMatch = objText.match(
+          /finishedDate:\s*(?:new Date\(['"]([^'"]*)['"]\)|null)/
+        );
         const coverImageSrcMatch = objText.match(/coverImageSrc:\s*['"]([^'"]*)['"]/);
         const thoughtsMatch = objText.match(/thoughts:\s*['"]([^'"]*)['"]/);
         const droppedMatch = objText.match(/dropped:\s*(true|false)/);
-        
+
         if (slugMatch && titleMatch) {
           const reading = {
             slug: slugMatch[1],
@@ -46,46 +48,43 @@ function extractArrayFromFile(filePath, arrayName) {
             finishedDate: finishedDateMatch && finishedDateMatch[1] ? finishedDateMatch[1] : null,
             coverImageSrc: coverImageSrcMatch ? coverImageSrcMatch[1] : null,
             thoughts: thoughtsMatch ? thoughtsMatch[1] : '',
-            dropped: droppedMatch ? droppedMatch[1] === 'true' : false
+            dropped: droppedMatch ? droppedMatch[1] === 'true' : false,
           };
-          
+
           allReadings.push(reading);
         }
       } catch (error) {
         console.error('Error parsing reading object:', error);
       }
     }
-    
+
     console.log(`Successfully parsed ${allReadings.length} readings`);
     return allReadings;
   }
-  
+
   // Special handling for QUOTES array
   console.log('Attempting to parse QUOTES from:', filePath);
   const startMatch = content.match(/export\s+const\s+QUOTES\s*=\s*\[/);
-  
+
   if (!startMatch) {
     console.log(`No QUOTES array found in ${filePath}`);
     return [];
   }
-  
+
   try {
     // Extract the whole array content
     const arrayStartIndex = startMatch.index + startMatch[0].length;
     const arrayEndMatch = content.substring(arrayStartIndex).match(/\];/);
-    
+
     if (!arrayEndMatch) {
       console.log('Could not find end of QUOTES array');
       return [];
     }
-    
-    const arrayContent = content.substring(
-      arrayStartIndex, 
-      arrayStartIndex + arrayEndMatch.index
-    );
-    
+
+    const arrayContent = content.substring(arrayStartIndex, arrayStartIndex + arrayEndMatch.index);
+
     console.log('Successfully extracted quotes array content, length:', arrayContent.length);
-    
+
     // Process array content using a more sophisticated approach
     const quotes = [];
     let currentQuote = null;
@@ -94,20 +93,20 @@ function extractArrayFromFile(filePath, arrayName) {
     let authorCapturing = false;
     let textBuffer = '';
     let authorBuffer = '';
-    
+
     // Split by lines and process
     const lines = arrayContent.split('\n');
-    
+
     for (const line of lines) {
       const trimmedLine = line.trim();
-      
+
       // Start of a quote object
       if (trimmedLine === '{') {
         inQuoteObject = true;
         currentQuote = { text: '', author: null };
         continue;
       }
-      
+
       // End of a quote object
       if (trimmedLine === '},' || trimmedLine === '}') {
         if (currentQuote && currentQuote.text) {
@@ -120,7 +119,7 @@ function extractArrayFromFile(filePath, arrayName) {
         authorBuffer = '';
         continue;
       }
-      
+
       // Inside a quote object
       if (inQuoteObject) {
         // Text property
@@ -140,7 +139,7 @@ function extractArrayFromFile(filePath, arrayName) {
           }
           continue;
         }
-        
+
         // Author property
         if (trimmedLine.startsWith('author:')) {
           textCapturing = false;
@@ -161,7 +160,7 @@ function extractArrayFromFile(filePath, arrayName) {
           }
           continue;
         }
-        
+
         // Continue capturing multi-line text
         if (textCapturing) {
           textBuffer += ' ' + trimmedLine;
@@ -173,7 +172,7 @@ function extractArrayFromFile(filePath, arrayName) {
           }
           continue;
         }
-        
+
         // Continue capturing multi-line author
         if (authorCapturing) {
           authorBuffer += ' ' + trimmedLine;
@@ -187,7 +186,7 @@ function extractArrayFromFile(filePath, arrayName) {
         }
       }
     }
-    
+
     // Clean up any escape sequences in the quotes
     quotes.forEach(quote => {
       if (quote.text) {
@@ -205,15 +204,17 @@ function extractArrayFromFile(filePath, arrayName) {
           .replace(/\\\\/g, '\\');
       }
     });
-    
+
     // Log some sample quotes for debugging
     if (quotes.length > 0) {
       console.log('Sample quotes:');
       for (let i = 0; i < Math.min(3, quotes.length); i++) {
-        console.log(`Quote ${i+1}: "${quotes[i].text.substring(0, 40)}..." by "${quotes[i].author}"`);
+        console.log(
+          `Quote ${i + 1}: "${quotes[i].text.substring(0, 40)}..." by "${quotes[i].author}"`
+        );
       }
     }
-    
+
     console.log(`Found ${quotes.length} quotes in the file`);
     return quotes;
   } catch (error) {
@@ -225,23 +226,23 @@ function extractArrayFromFile(filePath, arrayName) {
 async function migrateData() {
   try {
     console.log('Starting data migration...');
-    
+
     // Get file paths
     const readingsPath = path.join(__dirname, '../src/app/readings/data.ts');
     const quotesPath = path.join(__dirname, '../src/app/quotes.ts');
-    
+
     // Extract data
     console.log('Extracting data from source files...');
     const readings = extractArrayFromFile(readingsPath, 'READINGS');
     const quotes = extractArrayFromFile(quotesPath, 'QUOTES');
-    
+
     console.log(`Found ${readings.length} readings and ${quotes.length} quotes`);
 
     // Clear existing data
     console.log('Clearing existing data...');
     await prisma.quote.deleteMany({});
     await prisma.reading.deleteMany({});
-    
+
     // Insert readings
     console.log(`Migrating ${readings.length} readings...`);
     for (const reading of readings) {
@@ -292,7 +293,7 @@ migrateData()
     console.log('Migration completed successfully');
     process.exit(0);
   })
-  .catch((error) => {
+  .catch(error => {
     console.error('Migration failed:', error);
     process.exit(1);
   });

@@ -2,7 +2,7 @@
 
 /**
  * SearchBar Component
- * 
+ *
  * A reusable search input component with optional filters.
  * Features:
  * - Text input for search
@@ -68,33 +68,39 @@ export default function SearchBar({
 }: SearchBarProps) {
   // Access theme context
   const { isDarkMode } = useTheme();
-  
+
   // Search input state (current value in input)
   const [query, setQuery] = useState(initialQuery);
-  
+
   // The last search query that was actually submitted/triggered
   const [submittedQuery, setSubmittedQuery] = useState(initialQuery);
-  
+
   // Filters state in UI
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>(() => {
     // Initialize with default values from filter configs
-    return filters.reduce((acc, filter) => {
-      acc[filter.name] = filter.defaultValue || '';
-      return acc;
-    }, {} as Record<string, string>);
+    return filters.reduce(
+      (acc, filter) => {
+        acc[filter.name] = filter.defaultValue || '';
+        return acc;
+      },
+      {} as Record<string, string>
+    );
   });
-  
+
   // The last set of filters that were actually submitted/triggered
   const [submittedFilters, setSubmittedFilters] = useState<Record<string, string>>(
-    filters.reduce((acc, filter) => {
-      acc[filter.name] = filter.defaultValue || '';
-      return acc;
-    }, {} as Record<string, string>)
+    filters.reduce(
+      (acc, filter) => {
+        acc[filter.name] = filter.defaultValue || '';
+        return acc;
+      },
+      {} as Record<string, string>
+    )
   );
-  
+
   // For debouncing search
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Clear any existing timeout on unmount
   useEffect(() => {
     return () => {
@@ -103,18 +109,18 @@ export default function SearchBar({
       }
     };
   }, []);
-  
+
   // Handle input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newQuery = e.target.value;
     setQuery(newQuery);
-    
+
     // If searchAsYouType is enabled, trigger search with debounce
     if (searchAsYouType) {
       if (searchTimeoutRef.current) {
         clearTimeout(searchTimeoutRef.current);
       }
-      
+
       if (debounceMs > 0) {
         searchTimeoutRef.current = setTimeout(() => {
           triggerSearch(newQuery, activeFilters);
@@ -124,18 +130,18 @@ export default function SearchBar({
       }
     }
   };
-  
+
   // Handle filter change
   const handleFilterChange = (filterName: string, value: string) => {
     const newFilters = { ...activeFilters, [filterName]: value };
     setActiveFilters(newFilters);
-    
+
     // If filtersUpdateOnChange is true, trigger search
     if (filtersUpdateOnChange) {
       if (searchTimeoutRef.current) {
         clearTimeout(searchTimeoutRef.current);
       }
-      
+
       if (debounceMs > 0) {
         searchTimeoutRef.current = setTimeout(() => {
           triggerSearch(query, newFilters);
@@ -145,45 +151,45 @@ export default function SearchBar({
       }
     }
   };
-  
+
   // Centralized function to trigger search and update submitted state
   const triggerSearch = (searchQuery: string, searchFilters: Record<string, string>) => {
     setSubmittedQuery(searchQuery);
     setSubmittedFilters(searchFilters);
     onSearch(searchQuery, searchFilters);
   };
-  
+
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Only trigger search on form submission if searchAsYouType is false
     // When searchAsYouType is true, search is already triggered on input change
     if (!searchAsYouType) {
       triggerSearch(query, activeFilters);
     }
   };
-  
+
   // Handle clearing the search
   const handleClear = () => {
     setQuery('');
-    
+
     // If searchAsYouType is enabled, also trigger the search with empty query
     if (searchAsYouType) {
       triggerSearch('', activeFilters);
     }
   };
-  
+
   // Determine if current input differs from last submitted search
-  const hasUnsearchedChanges = query !== submittedQuery || 
-    Object.entries(activeFilters).some(
-      ([key, value]) => value !== submittedFilters[key]
-    );
-  
+  const hasUnsearchedChanges =
+    query !== submittedQuery ||
+    Object.entries(activeFilters).some(([key, value]) => value !== submittedFilters[key]);
+
   // Generate button class based on variant
   const getButtonClasses = () => {
-    const baseClasses = "inline-flex items-center px-4 py-2 border text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2";
-    
+    const baseClasses =
+      'inline-flex items-center px-4 py-2 border text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2';
+
     switch (buttonVariant) {
       case 'secondary':
         return `${baseClasses} border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:ring-blue-500 dark:focus:ring-offset-gray-900`;
@@ -194,34 +200,34 @@ export default function SearchBar({
         return `${baseClasses} border-transparent bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white focus:ring-blue-500 dark:focus:ring-offset-gray-900`;
     }
   };
-  
+
   return (
     <div className={`w-full ${className}`}>
-      <form 
-        onSubmit={handleSubmit} 
+      <form
+        onSubmit={handleSubmit}
         className="flex flex-col sm:flex-row gap-2"
         // When searchAsYouType is true, we suppress the Enter key to prevent accidental form submissions
-        onKeyDown={searchAsYouType ? (e) => e.key === 'Enter' && e.preventDefault() : undefined}
+        onKeyDown={searchAsYouType ? e => e.key === 'Enter' && e.preventDefault() : undefined}
       >
         {/* Search input with icon and clear button */}
         <div className="relative flex-grow">
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <svg 
-              className="h-4 w-4 text-gray-400 dark:text-gray-500" 
-              fill="none" 
-              viewBox="0 0 24 24" 
+            <svg
+              className="h-4 w-4 text-gray-400 dark:text-gray-500"
+              fill="none"
+              viewBox="0 0 24 24"
               stroke="currentColor"
               aria-hidden="true"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
           </div>
-          
+
           <input
             type="text"
             value={query}
@@ -233,45 +239,45 @@ export default function SearchBar({
               focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
             aria-label="Search"
           />
-          
+
           {/* Clear button - only show when there's text */}
           {query && (
-            <button 
+            <button
               type="button"
               onClick={handleClear}
               className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
               aria-label="Clear search"
             >
-              <svg 
-                className="h-4 w-4" 
-                fill="none" 
-                viewBox="0 0 24 24" 
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
                 stroke="currentColor"
                 aria-hidden="true"
               >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M6 18L18 6M6 6l12 12" 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
             </button>
           )}
         </div>
-        
+
         {/* Filter dropdowns */}
-        {filters.map((filter) => (
+        {filters.map(filter => (
           <div key={filter.name} className="sm:w-auto">
             <select
               value={activeFilters[filter.name] || ''}
-              onChange={(e) => handleFilterChange(filter.name, e.target.value)}
+              onChange={e => handleFilterChange(filter.name, e.target.value)}
               className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 
                 rounded-md shadow-sm text-gray-900 dark:text-white bg-white dark:bg-gray-700
                 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
               aria-label={filter.label}
             >
-              {filter.options.map((option) => (
+              {filter.options.map(option => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
@@ -279,7 +285,7 @@ export default function SearchBar({
             </select>
           </div>
         ))}
-        
+
         {/* Search button - only show when searchAsYouType is false */}
         {!searchAsYouType && (
           <button

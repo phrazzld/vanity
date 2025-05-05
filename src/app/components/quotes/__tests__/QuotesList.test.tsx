@@ -9,7 +9,7 @@ import QuotesList from '../QuotesList';
 // Mock ThemeContext because it's used in the component
 jest.mock('../../../context/ThemeContext', () => ({
   useTheme: () => ({ isDarkMode: false, toggleDarkMode: jest.fn() }),
-  ThemeProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>
+  ThemeProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
 describe('QuotesList Component', () => {
@@ -17,18 +17,18 @@ describe('QuotesList Component', () => {
     {
       id: 1,
       text: 'The way to get started is to quit talking and begin doing.',
-      author: 'Walt Disney'
+      author: 'Walt Disney',
     },
     {
       id: 2,
-      text: 'Life is what happens when you\'re busy making other plans.',
-      author: 'John Lennon'
+      text: "Life is what happens when you're busy making other plans.",
+      author: 'John Lennon',
     },
     {
       id: 3,
       text: 'The greatest glory in living lies not in never falling, but in rising every time we fall.',
-      author: null
-    }
+      author: null,
+    },
   ];
 
   const mockSort = { field: 'text', order: 'asc' as const };
@@ -53,7 +53,7 @@ describe('QuotesList Component', () => {
     expect(screen.getByText(/The way to get started/)).toBeInTheDocument();
     expect(screen.getByText(/Life is what happens/)).toBeInTheDocument();
     expect(screen.getByText(/The greatest glory/)).toBeInTheDocument();
-    
+
     // Check if authors are rendered
     expect(screen.getByText('Walt Disney')).toBeInTheDocument();
     expect(screen.getByText('John Lennon')).toBeInTheDocument();
@@ -121,7 +121,9 @@ describe('QuotesList Component', () => {
     );
 
     expect(screen.getByText('No quotes found')).toBeInTheDocument();
-    expect(screen.getByText('Start building your collection of inspirational quotes')).toBeInTheDocument();
+    expect(
+      screen.getByText('Start building your collection of inspirational quotes')
+    ).toBeInTheDocument();
   });
 
   it('shows different empty state message when searching', () => {

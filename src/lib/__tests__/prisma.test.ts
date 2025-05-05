@@ -8,7 +8,7 @@ describe('Prisma Client', () => {
   it('should return the same instance when imported multiple times', () => {
     // Import the client again
     const prisma2 = require('../prisma').default;
-    
+
     // Should be the same instance
     expect(prisma).toBe(prisma2);
   });

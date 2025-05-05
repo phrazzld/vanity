@@ -10,25 +10,25 @@ import type { Reading } from '@/types';
 // Mock the theme context
 jest.mock('../../../context/ThemeContext', () => ({
   useTheme: () => ({ isDarkMode: false, toggleDarkMode: jest.fn() }),
-  ThemeProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>
+  ThemeProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
 // Mock the ReadingCard component to prevent Next.js Image issues in tests
 jest.mock('../ReadingCard', () => {
   return {
     __esModule: true,
-    default: ({ 
-      slug, 
-      title, 
-      author, 
-      dropped, 
-      finishedDate 
-    }: { 
-      slug: string; 
-      title: string; 
-      author: string; 
-      coverImageSrc?: string | null; 
-      dropped?: boolean; 
+    default: ({
+      slug,
+      title,
+      author,
+      dropped,
+      finishedDate,
+    }: {
+      slug: string;
+      title: string;
+      author: string;
+      coverImageSrc?: string | null;
+      dropped?: boolean;
       finishedDate?: string | Date | null;
     }) => (
       <div data-testid="reading-card" className="mocked-reading-card">
@@ -52,7 +52,7 @@ describe('YearSection Component', () => {
       finishedDate: '2023-01-15',
       coverImageSrc: '/covers/book-one.jpg',
       thoughts: 'Great book',
-      dropped: false
+      dropped: false,
     },
     {
       id: 2,
@@ -62,8 +62,8 @@ describe('YearSection Component', () => {
       finishedDate: '2023-03-20',
       coverImageSrc: null,
       thoughts: '',
-      dropped: false
-    }
+      dropped: false,
+    },
   ];
 
   // Currently reading book
@@ -75,7 +75,7 @@ describe('YearSection Component', () => {
     finishedDate: null,
     coverImageSrc: '/covers/book-three.jpg',
     thoughts: 'Reading this now',
-    dropped: false
+    dropped: false,
   };
 
   // Dropped book
@@ -87,29 +87,29 @@ describe('YearSection Component', () => {
     finishedDate: null,
     coverImageSrc: null,
     thoughts: 'Not for me',
-    dropped: true
+    dropped: true,
   };
 
   it('renders year heading correctly', () => {
     render(<YearSection year="2023" readings={sampleReadings} />);
-    
+
     expect(screen.getByText('2023')).toBeInTheDocument();
     expect(screen.getByText('(2 books)')).toBeInTheDocument();
   });
 
   it('renders correct count with singular form', () => {
     render(<YearSection year="2022" readings={[sampleReadings[0]]} />);
-    
+
     expect(screen.getByText('(1 book)')).toBeInTheDocument();
   });
 
   it('displays "Currently Reading" section with appropriate styling', () => {
     render(<YearSection year="Currently Reading" readings={[currentlyReadingBook]} />);
-    
+
     // More specific selection to avoid ambiguity
     const heading = screen.getByRole('heading', { name: /currently reading/i });
     expect(heading).toBeInTheDocument();
-    
+
     // Find the parent section and check for data attribute
     const section = heading.closest('section');
     expect(section).toHaveAttribute('data-year', 'Currently Reading');
@@ -117,11 +117,11 @@ describe('YearSection Component', () => {
 
   it('displays "Dropped" section with appropriate styling', () => {
     render(<YearSection year="Dropped" readings={[droppedBook]} />);
-    
+
     // More specific selection to avoid ambiguity, use h2 tag selector
     const heading = screen.getByRole('heading', { name: /dropped/i });
     expect(heading).toBeInTheDocument();
-    
+
     // Find the parent section and check for data attribute
     const section = heading.closest('section');
     expect(section).toHaveAttribute('data-year', 'Dropped');
@@ -129,7 +129,7 @@ describe('YearSection Component', () => {
 
   it('handles empty reading array gracefully', () => {
     render(<YearSection year="2024" readings={[]} />);
-    
+
     expect(screen.getByText('2024')).toBeInTheDocument();
     expect(screen.getByText('No readings found for this year.')).toBeInTheDocument();
   });
@@ -140,7 +140,7 @@ describe('YearSection Component', () => {
         <div data-testid="custom-content">Custom content</div>
       </YearSection>
     );
-    
+
     expect(screen.getByTestId('custom-content')).toBeInTheDocument();
     expect(screen.getByText('Custom content')).toBeInTheDocument();
   });

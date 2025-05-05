@@ -18,12 +18,12 @@ const mockFetchItems = jest.fn();
 const defaultResponse = {
   data: [
     { id: 1, name: 'Item 1' },
-    { id: 2, name: 'Item 2' }
+    { id: 2, name: 'Item 2' },
   ],
   totalCount: 2,
   currentPage: 1,
   totalPages: 1,
-  pageSize: 10
+  pageSize: 10,
 };
 
 describe('useListState', () => {
@@ -37,7 +37,7 @@ describe('useListState', () => {
     const { result, waitForNextUpdate } = renderHook(() =>
       useListState<TestItem>({
         fetchItems: mockFetchItems,
-        fetchOnMount: true
+        fetchOnMount: true,
       })
     );
 
@@ -63,7 +63,7 @@ describe('useListState', () => {
         initialSearch: 'test',
         initialSort: { field: 'name', order: 'asc' },
         initialPageSize: 20,
-        fetchOnMount: false
+        fetchOnMount: false,
       })
     );
 
@@ -81,7 +81,7 @@ describe('useListState', () => {
         initialSearch: 'test',
         initialSort: { field: 'name', order: 'asc' },
         initialPageSize: 5,
-        fetchOnMount: true
+        fetchOnMount: true,
       })
     );
 
@@ -94,7 +94,7 @@ describe('useListState', () => {
       sortBy: 'name',
       sortOrder: 'asc',
       limit: 5,
-      offset: 0
+      offset: 0,
     });
   });
 
@@ -102,7 +102,7 @@ describe('useListState', () => {
     const { result, waitForNextUpdate } = renderHook(() =>
       useListState<TestItem>({
         fetchItems: mockFetchItems,
-        fetchOnMount: true
+        fetchOnMount: true,
       })
     );
 
@@ -112,7 +112,7 @@ describe('useListState', () => {
     // Set up mock for next page
     mockFetchItems.mockResolvedValueOnce({
       ...defaultResponse,
-      currentPage: 2
+      currentPage: 2,
     });
 
     // Change page
@@ -126,7 +126,7 @@ describe('useListState', () => {
     // Check that fetch was called with updated offset
     expect(mockFetchItems).toHaveBeenCalledWith(
       expect.objectContaining({
-        offset: 10 // Page 2 with page size 10
+        offset: 10, // Page 2 with page size 10
       })
     );
   });
@@ -135,14 +135,14 @@ describe('useListState', () => {
     // Mock for second page
     mockFetchItems.mockResolvedValueOnce({
       ...defaultResponse,
-      currentPage: 2
+      currentPage: 2,
     });
 
     const { result, waitForNextUpdate } = renderHook(() =>
       useListState<TestItem>({
         fetchItems: mockFetchItems,
         fetchOnMount: true,
-        searchDebounce: 0 // Disable debounce for testing
+        searchDebounce: 0, // Disable debounce for testing
       })
     );
 
@@ -161,7 +161,7 @@ describe('useListState', () => {
     mockFetchItems.mockResolvedValueOnce({
       ...defaultResponse,
       data: [{ id: 3, name: 'Item 3' }],
-      totalCount: 1
+      totalCount: 1,
     });
 
     // Update search
@@ -174,12 +174,12 @@ describe('useListState', () => {
 
     // Page should be reset to 1
     expect(result.current.pagination.currentPage).toBe(1);
-    
+
     // Check that fetch was called with updated search and reset page
     expect(mockFetchItems).toHaveBeenCalledWith(
       expect.objectContaining({
         search: 'new search',
-        offset: 0 // Page 1
+        offset: 0, // Page 1
       })
     );
   });
@@ -189,7 +189,7 @@ describe('useListState', () => {
       useListState<TestItem, { category: string }>({
         fetchItems: mockFetchItems,
         initialFilters: { category: 'all' },
-        fetchOnMount: true
+        fetchOnMount: true,
       })
     );
 
@@ -200,7 +200,7 @@ describe('useListState', () => {
     mockFetchItems.mockResolvedValueOnce({
       ...defaultResponse,
       data: [{ id: 1, name: 'Item 1' }],
-      totalCount: 1
+      totalCount: 1,
     });
 
     // Update a single filter
@@ -214,7 +214,7 @@ describe('useListState', () => {
     // Check that fetch was called with updated filter
     expect(mockFetchItems).toHaveBeenCalledWith(
       expect.objectContaining({
-        category: 'books'
+        category: 'books',
       })
     );
 
@@ -222,7 +222,7 @@ describe('useListState', () => {
     mockFetchItems.mockResolvedValueOnce({
       ...defaultResponse,
       data: [{ id: 2, name: 'Item 2' }],
-      totalCount: 1
+      totalCount: 1,
     });
 
     act(() => {
@@ -235,7 +235,7 @@ describe('useListState', () => {
     // Check that fetch was called with updated filters
     expect(mockFetchItems).toHaveBeenCalledWith(
       expect.objectContaining({
-        category: 'movies'
+        category: 'movies',
       })
     );
   });
@@ -244,7 +244,7 @@ describe('useListState', () => {
     const { result, waitForNextUpdate } = renderHook(() =>
       useListState<TestItem>({
         fetchItems: mockFetchItems,
-        fetchOnMount: true
+        fetchOnMount: true,
       })
     );
 
@@ -266,7 +266,7 @@ describe('useListState', () => {
     expect(mockFetchItems).toHaveBeenCalledWith(
       expect.objectContaining({
         sortBy: 'name',
-        sortOrder: 'asc'
+        sortOrder: 'asc',
       })
     );
 
@@ -284,7 +284,7 @@ describe('useListState', () => {
     expect(mockFetchItems).toHaveBeenCalledWith(
       expect.objectContaining({
         sortBy: 'name',
-        sortOrder: 'desc'
+        sortOrder: 'desc',
       })
     );
   });
@@ -297,7 +297,7 @@ describe('useListState', () => {
     const { result, waitForNextUpdate } = renderHook(() =>
       useListState<TestItem>({
         fetchItems: mockFetchItems,
-        fetchOnMount: true
+        fetchOnMount: true,
       })
     );
 

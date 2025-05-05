@@ -3,6 +3,7 @@
 This plan focuses on providing essential project context, setup instructions, usage guidelines, contribution workflow, and legal information.
 
 ## Documentation
+
 - [ ] Create comprehensive README.md
   - [ ] Project description and purpose
   - [ ] Features list

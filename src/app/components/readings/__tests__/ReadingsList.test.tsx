@@ -10,13 +10,20 @@ import { ThemeProvider } from '../../../context/ThemeContext';
 // Mock ThemeContext because it's used in the component
 jest.mock('../../../context/ThemeContext', () => ({
   useTheme: () => ({ isDarkMode: false, toggleDarkMode: jest.fn() }),
-  ThemeProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>
+  ThemeProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
 // Mock Next.js Image component
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: ({ src, alt, width, height, className, onError }: { 
+  default: ({
+    src,
+    alt,
+    width,
+    height,
+    className,
+    onError,
+  }: {
     src: string;
     alt: string;
     width: number;
@@ -24,15 +31,11 @@ jest.mock('next/image', () => ({
     className?: string;
     onError?: (e: any) => void;
   }) => (
-    <div 
-      data-testid="mock-image" 
-      style={{ width, height }} 
-      className={className}
-    >
+    <div data-testid="mock-image" style={{ width, height }} className={className}>
       {/* Replace img with div to avoid ESLint warnings */}
       Mock Image: {alt}
     </div>
-  )
+  ),
 }));
 
 // Mock environment variable for image URLs
@@ -48,7 +51,7 @@ describe('ReadingsList Component', () => {
       finishedDate: new Date().toISOString(),
       coverImageSrc: '/test-cover-1.jpg',
       thoughts: 'Great book',
-      dropped: false
+      dropped: false,
     },
     {
       id: 2,
@@ -58,7 +61,7 @@ describe('ReadingsList Component', () => {
       finishedDate: null,
       coverImageSrc: null,
       thoughts: 'Currently reading',
-      dropped: false
+      dropped: false,
     },
     {
       id: 3,
@@ -68,8 +71,8 @@ describe('ReadingsList Component', () => {
       finishedDate: null,
       coverImageSrc: '/test-cover-3.jpg',
       thoughts: 'Not my favorite',
-      dropped: true
-    }
+      dropped: true,
+    },
   ];
 
   const mockSort = { field: 'title', order: 'asc' as const };
@@ -94,7 +97,7 @@ describe('ReadingsList Component', () => {
     expect(screen.getByText('Test Book 1')).toBeInTheDocument();
     expect(screen.getByText('Test Book 2')).toBeInTheDocument();
     expect(screen.getByText('Test Book 3')).toBeInTheDocument();
-    
+
     // Check if authors are rendered
     expect(screen.getByText('Test Author 1')).toBeInTheDocument();
     expect(screen.getByText('Test Author 2')).toBeInTheDocument();

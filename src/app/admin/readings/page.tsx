@@ -2,7 +2,7 @@
 
 /**
  * Admin Readings Management Page
- * 
+ *
  * This page allows administrators to create, view, edit, and delete readings.
  */
 
@@ -12,18 +12,18 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import type { Reading, ReadingInput } from '@/types';
 import { useReadingsList } from '@/app/hooks';
-import { 
-  SearchBar, 
-  Pagination, 
-  ReadingListSkeleton, 
+import {
+  SearchBar,
+  Pagination,
+  ReadingListSkeleton,
   SearchLoadingIndicator,
-  ReadingsList
+  ReadingsList,
 } from '@/app/components';
 import type { FilterConfig } from '@/app/components/SearchBar';
 
 export default function ReadingsManagementPage() {
   const router = useRouter();
-  
+
   // Use the readings list hook for search, filter, and pagination
   const {
     items: readings,
@@ -39,13 +39,13 @@ export default function ReadingsManagementPage() {
     toggleSort,
     setPage,
     setPageSize,
-    refreshData
+    refreshData,
   } = useReadingsList({
     initialFilters: { status: 'all' },
     initialSort: { field: 'date', order: 'desc' },
-    fetchOnMount: true
+    fetchOnMount: true,
   });
-  
+
   // Filter configuration for the search bar
   const filterConfig: FilterConfig[] = [
     {
@@ -54,12 +54,12 @@ export default function ReadingsManagementPage() {
       options: [
         { value: 'all', label: 'All' },
         { value: 'read', label: 'Read' },
-        { value: 'dropped', label: 'Dropped' }
+        { value: 'dropped', label: 'Dropped' },
       ],
-      defaultValue: filters.status || 'all'
-    }
+      defaultValue: filters.status || 'all',
+    },
   ];
-  
+
   // Handle search and filter changes
   const handleSearch = (query: string, searchFilters: Record<string, string>) => {
     setSearch(query);
@@ -67,7 +67,7 @@ export default function ReadingsManagementPage() {
       updateFilter('status', searchFilters.status);
     }
   };
-  
+
   // State for selected reading and form
   const [selectedReading, setSelectedReading] = useState<Reading | null>(null);
   const [isCreating, setIsCreating] = useState(false);
@@ -78,18 +78,18 @@ export default function ReadingsManagementPage() {
     finishedDate: null,
     coverImageSrc: '',
     thoughts: '',
-    dropped: false
+    dropped: false,
   });
-  
+
   // State for form feedback
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  
+
   // Modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [readingToDelete, setReadingToDelete] = useState<Reading | null>(null);
-  
+
   const handleSelectReading = (reading: Reading) => {
     setSelectedReading(reading);
     setIsCreating(false);
@@ -100,12 +100,12 @@ export default function ReadingsManagementPage() {
       finishedDate: reading.finishedDate,
       coverImageSrc: reading.coverImageSrc || '',
       thoughts: reading.thoughts || '',
-      dropped: reading.dropped || false
+      dropped: reading.dropped || false,
     });
     setFormError(null);
     setSuccessMessage(null);
   };
-  
+
   const handleNewReading = () => {
     setSelectedReading(null);
     setIsCreating(true);
@@ -116,88 +116,90 @@ export default function ReadingsManagementPage() {
       finishedDate: null,
       coverImageSrc: '',
       thoughts: '',
-      dropped: false
+      dropped: false,
     });
     setFormError(null);
     setSuccessMessage(null);
   };
-  
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
-    
+
     // Handle checkbox inputs differently
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
       setFormData(prev => ({ ...prev, [name]: checked }));
-    } 
+    }
     // Handle date inputs
     else if (name === 'finishedDate') {
       const dateValue = value ? new Date(value) : null;
       setFormData(prev => ({ ...prev, [name]: dateValue }));
-    } 
+    }
     // Handle all other inputs
     else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
-  
+
   const validateForm = (): boolean => {
     if (!formData.slug) {
       setFormError('Slug is required');
       return false;
     }
-    
+
     if (!formData.title) {
       setFormError('Title is required');
       return false;
     }
-    
+
     if (!formData.author) {
       setFormError('Author is required');
       return false;
     }
-    
+
     return true;
   };
-  
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     try {
       setIsSaving(true);
       setFormError(null);
       setSuccessMessage(null);
-      
+
       const endpoint = isCreating ? '/api/readings' : `/api/readings?slug=${selectedReading?.slug}`;
       const method = isCreating ? 'POST' : 'PUT';
-      
+
       const response = await fetch(endpoint, {
         method,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer token' // In a real app, use a real token
+          Authorization: 'Bearer token', // In a real app, use a real token
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || `Failed with status: ${response.status}`);
       }
-      
+
       const savedReading = await response.json();
-      
-      setSuccessMessage(isCreating ? 'Reading created successfully!' : 'Reading updated successfully!');
-      
+
+      setSuccessMessage(
+        isCreating ? 'Reading created successfully!' : 'Reading updated successfully!'
+      );
+
       // Refresh readings list
       refreshData();
-      
+
       if (isCreating) {
         // Switch to edit mode for the new reading
         handleSelectReading(savedReading);
@@ -205,7 +207,6 @@ export default function ReadingsManagementPage() {
         // Update the selected reading
         setSelectedReading(savedReading);
       }
-      
     } catch (err) {
       console.error('Error saving reading:', err);
       setFormError(`Failed to save: ${err instanceof Error ? err.message : String(err)}`);
@@ -213,39 +214,39 @@ export default function ReadingsManagementPage() {
       setIsSaving(false);
     }
   };
-  
+
   const confirmDelete = (reading: Reading) => {
     setReadingToDelete(reading);
     setShowDeleteModal(true);
   };
-  
+
   const handleDelete = async () => {
     if (!readingToDelete) return;
-    
+
     try {
       setIsSaving(true);
       setFormError(null);
-      
+
       const response = await fetch(`/api/readings?slug=${readingToDelete.slug}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': 'Bearer token' // In a real app, use a real token
-        }
+          Authorization: 'Bearer token', // In a real app, use a real token
+        },
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || `Failed with status: ${response.status}`);
       }
-      
+
       // Refresh readings list
       refreshData();
-      
+
       // Reset form if we were editing the deleted reading
       if (selectedReading?.slug === readingToDelete.slug) {
         handleNewReading();
       }
-      
+
       setSuccessMessage(`"${readingToDelete.title}" deleted successfully!`);
     } catch (err) {
       console.error('Error deleting reading:', err);
@@ -256,25 +257,24 @@ export default function ReadingsManagementPage() {
       setReadingToDelete(null);
     }
   };
-  
+
   const slugify = (text: string) => {
     return text
       .toString()
       .toLowerCase()
       .trim()
-      .replace(/\s+/g, '-')        // Replace spaces with -
-      .replace(/&/g, '-and-')      // Replace & with 'and'
-      .replace(/[^\w\-]+/g, '')    // Remove all non-word chars
-      .replace(/\-\-+/g, '-');     // Replace multiple - with single -
+      .replace(/\s+/g, '-') // Replace spaces with -
+      .replace(/&/g, '-and-') // Replace & with 'and'
+      .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+      .replace(/\-\-+/g, '-'); // Replace multiple - with single -
   };
-  
+
   const generateSlug = () => {
     if (formData.title) {
       const slug = slugify(formData.title);
       setFormData(prev => ({ ...prev, slug }));
     }
   };
-  
 
   return (
     <div className="space-y-6">
@@ -288,21 +288,25 @@ export default function ReadingsManagementPage() {
         </div>
         <div className="mt-4 sm:mt-0">
           <div className="flex items-center space-x-3">
-            <Link
-              href="/admin"
-              className="form-button-secondary"
-            >
+            <Link href="/admin" className="form-button-secondary">
               <svg className="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
               </svg>
               Dashboard
             </Link>
-            <button
-              onClick={handleNewReading}
-              className="form-button-primary"
-            >
+            <button onClick={handleNewReading} className="form-button-primary">
               <svg className="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
               </svg>
               Add Reading
             </button>
@@ -323,7 +327,7 @@ export default function ReadingsManagementPage() {
                   </span>
                 )}
               </div>
-              
+
               {/* Search Bar */}
               <div className="mt-3">
                 <div className="flex items-center">
@@ -334,7 +338,7 @@ export default function ReadingsManagementPage() {
                       placeholder="Search by title, author, or content..."
                       filters={filterConfig}
                       debounceMs={300}
-                      searchAsYouType={true} 
+                      searchAsYouType={true}
                       filtersUpdateOnChange={true}
                     />
                   </div>
@@ -346,7 +350,7 @@ export default function ReadingsManagementPage() {
                 </div>
               </div>
             </div>
-            
+
             {/* Initial loading state (only for first load) */}
             {isLoading && readings.length === 0 ? (
               <div className="transition-opacity duration-300">
@@ -359,25 +363,48 @@ export default function ReadingsManagementPage() {
             ) : readings.length === 0 ? (
               <div className="p-8 text-center text-gray-500 dark:text-gray-400">
                 <div className="w-16 h-16 mx-auto bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mb-3">
-                  <svg className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} 
-                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  <svg
+                    className="h-8 w-8 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                    />
                   </svg>
                 </div>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">No readings found</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  No readings found
+                </p>
                 {search || filters.status !== 'all' ? (
                   <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                     Try adjusting your search criteria or filters
                   </p>
                 ) : (
                   <>
-                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Start building your literary collection</p>
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                      Start building your literary collection
+                    </p>
                     <button
                       onClick={handleNewReading}
                       className="mt-4 inline-flex items-center px-3 py-1.5 text-sm text-blue-600 font-medium"
                     >
-                      <svg className="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      <svg
+                        className="mr-1.5 h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                        />
                       </svg>
                       Add your first reading
                     </button>
@@ -388,7 +415,7 @@ export default function ReadingsManagementPage() {
               <>
                 {/* Inline loading state (for subsequent loads after initial data is fetched) */}
                 {isLoading && readings.length > 0 ? (
-                  <div 
+                  <div
                     className="transition-opacity duration-300"
                     aria-live="polite"
                     aria-busy="true"
@@ -405,7 +432,7 @@ export default function ReadingsManagementPage() {
                     selectedReading={selectedReading}
                   />
                 )}
-              
+
                 {/* Pagination */}
                 {!isLoading && readings.length > 0 && (
                   <Pagination
@@ -425,7 +452,7 @@ export default function ReadingsManagementPage() {
 
         {/* Edit Form */}
         <div className="w-full lg:w-3/5">
-          {(selectedReading || isCreating) ? (
+          {selectedReading || isCreating ? (
             <div className="form-container">
               <div className="form-header">
                 <h2 className="text-lg font-medium text-gray-900 dark:text-white">
@@ -437,37 +464,65 @@ export default function ReadingsManagementPage() {
                   </span>
                 )}
               </div>
-              
+
               <div className="form-body">
                 {formError && (
                   <div className="error-message">
-                    <svg className="h-5 w-5 text-red-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    <svg
+                      className="h-5 w-5 text-red-400 flex-shrink-0"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                      />
                     </svg>
                     <span>{formError}</span>
                   </div>
                 )}
-                
+
                 {successMessage && (
                   <div className="success-message">
-                    <svg className="h-5 w-5 text-green-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="h-5 w-5 text-green-400 flex-shrink-0"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     <span>{successMessage}</span>
                   </div>
                 )}
-                
+
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="form-section">
                     <h3 className="form-section-title">
-                      <svg className="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <svg
+                        className="h-4 w-4 text-gray-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
                       </svg>
                       Basic Information
                     </h3>
-                    
+
                     <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-6">
                       <div className="sm:col-span-4">
                         <label htmlFor="title" className="form-label">
@@ -475,9 +530,18 @@ export default function ReadingsManagementPage() {
                         </label>
                         <div className="relative">
                           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} 
-                                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                            <svg
+                              className="h-5 w-5 text-gray-400"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1.5}
+                                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                              />
                             </svg>
                           </div>
                           <input
@@ -493,7 +557,7 @@ export default function ReadingsManagementPage() {
                           />
                         </div>
                       </div>
-                      
+
                       <div className="sm:col-span-2">
                         <div className="flex items-center justify-between">
                           <label htmlFor="slug" className="form-label">
@@ -511,24 +575,31 @@ export default function ReadingsManagementPage() {
                             placeholder="url-slug"
                             required
                           />
-                          <button 
+                          <button
                             type="button"
                             onClick={generateSlug}
                             className="inline-flex items-center px-3 py-2 border border-l-0 border-gray-300 rounded-r-md bg-gray-50 text-gray-500 text-xs hover:bg-gray-100"
                             title="Generate from title"
                           >
-                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            <svg
+                              className="h-4 w-4"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                              />
                             </svg>
                           </button>
                         </div>
-                        <p className="form-help-text">
-                          URL-friendly identifier
-                        </p>
+                        <p className="form-help-text">URL-friendly identifier</p>
                       </div>
                     </div>
-                    
+
                     <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-6">
                       <div className="sm:col-span-3">
                         <label htmlFor="author" className="form-label">
@@ -536,9 +607,18 @@ export default function ReadingsManagementPage() {
                         </label>
                         <div className="relative">
                           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} 
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            <svg
+                              className="h-5 w-5 text-gray-400"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1.5}
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                              />
                             </svg>
                           </div>
                           <input
@@ -553,43 +633,63 @@ export default function ReadingsManagementPage() {
                           />
                         </div>
                       </div>
-                      
+
                       <div className="sm:col-span-3">
                         <label htmlFor="finishedDate" className="form-label">
                           Finished Date
                         </label>
                         <div className="relative">
                           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} 
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            <svg
+                              className="h-5 w-5 text-gray-400"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1.5}
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                              />
                             </svg>
                           </div>
                           <input
                             type="date"
                             id="finishedDate"
                             name="finishedDate"
-                            value={formData.finishedDate ? new Date(formData.finishedDate).toISOString().split('T')[0] : ''}
+                            value={
+                              formData.finishedDate
+                                ? new Date(formData.finishedDate).toISOString().split('T')[0]
+                                : ''
+                            }
                             onChange={handleInputChange}
                             className="form-input pl-10"
                           />
                         </div>
-                        <p className="form-help-text">
-                          Date when you finished reading
-                        </p>
+                        <p className="form-help-text">Date when you finished reading</p>
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="form-section">
                     <h3 className="form-section-title">
-                      <svg className="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      <svg
+                        className="h-4 w-4 text-gray-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
                       </svg>
                       Cover & Content
                     </h3>
-                    
+
                     <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-6">
                       <div className="sm:col-span-3">
                         <label htmlFor="coverImageSrc" className="form-label">
@@ -597,9 +697,18 @@ export default function ReadingsManagementPage() {
                         </label>
                         <div className="relative">
                           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} 
-                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            <svg
+                              className="h-5 w-5 text-gray-400"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1.5}
+                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                              />
                             </svg>
                           </div>
                           <input
@@ -613,7 +722,7 @@ export default function ReadingsManagementPage() {
                           />
                         </div>
                       </div>
-                      
+
                       <div className="sm:col-span-3 flex items-start pl-5 pt-6">
                         <div className="flex h-5 items-center">
                           <input
@@ -629,20 +738,31 @@ export default function ReadingsManagementPage() {
                           <label htmlFor="dropped" className="font-medium text-gray-700">
                             Dropped
                           </label>
-                          <p className="text-gray-500 text-xs">Mark if you didn&apos;t finish this book</p>
+                          <p className="text-gray-500 text-xs">
+                            Mark if you didn&apos;t finish this book
+                          </p>
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="mt-4">
                       <label htmlFor="thoughts" className="form-label">
                         Your Thoughts
                       </label>
                       <div className="relative">
                         <div className="absolute top-3 left-3 pointer-events-none">
-                          <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} 
-                              d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                          <svg
+                            className="h-5 w-5 text-gray-400"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={1.5}
+                              d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                            />
                           </svg>
                         </div>
                         <textarea
@@ -660,7 +780,7 @@ export default function ReadingsManagementPage() {
                       </p>
                     </div>
                   </div>
-                
+
                   <div className="form-footer">
                     <div>
                       {!isCreating && (
@@ -670,38 +790,63 @@ export default function ReadingsManagementPage() {
                           className="form-button-danger"
                           disabled={isSaving}
                         >
-                          <svg className="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          <svg
+                            className="mr-1.5 h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
                           </svg>
                           Delete
                         </button>
                       )}
                     </div>
-                    
+
                     <div className="flex space-x-3">
                       <button
                         type="button"
-                        onClick={isCreating ? () => setIsCreating(false) : () => setSelectedReading(null)}
+                        onClick={
+                          isCreating ? () => setIsCreating(false) : () => setSelectedReading(null)
+                        }
                         className="form-button-secondary"
                         disabled={isSaving}
                       >
                         Cancel
                       </button>
-                      
-                      <button
-                        type="submit"
-                        className="form-button-primary"
-                        disabled={isSaving}
-                      >
+
+                      <button type="submit" className="form-button-primary" disabled={isSaving}>
                         {isSaving ? (
                           <>
-                            <svg className="animate-spin mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            <svg
+                              className="animate-spin mr-2 h-4 w-4 text-white"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              ></circle>
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              ></path>
                             </svg>
                             Saving
                           </>
-                        ) : 'Save'}
+                        ) : (
+                          'Save'
+                        )}
                       </button>
                     </div>
                   </div>
@@ -712,22 +857,41 @@ export default function ReadingsManagementPage() {
             <div className="form-container h-full">
               <div className="flex flex-col items-center justify-center p-8 h-full min-h-[400px] text-center">
                 <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-4">
-                  <svg className="h-10 w-10 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} 
-                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  <svg
+                    className="h-10 w-10 text-blue-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                    />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white">No reading selected</h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                  No reading selected
+                </h3>
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 max-w-md">
-                  Select a reading from the list to edit it, or create a new one to add to your collection.
+                  Select a reading from the list to edit it, or create a new one to add to your
+                  collection.
                 </p>
                 <div className="mt-6">
-                  <button
-                    onClick={handleNewReading}
-                    className="form-button-primary"
-                  >
-                    <svg className="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  <button onClick={handleNewReading} className="form-button-primary">
+                    <svg
+                      className="mr-1.5 h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                      />
                     </svg>
                     Create New Reading
                   </button>
@@ -737,47 +901,66 @@ export default function ReadingsManagementPage() {
           )}
         </div>
       </div>
-      
+
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 z-10 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div
+          className="fixed inset-0 z-10 overflow-y-auto"
+          aria-labelledby="modal-title"
+          role="dialog"
+          aria-modal="true"
+        >
           <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             {/* Background overlay */}
             <div className="modal-backdrop" aria-hidden="true"></div>
-            
+
             {/* Modal panel */}
             <div className="modal-container">
               <div className="modal-body">
                 <div className="sm:flex sm:items-start">
                   <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                    <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    <svg
+                      className="h-6 w-6 text-red-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                      />
                     </svg>
                   </div>
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white" id="modal-title">
+                    <h3
+                      className="text-lg leading-6 font-medium text-gray-900 dark:text-white"
+                      id="modal-title"
+                    >
                       Delete Reading
                     </h3>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Are you sure you want to delete &ldquo;{readingToDelete?.title}&rdquo;? This action cannot be undone.
+                        Are you sure you want to delete &ldquo;{readingToDelete?.title}&rdquo;? This
+                        action cannot be undone.
                       </p>
                       <div className="mt-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700 flex items-start gap-3">
                         {readingToDelete?.coverImageSrc ? (
                           <div className="h-14 w-10 flex-shrink-0 rounded overflow-hidden border border-gray-200 dark:border-gray-700">
                             {process.env.NEXT_PUBLIC_SPACES_BASE_URL ? (
-                              <Image 
+                              <Image
                                 src={`${process.env.NEXT_PUBLIC_SPACES_BASE_URL}${readingToDelete.coverImageSrc}`}
                                 alt={`Cover for ${readingToDelete.title}`}
                                 width={40}
                                 height={56}
                                 className="h-full w-full object-cover"
-                                onError={(e) => {
+                                onError={e => {
                                   e.currentTarget.src = '/images/projects/book-02.webp';
                                 }}
                               />
                             ) : (
-                              <Image 
+                              <Image
                                 src="/images/projects/book-02.webp"
                                 alt={`Cover for ${readingToDelete.title}`}
                                 width={40}
@@ -788,15 +971,28 @@ export default function ReadingsManagementPage() {
                           </div>
                         ) : (
                           <div className="h-14 w-10 flex-shrink-0 rounded bg-gray-100 dark:bg-gray-700 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                            <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} 
-                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            <svg
+                              className="h-6 w-6 text-gray-400"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1.5}
+                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                              />
                             </svg>
                           </div>
                         )}
                         <div>
-                          <p className="text-sm font-medium text-gray-900 dark:text-white">{readingToDelete?.title}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">{readingToDelete?.author}</p>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {readingToDelete?.title}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {readingToDelete?.author}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -804,24 +1000,41 @@ export default function ReadingsManagementPage() {
                 </div>
               </div>
               <div className="modal-footer">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="form-button-danger sm:ml-3 sm:w-auto"
                   onClick={handleDelete}
                   disabled={isSaving}
                 >
                   {isSaving ? (
                     <>
-                      <svg className="animate-spin mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      <svg
+                        className="animate-spin mr-2 h-4 w-4 text-white"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
                       </svg>
                       Deleting...
                     </>
-                  ) : 'Delete'}
+                  ) : (
+                    'Delete'
+                  )}
                 </button>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="form-button-secondary sm:mt-0 sm:ml-3 sm:w-auto"
                   onClick={() => setShowDeleteModal(false)}
                   disabled={isSaving}

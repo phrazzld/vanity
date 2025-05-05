@@ -3,7 +3,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import YearSection from '../components/readings/YearSection';
 import type { Reading } from '@/types';
-import { groupReadingsByYear, getSortedYearKeys, sortReadingsWithinCategory } from '@/lib/utils/readingUtils';
+import {
+  groupReadingsByYear,
+  getSortedYearKeys,
+  sortReadingsWithinCategory,
+} from '@/lib/utils/readingUtils';
 
 export default function ReadingsPage() {
   const [readings, setReadings] = useState<Reading[]>([]);
@@ -16,7 +20,7 @@ export default function ReadingsPage() {
   const [error, setError] = useState<string | null>(null);
   const observer = useRef<IntersectionObserver | null>(null);
   const loadingRef = useRef<HTMLDivElement | null>(null);
-  
+
   const ITEMS_PER_PAGE = 12;
 
   // Fetch readings data with pagination
@@ -24,32 +28,34 @@ export default function ReadingsPage() {
     try {
       // Don't set loading states here - they should be managed by the calling functions
       setError(null);
-      
+
       const offset = (pageNum - 1) * ITEMS_PER_PAGE;
-      
+
       // Add a cache-busting parameter to prevent browser caching issues
       const cacheBuster = new Date().getTime();
       const response = await fetch(
         `/api/readings?limit=${ITEMS_PER_PAGE}&offset=${offset}&sortBy=date&sortOrder=desc&_=${cacheBuster}`
       );
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch readings: ${response.status} ${response.statusText}`);
       }
-      
+
       const result = await response.json();
-      
+
       // Validate the result structure to ensure it has the expected properties
       if (!result || !Array.isArray(result.data)) {
         console.error('Invalid API response format:', result);
         throw new Error('Invalid response format from API');
       }
-      
-      console.log(`Fetched page ${pageNum} with offset ${offset}. Got ${result.data.length} items.`);
-      
+
+      console.log(
+        `Fetched page ${pageNum} with offset ${offset}. Got ${result.data.length} items.`
+      );
+
       return {
         data: result.data,
-        hasMore: offset + ITEMS_PER_PAGE < result.totalCount
+        hasMore: offset + ITEMS_PER_PAGE < result.totalCount,
       };
     } catch (err) {
       console.error('Error fetching readings:', err);
@@ -65,7 +71,7 @@ export default function ReadingsPage() {
     const loadInitialData = async () => {
       // Set initial loading state before fetching
       setIsInitialLoading(true);
-      
+
       try {
         const { data, hasMore } = await fetchReadings(1);
         setReadings(data);
@@ -78,7 +84,7 @@ export default function ReadingsPage() {
         setIsInitialLoading(false);
       }
     };
-    
+
     loadInitialData();
   }, [fetchReadings]);
 
@@ -86,23 +92,23 @@ export default function ReadingsPage() {
   const loadMore = useCallback(async () => {
     // Guard clause to prevent duplicate requests
     if (isInitialLoading || isPaginationLoading || !hasMore) return;
-    
+
     // Set pagination loading state before fetching to prevent multiple triggers
     setIsPaginationLoading(true);
-    
+
     try {
       const nextPage = page + 1;
       const { data, hasMore: moreAvailable } = await fetchReadings(nextPage);
-      
+
       // Use a function to update state based on previous state to avoid race conditions
       setReadings(prev => {
         // Check for duplicates by slug to ensure we don't add the same reading twice
         const existingSlugs = new Set(prev.map(r => r.slug));
         const uniqueNewData = data.filter((item: Reading) => !existingSlugs.has(item.slug));
-        
+
         return [...prev, ...uniqueNewData];
       });
-      
+
       setPage(nextPage);
       setHasMore(moreAvailable);
     } catch (error) {
@@ -117,10 +123,10 @@ export default function ReadingsPage() {
   // Group readings by year whenever they change
   useEffect(() => {
     if (readings.length === 0) return;
-    
+
     const grouped = groupReadingsByYear(readings);
     setYearGroups(grouped);
-    
+
     const sortedYears = getSortedYearKeys(grouped);
     setYears(sortedYears);
   }, [readings]);
@@ -129,43 +135,48 @@ export default function ReadingsPage() {
   useEffect(() => {
     // Don't set up observer when loading or when we have no data yet
     if (isInitialLoading || readings.length === 0) return;
-    
+
     const currentObserver = observer.current;
-    
+
     // Disconnect previous observer if it exists
     if (currentObserver) {
       currentObserver.disconnect();
     }
-    
+
     // Create new observer with improved options
-    observer.current = new IntersectionObserver(entries => {
-      // Only trigger loadMore if:
-      // 1. The loading element is intersecting
-      // 2. We're not already loading
-      // 3. There are more items to load
-      // 4. We have some data already
-      if (entries[0].isIntersecting && 
-          !isInitialLoading && 
-          !isPaginationLoading && 
-          hasMore && 
-          readings.length > 0) {
-        // Add a short debounce to prevent multiple triggers
-        // This is important for mobile devices with touch scrolling
-        console.log('Loading element visible, triggering loadMore');
-        loadMore();
+    observer.current = new IntersectionObserver(
+      entries => {
+        // Only trigger loadMore if:
+        // 1. The loading element is intersecting
+        // 2. We're not already loading
+        // 3. There are more items to load
+        // 4. We have some data already
+        if (
+          entries[0].isIntersecting &&
+          !isInitialLoading &&
+          !isPaginationLoading &&
+          hasMore &&
+          readings.length > 0
+        ) {
+          // Add a short debounce to prevent multiple triggers
+          // This is important for mobile devices with touch scrolling
+          console.log('Loading element visible, triggering loadMore');
+          loadMore();
+        }
+      },
+      {
+        // Lower threshold to trigger earlier
+        threshold: 0.1,
+        // Add rootMargin to load earlier (before element is fully visible)
+        rootMargin: '0px 0px 100px 0px',
       }
-    }, { 
-      // Lower threshold to trigger earlier
-      threshold: 0.1,
-      // Add rootMargin to load earlier (before element is fully visible)
-      rootMargin: '0px 0px 100px 0px'
-    });
-    
+    );
+
     // Only observe loading element if we have data and more items to load
     if (loadingRef.current && hasMore) {
       observer.current.observe(loadingRef.current);
     }
-    
+
     // Cleanup
     return () => {
       if (currentObserver) {
@@ -183,18 +194,17 @@ export default function ReadingsPage() {
           <div className="w-10 h-10 border-t-2 border-b-2 border-indigo-500 rounded-full animate-spin"></div>
         </div>
       )}
-      
+
       {/* Show years if we have data */}
-      {years.length > 0 && (
+      {years.length > 0 &&
         years.map(year => (
           <YearSection
             key={year}
             year={year}
             readings={sortReadingsWithinCategory(yearGroups[year], year)}
           />
-        ))
-      )}
-      
+        ))}
+
       {/* No readings found message */}
       {!isInitialLoading && readings.length === 0 && (
         <div className="flex justify-center items-center py-16">
@@ -203,11 +213,11 @@ export default function ReadingsPage() {
           </div>
         </div>
       )}
-      
+
       {/* Pagination loading indicator - only show if we already have some data */}
       {readings.length > 0 && (
-        <div 
-          ref={loadingRef} 
+        <div
+          ref={loadingRef}
           className="flex justify-center my-8"
           style={{ height: hasMore ? '50px' : '0px' }}
         >
@@ -216,14 +226,10 @@ export default function ReadingsPage() {
           )}
         </div>
       )}
-      
+
       {/* Error message */}
-      {error && (
-        <div className="text-red-500 text-center my-4">
-          {error}
-        </div>
-      )}
-      
+      {error && <div className="text-red-500 text-center my-4">{error}</div>}
+
       {/* End of list message */}
       {!hasMore && readings.length > 0 && (
         <div className="text-gray-500 text-center my-4 text-sm">

@@ -11,7 +11,10 @@ async function importData() {
     console.log('Starting data import...');
 
     // Load data from source files
-    const readingsFile = fs.readFileSync(path.join(__dirname, '../src/app/readings/data.ts'), 'utf8');
+    const readingsFile = fs.readFileSync(
+      path.join(__dirname, '../src/app/readings/data.ts'),
+      'utf8'
+    );
     const quotesFile = fs.readFileSync(path.join(__dirname, '../src/app/quotes.ts'), 'utf8');
 
     // Extract READINGS array using regex
@@ -38,7 +41,7 @@ async function importData() {
     console.log('Clearing existing data...');
     await prisma.quote.deleteMany({});
     await prisma.reading.deleteMany({});
-    
+
     // Insert readings
     console.log(`Migrating ${readingsData.length} readings...`);
     for (const reading of readingsData) {
@@ -77,4 +80,4 @@ async function importData() {
 // Run the import
 importData()
   .then(() => console.log('Done!'))
-  .catch((e) => console.error(e));
+  .catch(e => console.error(e));

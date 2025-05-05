@@ -2,7 +2,7 @@
 
 /**
  * ReadingsListStateDemo Component
- * 
+ *
  * A demonstration component showing how to use the useReadingsList hook
  * This is for demonstration purposes only.
  */
@@ -27,14 +27,14 @@ export default function ReadingsListStateDemo() {
     toggleSort,
     setPage,
     setPageSize,
-    refreshData
+    refreshData,
   } = useReadingsList({
     initialFilters: { status: 'all' },
     initialSort: { field: 'date', order: 'desc' },
     initialPageSize: 10,
-    fetchOnMount: true
+    fetchOnMount: true,
   });
-  
+
   // Filter configuration for the search bar
   const filterConfig: FilterConfig[] = [
     {
@@ -43,27 +43,27 @@ export default function ReadingsListStateDemo() {
       options: [
         { value: 'all', label: 'All' },
         { value: 'read', label: 'Read' },
-        { value: 'dropped', label: 'Dropped' }
+        { value: 'dropped', label: 'Dropped' },
       ],
-      defaultValue: filters.status || 'all'
-    }
+      defaultValue: filters.status || 'all',
+    },
   ];
-  
+
   // Handle search and filter changes
   const handleSearch = (query: string, searchFilters: Record<string, string>) => {
     setSearch(query);
     updateFilter('status', searchFilters.status);
   };
-  
+
   // Handle column header click for sorting
   const handleColumnHeaderClick = (field: string) => {
     toggleSort(field);
   };
-  
+
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Readings List Demo</h2>
-      
+
       {/* Search and filter bar */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
         <SearchBar
@@ -73,56 +73,50 @@ export default function ReadingsListStateDemo() {
           filters={filterConfig}
         />
       </div>
-      
+
       {/* Status and loading indicators */}
       {isLoading && (
         <div className="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 p-3 rounded-md">
           Loading readings...
         </div>
       )}
-      
+
       {error && (
         <div className="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-md">
           Error: {error}
         </div>
       )}
-      
+
       {/* Readings list */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-750">
             <tr>
-              <th 
+              <th
                 className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
                 onClick={() => handleColumnHeaderClick('title')}
               >
                 Title
                 {sort.field === 'title' && (
-                  <span className="ml-1">
-                    {sort.order === 'asc' ? '↑' : '↓'}
-                  </span>
+                  <span className="ml-1">{sort.order === 'asc' ? '↑' : '↓'}</span>
                 )}
               </th>
-              <th 
+              <th
                 className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
                 onClick={() => handleColumnHeaderClick('author')}
               >
                 Author
                 {sort.field === 'author' && (
-                  <span className="ml-1">
-                    {sort.order === 'asc' ? '↑' : '↓'}
-                  </span>
+                  <span className="ml-1">{sort.order === 'asc' ? '↑' : '↓'}</span>
                 )}
               </th>
-              <th 
+              <th
                 className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
                 onClick={() => handleColumnHeaderClick('date')}
               >
                 Date
                 {sort.field === 'date' && (
-                  <span className="ml-1">
-                    {sort.order === 'asc' ? '↑' : '↓'}
-                  </span>
+                  <span className="ml-1">{sort.order === 'asc' ? '↑' : '↓'}</span>
                 )}
               </th>
             </tr>
@@ -135,7 +129,7 @@ export default function ReadingsListStateDemo() {
                 </td>
               </tr>
             ) : (
-              readings.map((reading) => (
+              readings.map(reading => (
                 <tr key={reading.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                   <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                     {reading.title}
@@ -144,7 +138,9 @@ export default function ReadingsListStateDemo() {
                     {reading.author}
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                    {reading.finishedDate ? new Date(reading.finishedDate).toLocaleDateString() : 'Not finished'}
+                    {reading.finishedDate
+                      ? new Date(reading.finishedDate).toLocaleDateString()
+                      : 'Not finished'}
                   </td>
                 </tr>
               ))
@@ -152,7 +148,7 @@ export default function ReadingsListStateDemo() {
           </tbody>
         </table>
       </div>
-      
+
       {/* Pagination */}
       {readings.length > 0 && (
         <div className="flex items-center justify-between bg-white dark:bg-gray-800 px-4 py-3 rounded-lg shadow">
@@ -175,7 +171,11 @@ export default function ReadingsListStateDemo() {
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                Showing <span className="font-medium">{((pagination.currentPage - 1) * pagination.pageSize) + 1}</span> to{' '}
+                Showing{' '}
+                <span className="font-medium">
+                  {(pagination.currentPage - 1) * pagination.pageSize + 1}
+                </span>{' '}
+                to{' '}
                 <span className="font-medium">
                   {Math.min(pagination.currentPage * pagination.pageSize, pagination.totalItems)}
                 </span>{' '}
@@ -183,7 +183,10 @@ export default function ReadingsListStateDemo() {
               </p>
             </div>
             <div>
-              <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+              <nav
+                className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+                aria-label="Pagination"
+              >
                 <button
                   onClick={() => setPage(Math.max(1, pagination.currentPage - 1))}
                   disabled={pagination.currentPage === 1}
@@ -198,16 +201,19 @@ export default function ReadingsListStateDemo() {
                     key={i}
                     onClick={() => setPage(i + 1)}
                     className={`relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium
-                      ${pagination.currentPage === i + 1
-                        ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
-                        : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600'
+                      ${
+                        pagination.currentPage === i + 1
+                          ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600'
                       }`}
                   >
                     {i + 1}
                   </button>
                 ))}
                 <button
-                  onClick={() => setPage(Math.min(pagination.totalPages, pagination.currentPage + 1))}
+                  onClick={() =>
+                    setPage(Math.min(pagination.totalPages, pagination.currentPage + 1))
+                  }
                   disabled={pagination.currentPage === pagination.totalPages}
                   className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50"
                 >

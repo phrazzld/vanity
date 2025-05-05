@@ -26,7 +26,7 @@ jest.mock('next/server', () => {
         };
       }),
     },
-    NextRequest: jest.fn().mockImplementation((url) => {
+    NextRequest: jest.fn().mockImplementation(url => {
       const actualUrl = url || 'http://localhost:3000/api/readings';
       return {
         url: actualUrl,
