@@ -60,7 +60,7 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Action:** Create `SearchBar.stories.ts` with stories for various states, filters, button variants, and behaviors.
   - **Depends On:** [T15, T16, T17]
 
-- [ ] **T20:** Document Storybook Usage Guidelines
+- [x] **T20:** Document Storybook Usage Guidelines
 
   - **Action:** Add documentation for using Storybook and creating component stories.
   - **Depends On:** [T13]
