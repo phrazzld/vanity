@@ -65,7 +65,7 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Action:** Add documentation for using Storybook and creating component stories.
   - **Depends On:** [T13]
 
-- [ ] **T21:** Add Storybook to CI Pipeline
+- [x] **T21:** Add Storybook to CI Pipeline
   - **Action:** Update GitHub Actions workflow to include Storybook build checks.
   - **Depends On:** [T13]
 
