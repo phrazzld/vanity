@@ -1,28 +1,33 @@
 // eslint.config.cjs
 const js = require('@eslint/js');
-const nextjs = require('eslint-config-next');
 const prettier = require('eslint-config-prettier');
+const nextPlugin = require('@next/eslint-plugin-next');
+const tseslint = require('typescript-eslint');
 
+// Create a TypeScript parser configuration
+const typescriptParser = tseslint.parser;
+
+// Define the flat configuration without relying on @rushstack/eslint-patch
 module.exports = [
   // Base JavaScript rules
   js.configs.recommended,
 
-  // Next.js rules
-  ...nextjs,
-
-  // Prettier compatibility (must come after style rules)
-  prettier,
-
-  // Core TypeScript rules
+  // TypeScript parser configuration for all TS files
   {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
-      parser: {
+      parser: typescriptParser,
+      parserOptions: {
+        project: './tsconfig.json',
         ecmaFeatures: {
           jsx: true,
         },
+        ecmaVersion: 'latest',
+        sourceType: 'module',
       },
-      sourceType: 'module',
+    },
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
     },
     rules: {
       // Strict TypeScript type rules
@@ -31,6 +36,21 @@ module.exports = [
       '@typescript-eslint/no-unsafe-assignment': 'error',
       '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
+      '@typescript-eslint/no-unused-vars': 'warn',
+    },
+  },
+
+  // Next.js specific rules
+  {
+    files: ['**/*.{js,jsx,ts,tsx}'],
+    plugins: {
+      '@next/next': nextPlugin,
+    },
+    rules: {
+      // Add Next.js specific rules from the plugin
+      '@next/next/no-html-link-for-pages': 'error',
+      '@next/next/no-img-element': 'error',
+      '@next/next/no-unwanted-polyfillio': 'warn',
     },
   },
 
@@ -74,11 +94,14 @@ module.exports = [
     },
   },
 
-  // Enforce unused variables checking (temporarily disabled in tsconfig)
+  // JavaScript-specific rules
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
+    files: ['**/*.{js,jsx}'],
     rules: {
       'no-unused-vars': 'warn',
     },
   },
+
+  // Prettier compatibility (must come last to override style rules)
+  prettier,
 ];

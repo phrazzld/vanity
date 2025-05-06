@@ -4,12 +4,12 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
 
 ## Technical Debt
 
-- [ ] **TD1:** Fix Type Errors Identified by Strict TypeScript Configuration
+- [x] **TD1:** Fix Type Errors Identified by Strict TypeScript Configuration
 
   - **Action:** Systematically address type errors flagged by the stricter TypeScript settings. Prioritize errors in core files (e.g., API routes, database interfaces).
   - **Depends On:** None
 
-- [ ] **TD2:** Fix ESLint v9 Integration with lint-staged
+- [x] **TD2:** Fix ESLint v9 Integration with lint-staged
   - **Action:** Resolve the integration issues between ESLint v9 and lint-staged. Research and implement a solution that allows ESLint v9 to work correctly in the pre-commit hook.
   - **Depends On:** None
 
