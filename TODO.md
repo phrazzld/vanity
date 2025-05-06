@@ -25,7 +25,7 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Action:** Install Storybook core (`@storybook/react`, `storybook`), Next.js integration (`@storybook/nextjs`), essential addons, accessibility addon, and dark mode addon using the resolution strategy from T11.
   - **Depends On:** [T11]
 
-- [ ] **T13:** Initialize and Configure Basic Storybook Setup
+- [x] **T13:** Initialize and Configure Basic Storybook Setup
 
   - **Action:** Create `.storybook/main.ts` and `.storybook/preview.ts` with proper configuration. Add Storybook scripts to `package.json`.
   - **Depends On:** [T12]
