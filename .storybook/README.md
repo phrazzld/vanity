@@ -185,7 +185,7 @@ export const Secondary: Story = {
 1. **Component-Driven Development**: Design and develop components in isolation before integrating them into the application.
 2. **Test Different States**: Create stories for all significant component states (normal, hover, active, disabled, error, etc.).
 3. **Document Props**: Use JSDoc comments for proper documentation in the Storybook UI.
-4. **Accessibility Testing**: Use the a11y addon to check for accessibility issues.
+4. **Accessibility Testing**: Use the a11y addon to check for accessibility issues (see dedicated section below).
 5. **Responsive Design Testing**: Use the viewport addon to test components at different screen sizes.
 6. **Using Tailwind Classes**: Apply Tailwind utility classes directly in your component and story files:
    ```tsx
@@ -227,6 +227,162 @@ export const Secondary: Story = {
      );
    }
    ```
+
+## Accessibility Testing
+
+### Accessibility Addon Overview
+
+The Storybook Accessibility (a11y) addon helps identify and fix accessibility issues in your components. It uses [axe-core](https://github.com/dequelabs/axe-core) to audit components for compliance with web accessibility standards.
+
+### Global Configuration
+
+A global accessibility configuration is set up in `.storybook/preview.ts` with sensible defaults:
+
+- **WCAG Compliance Level**: Set to WCAG 2.1 AA
+- **Key Rules Enabled**:
+  - ARIA attributes validation
+  - Button and link discernible text
+  - Form element labels
+  - Image alt text
+  - Color contrast
+  - And more...
+
+### Using the Accessibility Addon
+
+#### Viewing Accessibility Violations
+
+1. Open your component in Storybook
+2. Navigate to the "Accessibility" tab in the addon panel
+3. View highlighted violations, organized by severity
+4. Click on each violation to see:
+   - Details about the issue
+   - Affected elements
+   - How to fix the problem
+   - Links to WCAG guidelines
+
+#### Configuring Accessibility Rules for Specific Stories
+
+Override global rules for specific components or stories:
+
+```typescript
+// In your story file
+const meta: Meta<typeof MyComponent> = {
+  title: 'Components/MyComponent',
+  component: MyComponent,
+  parameters: {
+    a11y: {
+      // Component-specific a11y configuration
+      config: {
+        rules: [
+          {
+            // Disable a specific rule for this component
+            id: 'color-contrast',
+            enabled: false,
+          },
+          {
+            // Enable a rule that might be globally disabled
+            id: 'landmark-one-main',
+            enabled: true,
+          },
+        ],
+      },
+      // Optional manual checks specific to this component
+      manual: [
+        {
+          description: 'Check keyboard navigation for dropdown',
+          items: ['Escape key closes dropdown', 'Arrow keys navigate options'],
+        },
+      ],
+    },
+  },
+};
+```
+
+#### Story-Level Configuration
+
+Configure specific rule overrides for individual stories:
+
+```typescript
+export const WithSpecialRules: Story = {
+  args: {
+    // component props
+  },
+  parameters: {
+    a11y: {
+      config: {
+        rules: [
+          {
+            id: 'autocomplete-valid',
+            enabled: false,
+            // Optional reason for future reference
+            selector: 'input[autocomplete="custom-value"]',
+          },
+        ],
+      },
+    },
+  },
+};
+```
+
+### Accessibility Best Practices
+
+1. **Run A11y Checks Regularly**: Check the accessibility panel for every component and story
+2. **Fix All Violations**: Aim for zero accessibility violations in all components
+3. **Test in Light and Dark Modes**: Ensure components are accessible in both themes
+4. **Keyboard Navigation**: Verify components are fully usable with keyboard only
+5. **Focus Management**: Ensure focus states are visible and logical
+6. **Screen Reader Testing**: Test critical components with actual screen readers
+
+### Common Accessibility Patterns
+
+#### Accessible Buttons
+
+```tsx
+// Good - has accessible name
+<button aria-label="Close menu">
+  <svg>...</svg>
+</button>
+
+// Good - has text content
+<button>
+  <svg aria-hidden="true">...</svg>
+  Close menu
+</button>
+
+// Bad - no accessible name
+<button>
+  <svg>...</svg>
+</button>
+```
+
+#### Form Controls with Labels
+
+```tsx
+// Good - explicit label
+<div>
+  <label htmlFor="name">Name</label>
+  <input id="name" type="text" />
+</div>
+
+// Good - aria-label
+<input aria-label="Search" type="search" />
+
+// Bad - no label
+<input type="text" placeholder="Enter name" />
+```
+
+#### Non-Text Content
+
+```tsx
+// Good - descriptive alt text
+<img src="logo.png" alt="Company Logo" />
+
+// Good - decorative image
+<img src="decoration.png" alt="" role="presentation" />
+
+// Bad - missing alt
+<img src="logo.png" />
+```
 
 ## Troubleshooting
 

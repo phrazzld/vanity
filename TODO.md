@@ -45,7 +45,7 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Action:** Configure the `storybook-dark-mode` addon to integrate with Tailwind's dark mode.
   - **Depends On:** [T13, T15]
 
-- [ ] **T17:** Configure Accessibility Testing in Storybook
+- [x] **T17:** Configure Accessibility Testing in Storybook
 
   - **Action:** Set up `@storybook/addon-a11y` in `main.ts` and configure accessibility rules as needed.
   - **Depends On:** [T13]
