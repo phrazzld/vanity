@@ -30,6 +30,13 @@ The following addons are installed and configured:
 - **Dark Mode**: Configured to work with the project's dark mode implementation via Tailwind
 - **Global Styles**: Imports the app's global CSS for consistent styling
 
+### 4. Tailwind CSS Integration
+
+- **Automatic Processing**: Tailwind CSS is fully integrated with Storybook
+- **Global CSS Import**: The project's globals.css is imported in preview.ts
+- **Content Paths**: Tailwind's content configuration includes Storybook files
+- **Dark Mode Support**: Works with Tailwind's dark mode classes through ThemeDecorator
+
 ## Usage
 
 ### Running Storybook
@@ -102,6 +109,28 @@ export const Secondary: Story = {
 3. **Document Props**: Use JSDoc comments for proper documentation in the Storybook UI.
 4. **Accessibility Testing**: Use the a11y addon to check for accessibility issues.
 5. **Responsive Design Testing**: Use the viewport addon to test components at different screen sizes.
+6. **Using Tailwind Classes**: Apply Tailwind utility classes directly in your component and story files:
+   ```tsx
+   // Component example with Tailwind classes
+   <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+     <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Card Title</h2>
+     <p className="text-gray-600 dark:text-gray-300">Card content goes here</p>
+   </div>
+   ```
+7. **Testing Dark Mode**: Use the dark mode toggle in Storybook to test both light and dark appearances of components:
+   ```typescript
+   // Add a dark mode story variant
+   export const DarkMode: Story = {
+     args: {
+       /* component props */
+     },
+     parameters: {
+       darkMode: {
+         current: 'dark',
+       },
+     },
+   };
+   ```
 
 ## Troubleshooting
 

@@ -30,7 +30,7 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Action:** Create `.storybook/main.ts` and `.storybook/preview.ts` with proper configuration. Add Storybook scripts to `package.json`.
   - **Depends On:** [T12]
 
-- [ ] **T14:** Configure Tailwind CSS Integration in Storybook
+- [x] **T14:** Configure Tailwind CSS Integration in Storybook
 
   - **Action:** Import globals.css in `.storybook/preview.ts` and ensure proper Tailwind/PostCSS processing.
   - **Depends On:** [T13]
