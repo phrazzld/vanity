@@ -8,7 +8,8 @@ const meta: Meta<typeof DarkModeToggle> = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'A toggle button that switches between light and dark modes.',
+        component:
+          'A toggle button that switches between light and dark modes. This component uses the ThemeContext to determine the current mode and to toggle between modes.',
       },
     },
     a11y: {
@@ -28,6 +29,27 @@ const meta: Meta<typeof DarkModeToggle> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+// Default story - initial state depends on Storybook's dark mode setting
 export const Default: Story = {
   args: {},
+};
+
+// Light mode story - forces the story to render in light mode
+export const LightMode: Story = {
+  args: {},
+  parameters: {
+    darkMode: {
+      current: 'light',
+    },
+  },
+};
+
+// Dark mode story - forces the story to render in dark mode
+export const DarkMode: Story = {
+  args: {},
+  parameters: {
+    darkMode: {
+      current: 'dark',
+    },
+  },
 };

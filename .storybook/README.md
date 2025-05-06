@@ -29,8 +29,25 @@ The following addons are installed and configured:
 - **ThemeDecorator**: Integrates the app's theme context with Storybook
 - **Dark Mode**: Configured to work with the project's dark mode implementation via Tailwind
 - **Global Styles**: Imports the app's global CSS for consistent styling
+- **ThemeContext Provider**: Provides a theme context with `isDarkMode` and `toggleDarkMode` values
 
-### 4. Tailwind CSS Integration
+### 4. Theme Context Usage
+
+- **Context Access**: Components that use `useTheme()` hook will work correctly in Storybook
+- **Dark Mode Toggle**: The `ThemeContext` provides synchronized dark mode state with Storybook
+- **State Synchronization**: The theme state stays in sync with Storybook's dark mode toggle
+- **Story Parameters**: You can force light or dark mode in individual stories using parameters:
+  ```typescript
+  export const DarkMode: Story = {
+    parameters: {
+      darkMode: {
+        current: 'dark',
+      },
+    },
+  };
+  ```
+
+### 5. Tailwind CSS Integration
 
 - **Automatic Processing**: Tailwind CSS is fully integrated with Storybook
 - **Global CSS Import**: The project's globals.css is imported in preview.ts
@@ -118,6 +135,7 @@ export const Secondary: Story = {
    </div>
    ```
 7. **Testing Dark Mode**: Use the dark mode toggle in Storybook to test both light and dark appearances of components:
+
    ```typescript
    // Add a dark mode story variant
    export const DarkMode: Story = {
@@ -130,6 +148,23 @@ export const Secondary: Story = {
        },
      },
    };
+   ```
+
+8. **Using Theme Context**: For components that depend on the theme context:
+
+   ```typescript
+   // Import and use the useTheme hook normally in your components
+   import { useTheme } from '../context/ThemeContext';
+
+   function MyComponent() {
+     const { isDarkMode, toggleDarkMode } = useTheme();
+     // Use theme context values
+     return (
+       <div className={isDarkMode ? 'dark-theme' : 'light-theme'}>
+         <button onClick={toggleDarkMode}>Toggle Theme</button>
+       </div>
+     );
+   }
    ```
 
 ## Troubleshooting

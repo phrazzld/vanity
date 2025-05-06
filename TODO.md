@@ -35,7 +35,7 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Action:** Import globals.css in `.storybook/preview.ts` and ensure proper Tailwind/PostCSS processing.
   - **Depends On:** [T13]
 
-- [ ] **T15:** Configure Theme Context in Storybook
+- [x] **T15:** Configure Theme Context in Storybook
 
   - **Action:** Add a global decorator to wrap stories in `ThemeProvider` to enable theme context for components.
   - **Depends On:** [T14]
