@@ -40,7 +40,7 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Action:** Add a global decorator to wrap stories in `ThemeProvider` to enable theme context for components.
   - **Depends On:** [T14]
 
-- [ ] **T16:** Configure Dark Mode Support in Storybook
+- [x] **T16:** Configure Dark Mode Support in Storybook
 
   - **Action:** Configure the `storybook-dark-mode` addon to integrate with Tailwind's dark mode.
   - **Depends On:** [T13, T15]

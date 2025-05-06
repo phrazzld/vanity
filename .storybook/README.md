@@ -31,21 +31,82 @@ The following addons are installed and configured:
 - **Global Styles**: Imports the app's global CSS for consistent styling
 - **ThemeContext Provider**: Provides a theme context with `isDarkMode` and `toggleDarkMode` values
 
-### 4. Theme Context Usage
+### 4. Theme Context and Dark Mode
+
+#### Theme Context Integration
 
 - **Context Access**: Components that use `useTheme()` hook will work correctly in Storybook
 - **Dark Mode Toggle**: The `ThemeContext` provides synchronized dark mode state with Storybook
 - **State Synchronization**: The theme state stays in sync with Storybook's dark mode toggle
-- **Story Parameters**: You can force light or dark mode in individual stories using parameters:
-  ```typescript
-  export const DarkMode: Story = {
-    parameters: {
-      darkMode: {
-        current: 'dark',
-      },
+
+#### Using the Dark Mode Addon
+
+The Storybook dark mode addon (`storybook-dark-mode`) provides several ways to control dark mode:
+
+1. **Global Toggle**: Use the toggle button in the Storybook toolbar to switch between light and dark mode for all stories
+
+2. **Per-Story Configuration**: Force a specific story to render in light or dark mode using story parameters:
+
+   ```typescript
+   export const DarkMode: Story = {
+     parameters: {
+       darkMode: {
+         current: 'dark', // Use 'light' for light mode
+       },
+     },
+   };
+   ```
+
+3. **Default Dark Mode**: Set the default dark mode in preview.ts:
+   ```typescript
+   const preview: Preview = {
+     parameters: {
+       darkMode: {
+         current: 'light', // or 'dark'
+       },
+     },
+   };
+   ```
+
+#### Creating Dark Mode Variants
+
+For better testing and documentation, create explicit dark mode variants of your stories:
+
+```typescript
+// Light mode story (default)
+export const Default: Story = {
+  args: {
+    // component props
+  },
+};
+
+// Dark mode variant
+export const DefaultDarkMode: Story = {
+  args: {
+    // Same props as the Default story
+  },
+  parameters: {
+    darkMode: {
+      current: 'dark',
     },
-  };
-  ```
+  },
+};
+```
+
+#### Best Practices for Dark Mode
+
+1. **Test Both Modes**: Always view your components in both light and dark mode to ensure proper rendering
+2. **Use Tailwind Dark Classes**: Style dark mode variants using Tailwind's `dark:` prefix classes:
+   ```html
+   <div className="bg-white text-black dark:bg-gray-800 dark:text-white">
+     Dark mode compatible content
+   </div>
+   ```
+3. **Theme Context**: Components that need to react to theme changes should use the ThemeContext:
+   ```typescript
+   const { isDarkMode } = useTheme();
+   ```
+4. **Contrast and Accessibility**: Ensure proper contrast in both modes using the a11y addon
 
 ### 5. Tailwind CSS Integration
 

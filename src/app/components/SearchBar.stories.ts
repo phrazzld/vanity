@@ -59,12 +59,41 @@ export const Basic: Story = {
   },
 };
 
+// Dark mode variant of Basic
+export const BasicDarkMode: Story = {
+  args: {
+    placeholder: 'Search...',
+    searchButtonText: 'Search',
+    searchAsYouType: false,
+    buttonVariant: 'primary',
+  },
+  parameters: {
+    darkMode: {
+      current: 'dark',
+    },
+  },
+};
+
 // Search as you type
 export const SearchAsYouType: Story = {
   args: {
     placeholder: 'Search as you type...',
     searchAsYouType: true,
     debounceMs: 300,
+  },
+};
+
+// Dark mode variant of SearchAsYouType
+export const SearchAsYouTypeDarkMode: Story = {
+  args: {
+    placeholder: 'Search as you type...',
+    searchAsYouType: true,
+    debounceMs: 300,
+  },
+  parameters: {
+    darkMode: {
+      current: 'dark',
+    },
   },
 };
 
@@ -101,6 +130,44 @@ export const WithFilters: Story = {
   },
 };
 
+// Dark mode variant of WithFilters
+export const WithFiltersDarkMode: Story = {
+  args: {
+    placeholder: 'Search readings...',
+    searchButtonText: 'Search',
+    searchAsYouType: false,
+    filters: [
+      {
+        name: 'year',
+        label: 'Year',
+        options: [
+          { value: '', label: 'All Years' },
+          { value: '2024', label: '2024' },
+          { value: '2023', label: '2023' },
+          { value: '2022', label: '2022' },
+        ],
+        defaultValue: '',
+      },
+      {
+        name: 'category',
+        label: 'Category',
+        options: [
+          { value: '', label: 'All Categories' },
+          { value: 'fiction', label: 'Fiction' },
+          { value: 'non-fiction', label: 'Non-Fiction' },
+          { value: 'biography', label: 'Biography' },
+        ],
+        defaultValue: '',
+      },
+    ],
+  },
+  parameters: {
+    darkMode: {
+      current: 'dark',
+    },
+  },
+};
+
 // Different button variants
 export const ButtonVariants: Story = {
   // Note: The render function is commented out because JSX isn't supported directly in .stories.ts files
@@ -119,5 +186,20 @@ export const ButtonVariants: Story = {
     searchAsYouType: false,
     buttonVariant: 'primary',
     searchButtonText: 'Search',
+  },
+};
+
+// Dark mode variant of ButtonVariants
+export const ButtonVariantsDarkMode: Story = {
+  args: {
+    placeholder: 'Search...',
+    searchAsYouType: false,
+    buttonVariant: 'primary',
+    searchButtonText: 'Search',
+  },
+  parameters: {
+    darkMode: {
+      current: 'dark',
+    },
   },
 };
