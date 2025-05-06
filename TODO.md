@@ -50,7 +50,7 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Action:** Set up `@storybook/addon-a11y` in `main.ts` and configure accessibility rules as needed.
   - **Depends On:** [T13]
 
-- [ ] **T18:** Create DarkModeToggle Component Stories
+- [x] **T18:** Create DarkModeToggle Component Stories
 
   - **Action:** Create `DarkModeToggle.stories.ts` with stories for different states and interactions.
   - **Depends On:** [T15, T16, T17]
