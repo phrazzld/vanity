@@ -55,7 +55,7 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Action:** Create `DarkModeToggle.stories.ts` with stories for different states and interactions.
   - **Depends On:** [T15, T16, T17]
 
-- [ ] **T19:** Create SearchBar Component Stories
+- [x] **T19:** Create SearchBar Component Stories
 
   - **Action:** Create `SearchBar.stories.ts` with stories for various states, filters, button variants, and behaviors.
   - **Depends On:** [T15, T16, T17]
