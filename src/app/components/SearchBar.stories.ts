@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import SearchBar from './SearchBar';
 
-const meta = {
+const meta: Meta<typeof SearchBar> = {
   title: 'Components/SearchBar',
   component: SearchBar,
   parameters: {
@@ -44,7 +44,7 @@ const meta = {
       description: 'Button style variant',
     },
   },
-} satisfies Meta<typeof SearchBar>;
+};
 
 export default meta;
 type Story = StoryObj<typeof meta>;
