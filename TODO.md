@@ -20,7 +20,7 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Action:** Analyze dependency conflicts between Storybook, its addons, typescript-eslint, and ESLint v9. Apply a resolution strategy (e.g., using `--legacy-peer-deps` during install, pinning specific versions, configuring ESLint overrides for Storybook).
   - **Depends On:** None
 
-- [ ] **T12:** Install Storybook Core Packages and Essential Addons
+- [x] **T12:** Install Storybook Core Packages and Essential Addons
 
   - **Action:** Install Storybook core (`@storybook/react`, `storybook`), Next.js integration (`@storybook/nextjs`), essential addons, accessibility addon, and dark mode addon using the resolution strategy from T11.
   - **Depends On:** [T11]
