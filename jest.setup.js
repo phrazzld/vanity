@@ -1,6 +1,10 @@
+/* eslint-env jest */
+/* global global, window, process, expect, beforeEach */
+
 // Import Jest DOM extensions and other test utilities
 import '@testing-library/jest-dom';
 import { configure } from '@testing-library/react';
+import React from 'react';
 
 // Configure Testing Library
 configure({
@@ -15,6 +19,98 @@ configure({
 expect.extend({
   // Add any custom matchers here
 });
+
+// =============================================================================
+// Browser API Mocks
+// =============================================================================
+
+// Mock localStorage
+const localStorageMock = (() => {
+  let store = {};
+  return {
+    getItem: jest.fn((key) => store[key] ?? null),
+    setItem: jest.fn((key, value) => {
+      store[key] = value.toString();
+    }),
+    removeItem: jest.fn((key) => {
+      delete store[key];
+    }),
+    clear: jest.fn(() => {
+      store = {};
+    }),
+    length: Object.keys(store).length,
+    key: jest.fn((index) => Object.keys(store)[index] || null)
+  };
+})();
+
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
+});
+
+// Mock matchMedia
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false, // Default to light mode
+    media: query,
+    onchange: null,
+    addListener: jest.fn(), // Deprecated
+    removeListener: jest.fn(), // Deprecated
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
+
+// Make matchMedia mockable for dark mode tests
+window.matchMedia.mockImplementation((query) => {
+  return {
+    matches: query === '(prefers-color-scheme: dark)',
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  };
+});
+
+// Mock IntersectionObserver
+global.IntersectionObserver = class IntersectionObserver {
+  constructor(callback) {
+    this.callback = callback;
+  }
+  observe() {
+    return null;
+  }
+  unobserve() {
+    return null;
+  }
+  disconnect() {
+    return null;
+  }
+};
+
+// Mock ResizeObserver
+global.ResizeObserver = class ResizeObserver {
+  constructor(callback) {
+    this.callback = callback;
+  }
+  observe() {
+    return null;
+  }
+  unobserve() {
+    return null;
+  }
+  disconnect() {
+    return null;
+  }
+};
+
+// =============================================================================
+// Next.js Mocks
+// =============================================================================
 
 // Mock Next.js router
 jest.mock('next/router', () => ({
@@ -51,29 +147,23 @@ jest.mock('next/image', () => ({
   __esModule: true,
   default: props => {
     // eslint-disable-next-line jsx-a11y/alt-text
-    return <img {...props} />;
+    return React.createElement('img', props);
   },
 }));
 
-// Mock IntersectionObserver
-global.IntersectionObserver = class IntersectionObserver {
-  constructor(callback) {
-    this.callback = callback;
-  }
-  observe() {
-    return null;
-  }
-  unobserve() {
-    return null;
-  }
-  disconnect() {
-    return null;
-  }
-};
+// =============================================================================
+// Test Setup and Teardown
+// =============================================================================
 
 // Reset mocks between tests
 beforeEach(() => {
   jest.clearAllMocks();
+  
+  // Reset localStorage mock
+  localStorageMock.clear();
+  
+  // Reset any custom mocks
+  window.matchMedia.mockClear();
 });
 
 // Mock environment variables

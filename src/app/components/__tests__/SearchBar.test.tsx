@@ -2,16 +2,9 @@
  * SearchBar Component Tests
  */
 
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { renderWithTheme, screen, waitFor, setupUser } from '@/test-utils';
 import '@testing-library/jest-dom';
 import SearchBar from '../SearchBar';
-import { ThemeProvider } from '../../context/ThemeContext';
-
-// Mock the theme context to provide the required values
-jest.mock('../../context/ThemeContext', () => ({
-  useTheme: () => ({ isDarkMode: false, toggleDarkMode: jest.fn() }),
-  ThemeProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-}));
 
 describe('SearchBar Component', () => {
   const mockOnSearch = jest.fn();
@@ -26,7 +19,7 @@ describe('SearchBar Component', () => {
   });
 
   it('renders correctly with default props', () => {
-    render(<SearchBar onSearch={mockOnSearch} />);
+    renderWithTheme(<SearchBar onSearch={mockOnSearch} />);
 
     expect(screen.getByRole('textbox')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Search...')).toBeInTheDocument();
@@ -34,24 +27,34 @@ describe('SearchBar Component', () => {
     expect(screen.queryByLabelText('Clear search')).not.toBeInTheDocument();
   });
 
+  it('renders correctly in dark mode', () => {
+    renderWithTheme(<SearchBar onSearch={mockOnSearch} />, { themeMode: 'dark' });
+    
+    // Verify the theme provider is rendering with dark mode
+    expect(screen.getByTestId('theme-provider')).toHaveAttribute('data-theme', 'dark');
+    expect(screen.getByRole('textbox')).toBeInTheDocument();
+  });
+
   it('shows clear button when there is text in the input', () => {
-    render(<SearchBar onSearch={mockOnSearch} initialQuery="test query" />);
+    renderWithTheme(<SearchBar onSearch={mockOnSearch} initialQuery="test query" />);
 
     expect(screen.getByLabelText('Clear search')).toBeInTheDocument();
   });
 
-  it('calls onSearch when clear button is clicked', () => {
-    render(<SearchBar onSearch={mockOnSearch} initialQuery="test query" />);
+  it('calls onSearch when clear button is clicked', async () => {
+    const user = setupUser();
+    renderWithTheme(<SearchBar onSearch={mockOnSearch} initialQuery="test query" />);
 
-    fireEvent.click(screen.getByLabelText('Clear search'));
+    await user.click(screen.getByLabelText('Clear search'));
 
     expect(mockOnSearch).toHaveBeenCalledWith('', {});
   });
 
   it('debounces search as you type', async () => {
-    render(<SearchBar onSearch={mockOnSearch} debounceMs={300} />);
+    const user = setupUser();
+    renderWithTheme(<SearchBar onSearch={mockOnSearch} debounceMs={300} />);
 
-    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'test' } });
+    await user.type(screen.getByRole('textbox'), 'test');
 
     // Search should not be called immediately
     expect(mockOnSearch).not.toHaveBeenCalled();
@@ -74,7 +77,7 @@ describe('SearchBar Component', () => {
       },
     ];
 
-    render(<SearchBar onSearch={mockOnSearch} filters={filters} />);
+    renderWithTheme(<SearchBar onSearch={mockOnSearch} filters={filters} />);
 
     // Check if filter dropdown exists
     const filterSelect = screen.getByLabelText('Status');
@@ -86,7 +89,8 @@ describe('SearchBar Component', () => {
     expect(screen.getByText('Inactive')).toBeInTheDocument();
   });
 
-  it('triggers search when filter changes', () => {
+  it('triggers search when filter changes', async () => {
+    const user = setupUser();
     const filters = [
       {
         name: 'status',
@@ -98,29 +102,30 @@ describe('SearchBar Component', () => {
       },
     ];
 
-    render(
+    renderWithTheme(
       <SearchBar onSearch={mockOnSearch} filters={filters} initialQuery="test" debounceMs={0} />
     );
 
     // Change filter value
-    fireEvent.change(screen.getByLabelText('Status'), { target: { value: 'active' } });
+    await user.selectOptions(screen.getByLabelText('Status'), 'active');
 
     // Check if search was triggered with both query and filter
     expect(mockOnSearch).toHaveBeenCalledWith('test', { status: 'active' });
   });
 
   it('shows search button when searchAsYouType is false', () => {
-    render(<SearchBar onSearch={mockOnSearch} searchAsYouType={false} />);
+    renderWithTheme(<SearchBar onSearch={mockOnSearch} searchAsYouType={false} />);
 
     expect(screen.getByLabelText('Submit search')).toBeInTheDocument();
   });
 
-  it('triggers search on form submission when searchAsYouType is false', () => {
-    render(<SearchBar onSearch={mockOnSearch} searchAsYouType={false} initialQuery="test query" />);
+  it('triggers search on form submission when searchAsYouType is false', async () => {
+    const user = setupUser();
+    renderWithTheme(<SearchBar onSearch={mockOnSearch} searchAsYouType={false} initialQuery="test query" />);
 
     // Get the form using DOM structure instead of role
     const form = screen.getByLabelText('Submit search').closest('form');
-    fireEvent.submit(form);
+    await user.click(screen.getByLabelText('Submit search'));
 
     expect(mockOnSearch).toHaveBeenCalledWith('test query', {});
   });

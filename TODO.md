@@ -12,6 +12,10 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
 - [x] **TD2:** Fix ESLint v9 Integration with lint-staged
   - **Action:** Resolve the integration issues between ESLint v9 and lint-staged. Research and implement a solution that allows ESLint v9 to work correctly in the pre-commit hook.
   - **Depends On:** None
+  
+- [ ] **TD3:** Fix ESLint Configuration for Test Files
+  - **Action:** Resolve ESLint errors in test files by properly configuring ESLint for Jest environment, converting test utility files from .ts to .tsx where JSX is used, and ensuring TypeScript configuration includes test files.
+  - **Depends On:** None
 
 ## Storybook Implementation
 
@@ -71,10 +75,11 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
 
 ## Component Testing
 
-- [ ] **T23:** Set Up React Testing Library Configuration
+- [x] **T23:** Set Up React Testing Library Configuration
 
   - **Action:** Create dedicated test setup for React Testing Library with ThemeProvider and necessary mocks.
   - **Depends On:** None
+  - **Note:** Initial implementation works but ESLint configuration for test files needs improvement. See TD3.
 
 - [ ] **T24:** Implement Component Test Patterns
 
