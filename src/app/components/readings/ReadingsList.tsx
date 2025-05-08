@@ -11,11 +11,10 @@
  * - Responsive design
  */
 
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import Image from 'next/image';
 import type { Reading } from '@/types';
 import type { ListSortOption } from '@/app/hooks';
-import { useTheme } from '@/app/context/ThemeContext';
 
 /**
  * Format a date without timezone issues
@@ -29,12 +28,15 @@ function formatDateWithoutTimezoneIssue(dateInput: string | Date): string {
     if (typeof dateInput === 'string') {
       // Extract date parts directly from the ISO string (YYYY-MM-DD)
       // This approach prevents any timezone adjustments
-      const parts = dateInput.split('T')[0].split('-');
-      if (parts.length === 3) {
-        const year = parseInt(parts[0], 10);
-        const month = parseInt(parts[1], 10);
-        const day = parseInt(parts[2], 10);
-        return `${month}/${day}/${year}`;
+      const datePart = dateInput.split('T')[0];
+      if (datePart) {
+        const parts = datePart.split('-');
+        if (parts.length === 3) {
+          const year = parseInt(parts[0] || '0', 10);
+          const month = parseInt(parts[1] || '1', 10);
+          const day = parseInt(parts[2] || '1', 10);
+          return `${month}/${day}/${year}`;
+        }
       }
     }
 
@@ -89,12 +91,14 @@ export interface ReadingsListProps {
   sort: ListSortOption;
 
   /** Function to call when a column header is clicked for sorting */
+  // eslint-disable-next-line no-unused-vars
   onSortChange: (field: string) => void;
 
   /** Current search query for highlighting */
   searchQuery?: string;
 
   /** Function to call when a reading item is selected */
+  // eslint-disable-next-line no-unused-vars
   onSelectReading: (reading: Reading) => void;
 
   /** Currently selected reading (if any) */
@@ -141,13 +145,14 @@ const highlightSearchTerm = (text: string, searchTerm: string) => {
 export default function ReadingsList({
   readings,
   sort,
-  onSortChange,
+  onSortChange, // Used in handleSortClick to pass field name to parent
   searchQuery = '',
-  onSelectReading,
+  onSelectReading, // Called when a reading list item is clicked
   selectedReading,
   className = '',
 }: ReadingsListProps) {
-  const { isDarkMode } = useTheme();
+  // Theme context is not currently used in this component but may be used in future updates
+  // const { isDarkMode } = useTheme();
 
   // Function to handle sort column click
   const handleSortClick = useCallback(
@@ -270,9 +275,10 @@ export default function ReadingsList({
                 {/* Book Cover Image or Placeholder */}
                 {reading.coverImageSrc ? (
                   <div className="h-14 w-10 flex-shrink-0 rounded overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 group-hover:shadow-sm">
-                    {process.env.NEXT_PUBLIC_SPACES_BASE_URL ? (
+                    {/* Use client-side environment variable */}
+                    {typeof window !== 'undefined' && window.ENV_NEXT_PUBLIC_SPACES_BASE_URL ? (
                       <Image
-                        src={`${process.env.NEXT_PUBLIC_SPACES_BASE_URL}${reading.coverImageSrc}`}
+                        src={`${window.ENV_NEXT_PUBLIC_SPACES_BASE_URL}${reading.coverImageSrc}`}
                         alt={`Cover for ${reading.title}`}
                         width={40}
                         height={56}

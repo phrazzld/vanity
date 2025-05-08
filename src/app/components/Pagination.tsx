@@ -14,7 +14,6 @@
  * - Accessibility features
  */
 
-import { useTheme } from '../context/ThemeContext';
 import { useCallback } from 'react';
 
 export interface PaginationProps {
@@ -27,8 +26,10 @@ export interface PaginationProps {
   /** Number of items per page */
   pageSize: number;
   /** Callback when page changes */
+  // eslint-disable-next-line no-unused-vars
   onPageChange: (page: number) => void;
   /** Callback when page size changes */
+  // eslint-disable-next-line no-unused-vars
   onPageSizeChange?: (pageSize: number) => void;
   /** Available page size options */
   pageSizeOptions?: number[];
@@ -43,14 +44,13 @@ export default function Pagination({
   totalPages,
   totalItems,
   pageSize,
-  onPageChange,
-  onPageSizeChange,
+  onPageChange, // Callback used when clicking page buttons
+  onPageSizeChange, // Callback used when changing page size in dropdown
   pageSizeOptions = [10, 25, 50, 100],
   showPageSizeSelector = false,
   className = '',
 }: PaginationProps) {
-  // Access theme context
-  const { isDarkMode } = useTheme();
+  // Theme state is handled via CSS classes now
 
   /**
    * Generates an array of page numbers to display, with ellipses for large ranges
@@ -155,7 +155,9 @@ export default function Pagination({
             {/* Page numbers with ellipsis */}
             {displayedPageNumbers.map((page, index, array) => {
               // Determine if we need to show ellipsis
-              const showEllipsisAfter = index < array.length - 1 && array[index + 1] - page > 1;
+              const nextPage = index < array.length - 1 ? array[index + 1] : undefined;
+              const showEllipsisAfter =
+                index < array.length - 1 && nextPage !== undefined && nextPage - page > 1;
 
               return (
                 <div key={page} className="flex items-center">

@@ -21,12 +21,12 @@ export function groupReadingsByYear(readings: Reading[]): Record<string, Reading
   readings.forEach(reading => {
     // Handle special categories first
     if (reading.dropped) {
-      grouped['Dropped'].push(reading);
+      grouped['Dropped']?.push(reading);
       return;
     }
 
     if (reading.finishedDate === null) {
-      grouped['Currently Reading'].push(reading);
+      grouped['Currently Reading']?.push(reading);
       return;
     }
 
@@ -44,12 +44,12 @@ export function groupReadingsByYear(readings: Reading[]): Record<string, Reading
     }
 
     // Add reading to appropriate year
-    grouped[year].push(reading);
+    grouped[year]?.push(reading);
   });
 
   // Remove empty special categories
   Object.keys(grouped).forEach(key => {
-    if (grouped[key].length === 0) {
+    if (grouped[key]?.length === 0) {
       delete grouped[key];
     }
   });

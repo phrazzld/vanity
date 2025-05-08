@@ -232,6 +232,10 @@ export default function ReadingCard({
     if (isHovered) {
       // Set animating state to true when animation starts
       setIsAnimating(true);
+      // Return an empty cleanup function for the true condition path
+      return () => {
+        // No cleanup needed for this path
+      };
     } else {
       // When hover ends, delay cleanup until animations complete
       // Use a timeout slightly longer than the longest animation duration
@@ -242,7 +246,10 @@ export default function ReadingCard({
       }, animationCleanupDelay);
 
       // Clean up timer if component unmounts or hover state changes again
-      return () => clearTimeout(cleanupTimer);
+      return () => {
+        // Use window.clearTimeout to be explicit about the global function
+        window.clearTimeout(cleanupTimer);
+      };
     }
   }, [isHovered]);
 
@@ -279,9 +286,6 @@ export default function ReadingCard({
       darker: '#374151', // very dark gray for deep shadows
     },
   };
-
-  // Status badge text
-  const statusText = isCurrentlyReading ? 'Reading' : isFinished ? formattedFinishDate : 'Paused';
 
   // Status color object for the current status
   const statusColor = isCurrentlyReading
@@ -351,7 +355,8 @@ export default function ReadingCard({
       >
         {coverImageSrc && (
           <Image
-            src={`${process.env.NEXT_PUBLIC_SPACES_BASE_URL}${coverImageSrc}`}
+            // Access environment variable safely using window.ENV_ pattern for client
+            src={`${(typeof window !== 'undefined' && window.ENV_NEXT_PUBLIC_SPACES_BASE_URL) || ''}${coverImageSrc}`}
             alt={`${title} cover`}
             fill={true}
             sizes="(max-width: 480px) 33vw, (max-width: 768px) 25vw, (max-width: 1024px) 20vw, 200px"

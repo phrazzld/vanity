@@ -25,7 +25,8 @@ export async function getReading(slug: string): Promise<Reading | null> {
       LIMIT 1;
     `;
 
-    const reading =
+    // Cast the first result to Reading if it exists
+    const reading: Reading | null =
       Array.isArray(readings) && readings.length > 0 ? (readings[0] as Reading) : null;
 
     console.log(reading ? `Found reading: ${reading.title}` : `No reading found for slug: ${slug}`);
@@ -69,6 +70,7 @@ export async function getReadings(): Promise<Reading[]> {
       console.warn('No readings found in database');
     }
 
+    // Cast the raw query result to Reading[] to ensure correct type
     return readings as Reading[];
   } catch (error) {
     console.error('Error fetching readings:', error);
@@ -100,7 +102,7 @@ export async function getReadingsWithFilters(
 
     // Build WHERE conditions
     const whereConditions: string[] = [];
-    const queryParams: any[] = [];
+    const queryParams: (string | null | boolean)[] = [];
     let paramIndex = 1;
 
     // Search in title, author, or thoughts
@@ -164,11 +166,18 @@ export async function getReadingsWithFilters(
     }
 
     // Execute count query with parameters
-    const countResult = (await prisma.$queryRawUnsafe(countQuery, ...queryParams)) as {
-      total: number | bigint;
-    }[];
+    // Using unknown is safer than any for raw SQL results
+    const countResult = (await prisma.$queryRawUnsafe(countQuery, ...queryParams));
 
-    const totalCount = parseInt(countResult[0].total.toString(), 10);
+    // Type guard to ensure we're working with an array-like object
+    const totalCount =
+      Array.isArray(countResult) &&
+      countResult[0] &&
+      typeof countResult[0] === 'object' &&
+      countResult[0] !== null &&
+      'total' in countResult[0]
+        ? parseInt(String(countResult[0].total), 10)
+        : 0;
     console.log(`Total matching readings: ${totalCount}`);
 
     // Build the main query with parameters
@@ -185,9 +194,9 @@ export async function getReadingsWithFilters(
     mainQuery += ` LIMIT ${limit} OFFSET ${offset}`;
 
     // Execute main query with parameters
-    const readings = (await prisma.$queryRawUnsafe(mainQuery, ...queryParams)) as Reading[];
+    const readings = await prisma.$queryRawUnsafe(mainQuery, ...queryParams);
 
-    console.log(`Found ${readings.length} readings for current page`);
+    console.log(`Found ${Array.isArray(readings) ? readings.length : 0} readings for current page`);
 
     // Calculate pagination metadata
     const totalPages = Math.ceil(totalCount / limit);
@@ -197,7 +206,7 @@ export async function getReadingsWithFilters(
     console.log(`Returning data for page ${currentPage} (offset: ${offset}, limit: ${limit})`);
 
     return {
-      data: readings,
+      data: readings as Reading[],
       totalCount,
       currentPage,
       totalPages,

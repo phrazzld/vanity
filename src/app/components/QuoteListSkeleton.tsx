@@ -7,8 +7,6 @@
  * Provides a better user experience during loading states.
  */
 
-import { useTheme } from '../context/ThemeContext';
-
 interface QuoteListSkeletonProps {
   /**
    * Number of skeleton items to display
@@ -17,8 +15,6 @@ interface QuoteListSkeletonProps {
 }
 
 export default function QuoteListSkeleton({ count = 5 }: QuoteListSkeletonProps) {
-  const { isDarkMode } = useTheme();
-
   // Create an array of length 'count' to map over
   const items = Array.from({ length: count }, (_, i) => i);
 

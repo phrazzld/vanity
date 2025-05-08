@@ -25,6 +25,7 @@ export async function getQuotes(): Promise<Quote[]> {
       console.warn('No quotes found in database');
     }
 
+    // Cast the raw query result to Quote[] to ensure correct type
     return quotes as Quote[];
   } catch (error) {
     console.error('Error fetching quotes:', error);
@@ -49,7 +50,7 @@ export async function getQuotesWithFilters(
 
     // Build WHERE conditions
     const whereConditions: string[] = [];
-    const queryParams: any[] = [];
+    const queryParams: (string | null | boolean)[] = [];
     let paramIndex = 1;
 
     // Search in quote text or author
@@ -88,11 +89,12 @@ export async function getQuotesWithFilters(
     }
 
     // Execute count query with parameters
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     const countResult = (await prisma.$queryRawUnsafe(countQuery, ...queryParams)) as {
       total: number | bigint;
     }[];
 
-    const totalCount = parseInt(countResult[0].total.toString(), 10);
+    const totalCount = parseInt(countResult[0]?.total?.toString() || '0', 10);
     console.log(`Total matching quotes: ${totalCount}`);
 
     // Build the main query with parameters
@@ -109,16 +111,16 @@ export async function getQuotesWithFilters(
     mainQuery += ` LIMIT ${limit} OFFSET ${offset}`;
 
     // Execute main query with parameters
-    const quotes = (await prisma.$queryRawUnsafe(mainQuery, ...queryParams)) as Quote[];
+    const quotes = await prisma.$queryRawUnsafe(mainQuery, ...queryParams);
 
-    console.log(`Found ${quotes.length} quotes for current page`);
+    console.log(`Found ${Array.isArray(quotes) ? quotes.length : 0} quotes for current page`);
 
     // Calculate pagination metadata
     const totalPages = Math.ceil(totalCount / limit);
     const currentPage = Math.floor(offset / limit) + 1;
 
     return {
-      data: quotes,
+      data: quotes as Quote[],
       totalCount,
       currentPage,
       totalPages,
@@ -154,7 +156,9 @@ export async function getQuote(id: number): Promise<Quote | null> {
       LIMIT 1;
     `;
 
-    const quote = Array.isArray(quotes) && quotes.length > 0 ? (quotes[0] as Quote) : null;
+    // Cast the first result to Quote if it exists
+    const quote: Quote | null =
+      Array.isArray(quotes) && quotes.length > 0 ? (quotes[0] as Quote) : null;
 
     console.log(quote ? `Found quote with ID ${id}` : `No quote found with ID ${id}`);
     return quote;

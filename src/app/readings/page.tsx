@@ -3,6 +3,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import YearSection from '../components/readings/YearSection';
 import type { Reading } from '@/types';
+
+// Type for API responses
+interface ReadingsApiResponse {
+  data: Reading[];
+  totalCount: number;
+  hasMore?: boolean;
+}
 import {
   groupReadingsByYear,
   getSortedYearKeys,
@@ -41,7 +48,8 @@ export default function ReadingsPage() {
         throw new Error(`Failed to fetch readings: ${response.status} ${response.statusText}`);
       }
 
-      const result = await response.json();
+      // Parse response with explicit typing
+      const result = (await response.json()) as ReadingsApiResponse;
 
       // Validate the result structure to ensure it has the expected properties
       if (!result || !Array.isArray(result.data)) {
@@ -73,9 +81,13 @@ export default function ReadingsPage() {
       setIsInitialLoading(true);
 
       try {
-        const { data, hasMore } = await fetchReadings(1);
-        setReadings(data);
-        setHasMore(hasMore);
+        const result = await fetchReadings(1);
+        // Explicitly type the destructured values
+        const fetchedData: Reading[] = result.data;
+        const moreAvailable: boolean = result.hasMore;
+
+        setReadings(fetchedData);
+        setHasMore(moreAvailable);
       } catch (error) {
         console.error('Error loading initial data:', error);
         setError(error instanceof Error ? error.message : 'Failed to load initial data');
@@ -98,13 +110,18 @@ export default function ReadingsPage() {
 
     try {
       const nextPage = page + 1;
-      const { data, hasMore: moreAvailable } = await fetchReadings(nextPage);
+      const result = await fetchReadings(nextPage);
+
+      // Explicitly type the destructured values
+      const fetchedData: Reading[] = result.data;
+      const moreAvailable: boolean = result.hasMore;
 
       // Use a function to update state based on previous state to avoid race conditions
       setReadings(prev => {
         // Check for duplicates by slug to ensure we don't add the same reading twice
         const existingSlugs = new Set(prev.map(r => r.slug));
-        const uniqueNewData = data.filter((item: Reading) => !existingSlugs.has(item.slug));
+        // Explicitly type the filter operation
+        const uniqueNewData = fetchedData.filter(item => !existingSlugs.has(item.slug));
 
         return [...prev, ...uniqueNewData];
       });
@@ -152,7 +169,7 @@ export default function ReadingsPage() {
         // 3. There are more items to load
         // 4. We have some data already
         if (
-          entries[0].isIntersecting &&
+          entries[0]?.isIntersecting &&
           !isInitialLoading &&
           !isPaginationLoading &&
           hasMore &&
@@ -201,7 +218,7 @@ export default function ReadingsPage() {
           <YearSection
             key={year}
             year={year}
-            readings={sortReadingsWithinCategory(yearGroups[year], year)}
+            readings={sortReadingsWithinCategory(yearGroups[year] || [], year)}
           />
         ))}
 
