@@ -13,6 +13,11 @@ const customJestConfig = {
     // Handle module aliases (this will be automatically configured for you when using `next/jest`)
     '^@/(.*)$': '<rootDir>/src/$1',
   },
+  // Snapshot configuration
+  snapshotResolver: '<rootDir>/snapshotResolver.js',
+  snapshotSerializers: ['@emotion/jest/serializer'],
+  // When should snapshots be updated
+  updateSnapshot: process.env.UPDATE_SNAPSHOTS === 'true',
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
     '!src/**/*.d.ts',

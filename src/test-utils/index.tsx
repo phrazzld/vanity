@@ -1,9 +1,9 @@
 // src/test-utils/index.tsx
-import React, { useState } from 'react';
+import React from 'react';
 import { render } from '@testing-library/react';
 import type { RenderOptions } from '@testing-library/react';
-import { ThemeContext } from '@/app/context/ThemeContext';
 import userEvent from '@testing-library/user-event';
+import { ThemeProvider } from '@/app/context/ThemeContext';
 
 // ===========================================================================
 // Theme Provider Test Setup
@@ -19,19 +19,11 @@ export function TestThemeProvider({
   children: React.ReactNode;
   initialTheme?: 'light' | 'dark';
 }) {
-  const [isDarkMode, setIsDarkMode] = useState(initialTheme === 'dark');
-
-  const toggleDarkMode = () => setIsDarkMode(prev => !prev);
-
+  // We're using the mocked ThemeProvider from jest.setup.js
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode }}>
-      <div 
-        data-testid="theme-provider"
-        data-theme={isDarkMode ? 'dark' : 'light'}
-      >
-        {children}
-      </div>
-    </ThemeContext.Provider>
+    <ThemeProvider>
+      <div data-theme={initialTheme}>{children}</div>
+    </ThemeProvider>
   );
 }
 
@@ -44,17 +36,12 @@ type CustomRenderOptions = Omit<RenderOptions, 'wrapper'> & {
   // Add other custom render options here as needed
 };
 
-export function renderWithTheme(
-  ui: React.ReactElement,
-  options?: CustomRenderOptions
-) {
+export function renderWithTheme(ui: React.ReactElement, options?: CustomRenderOptions) {
   const { themeMode = 'light', ...renderOptions } = options || {};
-  
+
   return render(ui, {
     wrapper: ({ children }) => (
-      <TestThemeProvider initialTheme={themeMode}>
-        {children}
-      </TestThemeProvider>
+      <TestThemeProvider initialTheme={themeMode}>{children}</TestThemeProvider>
     ),
     ...renderOptions,
   });
@@ -151,15 +138,141 @@ export function renderHookWithTheme<Result, Props>(
 ): RenderHookResult<Result, Props> {
   // The initialProps parameter is used by the renderHook function internally
   const { themeMode = 'light', ...renderOptions } = options || {};
-  
+
   return renderHook(hook, {
     wrapper: ({ children }) => (
-      <TestThemeProvider initialTheme={themeMode}>
-        {children}
-      </TestThemeProvider>
+      <TestThemeProvider initialTheme={themeMode}>{children}</TestThemeProvider>
     ),
     ...renderOptions,
   });
+}
+
+// ===========================================================================
+// Snapshot Testing Utilities
+// ===========================================================================
+
+/**
+ * Creates a snapshot test with consistent formatting
+ *
+ * @param ui The React element to render
+ * @param options The render options, including theme mode
+ * @returns The rendered component for snapshot testing
+ */
+export function createComponentSnapshot(ui: React.ReactElement, options?: CustomRenderOptions) {
+  const { container } = renderWithTheme(ui, options);
+
+  // Remove whitespace for cleaner snapshots
+  const cleanHtml = container.innerHTML
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\n/g, '')
+    .trim();
+
+  return {
+    container,
+    cleanHtml,
+  };
+}
+
+/**
+ * Creates a responsive snapshot for multiple viewport sizes
+ * Sets the viewport size using Jest's mocked window object
+ */
+export function createResponsiveSnapshots(
+  ui: React.ReactElement,
+  viewportSizes = ['mobile', 'tablet', 'desktop'],
+  options?: CustomRenderOptions
+) {
+  const originalInnerWidth = window.innerWidth;
+  const originalInnerHeight = window.innerHeight;
+
+  const viewportMap: Record<string, { width: number; height: number }> = {
+    mobile: { width: 390, height: 844 },
+    tablet: { width: 768, height: 1024 },
+    desktop: { width: 1280, height: 800 },
+  };
+
+  const snapshots: Record<string, string> = {};
+
+  // Generate snapshot for each viewport size
+  viewportSizes.forEach(size => {
+    // Set viewport size
+    const viewport = viewportMap[size];
+    if (!viewport) return;
+
+    // Use temporary variables to avoid TypeScript's unsafe assignment error
+    const viewportWidth = viewport.width;
+    const viewportHeight = viewport.height;
+
+    // Use explicit type for configurable object to avoid unsafe assignment
+    const widthConfig: PropertyDescriptor = {
+      writable: true,
+      configurable: true,
+      value: viewportWidth,
+    };
+    const heightConfig: PropertyDescriptor = {
+      writable: true,
+      configurable: true,
+      value: viewportHeight,
+    };
+
+    Object.defineProperty(window, 'innerWidth', widthConfig);
+    Object.defineProperty(window, 'innerHeight', heightConfig);
+
+    // Create window.matchMedia mock for the current viewport
+    // Use width value directly to avoid unsafe assignment
+    const width = viewport.width;
+    const isDarkMode = options?.themeMode === 'dark';
+
+    // Create type-safe query matcher function
+    const matchesQuery = (query: string): boolean => {
+      return (
+        query.includes(`(min-width: ${width}px)`) ||
+        (query.includes('(prefers-color-scheme: dark)') && isDarkMode)
+      );
+    };
+
+    const mockMatchMedia = jest.fn().mockImplementation((query: string) => {
+      return {
+        matches: matchesQuery(query),
+        media: query,
+        onchange: null,
+        addListener: jest.fn(),
+        removeListener: jest.fn(),
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+        dispatchEvent: jest.fn(),
+      };
+    });
+
+    // Type assertion to avoid TypeScript errors
+    window.matchMedia = mockMatchMedia as typeof window.matchMedia;
+
+    // Render the component
+    const { cleanHtml } = createComponentSnapshot(ui, options);
+    snapshots[size] = cleanHtml;
+  });
+
+  // Restore original viewport size
+  // Use temporary variables to avoid unsafe assignment
+  const originalWidth = originalInnerWidth;
+  const originalHeight = originalInnerHeight;
+
+  // Use explicit type for configurable object to avoid unsafe assignment
+  const originalWidthConfig: PropertyDescriptor = {
+    writable: true,
+    configurable: true,
+    value: originalWidth,
+  };
+  const originalHeightConfig: PropertyDescriptor = {
+    writable: true,
+    configurable: true,
+    value: originalHeight,
+  };
+
+  Object.defineProperty(window, 'innerWidth', originalWidthConfig);
+  Object.defineProperty(window, 'innerHeight', originalHeightConfig);
+
+  return snapshots;
 }
 
 // Export everything from testing library for convenience

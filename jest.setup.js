@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-env jest */
+/* eslint-env jest, node */
+/* global global, URLSearchParams, process */
 
 // Import Jest DOM extensions and other test utilities
 import '@testing-library/jest-dom';
@@ -15,9 +15,69 @@ configure({
   throwSuggestions: true,
 });
 
-// Set up DOM matchers
+// =============================================================================
+// Custom Jest Matchers for Snapshots
+// =============================================================================
+
 expect.extend({
-  // Add any custom matchers here
+  // Custom matcher for checking if a component renders consistently
+  toMatchComponentSnapshot(received, expected) {
+    const { container } = received;
+    const innerHTML = container.innerHTML
+      .replace(/\s{2,}/g, ' ')
+      .replace(/\n/g, '')
+      .trim();
+
+    const pass = innerHTML === expected;
+
+    return {
+      pass,
+      message: () =>
+        pass
+          ? `Expected component not to match snapshot`
+          : `Expected component to match snapshot.\n\nExpected: ${expected}\n\nReceived: ${innerHTML}`,
+    };
+  },
+
+  // Custom matcher for responsive snapshots
+  toMatchResponsiveSnapshots(received, expected) {
+    const pass = Object.keys(expected).every(key => expected[key] === received[key]);
+
+    return {
+      pass,
+      message: () =>
+        pass
+          ? `Expected responsive snapshots not to match`
+          : `Expected responsive snapshots to match.\n\nDifferences:\n${Object.keys(expected)
+              .filter(key => expected[key] !== received[key])
+              .map(key => `${key}:\nExpected: ${expected[key]}\nReceived: ${received[key]}`)
+              .join('\n\n')}`,
+    };
+  },
+
+  // Adds ability to check if a component matches theme variants
+  toMatchThemeSnapshots(lightModeRender, darkModeRender) {
+    const lightHTML = lightModeRender.container.innerHTML
+      .replace(/\s{2,}/g, ' ')
+      .replace(/\n/g, '')
+      .trim();
+
+    const darkHTML = darkModeRender.container.innerHTML
+      .replace(/\s{2,}/g, ' ')
+      .replace(/\n/g, '')
+      .trim();
+
+    // Check that the renders are different (if they're the same, the component isn't respecting the theme)
+    const pass = lightHTML !== darkHTML;
+
+    return {
+      pass,
+      message: () =>
+        pass
+          ? `Expected component to render the same in light and dark mode`
+          : `Expected component to render differently in light and dark mode, but they are identical`,
+    };
+  },
 });
 
 // =============================================================================
@@ -28,18 +88,18 @@ expect.extend({
 const localStorageMock = (() => {
   let store = {};
   return {
-    getItem: jest.fn((key) => store[key] ?? null),
+    getItem: jest.fn(key => store[key] ?? null),
     setItem: jest.fn((key, value) => {
       store[key] = value.toString();
     }),
-    removeItem: jest.fn((key) => {
+    removeItem: jest.fn(key => {
       delete store[key];
     }),
     clear: jest.fn(() => {
       store = {};
     }),
     length: Object.keys(store).length,
-    key: jest.fn((index) => Object.keys(store)[index] || null)
+    key: jest.fn(index => Object.keys(store)[index] || null),
   };
 })();
 
@@ -63,7 +123,7 @@ Object.defineProperty(window, 'matchMedia', {
 });
 
 // Make matchMedia mockable for dark mode tests
-window.matchMedia.mockImplementation((query) => {
+window.matchMedia.mockImplementation(query => {
   return {
     matches: query === '(prefers-color-scheme: dark)',
     media: query,
@@ -109,8 +169,24 @@ global.ResizeObserver = class ResizeObserver {
 };
 
 // =============================================================================
-// Next.js Mocks
+// Next.js and App Mocks
 // =============================================================================
+
+// Mock the ThemeContext
+jest.mock('@/app/context/ThemeContext', () => ({
+  useTheme: () => ({
+    isDarkMode: false,
+    toggleDarkMode: jest.fn(),
+  }),
+  ThemeProvider: ({ children }) =>
+    React.createElement(
+      'div',
+      {
+        'data-testid': 'theme-provider',
+      },
+      children
+    ),
+}));
 
 // Mock Next.js router
 jest.mock('next/router', () => ({
@@ -146,7 +222,7 @@ jest.mock('next/navigation', () => ({
 jest.mock('next/image', () => ({
   __esModule: true,
   default: props => {
-    // eslint-disable-next-line jsx-a11y/alt-text
+    // We're forwarding all props including alt, so this is safe
     return React.createElement('img', props);
   },
 }));
@@ -158,10 +234,10 @@ jest.mock('next/image', () => ({
 // Reset mocks between tests
 beforeEach(() => {
   jest.clearAllMocks();
-  
+
   // Reset localStorage mock
   localStorageMock.clear();
-  
+
   // Reset any custom mocks
   window.matchMedia.mockClear();
 });

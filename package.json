@@ -77,6 +77,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:snapshot": "jest --testMatch='**/*.snapshot.test.{ts,tsx}'",
+    "test:snapshot:update": "node scripts/update-snapshots.js",
     "prisma:generate": "prisma generate",
     "migrate:deploy": "prisma migrate deploy",
     "migrate:data": "node scripts/migrate-data.js",
@@ -108,6 +110,7 @@
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
+    "@emotion/jest": "^11.13.0",
     "@eslint/js": "^9.22.0",
     "@next/eslint-plugin-next": "^15.2.2",
     "@storybook/addon-a11y": "^8.6.12",
