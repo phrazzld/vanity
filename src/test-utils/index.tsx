@@ -1,6 +1,7 @@
-// src/test-utils/index.ts
+// src/test-utils/index.tsx
 import React, { useState } from 'react';
-import { render, RenderOptions } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import type { RenderOptions } from '@testing-library/react';
 import { ThemeContext } from '@/app/context/ThemeContext';
 import userEvent from '@testing-library/user-event';
 
@@ -22,17 +23,15 @@ export function TestThemeProvider({
 
   const toggleDarkMode = () => setIsDarkMode(prev => !prev);
 
-  return React.createElement(
-    ThemeContext.Provider,
-    { value: { isDarkMode, toggleDarkMode } },
-    React.createElement(
-      'div',
-      { 
-        'data-testid': 'theme-provider',
-        'data-theme': isDarkMode ? 'dark' : 'light'
-      },
-      children
-    )
+  return (
+    <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode }}>
+      <div 
+        data-testid="theme-provider"
+        data-theme={isDarkMode ? 'dark' : 'light'}
+      >
+        {children}
+      </div>
+    </ThemeContext.Provider>
   );
 }
 
@@ -53,7 +52,9 @@ export function renderWithTheme(
   
   return render(ui, {
     wrapper: ({ children }) => (
-      React.createElement(TestThemeProvider, { initialTheme: themeMode }, children)
+      <TestThemeProvider initialTheme={themeMode}>
+        {children}
+      </TestThemeProvider>
     ),
     ...renderOptions,
   });
@@ -136,22 +137,26 @@ export function waitForCondition(
 }
 
 // Hook testing with theme context
-import { renderHook, RenderHookOptions, RenderHookResult } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
+import type { RenderHookOptions, RenderHookResult } from '@testing-library/react';
 
 /**
  * Custom renderHook method that includes the ThemeProvider wrapper
  */
 export function renderHookWithTheme<Result, Props>(
-  hook: (props: Props) => Result,
+  hook: (initialProps: Props) => Result,
   options?: Omit<RenderHookOptions<Props>, 'wrapper'> & {
     themeMode?: 'light' | 'dark';
   }
 ): RenderHookResult<Result, Props> {
+  // The initialProps parameter is used by the renderHook function internally
   const { themeMode = 'light', ...renderOptions } = options || {};
   
   return renderHook(hook, {
     wrapper: ({ children }) => (
-      React.createElement(TestThemeProvider, { initialTheme: themeMode }, children)
+      <TestThemeProvider initialTheme={themeMode}>
+        {children}
+      </TestThemeProvider>
     ),
     ...renderOptions,
   });

@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-env jest */
-/* global global, window, process, expect, beforeEach */
 
 // Import Jest DOM extensions and other test utilities
 import '@testing-library/jest-dom';

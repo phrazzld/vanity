@@ -1,11 +1,25 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+/**
+ * ReadingCard Component Tests
+ * 
+ * This file demonstrates testing patterns for a complex UI component with:
+ * - Interactive animations and hover states
+ * - Theme context integration
+ * - Accessibility attributes
+ * - Different status rendering based on props
+ * - Image handling with fallbacks
+ * - Responsive behavior
+ * - Touch device detection
+ */
+
+import { renderWithTheme, screen, setupUser } from '@/test-utils';
 import ReadingCard from '../ReadingCard';
-import { ThemeProvider } from '@/app/context/ThemeContext';
+import type { ReadingListItem } from '@/types';
 
 // Mock the getSeededPlaceholderStyles function
 jest.mock('../placeholderUtils', () => ({
   getSeededPlaceholderStyles: jest.fn().mockReturnValue({
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f0f4f8',
+    backgroundImage: 'linear-gradient(135deg, #e0e8f0 25%, transparent 25%)',
   }),
 }));
 
@@ -22,180 +36,403 @@ jest.mock('next/image', () => ({
       }
       return acc;
     }, {});
-    return (
-      <div data-testid="mock-image" style={{ width: imgProps.width, height: imgProps.height }}>
-        Mock Image: {imgProps.alt || ''}
-      </div>
+    
+    return React.createElement(
+      'div',
+      {
+        'data-testid': 'mock-image',
+        style: { width: imgProps.width, height: imgProps.height },
+        alt: imgProps.alt || '',
+        src: imgProps.src || '',
+      },
+      `Mock Image: ${imgProps.alt || ''}`
     );
   },
-}));
-
-// Mock the ThemeContext
-jest.mock('@/app/context/ThemeContext', () => ({
-  useTheme: jest.fn().mockReturnValue({ isDarkMode: false, toggleDarkMode: jest.fn() }),
-  ThemeProvider: ({ children }) => <>{children}</>,
 }));
 
 // Mock environment variables
 process.env.NEXT_PUBLIC_SPACES_BASE_URL = 'https://test-space.com';
 
-// Mock setInterval and clearInterval
-jest.useFakeTimers();
+// Sample test data with fixed date for consistent testing
+const TEST_DATE = '2022-12-15';
 
-describe('ReadingCard', () => {
+// Create reusable mock props for the various test cases
+const createMockProps = (overrides = {}): ReadingListItem => ({
+  slug: 'test-book',
+  title: 'Test Book',
+  author: 'Test Author',
+  coverImageSrc: '/covers/test-book.jpg',
+  dropped: false,
+  finishedDate: TEST_DATE,
+  ...overrides,
+});
+
+describe('ReadingCard Component', () => {
+  // Setup and cleanup
   beforeEach(() => {
     jest.clearAllMocks();
+    
+    // Mock window.navigator.maxTouchPoints for touch device detection
+    Object.defineProperty(navigator, 'maxTouchPoints', {
+      writable: true,
+      value: 0, // Default to non-touch device
+    });
+    
+    // Mock matchMedia for testing media queries
+    window.matchMedia = jest.fn().mockImplementation(query => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    }));
   });
 
-  // Use a fixed date string to ensure consistent formatting in tests
-  const testDate = '2022-12-15';
+  describe('Rendering Different States', () => {
+    it('renders with cover image in light mode', () => {
+      // Arrange & Act
+      renderWithTheme(<ReadingCard {...createMockProps()} />);
 
-  const mockProps = {
-    slug: 'test-book',
-    title: 'Test Book',
-    author: 'Test Author',
-    coverImageSrc: '/covers/test-book.jpg',
-    dropped: false,
-    finishedDate: testDate,
-  };
+      // Assert
+      const card = screen.getByTitle('Test Book');
+      expect(card).toBeInTheDocument();
+      
+      // Check image is rendered with correct src
+      const image = screen.getByTestId('mock-image');
+      expect(image).toBeInTheDocument();
+      expect(image).toHaveAttribute('src', 'https://test-space.com/covers/test-book.jpg');
+    });
 
-  it('renders with cover image', () => {
-    render(<ReadingCard {...mockProps} />);
+    it('renders with cover image in dark mode', () => {
+      // Arrange & Act
+      renderWithTheme(<ReadingCard {...createMockProps()} />, { themeMode: 'dark' });
 
-    const card = screen.getByTitle('Test Book');
-    expect(card).toBeInTheDocument();
+      // Assert - verify theme context
+      expect(screen.getByTestId('theme-provider')).toHaveAttribute('data-theme', 'dark');
+      
+      // Card and cover should render
+      const card = screen.getByTitle('Test Book');
+      expect(card).toBeInTheDocument();
+      expect(screen.getByTestId('mock-image')).toBeInTheDocument();
+    });
 
-    const image = screen.getByTestId('mock-image');
-    expect(image).toBeInTheDocument();
+    it('renders without cover image using placeholder', () => {
+      // Arrange & Act
+      renderWithTheme(<ReadingCard {...createMockProps({ coverImageSrc: null })} />);
+
+      // Assert
+      const card = screen.getByTitle('Test Book');
+      expect(card).toBeInTheDocument();
+
+      // No image should be rendered
+      expect(screen.queryByTestId('mock-image')).not.toBeInTheDocument();
+      
+      // Card should still render with proper dimensions
+      expect(card).toHaveStyle('aspectRatio: 2 / 3');
+    });
+
+    it('shows "Reading paused" status when dropped=true', async () => {
+      // Arrange
+      const user = setupUser();
+      renderWithTheme(<ReadingCard {...createMockProps({ dropped: true })} />);
+
+      // Act - simulate hover to reveal status
+      const card = screen.getByTitle('Test Book');
+      await user.hover(card);
+
+      // Assert - verify status text
+      expect(screen.getByText('Reading paused')).toBeInTheDocument();
+      expect(screen.getByTestId('status-icon')).toBeInTheDocument();
+    });
+
+    it('shows "Currently reading" status when finishedDate=null', async () => {
+      // Arrange
+      const user = setupUser();
+      renderWithTheme(<ReadingCard {...createMockProps({ finishedDate: null })} />);
+
+      // Act - simulate hover
+      const card = screen.getByTitle('Test Book');
+      await user.hover(card);
+
+      // Assert - verify status text
+      expect(screen.getByText('Currently reading')).toBeInTheDocument();
+    });
+
+    it('shows "Finished [date]" status when book is completed', async () => {
+      // Arrange
+      const user = setupUser();
+      renderWithTheme(<ReadingCard {...createMockProps()} />);
+
+      // Act - simulate hover
+      const card = screen.getByTitle('Test Book');
+      await user.hover(card);
+
+      // Assert - verify date is formatted properly (Dec 2022)
+      expect(screen.getByText('Finished Dec 2022')).toBeInTheDocument();
+    });
   });
 
-  it('renders without cover image using placeholder', () => {
-    render(<ReadingCard {...mockProps} coverImageSrc={null} />);
+  describe('Animation and Interaction', () => {
+    it('shows book metadata when hovered', async () => {
+      // Arrange
+      const user = setupUser();
+      renderWithTheme(<ReadingCard {...createMockProps()} />);
 
-    const card = screen.getByTitle('Test Book');
-    expect(card).toBeInTheDocument();
+      // Initial state - title and author should not be visible
+      expect(screen.queryByTestId('book-title')).not.toBeVisible();
+      expect(screen.queryByTestId('book-author')).not.toBeVisible();
 
-    // No image should be rendered
-    expect(screen.queryByTestId('mock-image')).not.toBeInTheDocument();
+      // Act - hover the card
+      const card = screen.getByTitle('Test Book');
+      await user.hover(card);
+
+      // Assert - metadata should be revealed
+      const bookTitle = screen.getByTestId('book-title');
+      expect(bookTitle).toBeVisible();
+      expect(bookTitle).toHaveTextContent('Test Book');
+
+      const bookAuthor = screen.getByTestId('book-author');
+      expect(bookAuthor).toBeVisible();
+      expect(bookAuthor).toHaveTextContent('Test Author');
+    });
+    
+    it('applies ribbon unfurl animation when mouse enters', async () => {
+      // Arrange
+      const user = setupUser();
+      renderWithTheme(<ReadingCard {...createMockProps()} />);
+
+      // Get the card element
+      const card = screen.getByTitle('Test Book');
+
+      // Get the ribbon container before hover
+      const ribbonContainer = screen.getByTestId('ribbon-container');
+      
+      // Initial state checks
+      expect(ribbonContainer).toHaveStyle('opacity: 0');
+      expect(ribbonContainer).toHaveStyle('visibility: hidden');
+      expect(ribbonContainer).toHaveStyle('transform: translateY(15px) scale(0.98)');
+      expect(ribbonContainer).toHaveStyle('minHeight: 0');
+
+      // Act - hover the card
+      await user.hover(card);
+
+      // Assert - verify animation styles
+      expect(ribbonContainer).toHaveStyle('opacity: 1');
+      expect(ribbonContainer).toHaveStyle('visibility: visible');
+      expect(ribbonContainer).toHaveStyle('transform: translateY(0) scale(1)');
+      expect(ribbonContainer).toHaveStyle('minHeight: 100px'); // Expanded state
+
+      // Card itself should transform
+      expect(card).toHaveStyle('transform: translateY(-4px) scale(1.01)');
+      
+      // Status information should be visible
+      expect(screen.getByTestId('status-icon')).toBeVisible();
+      expect(screen.getByTestId('status-text')).toBeVisible();
+    });
+
+    it('collapses ribbon when mouse leaves', async () => {
+      // Arrange
+      const user = setupUser();
+      renderWithTheme(<ReadingCard {...createMockProps()} />);
+
+      // Get the card element
+      const card = screen.getByTitle('Test Book');
+
+      // Act - hover then unhover
+      await user.hover(card);
+      await user.unhover(card);
+
+      // Assert - check ribbon container
+      const ribbonContainer = screen.getByTestId('ribbon-container');
+      expect(ribbonContainer).toHaveStyle('opacity: 0');
+      expect(ribbonContainer).toHaveStyle('transform: translateY(15px) scale(0.98)');
+
+      // Card animation should reset
+      expect(card).toHaveStyle('transform: translateY(0) scale(1)');
+    });
+    
+    it('handles touch devices differently by detecting maxTouchPoints', async () => {
+      // Arrange - mock a touch device
+      Object.defineProperty(navigator, 'maxTouchPoints', { value: 2 });
+      
+      const user = setupUser();
+      const { rerender } = renderWithTheme(<ReadingCard {...createMockProps()} />);
+      
+      // Need to rerender after changing navigator properties
+      rerender(<ReadingCard {...createMockProps()} />);
+      
+      // Act - simulate touch
+      const card = screen.getByTitle('Test Book');
+      await user.hover(card); // Using hover as a stand-in for touch
+
+      // Touch devices should show info on "touch" (hover in our simulation)
+      expect(screen.getByTestId('ribbon-container')).toHaveStyle('opacity: 1');
+      
+      // Metadata should be visible
+      expect(screen.getByTestId('book-title')).toBeVisible();
+      expect(screen.getByTestId('book-author')).toBeVisible();
+    });
   });
 
-  it('shows book title and author', () => {
-    render(<ReadingCard {...mockProps} />);
+  describe('Accessibility', () => {
+    it('provides appropriate ARIA labels with book details', () => {
+      // Arrange & Act
+      renderWithTheme(<ReadingCard {...createMockProps()} />);
 
-    // Hover the card to reveal the ribbon with text
-    const card = screen.getByTitle('Test Book');
-    fireEvent.mouseEnter(card);
+      // Assert - check aria-label on the main container
+      const card = screen.getByTitle('Test Book');
+      expect(card).toHaveAttribute(
+        'aria-label',
+        'Book: Test Book by Test Author, Status: Finished on Dec 2022'
+      );
+    });
+    
+    it('provides appropriate ARIA labels for currently reading books', () => {
+      // Arrange & Act - render currently reading card
+      renderWithTheme(<ReadingCard {...createMockProps({ finishedDate: null })} />);
 
-    const bookTitle = screen.getByTestId('book-title');
-    expect(bookTitle).toHaveTextContent('Test Book');
+      // Assert
+      const card = screen.getByTitle('Test Book');
+      expect(card).toHaveAttribute(
+        'aria-label',
+        'Book: Test Book by Test Author, Status: Currently Reading'
+      );
+    });
+    
+    it('provides appropriate ARIA labels for paused books', () => {
+      // Arrange & Act - render paused reading card
+      renderWithTheme(<ReadingCard {...createMockProps({ dropped: true })} />);
 
-    const bookAuthor = screen.getByTestId('book-author');
-    expect(bookAuthor).toHaveTextContent('Test Author');
+      // Assert
+      const card = screen.getByTitle('Test Book');
+      expect(card).toHaveAttribute(
+        'aria-label',
+        'Book: Test Book by Test Author, Status: Reading Paused'
+      );
+    });
+
+    it('sets aria-hidden on ribbon when not hovered', async () => {
+      // Arrange
+      const user = setupUser();
+      renderWithTheme(<ReadingCard {...createMockProps()} />);
+
+      // Get the ribbon container
+      const ribbonContainer = screen.getByTestId('ribbon-container');
+      
+      // Initial state (not hovered)
+      expect(ribbonContainer).toHaveAttribute('aria-hidden', 'true');
+      
+      // Act - hover the card
+      const card = screen.getByTitle('Test Book');
+      await user.hover(card);
+      
+      // Assert - ribbon should no longer be hidden
+      expect(ribbonContainer).toHaveAttribute('aria-hidden', 'false');
+      
+      // Act - unhover
+      await user.unhover(card);
+      
+      // Assert - ribbon should be hidden again
+      expect(ribbonContainer).toHaveAttribute('aria-hidden', 'true');
+    });
   });
 
-  it('shows paused indicator when dropped is true', () => {
-    render(<ReadingCard {...mockProps} dropped={true} />);
+  describe('Status-Specific Styling', () => {
+    it('applies "currently reading" specific styles', async () => {
+      // Arrange
+      const user = setupUser();
+      renderWithTheme(<ReadingCard {...createMockProps({ finishedDate: null })} />);
 
-    // Hover the card to reveal the ribbon
-    const card = screen.getByTitle('Test Book');
-    fireEvent.mouseEnter(card);
+      // Act - hover to reveal the status
+      const card = screen.getByTitle('Test Book');
+      await user.hover(card);
 
-    // Look for the paused text
-    expect(screen.getByText('Reading paused')).toBeInTheDocument();
+      // Assert - status icon and text should have reading-specific styling
+      const statusText = screen.getByText('Currently reading');
+      
+      // Currently reading status should have the subtle left line
+      const statusContainer = statusText.closest('.reading-status');
+      expect(statusContainer).toHaveStyle('paddingLeft: 7px');
+      expect(statusContainer).toHaveStyle('borderLeft: 2px solid rgba(255, 255, 255, 0.35)');
+    });
+
+    it('applies "finished" specific styles', async () => {
+      // Arrange
+      const user = setupUser();
+      renderWithTheme(<ReadingCard {...createMockProps()} />);
+
+      // Act - hover to reveal the status
+      const card = screen.getByTitle('Test Book');
+      await user.hover(card);
+
+      // Assert - finished status should have specific styling
+      const statusText = screen.getByText(/Finished/);
+      expect(statusText).toBeInTheDocument();
+      
+      // The status icon for finished books should use the finished icon component
+      const statusIcon = screen.getByTestId('status-icon').querySelector('svg');
+      expect(statusIcon).toBeInTheDocument();
+    });
+
+    it('applies "paused" specific styles', async () => {
+      // Arrange
+      const user = setupUser();
+      renderWithTheme(<ReadingCard {...createMockProps({ dropped: true })} />);
+
+      // Act - hover to reveal the status
+      const card = screen.getByTitle('Test Book');
+      await user.hover(card);
+
+      // Assert - paused books have specific styling
+      const statusText = screen.getByText('Reading paused');
+      expect(statusText).toBeInTheDocument();
+      
+      // The container for paused status has lower opacity
+      const statusContainer = statusText.closest('.reading-status');
+      // Note: can't easily test the reduced opacity as its conditional to the hover state
+      expect(statusContainer).toHaveClass('paused-status');
+    });
   });
 
-  it('shows currently reading indicator when finishedDate is null', () => {
-    render(<ReadingCard {...mockProps} finishedDate={null} />);
+  describe('Edge Cases', () => {
+    it('handles very long titles gracefully', async () => {
+      // Arrange - book with extremely long title
+      const longTitle = 'This is an extremely long book title that would normally wrap or overflow in normal circumstances but should be handled gracefully by the component';
+      const user = setupUser();
+      
+      renderWithTheme(<ReadingCard {...createMockProps({ title: longTitle })} />);
 
-    // Hover the card to reveal the ribbon
-    const card = screen.getByTitle('Test Book');
-    fireEvent.mouseEnter(card);
+      // Act - hover to reveal title
+      const card = screen.getByTitle(longTitle);
+      await user.hover(card);
 
-    // Look for the currently reading text
-    expect(screen.getByText('Currently reading')).toBeInTheDocument();
-  });
+      // Assert - title should be contained in the ribbon (not overflow the container)
+      const titleElement = screen.getByTestId('book-title');
+      expect(titleElement).toBeInTheDocument();
+      
+      // Title has ellipsis style for overflow
+      expect(titleElement).toHaveStyle('overflow: hidden');
+      expect(titleElement).toHaveStyle('textOverflow: ellipsis');
+      expect(titleElement).toHaveStyle('display: -webkit-box');
+      expect(titleElement).toHaveStyle('WebkitLineClamp: 3');
+    });
 
-  it('shows finished date when book is completed', () => {
-    render(<ReadingCard {...mockProps} />);
+    it('handles empty author gracefully', async () => {
+      // Arrange - book with no author
+      const user = setupUser();
+      renderWithTheme(<ReadingCard {...createMockProps({ author: '' })} />);
 
-    // Hover the card to reveal the ribbon
-    const card = screen.getByTitle('Test Book');
-    fireEvent.mouseEnter(card);
+      // Act - hover to reveal details
+      const card = screen.getByTitle('Test Book');
+      await user.hover(card);
 
-    // Look for the finished date text (Dec 2022 based on our testDate)
-    expect(screen.getByText('Finished Dec 2022')).toBeInTheDocument();
-  });
-
-  it('applies ribbon unfurl animation when mouse enters', () => {
-    render(<ReadingCard {...mockProps} />);
-
-    const card = screen.getByTitle('Test Book');
-
-    // Get the ribbon container before hover
-    const ribbonContainer = screen.getByTestId('ribbon-container');
-    expect(ribbonContainer).toHaveStyle('opacity: 0');
-    expect(ribbonContainer).toHaveStyle('visibility: hidden');
-    // The transform now combines translateY and scale for a more refined animation
-    expect(ribbonContainer).toHaveStyle('transform: translateY(15px) scale(0.98)');
-    expect(ribbonContainer).toHaveStyle('minHeight: 0');
-
-    // Simulate mouse enter
-    fireEvent.mouseEnter(card);
-
-    // Check that the ribbon expands
-    expect(ribbonContainer).toHaveStyle('opacity: 1');
-    expect(ribbonContainer).toHaveStyle('visibility: visible');
-    // The transform now combines translateY and scale for a more refined animation
-    expect(ribbonContainer).toHaveStyle('transform: translateY(0) scale(1)');
-    expect(ribbonContainer).toHaveStyle('minHeight: 100px'); // Check expanded state
-
-    // Check that the main card has hover styles
-    expect(card).toHaveStyle('transform: translateY(-4px) scale(1.01)');
-
-    // Check that content elements become visible
-    const ribbon = screen.getByTestId('ribbon-container');
-    expect(ribbon).toBeInTheDocument();
-
-    // Status icon should be visible
-    const statusIcon = screen.getByTestId('status-icon');
-    expect(statusIcon).toBeInTheDocument();
-  });
-
-  it('collapses ribbon when mouse leaves', () => {
-    render(<ReadingCard {...mockProps} />);
-
-    const card = screen.getByTitle('Test Book');
-
-    // Simulate mouse enter then leave
-    fireEvent.mouseEnter(card);
-    fireEvent.mouseLeave(card);
-
-    // Get the ribbon container after hover
-    const ribbonContainer = screen.getByTestId('ribbon-container');
-    expect(ribbonContainer).toHaveStyle('opacity: 0');
-    // The transform now combines translateY and scale for a more refined animation
-    expect(ribbonContainer).toHaveStyle('transform: translateY(15px) scale(0.98)');
-
-    // Check that the main card hover state has been reset
-    expect(card).toHaveStyle('transform: translateY(0) scale(1)');
-  });
-
-  it('sets accessible ARIA label with book details', () => {
-    render(<ReadingCard {...mockProps} />);
-
-    const card = screen.getByTitle('Test Book');
-    expect(card).toHaveAttribute(
-      'aria-label',
-      'Book: Test Book by Test Author, Status: Finished on Dec 2022'
-    );
-
-    // Render a currently reading book
-    render(<ReadingCard {...mockProps} finishedDate={null} />);
-
-    const readingCard = screen.getAllByTitle('Test Book')[1];
-    expect(readingCard).toHaveAttribute(
-      'aria-label',
-      'Book: Test Book by Test Author, Status: Currently Reading'
-    );
+      // Assert - author element should still exist but be empty
+      const authorElement = screen.getByTestId('book-author');
+      expect(authorElement).toBeInTheDocument();
+      expect(authorElement.textContent).toBe('');
+    });
   });
 });

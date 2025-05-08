@@ -50,6 +50,54 @@ module.exports = [
   // Storybook config (must come early to set up Storybook files properly)
   ...storybook.configs['flat/recommended'],
 
+  // Test files configuration (place before the general TypeScript configuration)
+  {
+    files: [
+      '*.test.{js,jsx,ts,tsx}',
+      'src/**/*.test.{js,jsx,ts,tsx}',
+      'src/test-utils/*.{js,jsx,ts,tsx}',
+      'src/**/__tests__/*.{js,jsx,ts,tsx}',
+      'src/**/__tests__/**/*.{js,jsx,ts,tsx}',
+      'tests/**/*.{js,jsx,ts,tsx}',
+      'jest.setup.js'
+    ],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        // Don't specify project for now, as it's causing issues
+        ecmaFeatures: {
+          jsx: true,
+        },
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+      globals: {
+        ...testGlobals,
+        ...browserGlobals,
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
+    },
+    rules: {
+      ...tseslint.configs.recommended.rules,
+      // Relaxed rules for test files
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': ['warn', { 
+        'argsIgnorePattern': '^_|props|initialProps',
+        'varsIgnorePattern': '^_' 
+      }],
+      'no-unused-vars': ['warn', { 
+        'argsIgnorePattern': '^_|props|initialProps', 
+        'varsIgnorePattern': '^_' 
+      }],
+      'max-lines-per-function': 'off',
+      'max-lines': 'off',
+      // Allow non-null assertions in tests
+      '@typescript-eslint/no-non-null-assertion': 'off',
+    },
+  },
+
   // TypeScript parser configuration for all TS files
   {
     files: ['**/*.{ts,tsx}'],
@@ -174,16 +222,6 @@ module.exports = [
     },
   },
 
-  // Test files
-  {
-    files: ['**/*.test.{js,jsx,ts,tsx}', '**/src/test-utils/**/*.{js,jsx,ts,tsx}', '**/__tests__/**/*.{js,jsx,ts,tsx}'],
-    languageOptions: {
-      globals: {
-        ...testGlobals,
-        ...browserGlobals,
-      },
-    },
-  },
 
   // Storybook files
   {
