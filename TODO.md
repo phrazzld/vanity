@@ -97,12 +97,12 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Action:** Review and improve Tailwind configuration to align with design needs.
   - **Depends On:** None
 
-- [ ] **T27:** Create Design Token System
+- [x] **T27:** Create Design Token System
 
   - **Action:** Establish design tokens in Tailwind config for colors, typography, spacing, etc.
   - **Depends On:** [T26]
 
-- [ ] **T28:** Implement Responsive Design Utilities
+- [x] **T28:** Implement Responsive Design Utilities
   - **Action:** Create utilities leveraging Tailwind's responsive modifiers with documentation.
   - **Depends On:** [T26]
 

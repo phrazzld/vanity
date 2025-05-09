@@ -151,3 +151,7 @@ When extending the design system:
 2. If needed, add CSS variables in `globals.css` for tokens that need to change with theme
 3. Document new tokens in this file
 4. Create examples in Storybook to showcase usage
+
+## Related Documentation
+
+- [Responsive Design Guidelines](./RESPONSIVE_DESIGN.md) - Detailed information about responsive design utilities and patterns

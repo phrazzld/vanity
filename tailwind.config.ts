@@ -1,6 +1,8 @@
 import type { Config } from 'tailwindcss';
 // Import defaultTheme with proper typing to avoid ESLint errors
 import defaultTheme from 'tailwindcss/defaultTheme';
+// Import container queries plugin
+import containerQueries from '@tailwindcss/container-queries';
 
 /**
  * Vanity Design System
@@ -198,7 +200,68 @@ export default {
         'standard-exit': 'cubic-bezier(0.4, 0, 0.2, 1)',
         'content-entrance': 'cubic-bezier(0.215, 0.61, 0.355, 1)',
       },
+
+      // Custom width utilities for responsive layouts
+      width: {
+        fit: 'fit-content',
+        readable: 'clamp(45ch, 60%, 75ch)', // Optimal reading width
+        prose: 'min(65ch, 100%)',
+      },
+
+      // Aspect ratio utilities
+      aspectRatio: {
+        portrait: '2/3',
+        landscape: '16/9',
+        ultrawide: '21/9',
+        square: '1/1',
+        golden: '1.618/1', // Golden ratio
+      },
+
+      // Custom height utilities
+      height: {
+        'screen-small': '100svh', // Small viewport height (mobile-friendly)
+        'screen-large': '100lvh', // Large viewport height
+        'screen-dynamic': '100dvh', // Dynamic viewport height
+      },
+
+      // Z-index scale with semantic naming
+      zIndex: {
+        behind: '-1',
+        base: '0',
+        elevated: '1',
+        dropdown: '10',
+        sticky: '20',
+        fixed: '30',
+        modal: '40',
+        popover: '50',
+        tooltip: '60',
+        toast: '70',
+        overlay: '80',
+        spinner: '90',
+        top: '100',
+      },
     },
   },
-  plugins: [],
+  // Define custom screen breakpoints
+  screens: {
+    xs: '480px', // Extra small devices (phones)
+    ...defaultTheme.screens,
+    '2xl': '1536px', // Override for consistency
+    '3xl': '1920px', // Extra large monitors/displays
+  },
+
+  // Add responsive variants
+  variants: {
+    extend: {
+      // Extend variants as needed
+      display: ['responsive', 'group-hover', 'hover', 'focus', 'dark'],
+      opacity: ['responsive', 'group-hover', 'hover', 'focus', 'dark'],
+      scale: ['responsive', 'hover', 'focus', 'active'],
+      textColor: ['responsive', 'hover', 'focus', 'dark'],
+      backgroundColor: ['responsive', 'hover', 'focus', 'dark'],
+    },
+  },
+
+  // Register plugins
+  plugins: [containerQueries],
 } satisfies Config;
