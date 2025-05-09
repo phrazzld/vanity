@@ -125,7 +125,10 @@ module.exports = [
       '@typescript-eslint/no-unsafe-assignment': 'error',
       '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
-      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-unused-vars': ['warn', { 
+        'argsIgnorePattern': '^_', 
+        'varsIgnorePattern': '^_' 
+      }],
     },
   },
 
@@ -170,6 +173,11 @@ module.exports = [
           skipComments: true,
         },
       ],
+      // Allow underscore prefixed parameters to be unused
+      'no-unused-vars': ['warn', { 
+        'argsIgnorePattern': '^_', 
+        'varsIgnorePattern': '^_' 
+      }],
     },
   },
 

@@ -97,6 +97,8 @@
   "dependencies": {
     "@prisma/client": "^6.5.0",
     "@tailwindcss/container-queries": "^0.1.1",
+    "@tanstack/react-query": "^5.75.5",
+    "@tanstack/react-query-devtools": "^5.75.5",
     "@types/leaflet": "^1.9.16",
     "@types/react-leaflet": "^3.0.0",
     "leaflet": "^1.9.4",
@@ -106,7 +108,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-leaflet": "^5.0.0",
-    "winston": "^3.17.0"
+    "winston": "^3.17.0",
+    "zustand": "^5.0.4"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
