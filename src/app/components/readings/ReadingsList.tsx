@@ -261,13 +261,19 @@ export default function ReadingsList({
           </p>
         </div>
       ) : (
-        <ul className="item-list-body" role="list" aria-label="Readings list">
+        <ul className="item-list-body" aria-label="Readings list">
           {readings.map(reading => (
-            <li
+            <div
               key={reading.slug}
               className={`item-list-item group ${selectedReading?.slug === reading.slug ? 'item-list-item-selected' : ''} hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150`}
+              role="button"
               onClick={() => onSelectReading(reading)}
-              role="listitem"
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  onSelectReading(reading);
+                  e.preventDefault();
+                }
+              }}
               tabIndex={0}
               aria-current={selectedReading?.slug === reading.slug ? 'true' : 'false'}
             >
@@ -372,7 +378,7 @@ export default function ReadingsList({
                   </div>
                 </div>
               </div>
-            </li>
+            </div>
           ))}
         </ul>
       )}

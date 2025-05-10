@@ -68,9 +68,7 @@ export function ResponsiveNavigation({
       <ul className="hidden lg:flex gap-4 items-center">
         {items.map(item => (
           <li key={item}>
-            <a href="#" className="content-link">
-              {item}
-            </a>
+            <button className="content-link">{item}</button>
           </li>
         ))}
       </ul>

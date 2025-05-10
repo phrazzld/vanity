@@ -115,7 +115,8 @@ export default function QuotesList({
   selectedQuote,
   className = '',
 }: QuotesListProps) {
-  const { isDarkMode } = useTheme();
+  // Using theme context for future dark mode styling enhancements
+  const { isDarkMode: _isDarkMode } = useTheme();
 
   // Function to handle sort column click
   const handleSortClick = useCallback(
@@ -203,13 +204,19 @@ export default function QuotesList({
           </p>
         </div>
       ) : (
-        <ul className="item-list-body" role="list" aria-label="Quotes list">
+        <ul className="item-list-body" aria-label="Quotes list">
           {quotes.map(quote => (
-            <li
+            <div
               key={quote.id}
               className={`item-list-item group ${selectedQuote?.id === quote.id ? 'item-list-item-selected' : ''} hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150`}
+              role="button"
               onClick={() => onSelectQuote(quote)}
-              role="listitem"
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  onSelectQuote(quote);
+                  e.preventDefault();
+                }
+              }}
               tabIndex={0}
               aria-current={selectedQuote?.id === quote.id ? 'true' : 'false'}
             >
@@ -261,7 +268,7 @@ export default function QuotesList({
                   )}
                 </div>
               </div>
-            </li>
+            </div>
           ))}
         </ul>
       )}
