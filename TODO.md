@@ -8,28 +8,32 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
 
   - **Action:** Systematically address type errors flagged by the stricter TypeScript settings. Prioritize errors in core files (e.g., API routes, database interfaces).
   - **Depends On:** None
-  
-- [ ] **TD6:** Fix TypewriterQuotes Timer Type Issues
+
+- [x] **TD6:** Fix TypewriterQuotes Timer Type Issues
+
   - **Action:** Properly address TypeScript type errors related to timer functions in TypewriterQuotes.tsx. The current implementation uses `any` type with eslint-disable comments as a temporary workaround, but this should be replaced with proper typing.
   - **Depends On:** None
   - **Note:** Issues include: Type 'Timeout' is not assignable to type 'number'. The component uses `setTimeout` and `setInterval` which return values of type `Timeout` in Node.js or `number` in browsers.
+  - **Resolution:** Used `ReturnType<typeof globalThis.setTimeout>` and `ReturnType<typeof globalThis.setInterval>` to properly type timer variables in a way that works in both browser and Node.js environments without requiring explicit NodeJS type imports.
 
 - [ ] **TD7:** Fix ReadingCard Component Tests
   - **Action:** Address failures in ReadingCard component tests related to TestingLibrary query recommendations, style testing, and interaction testing.
   - **Depends On:** None
   - **Note:** Issues include: TestingLibraryElementError suggesting better queries (queryByText instead of queryByTestId), and possibly problems with style assertions and hover interaction testing.
-  
 - [ ] **TD8:** Fix SearchBar Component Snapshot Tests
+
   - **Action:** Update SearchBar component snapshot tests to match the new component structure after accessibility and role attribute fixes.
   - **Depends On:** None
   - **Note:** Snapshot test failures occurred after moving role="search" from a div to the form element for accessibility.
 
 - [ ] **TD9:** Fix useReadingsQuotesList Test Environment
+
   - **Action:** Fix the test environment setup in useReadingsQuotesList.test.tsx to properly mock global.fetch.
   - **Depends On:** None
   - **Note:** Test fails with error "TypeError: Cannot set properties of undefined (setting 'fetch')" when trying to set global.fetch = jest.fn().
 
 - [ ] **TD10:** Update Obsolete Snapshot Files
+
   - **Action:** Update or remove obsolete snapshot files including DarkModeToggle.snapshot.test.tsx.snap and SearchBar.snapshot.test.tsx.snap.
   - **Depends On:** None
   - **Note:** Run `npm test -- -u` to update the snapshot files after all component fixes are in place.

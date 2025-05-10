@@ -160,9 +160,8 @@ export default function TypewriterQuotes() {
    */
   useEffect(() => {
     // Setup blinking interval
-    // TypeScript definitions for setInterval in test environments can be problematic
-    // Make it explicit that we're dealing with a number
-    const blink: number = globalThis.setInterval(() => {
+    // Use ReturnType<typeof globalThis.setInterval> for proper type safety
+    const blink: ReturnType<typeof globalThis.setInterval> = globalThis.setInterval(() => {
       setCursorVisible(v => !v);
     }, CURSOR_BLINK_INTERVAL);
 
@@ -196,9 +195,8 @@ export default function TypewriterQuotes() {
       return; // Don't run typewriter logic until quotes are loaded
     }
 
-    // Use any to handle both browser and Node environments
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let timer: any;
+    // Use ReturnType<typeof globalThis.setTimeout> to handle both browser and Node environments
+    let timer: ReturnType<typeof globalThis.setTimeout>;
 
     switch (phase) {
       case 'typingQuote':
