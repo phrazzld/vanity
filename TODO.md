@@ -14,6 +14,26 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Depends On:** None
   - **Note:** Issues include: Type 'Timeout' is not assignable to type 'number'. The component uses `setTimeout` and `setInterval` which return values of type `Timeout` in Node.js or `number` in browsers.
 
+- [ ] **TD7:** Fix ReadingCard Component Tests
+  - **Action:** Address failures in ReadingCard component tests related to TestingLibrary query recommendations, style testing, and interaction testing.
+  - **Depends On:** None
+  - **Note:** Issues include: TestingLibraryElementError suggesting better queries (queryByText instead of queryByTestId), and possibly problems with style assertions and hover interaction testing.
+  
+- [ ] **TD8:** Fix SearchBar Component Snapshot Tests
+  - **Action:** Update SearchBar component snapshot tests to match the new component structure after accessibility and role attribute fixes.
+  - **Depends On:** None
+  - **Note:** Snapshot test failures occurred after moving role="search" from a div to the form element for accessibility.
+
+- [ ] **TD9:** Fix useReadingsQuotesList Test Environment
+  - **Action:** Fix the test environment setup in useReadingsQuotesList.test.tsx to properly mock global.fetch.
+  - **Depends On:** None
+  - **Note:** Test fails with error "TypeError: Cannot set properties of undefined (setting 'fetch')" when trying to set global.fetch = jest.fn().
+
+- [ ] **TD10:** Update Obsolete Snapshot Files
+  - **Action:** Update or remove obsolete snapshot files including DarkModeToggle.snapshot.test.tsx.snap and SearchBar.snapshot.test.tsx.snap.
+  - **Depends On:** None
+  - **Note:** Run `npm test -- -u` to update the snapshot files after all component fixes are in place.
+
 - [x] **TD2:** Fix ESLint v9 Integration with lint-staged
   - **Action:** Resolve the integration issues between ESLint v9 and lint-staged. Research and implement a solution that allows ESLint v9 to work correctly in the pre-commit hook.
   - **Depends On:** None
