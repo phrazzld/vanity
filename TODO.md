@@ -18,6 +18,9 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
 - [x] **TD4:** Fix ESLint Parameter Naming Issues in State Management
   - **Action:** Resolve ESLint unused parameter warnings in interface implementations. Configure ESLint to handle parameter naming consistency between interface definitions and implementations in state management hooks and stores.
   - **Depends On:** [T30]
+- [ ] **TD5:** Fix Failing Tests
+  - **Action:** Address failing tests in components including TypewriterQuotes, YearSection, and Prisma client mocks. Fix issues with testing library queries and timer mocks in Jest environment.
+  - **Depends On:** None
 
 ## Storybook Implementation
 
