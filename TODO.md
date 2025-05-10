@@ -16,10 +16,11 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Note:** Issues include: Type 'Timeout' is not assignable to type 'number'. The component uses `setTimeout` and `setInterval` which return values of type `Timeout` in Node.js or `number` in browsers.
   - **Resolution:** Used `ReturnType<typeof globalThis.setTimeout>` and `ReturnType<typeof globalThis.setInterval>` to properly type timer variables in a way that works in both browser and Node.js environments without requiring explicit NodeJS type imports.
 
-- [ ] **TD7:** Fix ReadingCard Component Tests
+- [x] **TD7:** Fix ReadingCard Component Tests
   - **Action:** Address failures in ReadingCard component tests related to TestingLibrary query recommendations, style testing, and interaction testing.
   - **Depends On:** None
   - **Note:** Issues include: TestingLibraryElementError suggesting better queries (queryByText instead of queryByTestId), and possibly problems with style assertions and hover interaction testing.
+  - **Resolution:** Updated tests to use semantically meaningful queries like getByText and getByRole instead of testIds, modified style assertions to be more robust and compatible with the testing environment, and improved interaction testing with hover/touch simulation.
 - [ ] **TD8:** Fix SearchBar Component Snapshot Tests
 
   - **Action:** Update SearchBar component snapshot tests to match the new component structure after accessibility and role attribute fixes.
