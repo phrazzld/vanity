@@ -56,14 +56,33 @@ export function setupUser(options = { delay: null }) {
 // Mock Response Helpers
 // ===========================================================================
 
+/**
+ * Type for the mock response returned by createMockResponse
+ */
+export type MockResponse<T> = {
+  ok: boolean;
+  status: number;
+  statusText: string;
+  json: jest.Mock<Promise<T>>;
+  text: jest.Mock<Promise<string>>;
+};
+
+/**
+ * Type for the return value of mockFetch
+ */
+export type MockFetchReturn<T> = {
+  mockResponse: MockResponse<T>;
+  mockFetch: jest.Mock<Promise<MockResponse<T>>>;
+};
+
 // Mock Fetch Response Helper
-export function createMockResponse<T>(data: T, status = 200, statusText = 'OK') {
+export function createMockResponse<T>(data: T, status = 200, statusText = 'OK'): MockResponse<T> {
   return {
     ok: status >= 200 && status < 300,
     status,
     statusText,
-    json: jest.fn().mockResolvedValue(data),
-    text: jest.fn().mockResolvedValue(JSON.stringify(data)),
+    json: jest.fn().mockResolvedValue(data) as jest.Mock<Promise<T>>,
+    text: jest.fn().mockResolvedValue(JSON.stringify(data)) as jest.Mock<Promise<string>>,
   };
 }
 
@@ -72,20 +91,24 @@ export function createMockErrorResponse(
   status = 500,
   statusText = 'Server Error',
   message = 'An error occurred'
-) {
+): MockResponse<{ error: string }> {
   return {
     ok: false,
     status,
     statusText,
-    json: jest.fn().mockResolvedValue({ error: message }),
-    text: jest.fn().mockResolvedValue(JSON.stringify({ error: message })),
+    json: jest.fn().mockResolvedValue({ error: message }) as jest.Mock<Promise<{ error: string }>>,
+    text: jest.fn().mockResolvedValue(JSON.stringify({ error: message })) as jest.Mock<
+      Promise<string>
+    >,
   };
 }
 
 // Mocks the fetch for testing API calls
-export function mockFetch<T>(data: T, status = 200) {
+export function mockFetch<T>(data: T, status = 200): MockFetchReturn<T> {
   const mockResponse = createMockResponse(data, status);
-  const fetchMock = jest.fn().mockResolvedValue(mockResponse);
+  const fetchMock = jest.fn().mockResolvedValue(mockResponse) as jest.Mock<
+    Promise<MockResponse<T>>
+  >;
   // Cast window to unknown first to avoid TypeScript errors
   (window as unknown as { fetch: typeof fetchMock }).fetch = fetchMock;
   return { mockResponse, mockFetch: fetchMock };
@@ -131,12 +154,12 @@ import type { RenderHookOptions, RenderHookResult } from '@testing-library/react
  * Custom renderHook method that includes the ThemeProvider wrapper
  */
 export function renderHookWithTheme<Result, Props>(
-  hook: (initialProps: Props) => Result,
+  hook: (_props: Props) => Result,
   options?: Omit<RenderHookOptions<Props>, 'wrapper'> & {
     themeMode?: 'light' | 'dark';
   }
 ): RenderHookResult<Result, Props> {
-  // The initialProps parameter is used by the renderHook function internally
+  // _initialProps would be used by the renderHook function internally
   const { themeMode = 'light', ...renderOptions } = options || {};
 
   return renderHook(hook, {

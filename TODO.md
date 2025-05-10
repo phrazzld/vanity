@@ -8,6 +8,11 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
 
   - **Action:** Systematically address type errors flagged by the stricter TypeScript settings. Prioritize errors in core files (e.g., API routes, database interfaces).
   - **Depends On:** None
+  
+- [ ] **TD6:** Fix TypewriterQuotes Timer Type Issues
+  - **Action:** Properly address TypeScript type errors related to timer functions in TypewriterQuotes.tsx. The current implementation uses `any` type with eslint-disable comments as a temporary workaround, but this should be replaced with proper typing.
+  - **Depends On:** None
+  - **Note:** Issues include: Type 'Timeout' is not assignable to type 'number'. The component uses `setTimeout` and `setInterval` which return values of type `Timeout` in Node.js or `number` in browsers.
 
 - [x] **TD2:** Fix ESLint v9 Integration with lint-staged
   - **Action:** Resolve the integration issues between ESLint v9 and lint-staged. Research and implement a solution that allows ESLint v9 to work correctly in the pre-commit hook.

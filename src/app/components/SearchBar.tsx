@@ -158,7 +158,7 @@ export default function SearchBar({
   };
 
   // Centralized function to trigger search and update submitted state
-   
+
   const triggerSearch = (searchQuery: string, searchFilters: Record<string, string>) => {
     setSubmittedQuery(searchQuery);
     setSubmittedFilters(searchFilters);
@@ -207,56 +207,18 @@ export default function SearchBar({
 
   return (
     <div className={`w-full ${className}`}>
-      <div
-        role="search"
-        className="flex flex-col sm:flex-row gap-2">
+      <div className="flex flex-col sm:flex-row gap-2">
         <form
           onSubmit={handleSubmit}
           className="w-full flex flex-col sm:flex-row gap-2"
-          // When searchAsYouType is true, we suppress the Enter key to prevent accidental form submissions
-          onKeyDown={searchAsYouType ? e => e.key === 'Enter' && e.preventDefault() : undefined}
-      >
-        {/* Search input with icon and clear button */}
-        <div className="relative flex-grow">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <svg
-              className="h-4 w-4 text-gray-400 dark:text-gray-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-
-          <input
-            type="text"
-            value={query}
-            onChange={handleInputChange}
-            placeholder={placeholder}
-            className="appearance-none block w-full px-3 py-2 pl-10 pr-10 border border-gray-300 dark:border-gray-600 
-              rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 
-              text-gray-900 dark:text-white bg-white dark:bg-gray-700
-              focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
-            aria-label="Search"
-          />
-
-          {/* Clear button - only show when there's text */}
-          {query && (
-            <button
-              type="button"
-              onClick={handleClear}
-              className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
-              aria-label="Clear search"
-            >
+          // No onKeyDown handler here - moved to the input element where it's more appropriate
+          role="search"
+        >
+          {/* Search input with icon and clear button */}
+          <div className="relative flex-grow">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               <svg
-                className="h-4 w-4"
+                className="h-4 w-4 text-gray-400 dark:text-gray-500"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -266,51 +228,89 @@ export default function SearchBar({
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
               </svg>
-            </button>
-          )}
-        </div>
+            </div>
 
-        {/* Filter dropdowns */}
-        {filters.map(filter => (
-          <div key={filter.name} className="sm:w-auto">
-            <select
-              value={activeFilters[filter.name] || ''}
-              onChange={e => handleFilterChange(filter.name, e.target.value)}
-              className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 
+            <input
+              type="text"
+              value={query}
+              onChange={handleInputChange}
+              placeholder={placeholder}
+              className="appearance-none block w-full px-3 py-2 pl-10 pr-10 border border-gray-300 dark:border-gray-600 
+              rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 
+              text-gray-900 dark:text-white bg-white dark:bg-gray-700
+              focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
+              aria-label="Search"
+              // When searchAsYouType is true, we suppress the Enter key to prevent accidental form submissions
+              onKeyDown={searchAsYouType ? e => e.key === 'Enter' && e.preventDefault() : undefined}
+            />
+
+            {/* Clear button - only show when there's text */}
+            {query && (
+              <button
+                type="button"
+                onClick={handleClear}
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                aria-label="Clear search"
+              >
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            )}
+          </div>
+
+          {/* Filter dropdowns */}
+          {filters.map(filter => (
+            <div key={filter.name} className="sm:w-auto">
+              <select
+                value={activeFilters[filter.name] || ''}
+                onChange={e => handleFilterChange(filter.name, e.target.value)}
+                className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 
                 rounded-md shadow-sm text-gray-900 dark:text-white bg-white dark:bg-gray-700
                 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
-              aria-label={filter.label}
-            >
-              {filter.options.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        ))}
+                aria-label={filter.label}
+              >
+                {filter.options.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))}
 
-        {/* Search button - only show when searchAsYouType is false */}
-        {!searchAsYouType && (
-          <button
-            type="submit"
-            className={`${getButtonClasses()} ${hasUnsearchedChanges ? 'ring-2 ring-offset-2 ring-blue-500 dark:ring-offset-gray-900' : ''}`}
-            aria-label="Submit search"
-          >
-            {searchButtonText}
-            {hasUnsearchedChanges && (
-              <span className="flex h-2 w-2 ml-1.5">
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-400">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-300 opacity-75"></span>
+          {/* Search button - only show when searchAsYouType is false */}
+          {!searchAsYouType && (
+            <button
+              type="submit"
+              className={`${getButtonClasses()} ${hasUnsearchedChanges ? 'ring-2 ring-offset-2 ring-blue-500 dark:ring-offset-gray-900' : ''}`}
+              aria-label="Submit search"
+            >
+              {searchButtonText}
+              {hasUnsearchedChanges && (
+                <span className="flex h-2 w-2 ml-1.5">
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-400">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-300 opacity-75"></span>
+                  </span>
                 </span>
-              </span>
-            )}
-          </button>
-        )}
-      </form>
+              )}
+            </button>
+          )}
+        </form>
       </div>
     </div>
   );

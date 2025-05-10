@@ -108,8 +108,8 @@ export default function TypewriterQuotes() {
         }
 
         // Cast response data to Quote[] with validation
-        const data = await response.json() as Quote[];
-        
+        const data = (await response.json()) as Quote[];
+
         // Validate the response data
         if (!Array.isArray(data)) {
           throw new Error('Invalid response format: expected an array of quotes');
@@ -131,9 +131,9 @@ export default function TypewriterQuotes() {
         // Fallback to a default quote if API fails
         // Use a properly typed fallback quote
         const fallbackQuote: Quote = {
-            id: 0,
-            text: 'Error loading quotes from database. Please check console for details.',
-            author: 'System',
+          id: 0,
+          text: 'Error loading quotes from database. Please check console for details.',
+          author: 'System',
         };
         setQuotes([fallbackQuote]);
         setPhase('typingQuote');
@@ -196,19 +196,20 @@ export default function TypewriterQuotes() {
       return; // Don't run typewriter logic until quotes are loaded
     }
 
-    // Use simpler type without NodeJS namespace
-    let timer: ReturnType<typeof setTimeout>;
+    // Use any to handle both browser and Node environments
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let timer: any;
 
     switch (phase) {
       case 'typingQuote':
         if (displayedQuote.length < rawQuote.length) {
           // Add one character at a time to the displayed quote
-          timer = setTimeout(() => {
+          timer = globalThis.setTimeout(() => {
             setDisplayedQuote(rawQuote.slice(0, displayedQuote.length + 1));
           }, TYPING_SPEED);
         } else {
           // Quote is fully typed, pause before showing the author
-          timer = setTimeout(() => {
+          timer = globalThis.setTimeout(() => {
             setPhase('pauseAfterQuote');
           }, PAUSE_AFTER_QUOTE);
         }
@@ -216,7 +217,7 @@ export default function TypewriterQuotes() {
 
       case 'pauseAfterQuote':
         // Brief pause after quote is displayed, then begin typing author
-        timer = setTimeout(() => {
+        timer = globalThis.setTimeout(() => {
           setPhase('typingAuthor');
         }, 300);
         break;
@@ -224,12 +225,12 @@ export default function TypewriterQuotes() {
       case 'typingAuthor':
         if (displayedAuthor.length < rawAuthor.length) {
           // Add one character at a time to the displayed author
-          timer = setTimeout(() => {
+          timer = globalThis.setTimeout(() => {
             setDisplayedAuthor(rawAuthor.slice(0, displayedAuthor.length + 1));
           }, TYPING_SPEED);
         } else {
           // Author is fully typed, pause for reading
-          timer = setTimeout(() => {
+          timer = globalThis.setTimeout(() => {
             setPhase('pauseAfterAuthor');
           }, PAUSE_AFTER_AUTHOR);
         }
@@ -237,7 +238,7 @@ export default function TypewriterQuotes() {
 
       case 'pauseAfterAuthor':
         // Longer pause after author is displayed, then begin erasing
-        timer = setTimeout(() => {
+        timer = globalThis.setTimeout(() => {
           setPhase('erasingAuthor');
         }, 500);
         break;
@@ -245,7 +246,7 @@ export default function TypewriterQuotes() {
       case 'erasingAuthor':
         if (displayedAuthor.length > 0) {
           // Erase author one character at a time from end
-          timer = setTimeout(() => {
+          timer = globalThis.setTimeout(() => {
             setDisplayedAuthor(displayedAuthor.slice(0, -1));
           }, ERASE_SPEED);
         } else {
@@ -257,7 +258,7 @@ export default function TypewriterQuotes() {
       case 'erasingQuote':
         if (displayedQuote.length > 0) {
           // Erase quote one character at a time from end
-          timer = setTimeout(() => {
+          timer = globalThis.setTimeout(() => {
             setDisplayedQuote(displayedQuote.slice(0, -1));
           }, ERASE_SPEED);
         } else {
