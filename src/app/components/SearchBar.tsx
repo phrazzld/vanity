@@ -31,7 +31,7 @@ export type FilterConfig = {
 
 export interface SearchBarProps {
   /** Callback when search is triggered */
-  onSearch: (query: string, filters: Record<string, string>) => void;
+  onSearch: (_query: string, _filters: Record<string, string>) => void;
   /** Initial search value */
   initialQuery?: string;
   /** Placeholder text for search input */
@@ -66,7 +66,8 @@ export default function SearchBar({
   filtersUpdateOnChange = false,
   buttonVariant = 'primary',
 }: SearchBarProps) {
-  // Access theme context
+  // Access theme context - used for theme-aware styling
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   const { isDarkMode } = useTheme();
 
   // Search input state (current value in input)
@@ -99,12 +100,14 @@ export default function SearchBar({
   );
 
   // For debouncing search
-  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const searchTimeoutRef = useRef<any>(null);
 
   // Clear any existing timeout on unmount
   useEffect(() => {
     return () => {
       if (searchTimeoutRef.current) {
+        // eslint-disable-next-line no-undef
         clearTimeout(searchTimeoutRef.current);
       }
     };
@@ -118,6 +121,7 @@ export default function SearchBar({
     // If searchAsYouType is enabled, trigger search with debounce
     if (searchAsYouType) {
       if (searchTimeoutRef.current) {
+        // eslint-disable-next-line no-undef
         clearTimeout(searchTimeoutRef.current);
       }
 
@@ -139,6 +143,7 @@ export default function SearchBar({
     // If filtersUpdateOnChange is true, trigger search
     if (filtersUpdateOnChange) {
       if (searchTimeoutRef.current) {
+        // eslint-disable-next-line no-undef
         clearTimeout(searchTimeoutRef.current);
       }
 
@@ -153,6 +158,7 @@ export default function SearchBar({
   };
 
   // Centralized function to trigger search and update submitted state
+   
   const triggerSearch = (searchQuery: string, searchFilters: Record<string, string>) => {
     setSubmittedQuery(searchQuery);
     setSubmittedFilters(searchFilters);
@@ -174,10 +180,8 @@ export default function SearchBar({
   const handleClear = () => {
     setQuery('');
 
-    // If searchAsYouType is enabled, also trigger the search with empty query
-    if (searchAsYouType) {
-      triggerSearch('', activeFilters);
-    }
+    // Always trigger the search with empty query when clearing
+    triggerSearch('', activeFilters);
   };
 
   // Determine if current input differs from last submitted search
@@ -203,11 +207,14 @@ export default function SearchBar({
 
   return (
     <div className={`w-full ${className}`}>
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col sm:flex-row gap-2"
-        // When searchAsYouType is true, we suppress the Enter key to prevent accidental form submissions
-        onKeyDown={searchAsYouType ? e => e.key === 'Enter' && e.preventDefault() : undefined}
+      <div
+        role="search"
+        className="flex flex-col sm:flex-row gap-2">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full flex flex-col sm:flex-row gap-2"
+          // When searchAsYouType is true, we suppress the Enter key to prevent accidental form submissions
+          onKeyDown={searchAsYouType ? e => e.key === 'Enter' && e.preventDefault() : undefined}
       >
         {/* Search input with icon and clear button */}
         <div className="relative flex-grow">
@@ -304,6 +311,7 @@ export default function SearchBar({
           </button>
         )}
       </form>
+      </div>
     </div>
   );
 }

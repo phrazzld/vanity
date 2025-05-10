@@ -1,12 +1,18 @@
 /**
  * Tests for useReadingsList and useQuotesList hooks
+ * @jest-environment jsdom
  */
 
-import { renderHook } from '@testing-library/react-hooks';
+/* eslint-env jest */
+
+import { renderHook } from '@testing-library/react';
 import { useReadingsList } from '../useReadingsList';
 import { useQuotesList } from '../useQuotesList';
 
-// Mock fetch
+// Mock fetch - define global as a workaround for ESLint
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+var global: any;
+ 
 global.fetch = jest.fn();
 
 describe('useReadingsList and useQuotesList', () => {
@@ -14,7 +20,8 @@ describe('useReadingsList and useQuotesList', () => {
     jest.resetAllMocks();
 
     // Mock successful response
-    (global.fetch as jest.Mock).mockResolvedValue({
+     
+    (global.fetch).mockResolvedValue({
       ok: true,
       json: async () => ({
         data: [],
@@ -28,7 +35,8 @@ describe('useReadingsList and useQuotesList', () => {
 
   it('useReadingsList constructs correct API URL with parameters', async () => {
     // Don't actually call fetch during this test
-    (global.fetch as jest.Mock).mockImplementation(() => new Promise(() => {}));
+     
+    (global.fetch).mockImplementation(() => new Promise(() => {}));
 
     renderHook(() =>
       useReadingsList({
@@ -51,7 +59,8 @@ describe('useReadingsList and useQuotesList', () => {
 
   it('useQuotesList constructs correct API URL with parameters', async () => {
     // Don't actually call fetch during this test
-    (global.fetch as jest.Mock).mockImplementation(() => new Promise(() => {}));
+     
+    (global.fetch).mockImplementation(() => new Promise(() => {}));
 
     renderHook(() =>
       useQuotesList({
@@ -72,7 +81,8 @@ describe('useReadingsList and useQuotesList', () => {
 
   it('useReadingsList handles API errors', async () => {
     // Mock error response
-    (global.fetch as jest.Mock).mockResolvedValue({
+     
+    (global.fetch).mockResolvedValue({
       ok: false,
       statusText: 'Not Found',
     });

@@ -84,57 +84,60 @@ expect.extend({
 // Browser API Mocks
 // =============================================================================
 
-// Mock localStorage
-const localStorageMock = (() => {
-  let store = {};
-  return {
-    getItem: jest.fn(key => store[key] ?? null),
-    setItem: jest.fn((key, value) => {
-      store[key] = value.toString();
-    }),
-    removeItem: jest.fn(key => {
-      delete store[key];
-    }),
-    clear: jest.fn(() => {
-      store = {};
-    }),
-    length: Object.keys(store).length,
-    key: jest.fn(index => Object.keys(store)[index] || null),
-  };
-})();
+// Mock browser APIs only in browser-like environments
+if (typeof window !== 'undefined') {
+  // Mock localStorage
+  const localStorageMock = (() => {
+    let store = {};
+    return {
+      getItem: jest.fn(key => store[key] ?? null),
+      setItem: jest.fn((key, value) => {
+        store[key] = value.toString();
+      }),
+      removeItem: jest.fn(key => {
+        delete store[key];
+      }),
+      clear: jest.fn(() => {
+        store = {};
+      }),
+      length: Object.keys(store).length,
+      key: jest.fn(index => Object.keys(store)[index] || null),
+    };
+  })();
 
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock,
-});
+  Object.defineProperty(window, 'localStorage', {
+    value: localStorageMock,
+  });
 
-// Mock matchMedia
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false, // Default to light mode
-    media: query,
-    onchange: null,
-    addListener: jest.fn(), // Deprecated
-    removeListener: jest.fn(), // Deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
+  // Mock matchMedia
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: jest.fn().mockImplementation(query => ({
+      matches: false, // Default to light mode
+      media: query,
+      onchange: null,
+      addListener: jest.fn(), // Deprecated
+      removeListener: jest.fn(), // Deprecated
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    })),
+  });
 
-// Make matchMedia mockable for dark mode tests
-window.matchMedia.mockImplementation(query => {
-  return {
-    matches: query === '(prefers-color-scheme: dark)',
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  };
-});
+  // Make matchMedia mockable for dark mode tests
+  window.matchMedia.mockImplementation(query => {
+    return {
+      matches: query === '(prefers-color-scheme: dark)',
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    };
+  });
+}
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
@@ -235,11 +238,19 @@ jest.mock('next/image', () => ({
 beforeEach(() => {
   jest.clearAllMocks();
 
-  // Reset localStorage mock
-  localStorageMock.clear();
+  // Reset localStorage mock and other browser-specific mocks only in browser environments
+  if (typeof window !== 'undefined') {
+    // Get localStorage mock from window property
+    const localStorageMock = window.localStorage;
+    if (localStorageMock && typeof localStorageMock.clear === 'function') {
+      localStorageMock.clear();
+    }
 
-  // Reset any custom mocks
-  window.matchMedia.mockClear();
+    // Reset any custom window mocks
+    if (window.matchMedia && typeof window.matchMedia.mockClear === 'function') {
+      window.matchMedia.mockClear();
+    }
+  }
 });
 
 // Mock environment variables

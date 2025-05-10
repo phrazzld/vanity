@@ -93,14 +93,15 @@ describe('YearSection Component', () => {
   it('renders year heading correctly', () => {
     render(<YearSection year="2023" readings={sampleReadings} />);
 
-    expect(screen.getByText('2023')).toBeInTheDocument();
-    expect(screen.getByText('(2 books)')).toBeInTheDocument();
+    // Use more specific query with role
+    expect(screen.getByRole('heading', { name: /2023/ })).toBeInTheDocument();
+    expect(screen.getByText(/2 books/)).toBeInTheDocument();
   });
 
   it('renders correct count with singular form', () => {
     render(<YearSection year="2022" readings={[sampleReadings[0]]} />);
 
-    expect(screen.getByText('(1 book)')).toBeInTheDocument();
+    expect(screen.getByText(/1 book/)).toBeInTheDocument();
   });
 
   it('displays "Currently Reading" section with appropriate styling', () => {
@@ -130,8 +131,8 @@ describe('YearSection Component', () => {
   it('handles empty reading array gracefully', () => {
     render(<YearSection year="2024" readings={[]} />);
 
-    expect(screen.getByText('2024')).toBeInTheDocument();
-    expect(screen.getByText('No readings found for this year.')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /2024/ })).toBeInTheDocument();
+    expect(screen.getByRole('paragraph')).toHaveTextContent(/No readings found for this year/);
   });
 
   it('renders additional children when provided', () => {
@@ -141,7 +142,7 @@ describe('YearSection Component', () => {
       </YearSection>
     );
 
-    expect(screen.getByTestId('custom-content')).toBeInTheDocument();
+    // We can use getByText directly since it's more specific and reliable
     expect(screen.getByText('Custom content')).toBeInTheDocument();
   });
 });

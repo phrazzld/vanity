@@ -1,8 +1,11 @@
 /**
  * Tests for useListState hook
+ * @jest-environment jsdom
  */
 
-import { renderHook, act } from '@testing-library/react-hooks';
+/* eslint-env jest */
+
+import { renderHook, act } from '@testing-library/react';
 import { useListState } from '../useListState';
 
 // Mock data
@@ -57,6 +60,7 @@ describe('useListState', () => {
   });
 
   it('accepts initial values', async () => {
+     
     const { result } = renderHook(() =>
       useListState<TestItem>({
         fetchItems: mockFetchItems,

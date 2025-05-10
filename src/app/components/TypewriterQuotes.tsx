@@ -107,7 +107,13 @@ export default function TypewriterQuotes() {
           throw new Error(`Failed to fetch quotes: ${response.status} ${response.statusText}`);
         }
 
-        const data = await response.json();
+        // Cast response data to Quote[] with validation
+        const data = await response.json() as Quote[];
+        
+        // Validate the response data
+        if (!Array.isArray(data)) {
+          throw new Error('Invalid response format: expected an array of quotes');
+        }
         console.log(`TypewriterQuotes: Received ${data.length} quotes from API`);
 
         if (data.length === 0) {
@@ -123,13 +129,13 @@ export default function TypewriterQuotes() {
       } catch (error) {
         console.error('TypewriterQuotes: Error fetching quotes:', error);
         // Fallback to a default quote if API fails
-        setQuotes([
-          {
+        // Use a properly typed fallback quote
+        const fallbackQuote: Quote = {
             id: 0,
             text: 'Error loading quotes from database. Please check console for details.',
             author: 'System',
-          } as Quote,
-        ]);
+        };
+        setQuotes([fallbackQuote]);
         setPhase('typingQuote');
       }
     };
@@ -154,12 +160,22 @@ export default function TypewriterQuotes() {
    */
   useEffect(() => {
     // Setup blinking interval
-    const blink = setInterval(() => {
+    // TypeScript definitions for setInterval in test environments can be problematic
+    // Make it explicit that we're dealing with a number
+    const blink: number = globalThis.setInterval(() => {
       setCursorVisible(v => !v);
     }, CURSOR_BLINK_INTERVAL);
 
     // Clean up interval on unmount
-    return () => clearInterval(blink);
+    return () => {
+      try {
+        // Use globalThis which is more reliable in both browser and test environments
+        globalThis.clearInterval(blink);
+      } catch (e) {
+        // Silently fail in test environments where this might not be available
+        console.error('Failed to clear interval:', e);
+      }
+    };
   }, []);
 
   /**
@@ -180,7 +196,8 @@ export default function TypewriterQuotes() {
       return; // Don't run typewriter logic until quotes are loaded
     }
 
-    let timer: NodeJS.Timeout;
+    // Use simpler type without NodeJS namespace
+    let timer: ReturnType<typeof setTimeout>;
 
     switch (phase) {
       case 'typingQuote':
@@ -254,7 +271,15 @@ export default function TypewriterQuotes() {
 
     // Clean up timer on unmount or when dependencies change
     return () => {
-      if (timer) clearTimeout(timer);
+      if (timer) {
+        try {
+          // Use globalThis which is more reliable in both browser and test environments
+          globalThis.clearTimeout(timer);
+        } catch (e) {
+          // Silently fail in test environments where this might not be available
+          console.error('Failed to clear timeout:', e);
+        }
+      }
     };
   }, [phase, displayedQuote, displayedAuthor, rawQuote, rawAuthor, quoteIndex, quotes]);
 

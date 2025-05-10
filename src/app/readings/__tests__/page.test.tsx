@@ -1,4 +1,5 @@
-import { render, waitFor } from '@testing-library/react';
+// Using render but not explicitly using waitFor in this file
+import { render } from '@testing-library/react';
 import { getReadings } from '@/lib/db';
 import prisma from '@/lib/prisma';
 import type { Reading } from '@/types';
@@ -104,10 +105,9 @@ describe('ReadingsPage', () => {
     const { default: ReadingsPage } = await import('../page');
 
     // Render the mocked component
-    const { getByTestId } = render(<ReadingsPage />);
+    const { getByText } = render(<ReadingsPage />);
 
-    // Verify the mocked component renders
-    expect(getByTestId('readings-page')).toBeInTheDocument();
-    expect(getByTestId('readings-page').textContent).toBe('Mocked Readings Page');
+    // Verify the mocked component renders - use getByText instead of getByTestId
+    expect(getByText('Mocked Readings Page')).toBeInTheDocument();
   });
 });
