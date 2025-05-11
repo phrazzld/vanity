@@ -21,11 +21,12 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Depends On:** None
   - **Note:** Issues include: TestingLibraryElementError suggesting better queries (queryByText instead of queryByTestId), and possibly problems with style assertions and hover interaction testing.
   - **Resolution:** Updated tests to use semantically meaningful queries like getByText and getByRole instead of testIds, modified style assertions to be more robust and compatible with the testing environment, and improved interaction testing with hover/touch simulation.
-- [ ] **TD8:** Fix SearchBar Component Snapshot Tests
+- [x] **TD8:** Fix SearchBar Component Snapshot Tests
 
   - **Action:** Update SearchBar component snapshot tests to match the new component structure after accessibility and role attribute fixes.
   - **Depends On:** None
   - **Note:** Snapshot test failures occurred after moving role="search" from a div to the form element for accessibility.
+  - **Resolution:** Updated snapshots to reflect the new component structure with `role="search"` on the form element instead of the div. All tests are now passing.
 
 - [ ] **TD9:** Fix useReadingsQuotesList Test Environment
 
@@ -35,9 +36,9 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
 
 - [ ] **TD10:** Update Obsolete Snapshot Files
 
-  - **Action:** Update or remove obsolete snapshot files including DarkModeToggle.snapshot.test.tsx.snap and SearchBar.snapshot.test.tsx.snap.
+  - **Action:** Update or remove obsolete snapshot file DarkModeToggle.snapshot.test.tsx.snap.
   - **Depends On:** None
-  - **Note:** Run `npm test -- -u` to update the snapshot files after all component fixes are in place.
+  - **Note:** Run `npm test -- -u` to update the snapshot files after all component fixes are in place. SearchBar.snapshot.test.tsx.snap has been updated as part of TD8.
 
 - [x] **TD2:** Fix ESLint v9 Integration with lint-staged
   - **Action:** Resolve the integration issues between ESLint v9 and lint-staged. Research and implement a solution that allows ESLint v9 to work correctly in the pre-commit hook.
