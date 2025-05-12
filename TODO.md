@@ -205,3 +205,21 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Action:** Document development workflow, branch naming, PR process, and quality expectations.
   - **Depends On:** [D2]
   - **Resolution:** Created comprehensive CONTRIBUTING.md with detailed sections on development workflow, branch naming conventions, PR process, quality expectations, commit guidelines, and release process. Included clear instructions and examples for contributors.
+
+## Testing Issues
+
+- [ ] **TD11:** Fix Keyboard Navigation Test Failures
+
+  - **Action:** Fix failing tests in the keyboard navigation utilities, primarily in the focus.test.ts file. Issues include failures in isVisible, getFocusableElements, focusFirstElement, and focusLastElement tests.
+  - **Depends On:** None
+  - **Note:** Test failures appear to be related to JSDOM environment limitations with visibility detection and focus handling.
+
+- [ ] **TD12:** Fix useListState React Testing Issues
+
+  - **Action:** Address "not wrapped in act(...)" warnings in useListState.test.tsx by properly wrapping state updates with act() and fixing async testing patterns.
+  - **Depends On:** None
+
+- [ ] **TD13:** Update Obsolete Snapshot Files
+  - **Action:** Update or regenerate the obsolete snapshot files for DarkModeToggle and SearchBar components.
+  - **Depends On:** None
+  - **Note:** Run `npm test -- -u` to update the snapshot files.
