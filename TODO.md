@@ -28,11 +28,12 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Note:** Snapshot test failures occurred after moving role="search" from a div to the form element for accessibility.
   - **Resolution:** Updated snapshots to reflect the new component structure with `role="search"` on the form element instead of the div. All tests are now passing.
 
-- [ ] **TD9:** Fix useReadingsQuotesList Test Environment
+- [x] **TD9:** Fix useReadingsQuotesList Test Environment
 
   - **Action:** Fix the test environment setup in useReadingsQuotesList.test.tsx to properly mock global.fetch.
   - **Depends On:** None
   - **Note:** Test fails with error "TypeError: Cannot set properties of undefined (setting 'fetch')" when trying to set global.fetch = jest.fn().
+  - **Resolution:** Used globalThis.fetch instead of global.fetch for better cross-environment compatibility, implemented proper waitFor logic for async tests, and fixed URL encoding expectations in the tests.
 
 - [ ] **TD10:** Update Obsolete Snapshot Files
 
