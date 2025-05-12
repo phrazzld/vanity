@@ -11,12 +11,12 @@ We provide custom test utilities in `src/test-utils/index.ts` to make testing co
 Always import from the test-utils package instead of directly from @testing-library/react:
 
 ```tsx
-import { 
-  renderWithTheme,  // Custom render with theme context
-  screen, 
-  waitFor, 
-  setupUser,        // Pre-configured userEvent setup 
-  mockFetch        // Helper for mocking fetch calls
+import {
+  renderWithTheme, // Custom render with theme context
+  screen,
+  waitFor,
+  setupUser, // Pre-configured userEvent setup
+  mockFetch, // Helper for mocking fetch calls
 } from '@/test-utils';
 ```
 
@@ -34,7 +34,7 @@ renderWithTheme(<MyComponent />, { themeMode: 'dark' });
 // You can still pass all standard render options
 renderWithTheme(<MyComponent />, {
   themeMode: 'dark',
-  container: document.body  // standard render option
+  container: document.body, // standard render option
 });
 ```
 
@@ -132,7 +132,7 @@ describe('useMyHook', () => {
 
     expect(result.current.value).toBe('new value');
   });
-  
+
   it('works with dark mode', () => {
     const { result } = renderHookWithTheme(() => useMyHook(), { themeMode: 'dark' });
     // Now test dark mode specific behavior
@@ -279,15 +279,15 @@ describe('ThemeToggleComponent', () => {
   it('toggles theme when button is clicked', async () => {
     const user = setupUser();
     renderWithTheme(<ThemeToggleComponent />);
-    
+
     // Initial state (light mode)
     let themeProvider = screen.getByTestId('theme-provider');
     expect(themeProvider).toHaveAttribute('data-theme', 'light');
-    
+
     // Click toggle button
     const toggleButton = screen.getByRole('button', { name: /toggle theme/i });
     await user.click(toggleButton);
-    
+
     // Check if theme changed to dark mode
     themeProvider = screen.getByTestId('theme-provider');
     expect(themeProvider).toHaveAttribute('data-theme', 'dark');

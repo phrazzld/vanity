@@ -38,7 +38,6 @@ export async function checkA11y(ui: ReactElement, options: A11yTestOptions = {})
   const results = await axe(container.container, axeOptions);
 
   if (verbose && results.violations.length > 0) {
-     
     console.log(results.violations);
   }
 
@@ -133,7 +132,6 @@ export async function checkResponsiveA11y(
       const results = await axe(container.container, options.axeOptions);
 
       if (options.verbose && results.violations.length > 0) {
-         
         console.log(
           `Viewport ${size.name} (${size.width}x${size.height}) violations:`,
           results.violations

@@ -35,9 +35,9 @@ export default function Button({
   onClick,
 }: ButtonProps) {
   const { isDarkMode } = useTheme();
-  
+
   // Component logic
-  
+
   // Return JSX
   return (
     <button
@@ -117,14 +117,14 @@ describe('Button', () => {
     renderWithTheme(<Button>Click me</Button>);
     expect(screen.getByText('Click me')).toBeInTheDocument();
   });
-  
+
   it('calls onClick handler when clicked', () => {
     const handleClick = jest.fn();
     renderWithTheme(<Button onClick={handleClick}>Click me</Button>);
     fireEvent.click(screen.getByText('Click me'));
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
-  
+
   it('applies correct class for variant', () => {
     renderWithTheme(<Button variant="secondary">Secondary</Button>);
     const button = screen.getByText('Secondary');

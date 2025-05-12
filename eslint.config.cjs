@@ -60,7 +60,7 @@ module.exports = [
       'src/**/__tests__/*.{js,jsx,ts,tsx}',
       'src/**/__tests__/**/*.{js,jsx,ts,tsx}',
       'tests/**/*.{js,jsx,ts,tsx}',
-      'jest.setup.js'
+      'jest.setup.js',
     ],
     languageOptions: {
       parser: typescriptParser,
@@ -84,14 +84,20 @@ module.exports = [
       ...tseslint.configs.recommended.rules,
       // Relaxed rules for test files
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': ['warn', { 
-        'argsIgnorePattern': '^_|props|initialProps',
-        'varsIgnorePattern': '^_' 
-      }],
-      'no-unused-vars': ['warn', { 
-        'argsIgnorePattern': '^_|props|initialProps', 
-        'varsIgnorePattern': '^_' 
-      }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_|props|initialProps',
+          varsIgnorePattern: '^_',
+        },
+      ],
+      'no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_|props|initialProps',
+          varsIgnorePattern: '^_',
+        },
+      ],
       'max-lines-per-function': 'off',
       'max-lines': 'off',
       // Allow non-null assertions in tests
@@ -126,10 +132,13 @@ module.exports = [
       '@typescript-eslint/no-unsafe-assignment': 'error',
       '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
-      '@typescript-eslint/no-unused-vars': ['warn', { 
-        'argsIgnorePattern': '^_', 
-        'varsIgnorePattern': '^_' 
-      }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
     },
   },
 
@@ -175,10 +184,13 @@ module.exports = [
         },
       ],
       // Allow underscore prefixed parameters to be unused
-      'no-unused-vars': ['warn', { 
-        'argsIgnorePattern': '^_', 
-        'varsIgnorePattern': '^_' 
-      }],
+      'no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
     },
   },
 
@@ -230,7 +242,6 @@ module.exports = [
       },
     },
   },
-
 
   // Storybook files
   {

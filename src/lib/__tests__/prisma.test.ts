@@ -16,7 +16,7 @@ describe('Prisma Client', () => {
     // Import the client again to test the singleton behavior
     // Using dynamic import to prevent TypeScript errors
     // This pattern is safe in test files when we need to verify module imports
-    
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const prismaModule = jest.requireActual('../prisma');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

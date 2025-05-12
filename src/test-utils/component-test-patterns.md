@@ -53,7 +53,7 @@ describe('Card Component', () => {
         <p>Test content</p>
       </Card>
     );
-    
+
     expect(screen.getByText('Test Title')).toBeInTheDocument();
     expect(screen.getByText('Test content')).toBeInTheDocument();
   });
@@ -65,10 +65,10 @@ describe('Card Component', () => {
       </Card>,
       { themeMode: 'dark' }
     );
-    
+
     // Verify the theme provider is in dark mode
     expect(screen.getByTestId('theme-provider')).toHaveAttribute('data-theme', 'dark');
-    
+
     // If card has specific dark mode styling, test those as well
     const card = screen.getByRole('article');
     expect(card).toBeInTheDocument();
@@ -96,7 +96,7 @@ import Button from '../Button';
 
 describe('Button Component', () => {
   const onClickMock = jest.fn();
-  
+
   beforeEach(() => {
     onClickMock.mockClear();
   });
@@ -104,20 +104,24 @@ describe('Button Component', () => {
   it('calls onClick when clicked', async () => {
     const user = setupUser();
     renderWithTheme(<Button onClick={onClickMock}>Click Me</Button>);
-    
+
     const button = screen.getByRole('button', { name: /click me/i });
     await user.click(button);
-    
+
     expect(onClickMock).toHaveBeenCalledTimes(1);
   });
 
   it('can be disabled', async () => {
     const user = setupUser();
-    renderWithTheme(<Button disabled onClick={onClickMock}>Disabled Button</Button>);
-    
+    renderWithTheme(
+      <Button disabled onClick={onClickMock}>
+        Disabled Button
+      </Button>
+    );
+
     const button = screen.getByRole('button', { name: /disabled button/i });
     expect(button).toBeDisabled();
-    
+
     await user.click(button);
     expect(onClickMock).not.toHaveBeenCalled();
   });
@@ -125,11 +129,11 @@ describe('Button Component', () => {
   it('supports keyboard interaction', async () => {
     const user = setupUser();
     renderWithTheme(<Button onClick={onClickMock}>Keyboard Button</Button>);
-    
+
     const button = screen.getByRole('button', { name: /keyboard button/i });
     button.focus();
     expect(button).toHaveFocus();
-    
+
     await user.keyboard('{enter}');
     expect(onClickMock).toHaveBeenCalledTimes(1);
   });
@@ -156,7 +160,7 @@ import UserProfile from '../UserProfile';
 describe('UserProfile Component', () => {
   it('shows loading state initially', () => {
     renderWithTheme(<UserProfile userId="123" />);
-    
+
     expect(screen.getByText(/loading/i)).toBeInTheDocument();
   });
 
@@ -164,14 +168,14 @@ describe('UserProfile Component', () => {
     // Mock successful API response
     const userData = { id: '123', name: 'John Doe', email: 'john@example.com' };
     mockFetch(userData);
-    
+
     renderWithTheme(<UserProfile userId="123" />);
-    
+
     // Wait for loading to finish
     await waitFor(() => {
       expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
     });
-    
+
     // Verify user data is displayed
     expect(screen.getByText('John Doe')).toBeInTheDocument();
     expect(screen.getByText('john@example.com')).toBeInTheDocument();
@@ -181,14 +185,14 @@ describe('UserProfile Component', () => {
     // Mock failed API response
     const mockError = { error: 'Failed to fetch user data' };
     mockFetch(mockError, 500);
-    
+
     renderWithTheme(<UserProfile userId="123" />);
-    
+
     // Wait for loading to finish
     await waitFor(() => {
       expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
     });
-    
+
     // Verify error state is displayed
     expect(screen.getByText(/error loading profile/i)).toBeInTheDocument();
   });
@@ -204,20 +208,14 @@ Verify that components render correctly with various props.
 ```tsx
 it('renders correctly with required props', () => {
   renderWithTheme(<Component requiredProp="value" />);
-  
+
   // Check for expected elements
   expect(screen.getByText('Expected Text')).toBeInTheDocument();
 });
 
 it('renders correctly with all props', () => {
-  renderWithTheme(
-    <Component 
-      requiredProp="value"
-      optionalProp="optional"
-      anotherProp={123}
-    />
-  );
-  
+  renderWithTheme(<Component requiredProp="value" optionalProp="optional" anotherProp={123} />);
+
   // Check for expected elements with all props
   expect(screen.getByText('Expected Text')).toBeInTheDocument();
   expect(screen.getByText('optional')).toBeInTheDocument();
@@ -232,12 +230,12 @@ Test user interactions using the `setupUser` utility from `@testing-library/user
 it('responds to user interaction', async () => {
   const handleChange = jest.fn();
   const user = setupUser();
-  
+
   renderWithTheme(<Input onChange={handleChange} />);
-  
+
   const input = screen.getByRole('textbox');
   await user.type(input, 'test input');
-  
+
   expect(handleChange).toHaveBeenCalledTimes(10); // Once per character
   expect(input).toHaveValue('test input');
 });
@@ -250,7 +248,7 @@ Test components in both light and dark themes using `renderWithTheme`.
 ```tsx
 it('renders correctly in light mode', () => {
   renderWithTheme(<ThemeAwareComponent />);
-  
+
   // Default is light mode
   expect(screen.getByTestId('theme-provider')).toHaveAttribute('data-theme', 'light');
   // Check light-mode specific elements
@@ -258,7 +256,7 @@ it('renders correctly in light mode', () => {
 
 it('renders correctly in dark mode', () => {
   renderWithTheme(<ThemeAwareComponent />, { themeMode: 'dark' });
-  
+
   expect(screen.getByTestId('theme-provider')).toHaveAttribute('data-theme', 'dark');
   // Check dark-mode specific elements
 });
@@ -272,7 +270,7 @@ Test asynchronous behavior using `waitFor`, `findBy*` queries, or by mocking tim
 // Using waitFor
 it('updates after async operation', async () => {
   renderWithTheme(<AsyncComponent />);
-  
+
   await waitFor(() => {
     expect(screen.getByText('Loaded')).toBeInTheDocument();
   });
@@ -281,7 +279,7 @@ it('updates after async operation', async () => {
 // Using findBy queries
 it('eventually shows data', async () => {
   renderWithTheme(<AsyncComponent />);
-  
+
   expect(await screen.findByText('Loaded')).toBeInTheDocument();
 });
 
@@ -289,12 +287,12 @@ it('eventually shows data', async () => {
 it('updates after delay', async () => {
   jest.useFakeTimers();
   renderWithTheme(<DelayedComponent />);
-  
+
   // Fast-forward time
   jest.advanceTimersByTime(1000);
-  
+
   expect(screen.getByText('Updated')).toBeInTheDocument();
-  
+
   jest.useRealTimers();
 });
 ```
@@ -307,32 +305,46 @@ Follow this structured approach for organizing component tests:
 describe('ComponentName', () => {
   // Setup code, mocks and cleanup
   const mockFn = jest.fn();
-  
+
   beforeEach(() => {
     mockFn.mockClear();
   });
-  
+
   afterEach(() => {
     // Cleanup if needed
   });
 
   // Basic rendering tests
   describe('rendering', () => {
-    it('renders correctly with default props', () => { /* ... */ });
-    it('renders correctly with all props', () => { /* ... */ });
-    it('renders in dark mode correctly', () => { /* ... */ });
+    it('renders correctly with default props', () => {
+      /* ... */
+    });
+    it('renders correctly with all props', () => {
+      /* ... */
+    });
+    it('renders in dark mode correctly', () => {
+      /* ... */
+    });
   });
 
   // Interaction tests
   describe('user interactions', () => {
-    it('responds to clicks', async () => { /* ... */ });
-    it('handles keyboard navigation', async () => { /* ... */ });
+    it('responds to clicks', async () => {
+      /* ... */
+    });
+    it('handles keyboard navigation', async () => {
+      /* ... */
+    });
   });
 
   // Specific functionality tests
   describe('specific functionality', () => {
-    it('filters items correctly', () => { /* ... */ });
-    it('sorts data in ascending order', () => { /* ... */ });
+    it('filters items correctly', () => {
+      /* ... */
+    });
+    it('sorts data in ascending order', () => {
+      /* ... */
+    });
   });
 });
 ```
@@ -356,23 +368,25 @@ Our project provides several utilities in `src/test-utils/index.ts` to make test
 it('validates form input', async () => {
   const user = setupUser();
   const handleSubmit = jest.fn();
-  
+
   renderWithTheme(<Form onSubmit={handleSubmit} />);
-  
+
   // Try submitting empty form
   await user.click(screen.getByRole('button', { name: /submit/i }));
   expect(handleSubmit).not.toHaveBeenCalled();
   expect(screen.getByText(/name is required/i)).toBeInTheDocument();
-  
+
   // Fill in required field
   await user.type(screen.getByLabelText(/name/i), 'John Doe');
-  
+
   // Submit form now that it's valid
   await user.click(screen.getByRole('button', { name: /submit/i }));
   expect(handleSubmit).toHaveBeenCalledTimes(1);
-  expect(handleSubmit).toHaveBeenCalledWith(expect.objectContaining({
-    name: 'John Doe'
-  }));
+  expect(handleSubmit).toHaveBeenCalledWith(
+    expect.objectContaining({
+      name: 'John Doe',
+    })
+  );
 });
 ```
 
@@ -382,10 +396,10 @@ it('validates form input', async () => {
 it('applies animation classes correctly', async () => {
   const user = setupUser();
   renderWithTheme(<AnimatedComponent />);
-  
+
   const element = screen.getByTestId('animated-element');
   expect(element).not.toHaveClass('animate-in');
-  
+
   // Trigger animation
   await user.click(screen.getByRole('button', { name: /animate/i }));
   expect(element).toHaveClass('animate-in');
@@ -399,22 +413,22 @@ it('debounces input changes', async () => {
   jest.useFakeTimers();
   const onSearchMock = jest.fn();
   const user = setupUser();
-  
+
   renderWithTheme(<SearchBar onSearch={onSearchMock} debounceMs={300} />);
-  
+
   // Type in search input
   await user.type(screen.getByRole('textbox'), 'test');
-  
+
   // Callback shouldn't be called immediately
   expect(onSearchMock).not.toHaveBeenCalled();
-  
+
   // Advance timers by debounce time
   jest.advanceTimersByTime(300);
-  
+
   // Now the callback should be called
   expect(onSearchMock).toHaveBeenCalledTimes(1);
   expect(onSearchMock).toHaveBeenCalledWith('test', expect.anything());
-  
+
   jest.useRealTimers();
 });
 ```
@@ -425,19 +439,19 @@ it('debounces input changes', async () => {
 it('renders modal when triggered', async () => {
   const user = setupUser();
   renderWithTheme(<ModalComponent />);
-  
+
   // Modal should be closed initially
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-  
+
   // Open the modal
   await user.click(screen.getByRole('button', { name: /open modal/i }));
-  
+
   // Modal should be rendered
   expect(screen.getByRole('dialog')).toBeInTheDocument();
-  
+
   // Close the modal
   await user.click(screen.getByRole('button', { name: /close/i }));
-  
+
   // Modal should be removed
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 });

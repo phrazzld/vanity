@@ -12,7 +12,7 @@ const PrismaClientMock = jest.fn().mockImplementation(() => ({
   $connect: jest.fn(),
   $disconnect: jest.fn(),
   $queryRaw: jest.fn(),
-  $transaction: jest.fn((callback) => callback()),
+  $transaction: jest.fn(callback => callback()),
   reading: {
     findMany: jest.fn(),
     findUnique: jest.fn(),

@@ -167,7 +167,7 @@ export async function getReadingsWithFilters(
 
     // Execute count query with parameters
     // Using unknown is safer than any for raw SQL results
-    const countResult = (await prisma.$queryRawUnsafe(countQuery, ...queryParams));
+    const countResult = await prisma.$queryRawUnsafe(countQuery, ...queryParams);
 
     // Type guard to ensure we're working with an array-like object
     const totalCount =
