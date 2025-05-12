@@ -9,9 +9,7 @@ import {
   restoreFocus,
 } from '../focus';
 
-// Mock document methods
-document.querySelector = jest.fn();
-document.querySelectorAll = jest.fn();
+// We'll mock at the container level instead of document level
 
 describe('Focus utilities', () => {
   let container: HTMLDivElement;
@@ -25,9 +23,17 @@ describe('Focus utilities', () => {
 
     button1 = document.createElement('button');
     button1.textContent = 'Button 1';
+    // Explicitly set visible styles for JSDOM
+    button1.style.display = 'inline-block';
+    button1.style.visibility = 'visible';
+    button1.style.opacity = '1';
 
     button2 = document.createElement('button');
     button2.textContent = 'Button 2';
+    // Explicitly set visible styles for JSDOM
+    button2.style.display = 'inline-block';
+    button2.style.visibility = 'visible';
+    button2.style.opacity = '1';
 
     hiddenButton = document.createElement('button');
     hiddenButton.textContent = 'Hidden Button';
@@ -37,12 +43,13 @@ describe('Focus utilities', () => {
     container.appendChild(button2);
     container.appendChild(hiddenButton);
 
-    // Mock querySelectorAll to return our elements
-    (document.querySelectorAll as jest.Mock).mockImplementation(selector => {
-      if (selector.includes('button')) {
-        return [button1, button2, hiddenButton];
+    // Mock container's querySelectorAll instead of document's
+    // This better simulates how getFocusableElements actually works
+    jest.spyOn(container, 'querySelectorAll').mockImplementation(selector => {
+      if (selector.includes('button') || selector.includes('[tabindex]')) {
+        return [button1, button2, hiddenButton] as unknown as NodeListOf<HTMLElement>;
       }
-      return [];
+      return [] as unknown as NodeListOf<HTMLElement>;
     });
   });
 
@@ -86,9 +93,14 @@ describe('Focus utilities', () => {
     });
 
     it('should return false if no focusable elements exist', () => {
-      (document.querySelectorAll as jest.Mock).mockReturnValue([]);
+      // Use a new container with no elements for this test
+      const emptyContainer = document.createElement('div');
+      // Mock empty container's querySelectorAll to return empty
+      jest
+        .spyOn(emptyContainer, 'querySelectorAll')
+        .mockReturnValue([] as unknown as NodeListOf<HTMLElement>);
 
-      const result = focusFirstElement(container);
+      const result = focusFirstElement(emptyContainer);
 
       expect(result).toBe(false);
     });
@@ -109,9 +121,14 @@ describe('Focus utilities', () => {
     });
 
     it('should return false if no focusable elements exist', () => {
-      (document.querySelectorAll as jest.Mock).mockReturnValue([]);
+      // Use a new container with no elements for this test
+      const emptyContainer = document.createElement('div');
+      // Mock empty container's querySelectorAll to return empty
+      jest
+        .spyOn(emptyContainer, 'querySelectorAll')
+        .mockReturnValue([] as unknown as NodeListOf<HTMLElement>);
 
-      const result = focusLastElement(container);
+      const result = focusLastElement(emptyContainer);
 
       expect(result).toBe(false);
     });

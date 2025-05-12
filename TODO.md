@@ -208,11 +208,12 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
 
 ## Testing Issues
 
-- [ ] **TD11:** Fix Keyboard Navigation Test Failures
+- [x] **TD11:** Fix Keyboard Navigation Test Failures
 
   - **Action:** Fix failing tests in the keyboard navigation utilities, primarily in the focus.test.ts file. Issues include failures in isVisible, getFocusableElements, focusFirstElement, and focusLastElement tests.
   - **Depends On:** None
   - **Note:** Test failures appear to be related to JSDOM environment limitations with visibility detection and focus handling.
+  - **Resolution:** Modified isVisible function to better handle JSDOM environment by adding fallback visibility detection using computed styles. Updated the test setup to explicitly set style properties and properly mock querySelectorAll at the container level instead of document level.
 
 - [ ] **TD12:** Fix useListState React Testing Issues
 
