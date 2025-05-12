@@ -298,6 +298,13 @@ export function createResponsiveSnapshots(
   return snapshots;
 }
 
+// ===========================================================================
+// Accessibility Testing Utilities
+// ===========================================================================
+
+// Import and export accessibility testing helpers
+export * from './a11y-helpers';
+
 // Export everything from testing library for convenience
 export * from '@testing-library/react';
 export { userEvent };

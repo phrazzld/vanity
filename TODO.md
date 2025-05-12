@@ -35,11 +35,12 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Note:** Test fails with error "TypeError: Cannot set properties of undefined (setting 'fetch')" when trying to set global.fetch = jest.fn().
   - **Resolution:** Used globalThis.fetch instead of global.fetch for better cross-environment compatibility, implemented proper waitFor logic for async tests, and fixed URL encoding expectations in the tests.
 
-- [ ] **TD10:** Update Obsolete Snapshot Files
+- [x] **TD10:** Update Obsolete Snapshot Files
 
   - **Action:** Update or remove obsolete snapshot file DarkModeToggle.snapshot.test.tsx.snap.
   - **Depends On:** None
   - **Note:** Run `npm test -- -u` to update the snapshot files after all component fixes are in place. SearchBar.snapshot.test.tsx.snap has been updated as part of TD8.
+  - **Resolution:** Updated DarkModeToggle.snapshot.test.tsx.snap to match the current implementation of the component. This ensures snapshot tests correctly reflect the current UI state.
 
 - [x] **TD2:** Fix ESLint v9 Integration with lint-staged
   - **Action:** Resolve the integration issues between ESLint v9 and lint-staged. Research and implement a solution that allows ESLint v9 to work correctly in the pre-commit hook.
@@ -172,10 +173,11 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
 
 ## Accessibility Standards
 
-- [ ] **T32:** Configure axe-core for Accessibility Testing
+- [x] **T32:** Configure axe-core for Accessibility Testing
 
   - **Action:** Integrate axe-core into the testing framework for automated accessibility checks.
   - **Depends On:** [T23]
+  - **Resolution:** Integrated axe-core via jest-axe, created utility functions for accessibility testing, added example tests for key components, and documented the approach in ACCESSIBILITY_TESTING.md.
 
 - [x] **T33:** Add eslint-plugin-jsx-a11y
 

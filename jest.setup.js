@@ -5,6 +5,7 @@
 import '@testing-library/jest-dom';
 import { configure } from '@testing-library/react';
 import React from 'react';
+import { toHaveNoViolations } from 'jest-axe';
 
 // Configure Testing Library
 configure({
@@ -16,9 +17,13 @@ configure({
 });
 
 // =============================================================================
-// Custom Jest Matchers for Snapshots
+// Custom Jest Matchers for Snapshots and Accessibility
 // =============================================================================
 
+// Add jest-axe matcher
+expect.extend(toHaveNoViolations);
+
+// Add our custom matchers
 expect.extend({
   // Custom matcher for checking if a component renders consistently
   toMatchComponentSnapshot(received, expected) {
