@@ -142,7 +142,7 @@ export function createGridNavigationHandler(
       const firstCell = firstRow.querySelector(cellSelector) as HTMLElement;
 
       if (firstCell) {
-        (firstCell).focus({ preventScroll });
+        firstCell.focus({ preventScroll });
         return true;
       }
 
