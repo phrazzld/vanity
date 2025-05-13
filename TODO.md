@@ -215,10 +215,11 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Note:** Test failures appear to be related to JSDOM environment limitations with visibility detection and focus handling.
   - **Resolution:** Modified isVisible function to better handle JSDOM environment by adding fallback visibility detection using computed styles. Updated the test setup to explicitly set style properties and properly mock querySelectorAll at the container level instead of document level.
 
-- [ ] **TD12:** Fix useListState React Testing Issues
+- [x] **TD12:** Fix useListState React Testing Issues
 
   - **Action:** Address "not wrapped in act(...)" warnings in useListState.test.tsx by properly wrapping state updates with act() and fixing async testing patterns.
   - **Depends On:** None
+  - **Resolution:** Updated the tests to use modern React Testing Library patterns with waitFor() instead of waitForNextUpdate(), properly wrapped state changes in act(), and implemented proper handling of debounced search with Jest timer mocks. All tests now pass without warnings.
 
 - [ ] **TD13:** Update Obsolete Snapshot Files
   - **Action:** Update or regenerate the obsolete snapshot files for DarkModeToggle and SearchBar components.

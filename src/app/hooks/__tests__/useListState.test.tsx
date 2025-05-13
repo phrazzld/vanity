@@ -5,7 +5,7 @@
 
 /* eslint-env jest */
 
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { useListState } from '../useListState';
 
 // Mock data
@@ -37,7 +37,7 @@ describe('useListState', () => {
   });
 
   it('initializes with default values', async () => {
-    const { result, waitForNextUpdate } = renderHook(() =>
+    const { result } = renderHook(() =>
       useListState<TestItem>({
         fetchItems: mockFetchItems,
         fetchOnMount: true,
@@ -47,8 +47,10 @@ describe('useListState', () => {
     // Initially loading
     expect(result.current.isLoading).toBe(true);
 
-    // Wait for initial fetch to complete
-    await waitForNextUpdate();
+    // Wait for loading to complete
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     // Default state should be set
     expect(result.current.items).toEqual(defaultResponse.data);
@@ -56,7 +58,6 @@ describe('useListState', () => {
     expect(result.current.sort).toEqual({ field: 'id', order: 'desc' });
     expect(result.current.pagination.pageSize).toBe(10);
     expect(result.current.pagination.currentPage).toBe(1);
-    expect(result.current.isLoading).toBe(false);
   });
 
   it('accepts initial values', async () => {
@@ -77,7 +78,7 @@ describe('useListState', () => {
   });
 
   it('fetches data with correct parameters', async () => {
-    const { result: _result, waitForNextUpdate } = renderHook(() =>
+    renderHook(() =>
       useListState<TestItem>({
         fetchItems: mockFetchItems,
         initialSearch: 'test',
@@ -87,11 +88,12 @@ describe('useListState', () => {
       })
     );
 
-    // Wait for initial fetch to complete
-    await waitForNextUpdate();
+    // Wait for fetch to complete
+    await waitFor(() => {
+      expect(mockFetchItems).toHaveBeenCalled();
+    });
 
     // Check that fetch was called with correct parameters
-    // No need to use result for this test since we're just checking the function call
     expect(mockFetchItems).toHaveBeenCalledWith({
       search: 'test',
       sortBy: 'name',
@@ -102,15 +104,17 @@ describe('useListState', () => {
   });
 
   it('changes page and fetches new data', async () => {
-    const { result, waitForNextUpdate } = renderHook(() =>
+    const { result } = renderHook(() =>
       useListState<TestItem>({
         fetchItems: mockFetchItems,
         fetchOnMount: true,
       })
     );
 
-    // Wait for initial fetch to complete
-    await waitForNextUpdate();
+    // Wait for initial load to complete
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     // Set up mock for next page
     mockFetchItems.mockResolvedValueOnce({
@@ -123,8 +127,11 @@ describe('useListState', () => {
       result.current.setPage(2);
     });
 
-    // Wait for fetch to complete
-    await waitForNextUpdate();
+    // Wait for the new data to be loaded
+    await waitFor(() => {
+      // The loading state will toggle from true to false
+      expect(mockFetchItems).toHaveBeenCalledTimes(2);
+    });
 
     // Check that fetch was called with updated offset
     expect(mockFetchItems).toHaveBeenCalledWith(
@@ -141,7 +148,10 @@ describe('useListState', () => {
       currentPage: 2,
     });
 
-    const { result, waitForNextUpdate } = renderHook(() =>
+    // Set up fake timers for debounce
+    jest.useFakeTimers();
+
+    const { result } = renderHook(() =>
       useListState<TestItem>({
         fetchItems: mockFetchItems,
         fetchOnMount: true,
@@ -149,16 +159,20 @@ describe('useListState', () => {
       })
     );
 
-    // Wait for initial fetch to complete
-    await waitForNextUpdate();
+    // Wait for initial load to complete
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     // Go to page 2
     act(() => {
       result.current.setPage(2);
     });
 
-    // Wait for fetch to complete
-    await waitForNextUpdate();
+    // Wait for page change to be processed
+    await waitFor(() => {
+      expect(mockFetchItems).toHaveBeenCalledTimes(2);
+    });
 
     // Prepare mock for search results
     mockFetchItems.mockResolvedValueOnce({
@@ -170,10 +184,14 @@ describe('useListState', () => {
     // Update search
     act(() => {
       result.current.setSearch('new search');
+      // Run any debounce timers immediately
+      jest.runAllTimers();
     });
 
-    // Wait for fetch to complete
-    await waitForNextUpdate();
+    // Wait for search to complete
+    await waitFor(() => {
+      expect(mockFetchItems).toHaveBeenCalledTimes(3);
+    });
 
     // Page should be reset to 1
     expect(result.current.pagination.currentPage).toBe(1);
@@ -185,10 +203,13 @@ describe('useListState', () => {
         offset: 0, // Page 1
       })
     );
+
+    // Restore real timers
+    jest.useRealTimers();
   });
 
   it('handles filter changes', async () => {
-    const { result, waitForNextUpdate } = renderHook(() =>
+    const { result } = renderHook(() =>
       useListState<TestItem, { category: string }>({
         fetchItems: mockFetchItems,
         initialFilters: { category: 'all' },
@@ -196,8 +217,10 @@ describe('useListState', () => {
       })
     );
 
-    // Wait for initial fetch to complete
-    await waitForNextUpdate();
+    // Wait for initial load to complete
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     // Prepare mock for filtered results
     mockFetchItems.mockResolvedValueOnce({
@@ -211,8 +234,10 @@ describe('useListState', () => {
       result.current.updateFilter('category', 'books');
     });
 
-    // Wait for fetch to complete
-    await waitForNextUpdate();
+    // Wait for filter change to be processed
+    await waitFor(() => {
+      expect(mockFetchItems).toHaveBeenCalledTimes(2);
+    });
 
     // Check that fetch was called with updated filter
     expect(mockFetchItems).toHaveBeenCalledWith(
@@ -221,19 +246,22 @@ describe('useListState', () => {
       })
     );
 
-    // Update all filters at once
+    // Prepare mock for next filter change
     mockFetchItems.mockResolvedValueOnce({
       ...defaultResponse,
       data: [{ id: 2, name: 'Item 2' }],
       totalCount: 1,
     });
 
+    // Update all filters at once
     act(() => {
       result.current.setFilters({ category: 'movies' });
     });
 
-    // Wait for fetch to complete
-    await waitForNextUpdate();
+    // Wait for the filters update to be processed
+    await waitFor(() => {
+      expect(mockFetchItems).toHaveBeenCalledTimes(3);
+    });
 
     // Check that fetch was called with updated filters
     expect(mockFetchItems).toHaveBeenCalledWith(
@@ -244,15 +272,17 @@ describe('useListState', () => {
   });
 
   it('handles sort changes', async () => {
-    const { result, waitForNextUpdate } = renderHook(() =>
+    const { result } = renderHook(() =>
       useListState<TestItem>({
         fetchItems: mockFetchItems,
         fetchOnMount: true,
       })
     );
 
-    // Wait for initial fetch to complete
-    await waitForNextUpdate();
+    // Wait for initial load to complete
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     // Prepare mock for sorted results
     mockFetchItems.mockResolvedValueOnce(defaultResponse);
@@ -262,8 +292,10 @@ describe('useListState', () => {
       result.current.setSort('name', 'asc');
     });
 
-    // Wait for fetch to complete
-    await waitForNextUpdate();
+    // Wait for sort change to be processed
+    await waitFor(() => {
+      expect(mockFetchItems).toHaveBeenCalledTimes(2);
+    });
 
     // Check that fetch was called with updated sort
     expect(mockFetchItems).toHaveBeenCalledWith(
@@ -273,15 +305,18 @@ describe('useListState', () => {
       })
     );
 
-    // Toggle sort on same field
+    // Prepare mock for toggle sort
     mockFetchItems.mockResolvedValueOnce(defaultResponse);
 
+    // Toggle sort on same field
     act(() => {
       result.current.toggleSort('name');
     });
 
-    // Wait for fetch to complete
-    await waitForNextUpdate();
+    // Wait for toggled sort to be processed
+    await waitFor(() => {
+      expect(mockFetchItems).toHaveBeenCalledTimes(3);
+    });
 
     // Should toggle to desc
     expect(mockFetchItems).toHaveBeenCalledWith(
@@ -297,18 +332,19 @@ describe('useListState', () => {
     const testError = new Error('Network error');
     mockFetchItems.mockRejectedValueOnce(testError);
 
-    const { result, waitForNextUpdate } = renderHook(() =>
+    const { result } = renderHook(() =>
       useListState<TestItem>({
         fetchItems: mockFetchItems,
         fetchOnMount: true,
       })
     );
 
-    // Wait for fetch to complete with error
-    await waitForNextUpdate();
+    // Wait for error to be processed and loading to complete
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     // Error should be set
     expect(result.current.error).toBe(testError.message);
-    expect(result.current.isLoading).toBe(false);
   });
 });
