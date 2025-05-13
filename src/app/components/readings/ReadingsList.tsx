@@ -253,7 +253,7 @@ export default function ReadingsList({
               />
             </svg>
           </div>
-          <p className="text-sm font-medium text-gray-900 dark:text-white">No readings found</p>
+          <h3 className="text-sm font-medium text-gray-900 dark:text-white">No readings found</h3>
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
             {searchQuery
               ? 'Try adjusting your search criteria or filters'

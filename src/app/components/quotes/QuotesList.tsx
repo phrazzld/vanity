@@ -49,12 +49,14 @@ export interface QuotesListProps {
   sort: ListSortOption;
 
   /** Function to call when a column header is clicked for sorting */
+  // eslint-disable-next-line no-unused-vars
   onSortChange: (field: string) => void;
 
   /** Current search query for highlighting */
   searchQuery?: string;
 
   /** Function to call when a quote item is selected */
+  // eslint-disable-next-line no-unused-vars
   onSelectQuote: (quote: Quote) => void;
 
   /** Currently selected quote (if any) */
@@ -120,8 +122,8 @@ export default function QuotesList({
 
   // Function to handle sort column click
   const handleSortClick = useCallback(
-    (field: string) => {
-      onSortChange(field);
+    (_field: string) => {
+      onSortChange(_field);
     },
     [onSortChange]
   );
@@ -196,7 +198,7 @@ export default function QuotesList({
               />
             </svg>
           </div>
-          <p className="text-sm font-medium text-gray-900 dark:text-white">No quotes found</p>
+          <h3 className="text-sm font-medium text-gray-900 dark:text-white">No quotes found</h3>
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
             {searchQuery
               ? 'Try adjusting your search criteria or filters'

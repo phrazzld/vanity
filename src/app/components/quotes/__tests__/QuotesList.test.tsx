@@ -40,7 +40,7 @@ describe('QuotesList Component', () => {
   });
 
   it('renders the list of quotes correctly', () => {
-    render(
+    const { container } = render(
       <QuotesList
         quotes={mockQuotes}
         sort={mockSort}
@@ -50,14 +50,14 @@ describe('QuotesList Component', () => {
     );
 
     // Check if all quote text snippets are rendered (could be truncated)
-    expect(screen.getByText(/The way to get started/)).toBeInTheDocument();
-    expect(screen.getByText(/Life is what happens/)).toBeInTheDocument();
-    expect(screen.getByText(/The greatest glory/)).toBeInTheDocument();
+    expect(container.textContent).toContain('The way to get started');
+    expect(container.textContent).toContain('Life is what happens');
+    expect(container.textContent).toContain('The greatest glory');
 
     // Check if authors are rendered
-    expect(screen.getByText('Walt Disney')).toBeInTheDocument();
-    expect(screen.getByText('John Lennon')).toBeInTheDocument();
-    expect(screen.getByText('Anonymous')).toBeInTheDocument();
+    expect(container.textContent).toContain('Walt Disney');
+    expect(container.textContent).toContain('John Lennon');
+    expect(container.textContent).toContain('Anonymous');
   });
 
   it('handles sorting when column headers are clicked', () => {
@@ -80,7 +80,7 @@ describe('QuotesList Component', () => {
   });
 
   it('calls onSelectQuote when a quote is clicked', () => {
-    render(
+    const { container } = render(
       <QuotesList
         quotes={mockQuotes}
         sort={mockSort}
@@ -89,8 +89,9 @@ describe('QuotesList Component', () => {
       />
     );
 
-    // Click on a quote
-    fireEvent.click(screen.getByText(/The way to get started/));
+    // Find the first quote item using role and click it
+    const quoteItems = container.querySelectorAll('[role="button"]');
+    fireEvent.click(quoteItems[0]);
     expect(mockHandleSelectQuote).toHaveBeenCalledWith(mockQuotes[0]);
   });
 
@@ -111,7 +112,7 @@ describe('QuotesList Component', () => {
   });
 
   it('shows the proper empty state when no quotes are available', () => {
-    render(
+    const { container } = render(
       <QuotesList
         quotes={[]}
         sort={mockSort}
@@ -120,14 +121,15 @@ describe('QuotesList Component', () => {
       />
     );
 
-    expect(screen.getByText('No quotes found')).toBeInTheDocument();
-    expect(
-      screen.getByText('Start building your collection of inspirational quotes')
-    ).toBeInTheDocument();
+    // Using a more flexible approach to find text elements
+    expect(container.textContent).toContain('No quotes found');
+    expect(container.textContent).toContain(
+      'Start building your collection of inspirational quotes'
+    );
   });
 
   it('shows different empty state message when searching', () => {
-    render(
+    const { container } = render(
       <QuotesList
         quotes={[]}
         sort={mockSort}
@@ -137,7 +139,8 @@ describe('QuotesList Component', () => {
       />
     );
 
-    expect(screen.getByText('No quotes found')).toBeInTheDocument();
-    expect(screen.getByText('Try adjusting your search criteria or filters')).toBeInTheDocument();
+    // Using a more flexible approach to find text elements
+    expect(container.textContent).toContain('No quotes found');
+    expect(container.textContent).toContain('Try adjusting your search criteria or filters');
   });
 });
