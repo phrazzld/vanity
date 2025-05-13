@@ -221,7 +221,8 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Depends On:** None
   - **Resolution:** Updated the tests to use modern React Testing Library patterns with waitFor() instead of waitForNextUpdate(), properly wrapped state changes in act(), and implemented proper handling of debounced search with Jest timer mocks. All tests now pass without warnings.
 
-- [ ] **TD13:** Update Obsolete Snapshot Files
+- [x] **TD13:** Update Obsolete Snapshot Files
   - **Action:** Update or regenerate the obsolete snapshot files for DarkModeToggle and SearchBar components.
   - **Depends On:** None
   - **Note:** Run `npm test -- -u` to update the snapshot files.
+  - **Resolution:** Regenerated the snapshot files for DarkModeToggle and SearchBar components. The snapshot tests now pass correctly for these components.
