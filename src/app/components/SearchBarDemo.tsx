@@ -8,7 +8,8 @@
  */
 
 import { useState } from 'react';
-import SearchBar, { FilterConfig } from './SearchBar';
+import type { FilterConfig } from './SearchBar';
+import SearchBar from './SearchBar';
 
 export default function SearchBarDemo() {
   const [searchQuery, setSearchQuery] = useState('');

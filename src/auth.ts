@@ -15,16 +15,18 @@ const auth = {
    * @returns Success status and user object if valid
    */
   validateCredentials(username: string, password: string) {
+    /* eslint-disable no-undef */
     // Get environment variables with fallbacks for development
-    const adminUsername = process.env.ADMIN_USERNAME || 'admin';
-    const adminPassword = process.env.ADMIN_PASSWORD || 'password123';
+    const adminUsername = (typeof process !== 'undefined' && process.env.ADMIN_USERNAME) || 'admin';
+    const adminPassword = (typeof process !== 'undefined' && process.env.ADMIN_PASSWORD) || 'password123';
 
     // Log auth attempt (without printing actual passwords)
     console.log(`Auth attempt for user: ${username}`);
     console.log(`Expected admin username: ${adminUsername}`);
     console.log(
-      `Environment variables present: ${!!process.env.ADMIN_USERNAME}, ${!!process.env.ADMIN_PASSWORD}`
+      `Environment variables present: ${!!(typeof process !== 'undefined' && process.env.ADMIN_USERNAME)}, ${!!(typeof process !== 'undefined' && process.env.ADMIN_PASSWORD)}`
     );
+    /* eslint-enable no-undef */
 
     // Check if someone is trying to use the demo credentials shown on the page
     if (

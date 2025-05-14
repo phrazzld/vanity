@@ -16,8 +16,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Initialize from localStorage and system preference
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     // First, check localStorage
-    const storedTheme = localStorage.getItem('theme');
+    const storedTheme = window.localStorage.getItem('theme');
     if (storedTheme) {
       setIsDarkMode(storedTheme === 'dark');
     } else {
@@ -31,24 +33,26 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Apply dark mode class when state changes
   useEffect(() => {
-    if (!isInitialized) return;
+    if (!isInitialized || typeof window === 'undefined') return;
 
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+      window.localStorage.setItem('theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      window.localStorage.setItem('theme', 'light');
     }
   }, [isDarkMode, isInitialized]);
 
   // Listen for system preference changes
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
     const handleChange = (e: MediaQueryListEvent) => {
       // Only update if the user hasn't explicitly set a preference
-      if (!localStorage.getItem('theme')) {
+      if (!window.localStorage.getItem('theme')) {
         setIsDarkMode(e.matches);
       }
     };

@@ -9,7 +9,7 @@
 
 import { useReadingsList } from '../hooks/useReadingsList';
 import SearchBar from './SearchBar';
-import { FilterConfig } from './SearchBar';
+import type { FilterConfig } from './SearchBar';
 
 export default function ReadingsListStateDemo() {
   // Initialize the readings list state with default options

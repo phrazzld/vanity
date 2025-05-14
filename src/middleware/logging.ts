@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { logger, CorrelationContext } from '@/lib/logger';
 
 // Generate a unique ID for the request

@@ -5,7 +5,7 @@
  * @module components/readings/YearSection
  */
 
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import type { Reading } from '@/types';
 import ReadingCard from './ReadingCard';
 

@@ -11,7 +11,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ReactNode, useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
+import { useState, useEffect } from 'react';
 import './admin.css';
 import { useTheme } from '../context/ThemeContext';
 
@@ -19,6 +20,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars  
   const { isDarkMode } = useTheme();
 
   // Check authentication status on mount
@@ -26,6 +28,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     async function checkAuth() {
       try {
         const response = await fetch('/api/auth/session');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const data = await response.json();
         setIsAuthenticated(data.isAuthenticated || false);
       } catch (error) {

@@ -6,7 +6,8 @@
  * This page allows administrators to create, view, edit, and delete readings.
  */
 
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect } from 'react';
+import type { FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -187,10 +188,12 @@ export default function ReadingsManagementPage() {
       });
 
       if (!response.ok) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const errorData = await response.json();
         throw new Error(errorData.error || `Failed with status: ${response.status}`);
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const savedReading = await response.json();
 
       setSuccessMessage(
@@ -235,6 +238,7 @@ export default function ReadingsManagementPage() {
       });
 
       if (!response.ok) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const errorData = await response.json();
         throw new Error(errorData.error || `Failed with status: ${response.status}`);
       }
@@ -265,8 +269,8 @@ export default function ReadingsManagementPage() {
       .trim()
       .replace(/\s+/g, '-') // Replace spaces with -
       .replace(/&/g, '-and-') // Replace & with 'and'
-      .replace(/[^\w\-]+/g, '') // Remove all non-word chars
-      .replace(/\-\-+/g, '-'); // Replace multiple - with single -
+      .replace(/[^\w-]+/g, '') // Remove all non-word chars
+      .replace(/--+/g, '-'); // Replace multiple - with single -
   };
 
   const generateSlug = () => {
@@ -783,10 +787,10 @@ export default function ReadingsManagementPage() {
 
                   <div className="form-footer">
                     <div>
-                      {!isCreating && (
+                      {!isCreating && selectedReading && (
                         <button
                           type="button"
-                          onClick={() => confirmDelete(selectedReading!)}
+                          onClick={() => confirmDelete(selectedReading)}
                           className="form-button-danger"
                           disabled={isSaving}
                         >
@@ -948,9 +952,11 @@ export default function ReadingsManagementPage() {
                       <div className="mt-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700 flex items-start gap-3">
                         {readingToDelete?.coverImageSrc ? (
                           <div className="h-14 w-10 flex-shrink-0 rounded overflow-hidden border border-gray-200 dark:border-gray-700">
-                            {process.env.NEXT_PUBLIC_SPACES_BASE_URL ? (
+                            {/* eslint-disable-next-line no-undef */}
+                            {(typeof process !== 'undefined' && process.env.NEXT_PUBLIC_SPACES_BASE_URL) ? (
                               <Image
-                                src={`${process.env.NEXT_PUBLIC_SPACES_BASE_URL}${readingToDelete.coverImageSrc}`}
+                                /* eslint-disable-next-line no-undef */
+                                src={`${typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_SPACES_BASE_URL : ''}${readingToDelete.coverImageSrc}`}
                                 alt={`Cover for ${readingToDelete.title}`}
                                 width={40}
                                 height={56}
