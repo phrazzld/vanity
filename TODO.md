@@ -226,3 +226,34 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Depends On:** None
   - **Note:** Run `npm test -- -u` to update the snapshot files.
   - **Resolution:** Regenerated the snapshot files for DarkModeToggle and SearchBar components. The snapshot tests now pass correctly for these components.
+
+## ESLint and Type Safety Issues
+
+- [ ] **TD14:** Fix Node.js Environment Detection and Global Object References
+
+  - **Action:** Implement proper environment detection for Node.js globals (process, localStorage, etc.) across the codebase. Use a consistent approach with isomorphic detection patterns.
+  - **Depends On:** None
+  - **Note:** Files with issues include ThemeContext.tsx, error.tsx, auth.ts, readings/page.tsx.
+
+- [ ] **TD15:** Properly Type API Responses
+
+  - **Action:** Implement proper TypeScript types for API responses and eliminate unsafe `any` assignments from response parsing.
+  - **Depends On:** None
+  - **Note:** Files with issues include admin/quotes/page.tsx, admin/readings/page.tsx, admin/layout.tsx.
+
+- [ ] **TD16:** Fix Non-null Assertion Usage
+
+  - **Action:** Replace non-null assertions (!) with proper null checking and conditional rendering.
+  - **Depends On:** None
+  - **Note:** Instances occur in admin/quotes/page.tsx and admin/readings/page.tsx.
+
+- [ ] **TD17:** Clean Up Unused Variables
+
+  - **Action:** Remove or properly use variables that are declared but not used in components.
+  - **Depends On:** None
+  - **Note:** Files with issues include admin/layout.tsx, admin/quotes/page.tsx, admin/readings/page.tsx.
+
+- [ ] **TD18:** Properly Implement Import Type Declarations
+  - **Action:** Use consistent type imports with `import type` for types-only imports across the codebase.
+  - **Depends On:** None
+  - **Note:** Files with issues include middleware.ts and various component imports.
