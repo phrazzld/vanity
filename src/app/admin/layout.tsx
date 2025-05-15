@@ -20,7 +20,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars  
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   const { isDarkMode } = useTheme();
 
   // Check authentication status on mount
@@ -28,8 +28,19 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     async function checkAuth() {
       try {
         const response = await fetch('/api/auth/session');
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const data = await response.json();
+        // Define the expected response type
+        interface SessionResponse {
+          isAuthenticated: boolean;
+          user?: {
+            name: string;
+            email: string;
+            role: string;
+          };
+          expires?: string;
+        }
+
+        // Parse with type safety
+        const data = (await response.json()) as SessionResponse;
         setIsAuthenticated(data.isAuthenticated || false);
       } catch (error) {
         console.error('Error checking auth status:', error);

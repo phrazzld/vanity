@@ -231,10 +231,13 @@ module.exports = [
       '**/tailwind.config.ts',
       '**/eslint.config.cjs',
       '**/commitlint.config.js',
+      '**/.prettierrc.js',
       '**/scripts/**/*.js',
       '**/src/lib/logger.ts',
       '**/src/lib/prisma.ts',
       '**/src/middleware/logging.ts',
+      '**/src/app/api/auth/**/*.ts',
+      '**/src/auth.ts',
     ],
     languageOptions: {
       globals: {

@@ -4,7 +4,7 @@
  * This file handles authentication routes for the admin section.
  */
 
-import type { NextRequest} from 'next/server';
+import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import auth from '@/auth';
 
@@ -32,11 +32,21 @@ export async function GET(request: NextRequest) {
       // Check if user is authenticated from cookie
       const isAuthenticated = request.cookies.has('admin_authenticated');
       const userStr = request.cookies.get('admin_user')?.value;
-      let user = null;
+
+      // Define user shape
+      interface AdminUser {
+        name: string;
+        email: string;
+        role: string;
+      }
+
+      let user: AdminUser | null = null;
 
       if (isAuthenticated && userStr) {
         try {
-          user = JSON.parse(userStr);
+          // Parse with type safety
+          const parsedUser = JSON.parse(userStr) as AdminUser;
+          user = parsedUser;
         } catch (e) {
           console.error('Failed to parse user cookie:', e);
         }
@@ -64,7 +74,11 @@ export async function POST(request: NextRequest) {
     const callbackUrl = (formData.get('callbackUrl') as string) || '/admin';
 
     console.log(`Login attempt: username=${username}, callbackUrl=${callbackUrl}`);
-    console.log(`Current environment: ${process.env.NODE_ENV}`);
+    // Safely access environment variable
+     
+    console.log(
+      `Current environment: ${typeof process !== 'undefined' && process.env ? process.env.NODE_ENV : 'unknown'}`
+    );
 
     // Use our auth utility to validate credentials
     const result = auth.validateCredentials(username, password);
@@ -87,8 +101,11 @@ export async function POST(request: NextRequest) {
         maxAge: 60 * 60 * 24, // 24 hours
         httpOnly: true,
         // In Vercel preview deployments, we should allow non-secure cookies
+         
         secure:
-          process.env.NODE_ENV === 'production' && !process.env.VERCEL_ENV?.includes('preview'),
+          typeof process !== 'undefined' &&
+          process.env.NODE_ENV === 'production' &&
+          !(typeof process !== 'undefined' && process.env.VERCEL_ENV?.includes('preview')),
         sameSite: 'lax',
       });
 
@@ -106,8 +123,11 @@ export async function POST(request: NextRequest) {
           maxAge: 60 * 60 * 24, // 24 hours
           httpOnly: true,
           // In Vercel preview deployments, we should allow non-secure cookies
+           
           secure:
-            process.env.NODE_ENV === 'production' && !process.env.VERCEL_ENV?.includes('preview'),
+            typeof process !== 'undefined' &&
+            process.env.NODE_ENV === 'production' &&
+            !(typeof process !== 'undefined' && process.env.VERCEL_ENV?.includes('preview')),
           sameSite: 'lax',
         });
       }

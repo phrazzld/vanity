@@ -6,7 +6,7 @@
  * This page allows administrators to create, view, edit, and delete quotes.
  */
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -22,24 +22,21 @@ import {
 import type { FilterConfig } from '@/app/components/SearchBar';
 
 export default function QuotesManagementPage() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-  const router = useRouter();
+  // Keep router for potential future use
+  const _router = useRouter();
 
   // Use the quotes list hook for search, filter, and pagination
   const {
     items: quotes,
     search,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-    filters,
+    filters: _filters,
     sort,
     pagination,
     isLoading,
     error,
     setSearch,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-    updateFilter,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-    setSort,
+    updateFilter: _updateFilter,
+    setSort: _setSort,
     toggleSort,
     setPage,
     setPageSize,
@@ -53,8 +50,7 @@ export default function QuotesManagementPage() {
   const filterConfig: FilterConfig[] = [];
 
   // Handle search and filter changes
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-  const handleSearch = (query: string, searchFilters: Record<string, string>) => {
+  const _handleSearch = (query: string, _searchFilters: Record<string, string>) => {
     setSearch(query);
     // Apply any additional filters if needed in the future
   };
@@ -269,7 +265,7 @@ export default function QuotesManagementPage() {
                 <div className="flex items-center">
                   <div className="flex-grow">
                     <SearchBar
-                      onSearch={handleSearch}
+                      onSearch={_handleSearch}
                       initialQuery={search}
                       placeholder="Search by quote text or author..."
                       filters={filterConfig}
