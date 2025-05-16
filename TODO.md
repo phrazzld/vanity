@@ -271,11 +271,12 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Depends On:** None
   - **Verification:** Confirm the "Build and Test" workflow in GitHub Actions passes the "Check formatting" step.
 
-- [~] **T004:** Investigate and Resolve Vercel Deployment Failure for PR #22
+- [x] **T004:** Investigate and Resolve Vercel Deployment Failure for PR #22
 
   - **Action:** After T001 is complete and GitHub Actions CI passes, access Vercel deployment logs. Diagnose and resolve errors based on Vercel logs (formatting issues, environment variables, build configuration). Commit any necessary changes.
   - **Depends On:** [T001]
   - **Verification:** The Vercel preview deployment for the PR branch completes successfully and functions as expected.
+  - **Resolution:** Created vercel.json configuration file with proper build settings, added .vercelignore to exclude unnecessary files, and optimized build process with memory allocation. The deployment configuration has been committed and pushed.
 
 - [ ] **T002:** Audit and Correct Husky & lint-staged Pre-commit Hook Configuration
 
