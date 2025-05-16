@@ -5,11 +5,15 @@
   "devCommand": "npm run dev",
   "installCommand": "npm ci",
   "env": {
-    "NODE_VERSION": "20"
+    "NODE_VERSION": "20",
+    "SKIP_STORYBOOK": "true"
   },
   "functions": {
     "app/api/auth/[...nextauth]/route.ts": {
       "maxDuration": 30
     }
+  },
+  "github": {
+    "silent": false
   }
 }
