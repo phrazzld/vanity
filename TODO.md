@@ -262,3 +262,71 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Depends On:** None
   - **Note:** Files with issues include middleware.ts and various component imports.
   - **Resolution:** Added proper `import type` syntax for type-only imports to separate runtime code from type declarations.
+
+## CI/CD Issues (PR #22)
+
+- [~] **T001:** Apply Prettier Formatting to 8 Files
+
+  - **Action:** Checkout `plan/infrastructure-ci-cd`, pull latest changes, and run `npm ci`. Execute `npm run format` to apply Prettier formatting to the 8 affected files. Stage the formatted files, commit with message "style: apply Prettier formatting to 8 files", and push.
+  - **Depends On:** None
+  - **Verification:** Confirm the "Build and Test" workflow in GitHub Actions passes the "Check formatting" step.
+
+- [ ] **T004:** Investigate and Resolve Vercel Deployment Failure for PR #22
+
+  - **Action:** After T001 is complete and GitHub Actions CI passes, access Vercel deployment logs. Diagnose and resolve errors based on Vercel logs (formatting issues, environment variables, build configuration). Commit any necessary changes.
+  - **Depends On:** [T001]
+  - **Verification:** The Vercel preview deployment for the PR branch completes successfully and functions as expected.
+
+- [ ] **T002:** Audit and Correct Husky & lint-staged Pre-commit Hook Configuration
+
+  - **Action:** Verify `husky` and `lint-staged` are properly configured in `package.json` and the `.husky/pre-commit` file exists with correct commands. Review the `lint-staged` configuration to ensure it runs Prettier on relevant files.
+  - **Depends On:** None
+  - **Verification:** Confirm pre-commit hooks successfully prevent or fix formatting issues.
+
+- [ ] **T003:** Update Development Documentation for Pre-commit Hook Setup and Policy
+
+  - **Action:** Update `DEVELOPMENT_SETUP.md` with clear steps for installing and confirming Husky pre-commit hooks. Update `CONTRIBUTING.md` to emphasize the "No `--no-verify`" policy.
+  - **Depends On:** [T002]
+  - **Verification:** Documentation clearly explains hook setup and policy.
+
+- [ ] **T010:** Add Recommended VS Code Editor Settings for Formatting and Linting
+
+  - **Action:** Create or update `.vscode/settings.json` with recommended editor settings for format-on-save using Prettier and real-time ESLint integration.
+  - **Depends On:** None
+  - **Verification:** Confirm code is automatically formatted on save in VS Code.
+
+- [ ] **T005:** Audit CI Pipeline for Comprehensive Quality Checks
+
+  - **Action:** Review GitHub Actions workflow files against `DEVELOPMENT_PHILOSOPHY.md` requirements for critical checks (formatting, linting, type checking, tests, build, security scans). Document any gaps.
+  - **Depends On:** None
+  - **Verification:** Comprehensive audit document.
+
+- [ ] **T006:** Align Node.js Version and Build Commands Between CI and Vercel Environments
+
+  - **Action:** Verify Node.js versions match between GitHub Actions and Vercel. Ensure Vercel's build command includes necessary quality checks similar to CI.
+  - **Depends On:** None
+  - **Verification:** Consistent Node.js versions and build processes across environments.
+
+- [ ] **T007:** Enhance CI Failure Messages for Clarity and Actionability
+
+  - **Action:** Review current CI error messages and modify GitHub Actions workflows to provide clearer, more actionable error messages with guidance for fixes.
+  - **Depends On:** None
+  - **Verification:** Clearer error reporting on PR failures.
+
+- [ ] **T008:** Address Reported Low-Severity npm Vulnerability
+
+  - **Action:** Run `npm audit` to identify the vulnerability, attempt `npm audit fix` or manually update affected packages. Test thoroughly after updates.
+  - **Depends On:** None
+  - **Verification:** `npm audit` shows the vulnerability addressed.
+
+- [ ] **T009:** Implement Automated Dependency Management (Dependabot/Renovate)
+
+  - **Action:** Choose and configure either GitHub's Dependabot or Renovate Bot to automatically scan for outdated dependencies and create update PRs.
+  - **Depends On:** None
+  - **Verification:** Bot creates dependency update PRs.
+
+- [ ] **T011:** Update General CI/CD Process and Troubleshooting in Documentation
+
+  - **Action:** Update `CONTRIBUTING.md` and `DEVELOPMENT_SETUP.md` to reflect current CI/CD processes, code formatting standards, and common troubleshooting steps.
+  - **Depends On:** None
+  - **Verification:** Clear, accurate documentation of CI/CD processes.

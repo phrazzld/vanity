@@ -1,6 +1,5 @@
-import type { NextRequest} from 'next/server';
+import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { logger } from '@/lib/logger';
 import { createComponentLogger } from '@/middleware/logging';
 
 // Create a component-specific logger

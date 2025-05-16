@@ -6,7 +6,7 @@ import {
   deleteQuote,
   getQuotesWithFilters,
 } from '@/lib/db';
-import type { NextRequest} from 'next/server';
+import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import type { QuoteInput, QuotesQueryParams } from '@/types';
 
@@ -25,27 +25,33 @@ const setCacheHeaders = (response: NextResponse) => {
 
 // Helper for validating quote input data
 const validateQuoteInput = (
-  data: any,
+  data: unknown,
   requireAllFields = true
 ): { valid: boolean; message?: string } => {
-  if (!data) {
+  if (!data || typeof data !== 'object') {
     return { valid: false, message: 'Request body is required' };
   }
 
+  const inputData = data as Record<string, unknown>;
+
   // Validate required fields
   if (requireAllFields) {
-    if (!data.text) return { valid: false, message: 'Quote text is required' };
+    if (!inputData.text) return { valid: false, message: 'Quote text is required' };
   }
 
   // Validate text if provided
-  if (data.text !== undefined) {
-    if (typeof data.text !== 'string' || data.text.trim().length === 0) {
+  if (inputData.text !== undefined) {
+    if (typeof inputData.text !== 'string' || inputData.text.trim().length === 0) {
       return { valid: false, message: 'Quote text must be a non-empty string' };
     }
   }
 
   // Validate author if provided (can be null or a string)
-  if (data.author !== undefined && data.author !== null && typeof data.author !== 'string') {
+  if (
+    inputData.author !== undefined &&
+    inputData.author !== null &&
+    typeof inputData.author !== 'string'
+  ) {
     return { valid: false, message: 'Author must be a string or null' };
   }
 
@@ -157,7 +163,7 @@ export async function POST(request: NextRequest) {
     // Parse request body
     let data: QuoteInput;
     try {
-      data = await request.json();
+      data = (await request.json()) as QuoteInput;
     } catch (error) {
       console.error('API Route: Error parsing JSON:', error);
       return setCacheHeaders(
@@ -225,7 +231,7 @@ export async function PUT(request: NextRequest) {
     // Parse request body
     let data: Partial<QuoteInput>;
     try {
-      data = await request.json();
+      data = (await request.json()) as Partial<QuoteInput>;
     } catch (error) {
       console.error('API Route: Error parsing JSON:', error);
       return setCacheHeaders(

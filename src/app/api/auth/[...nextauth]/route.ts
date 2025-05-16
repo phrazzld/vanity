@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
 
     console.log(`Login attempt: username=${username}, callbackUrl=${callbackUrl}`);
     // Safely access environment variable
-     
+
     console.log(
       `Current environment: ${typeof process !== 'undefined' && process.env ? process.env.NODE_ENV : 'unknown'}`
     );
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
         maxAge: 60 * 60 * 24, // 24 hours
         httpOnly: true,
         // In Vercel preview deployments, we should allow non-secure cookies
-         
+
         secure:
           typeof process !== 'undefined' &&
           process.env.NODE_ENV === 'production' &&
@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
           maxAge: 60 * 60 * 24, // 24 hours
           httpOnly: true,
           // In Vercel preview deployments, we should allow non-secure cookies
-           
+
           secure:
             typeof process !== 'undefined' &&
             process.env.NODE_ENV === 'production' &&

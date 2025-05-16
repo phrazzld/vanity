@@ -20,7 +20,7 @@ import {
   deleteReading,
   getReadingsWithFilters,
 } from '@/lib/db';
-import type { NextRequest} from 'next/server';
+import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import type { ReadingInput, ReadingsQueryParams } from '@/types';
 
@@ -58,27 +58,29 @@ const setCacheHeaders = (response: NextResponse) => {
  * @returns {{ valid: boolean; message?: string }} Validation result with error message if invalid
  */
 const validateReadingInput = (
-  data: any,
+  data: unknown,
   requireAllFields = true
 ): { valid: boolean; message?: string } => {
-  if (!data) {
+  if (!data || typeof data !== 'object') {
     return { valid: false, message: 'Request body is required' };
   }
 
+  const inputData = data as Record<string, unknown>;
+
   // Validate required fields for new readings (POST requests)
   if (requireAllFields) {
-    if (!data.slug) return { valid: false, message: 'Slug is required' };
-    if (!data.title) return { valid: false, message: 'Title is required' };
-    if (!data.author) return { valid: false, message: 'Author is required' };
+    if (!inputData.slug) return { valid: false, message: 'Slug is required' };
+    if (!inputData.title) return { valid: false, message: 'Title is required' };
+    if (!inputData.author) return { valid: false, message: 'Author is required' };
   }
 
   // Validate slug format if provided
-  if (data.slug !== undefined) {
-    if (typeof data.slug !== 'string') {
+  if (inputData.slug !== undefined) {
+    if (typeof inputData.slug !== 'string') {
       return { valid: false, message: 'Slug must be a string' };
     }
     // Ensure slugs are URL-friendly (lowercase, alphanumeric, hyphens only)
-    if (!/^[a-z0-9-]+$/.test(data.slug)) {
+    if (!/^[a-z0-9-]+$/.test(inputData.slug)) {
       return {
         valid: false,
         message: 'Slug must contain only lowercase letters, numbers, and hyphens',
@@ -87,20 +89,26 @@ const validateReadingInput = (
   }
 
   // Validate title is a non-empty string if provided
-  if (data.title !== undefined && (typeof data.title !== 'string' || data.title.length < 1)) {
+  if (
+    inputData.title !== undefined &&
+    (typeof inputData.title !== 'string' || inputData.title.length < 1)
+  ) {
     return { valid: false, message: 'Title must be a non-empty string' };
   }
 
   // Validate author is a non-empty string if provided
-  if (data.author !== undefined && (typeof data.author !== 'string' || data.author.length < 1)) {
+  if (
+    inputData.author !== undefined &&
+    (typeof inputData.author !== 'string' || inputData.author.length < 1)
+  ) {
     return { valid: false, message: 'Author must be a non-empty string' };
   }
 
   // Validate finishedDate can be parsed as a date if provided
-  if (data.finishedDate !== undefined && data.finishedDate !== null) {
+  if (inputData.finishedDate !== undefined && inputData.finishedDate !== null) {
     try {
-      new Date(data.finishedDate);
-    } catch (error) {
+      new Date(inputData.finishedDate as string | Date);
+    } catch {
       return { valid: false, message: 'Invalid date format for finishedDate' };
     }
   }
@@ -250,7 +258,7 @@ export async function POST(request: NextRequest) {
     // Parse and validate the request body
     let data: ReadingInput;
     try {
-      data = await request.json();
+      data = (await request.json()) as ReadingInput;
     } catch (error) {
       console.error('API Route: Error parsing JSON:', error);
       return setCacheHeaders(
@@ -335,7 +343,7 @@ export async function PUT(request: NextRequest) {
     // Parse request body
     let data: Partial<ReadingInput>;
     try {
-      data = await request.json();
+      data = (await request.json()) as Partial<ReadingInput>;
     } catch (error) {
       console.error('API Route: Error parsing JSON:', error);
       return setCacheHeaders(

@@ -17,7 +17,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Initialize from localStorage and system preference
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    
+
     // First, check localStorage
     const storedTheme = window.localStorage.getItem('theme');
     if (storedTheme) {
@@ -47,7 +47,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Listen for system preference changes
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    
+
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
     const handleChange = (e: MediaQueryListEvent) => {

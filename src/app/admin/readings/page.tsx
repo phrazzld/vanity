@@ -6,10 +6,9 @@
  * This page allows administrators to create, view, edit, and delete readings.
  */
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { FormEvent } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import type { Reading, ReadingInput } from '@/types';
 import { useReadingsList } from '@/app/hooks';
@@ -23,8 +22,6 @@ import {
 import type { FilterConfig } from '@/app/components/SearchBar';
 
 export default function ReadingsManagementPage() {
-  const router = useRouter();
-
   // Use the readings list hook for search, filter, and pagination
   const {
     items: readings,
@@ -36,7 +33,7 @@ export default function ReadingsManagementPage() {
     error,
     setSearch,
     updateFilter,
-    setSort,
+    setSort: _setSort,
     toggleSort,
     setPage,
     setPageSize,
@@ -952,11 +949,14 @@ export default function ReadingsManagementPage() {
                       <div className="mt-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700 flex items-start gap-3">
                         {readingToDelete?.coverImageSrc ? (
                           <div className="h-14 w-10 flex-shrink-0 rounded overflow-hidden border border-gray-200 dark:border-gray-700">
-                            {/* eslint-disable-next-line no-undef */}
-                            {(typeof process !== 'undefined' && process.env.NEXT_PUBLIC_SPACES_BASE_URL) ? (
+                            {typeof process !== 'undefined' &&
+                            /* eslint-disable-next-line no-undef */
+                            process.env.NEXT_PUBLIC_SPACES_BASE_URL ? (
                               <Image
-                                /* eslint-disable-next-line no-undef */
-                                src={`${typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_SPACES_BASE_URL : ''}${readingToDelete.coverImageSrc}`}
+                                src={
+                                  /* eslint-disable-next-line no-undef */
+                                  `${typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_SPACES_BASE_URL : ''}${readingToDelete.coverImageSrc}`
+                                }
                                 alt={`Cover for ${readingToDelete.title}`}
                                 width={40}
                                 height={56}
