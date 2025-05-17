@@ -45,7 +45,7 @@ For detailed setup instructions, please refer to our [Development Setup Guide](d
 
 1. **Identify a Task**: Pick an issue from the issue tracker or a task from the project board. If you want to work on something that's not listed, please create an issue first to discuss it.
 
-2. **Setup Your Environment**: Ensure your local development environment is properly set up according to the [Development Setup Guide](docs/DEVELOPMENT_SETUP.md).
+2. **Setup Your Environment**: Ensure your local development environment is properly set up according to the [Development Setup Guide](docs/DEVELOPMENT_SETUP.md), including the [Git hooks setup](docs/DEVELOPMENT_SETUP.md#3-set-up-git-hooks).
 
 3. **Create a Branch**: Create a new branch following our [branch naming conventions](#branch-naming-conventions).
 
@@ -268,6 +268,55 @@ The project follows the [Conventional Commits](https://www.conventionalcommits.o
 ### Pre-commit Hooks
 
 The project uses Husky and commitlint to enforce commit message format. Commits that don't follow the convention will be rejected automatically.
+
+#### The "No `--no-verify`" Policy
+
+**IMPORTANT**: We have a strict policy against bypassing Git hooks. The use of `--no-verify` is strongly discouraged.
+
+Git hooks are in place to maintain code quality and prevent issues from reaching the repository. They:
+
+- Format code consistently
+- Check for linting errors
+- Run type checking
+- Validate commit message format
+- Run tests before pushing
+
+**Why this policy exists:**
+
+1. **Code Quality**: Hooks ensure all code meets our quality standards
+2. **CI/CD Success**: Pre-commit checks prevent CI failures later
+3. **Team Consistency**: Everyone follows the same standards
+4. **Time Savings**: Catching issues locally is faster than fixing them after push
+
+**Alternatives for special cases:**
+
+If you encounter situations where hooks are failing:
+
+1. **Fix the issues**: This is always the preferred approach
+2. **Temporary staging**: If you need to save work-in-progress:
+   ```bash
+   # Create a WIP commit on a branch
+   git add .
+   git commit -m "WIP: description" # Fix issues before pushing
+   ```
+3. **Partial commits**: Commit only the files that pass checks:
+   ```bash
+   git add file1.ts file2.ts
+   git commit -m "feat: add feature"
+   ```
+
+**When exceptions might be considered:**
+
+- Emergency hotfixes where hooks are broken (extremely rare)
+- CI/CD infrastructure issues (should be fixed ASAP)
+
+In these rare cases, you must:
+
+1. Get explicit approval from a project maintainer
+2. Document why hooks were bypassed in the commit message
+3. Create an issue to fix the underlying problem
+
+Remember: Git hooks are here to help you. If they're consistently causing problems, please raise an issue so we can improve them.
 
 ## Release Process
 

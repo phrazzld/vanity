@@ -65,6 +65,98 @@ npm install
 
 The project uses Husky for Git hooks, which should be set up automatically during `npm install`. These hooks ensure code quality by running linters, formatters, and tests before commits and pushes.
 
+#### What Our Git Hooks Do
+
+The project has the following Git hooks in place:
+
+1. **Pre-commit Hook**: Runs automatically before each commit to:
+
+   - Format code using Prettier
+   - Run ESLint to check for code quality issues
+   - Check for large files (>5MB) and suggest using Git LFS
+   - Run TypeScript type checking
+   - Block commits with sensitive data or formatting issues
+
+2. **Commit-msg Hook**: Validates commit messages against the Conventional Commits format
+
+3. **Pre-push Hook**: Runs before pushing to remote to:
+
+   - Enforce branch naming conventions
+   - Run the complete test suite
+   - Prevent pushing if tests fail
+
+4. **Post-commit Hook**: Runs asynchronously after commit to:
+   - Update documentation with the Glance tool (non-blocking)
+
+#### Verifying Git Hooks Installation
+
+To verify that Git hooks are properly installed:
+
+```bash
+# Check if Husky is set up
+ls -la .husky/
+
+# You should see these files:
+# - pre-commit
+# - commit-msg
+# - pre-push
+# - post-commit
+```
+
+If hooks are missing or not working, reinstall them:
+
+```bash
+# Reinstall Husky
+npm run prepare
+
+# Or manually install
+npx husky install
+```
+
+#### Testing Pre-commit Hooks
+
+To test if your pre-commit hooks are working correctly:
+
+1. Make a test file with formatting issues:
+
+```javascript
+// test.js
+const foo = { bar: 'baz', qux: 1 }; // Bad formatting
+```
+
+2. Try to commit it:
+
+```bash
+git add test.js
+git commit -m "test: testing hooks"
+```
+
+You should see the pre-commit hook run and automatically fix the formatting.
+
+#### Troubleshooting Git Hooks
+
+If Git hooks aren't running:
+
+1. **Check Git version**: Ensure you have Git 2.9 or later
+2. **Verify core.hooksPath**: Git should be configured to use Husky's hooks:
+
+```bash
+git config core.hooksPath
+# Should output: .husky
+```
+
+3. **Check file permissions**: Hooks must be executable:
+
+```bash
+chmod +x .husky/*
+```
+
+4. **Common Issues**:
+   - **Hooks not running**: Try running `npm run prepare` again
+   - **Formatting conflicts**: Ensure your editor isn't fighting with Prettier
+   - **Type errors blocking commits**: Fix TypeScript errors before committing
+   - **Large files blocked**: Use Git LFS or exclude large files
+
 ## Environment Configuration
 
 ### 1. Create Environment Files
@@ -369,6 +461,8 @@ If you encounter problems with Git hooks:
 # Reinstall Husky
 npm run prepare
 ```
+
+For more detailed information about Git hooks setup and troubleshooting, see the [Git Hooks Setup section](#3-set-up-git-hooks).
 
 ## Additional Resources
 

@@ -285,11 +285,12 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Verification:** Confirm pre-commit hooks successfully prevent or fix formatting issues.
   - **Resolution:** Verified Husky v9.1.7 and lint-staged are properly configured. The .lintstagedrc.js file covers all relevant file types with Prettier and ESLint. Pre-commit hook successfully formats code and runs type checking. Deprecation warnings exist but don't affect functionality.
 
-- [ ] **T003:** Update Development Documentation for Pre-commit Hook Setup and Policy
+- [x] **T003:** Update Development Documentation for Pre-commit Hook Setup and Policy
 
   - **Action:** Update `DEVELOPMENT_SETUP.md` with clear steps for installing and confirming Husky pre-commit hooks. Update `CONTRIBUTING.md` to emphasize the "No `--no-verify`" policy.
   - **Depends On:** [T002]
   - **Verification:** Documentation clearly explains hook setup and policy.
+  - **Resolution:** Added comprehensive Git hooks setup section to DEVELOPMENT_SETUP.md with installation, verification, testing, and troubleshooting instructions. Added "No `--no-verify`" policy section to CONTRIBUTING.md with clear reasoning and alternatives. Cross-referenced between documents.
 
 - [ ] **T010:** Add Recommended VS Code Editor Settings for Formatting and Linting
 
