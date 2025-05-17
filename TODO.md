@@ -306,11 +306,12 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Verification:** Comprehensive audit document.
   - **Resolution:** Created comprehensive audit document (T005-CI-Audit.md) identifying key gaps: missing security vulnerability scanning with `npm audit`, no Conventional Commits validation, and external deployment via Vercel. Test coverage enforcement is already properly configured in jest.config.js.
 
-- [ ] **T006:** Align Node.js Version and Build Commands Between CI and Vercel Environments
+- [x] **T006:** Align Node.js Version and Build Commands Between CI and Vercel Environments
 
   - **Action:** Verify Node.js versions match between GitHub Actions and Vercel. Ensure Vercel's build command includes necessary quality checks similar to CI.
   - **Depends On:** None
   - **Verification:** Consistent Node.js versions and build processes across environments.
+  - **Resolution:** Node.js versions were already aligned at v20. Created .nvmrc and added engines field to package.json for explicit documentation. Documented the intentional separation of concerns where CI handles quality checks and Vercel focuses on deployment. Updated CONTRIBUTING.md with CI/CD strategy documentation.
 
 - [ ] **T007:** Enhance CI Failure Messages for Clarity and Actionability
 

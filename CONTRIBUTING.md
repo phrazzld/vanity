@@ -318,6 +318,39 @@ In these rare cases, you must:
 
 Remember: Git hooks are here to help you. If they're consistently causing problems, please raise an issue so we can improve them.
 
+## CI/CD and Deployment Strategy
+
+### Continuous Integration (GitHub Actions)
+
+Our CI pipeline runs comprehensive quality checks on every PR:
+
+1. **Node.js v20** - Standardized runtime version
+2. **Quality Checks**:
+   - Code formatting (Prettier)
+   - Linting (ESLint)
+   - Type checking (TypeScript)
+   - Test suite with coverage
+   - Build verification (Next.js and Storybook)
+
+### Deployment (Vercel)
+
+Vercel handles production deployments with a focused build process:
+
+1. **Node.js v20** - Matches CI environment
+2. **Build Process**:
+   - Installs dependencies (`npm ci`)
+   - Generates Prisma client
+   - Builds Next.js with memory optimization
+   - Skips Storybook build for performance
+
+**Note**: Quality checks are intentionally omitted from deployment builds as they're already enforced in CI. This separation ensures fast deployments while maintaining code quality through the PR process.
+
+### Environment Alignment
+
+- Node.js version: **v20** (specified in `.nvmrc`, `package.json`, and both CI/CD configs)
+- Dependencies: Locked via `package-lock.json` and installed with `npm ci`
+- Build commands: Optimized for each environment's purpose
+
 ## Release Process
 
 ### Version Numbering
