@@ -1,0 +1,52 @@
+# Keep dependencies up to date with automated pull requests
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'daily'
+      time: '06:00'
+      timezone: 'UTC'
+    # Raise all npm dependencies updates as a single PR
+    groups:
+      production-dependencies:
+        dependency-type: 'production'
+      development-dependencies:
+        dependency-type: 'development'
+        patterns:
+          - '*'
+        exclude-patterns:
+          - '@types/*'
+      types-dependencies:
+        patterns:
+          - '@types/*'
+    # Limit number of open pull requests
+    open-pull-requests-limit: 5
+    # Always increase the minimum version requirement
+    versioning-strategy: increase
+    # Disable automerge for npm packages
+    # (requires manual review due to potential breaking changes)
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '06:00'
+      timezone: 'UTC'
+    # Use semantic commit messages for GitHub Actions
+    commit-message:
+      prefix: 'ci'
+      include: 'scope'
+    # Actions are generally safer to update
+    open-pull-requests-limit: 3
+
+# Labels to add to Dependabot PRs
+labels:
+  - 'dependencies'
+  - 'automated'
