@@ -320,11 +320,12 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Verification:** Clearer error reporting on PR failures.
   - **Resolution:** Enhanced CI workflow with emojis, clear error messages, fix suggestions, and common issues. Created ci-helpers.md documentation with detailed troubleshooting guide. Each CI step now provides actionable guidance when failures occur.
 
-- [ ] **T008:** Address Reported Low-Severity npm Vulnerability
+- [x] **T008:** Address Reported Low-Severity npm Vulnerability
 
   - **Action:** Run `npm audit` to identify the vulnerability, attempt `npm audit fix` or manually update affected packages. Test thoroughly after updates.
   - **Depends On:** None
   - **Verification:** `npm audit` shows the vulnerability addressed.
+  - **Resolution:** Updated Next.js from 15.2.3 to 15.3.2 to fix security vulnerability that leaked x-middleware-subrequest-id to external hosts. Tests pass and build completes successfully.
 
 - [ ] **T009:** Implement Automated Dependency Management (Dependabot/Renovate)
 
