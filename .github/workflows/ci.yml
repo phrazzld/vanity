@@ -22,22 +22,98 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          echo "📦 Installing project dependencies..."
+          npm ci || {
+            echo "❌ Failed to install dependencies!"
+            echo "→ Try running 'npm ci' locally to reproduce the issue"
+            echo "→ Ensure package-lock.json is committed and up to date"
+            echo "→ Check if you have access to all npm registries"
+            exit 1
+          }
 
       - name: Generate Prisma client
-        run: npm run prisma:generate
+        run: |
+          echo "🗄️ Generating Prisma client..."
+          npm run prisma:generate || {
+            echo "❌ Failed to generate Prisma client!"
+            echo "→ Ensure prisma schema is valid"
+            echo "→ Check prisma/schema.prisma for syntax errors"
+            echo "→ Run 'npm run prisma:generate' locally to debug"
+            exit 1
+          }
 
       - name: Check formatting
-        run: npm run format:check
+        run: |
+          echo "🎨 Checking code formatting..."
+          npm run format:check || {
+            echo "❌ Code formatting check failed!"
+            echo ""
+            echo "To fix formatting issues:"
+            echo "1. Run 'npm run format' locally"
+            echo "2. Commit the formatted files"
+            echo "3. Push your changes"
+            echo ""
+            echo "💡 Tip: Enable format-on-save in VS Code"
+            echo "   See .vscode/settings.json for recommended settings"
+            exit 1
+          }
 
       - name: Lint
-        run: npm run lint
+        run: |
+          echo "🔍 Running ESLint..."
+          npm run lint || {
+            echo "❌ Linting failed!"
+            echo ""
+            echo "To fix linting issues:"
+            echo "1. Review the errors above"
+            echo "2. Run 'npm run lint:fix' to auto-fix some issues"
+            echo "3. Manually fix remaining issues"
+            echo "4. Commit and push your changes"
+            echo ""
+            echo "📚 Common issues:"
+            echo "→ Unused variables: prefix with '_' or remove"
+            echo "→ Missing return types: add explicit TypeScript types"
+            echo "→ Import order: let ESLint auto-fix handle this"
+            exit 1
+          }
 
       - name: Type check
-        run: npm run typecheck
+        run: |
+          echo "📝 Running TypeScript type check..."
+          npm run typecheck || {
+            echo "❌ TypeScript type check failed!"
+            echo ""
+            echo "To fix type errors:"
+            echo "1. Review the errors above"
+            echo "2. Add missing type annotations"
+            echo "3. Fix type mismatches"
+            echo "4. Avoid using 'any' type"
+            echo ""
+            echo "💡 Tips:"
+            echo "→ Enable strict mode in tsconfig.json"
+            echo "→ Use VS Code for real-time type checking"
+            echo "→ Check DEVELOPMENT_PHILOSOPHY_APPENDIX_TYPESCRIPT.md"
+            exit 1
+          }
 
       - name: Run tests with coverage
-        run: npm run test:coverage
+        run: |
+          echo "🧪 Running tests with coverage..."
+          npm run test:coverage || {
+            echo "❌ Tests failed!"
+            echo ""
+            echo "To debug test failures:"
+            echo "1. Run 'npm test' locally"
+            echo "2. For specific test: 'npm test -- path/to/test'"
+            echo "3. Update snapshots if needed: 'npm test -- -u'"
+            echo "4. Check test coverage thresholds in jest.config.js"
+            echo ""
+            echo "📊 Coverage requirements:"
+            echo "→ Global: 85% minimum"
+            echo "→ Core logic (api/, lib/): 90% minimum"
+            exit 1
+          }
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
@@ -46,7 +122,36 @@ jobs:
           path: coverage/
 
       - name: Build
-        run: npm run build
+        run: |
+          echo "🔨 Building Next.js application..."
+          npm run build || {
+            echo "❌ Build failed!"
+            echo ""
+            echo "To fix build issues:"
+            echo "1. Run 'npm run build' locally"
+            echo "2. Check for TypeScript errors"
+            echo "3. Verify all imports are correct"
+            echo "4. Ensure environment variables are set"
+            echo ""
+            echo "💡 Common build issues:"
+            echo "→ Missing environment variables"
+            echo "→ Import errors in production-only code"
+            echo "→ TypeScript errors not caught in dev mode"
+            exit 1
+          }
 
       - name: Build Storybook
-        run: npm run build-storybook
+        run: |
+          echo "📚 Building Storybook..."
+          npm run build-storybook || {
+            echo "❌ Storybook build failed!"
+            echo ""
+            echo "To fix Storybook build issues:"
+            echo "1. Run 'npm run storybook' locally"
+            echo "2. Check for story syntax errors"
+            echo "3. Verify all component imports"
+            echo "4. Review .storybook configuration"
+            echo ""
+            echo "📖 See STORYBOOK_GUIDELINES.md for help"
+            exit 1
+          }
