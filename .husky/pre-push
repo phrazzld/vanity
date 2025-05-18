@@ -52,6 +52,29 @@ case "$BRANCH_NAME" in
 esac
 
 # ========================================
+# Check code formatting
+# ========================================
+echo "🎨 Checking code formatting..."
+if npm run format:check > format_output.log 2>&1; then
+  echo "✅ Code formatting check passed"
+  rm format_output.log
+else
+  cat format_output.log
+  rm format_output.log
+  echo ""
+  echo "❌ Code formatting check failed!"
+  echo ""
+  echo "To fix formatting issues:"
+  echo "1. Run 'npm run format' locally"
+  echo "2. Commit the formatted files"
+  echo "3. Push your changes"
+  echo ""
+  echo "💡 Tip: Enable format-on-save in VS Code"
+  echo "   See .vscode/settings.json for recommended settings"
+  exit 1
+fi
+
+# ========================================
 # Check Edge Runtime compatibility
 # ========================================
 echo "🌐 Checking Edge Runtime compatibility..."

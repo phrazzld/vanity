@@ -128,10 +128,10 @@ jobs:
           cat > check-edge-compat.js << 'EOF'
           const fs = require('fs');
           const path = require('path');
-          
+
           const edgeIncompatiblePkgs = ['winston', 'fs', 'path', 'crypto', 'os', 'child_process'];
           const clientFiles = [];
-          
+
           function findFiles(dir, pattern) {
             const files = fs.readdirSync(dir);
             files.forEach(file => {
@@ -144,12 +144,12 @@ jobs:
               }
             });
           }
-          
+
           // Find all client components and pages
           findFiles('./src', /\.(tsx?|jsx?)$/);
-          
+
           let hasIssues = false;
-          
+
           clientFiles.forEach(file => {
             const content = fs.readFileSync(file, 'utf-8');
             // Check for 'use client' directive
@@ -163,7 +163,7 @@ jobs:
               });
             }
           });
-          
+
           if (hasIssues) {
             console.error('\n🚨 Edge Runtime compatibility issues found!');
             console.error('→ Client components cannot use Node.js APIs');
@@ -173,7 +173,7 @@ jobs:
             console.log('✅ All client components are Edge Runtime compatible');
           }
           EOF
-          
+
           node check-edge-compat.js || {
             echo ""
             echo "To fix Edge Runtime issues:"

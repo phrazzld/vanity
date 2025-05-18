@@ -62,7 +62,7 @@ module.exports = [
       '*.log',
     ],
   },
-  
+
   // Base JavaScript rules
   js.configs.recommended,
 

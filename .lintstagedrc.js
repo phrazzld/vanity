@@ -32,8 +32,14 @@ module.exports = {
       : [];
   },
 
-  // All files - just format, exclude symlinks
-  '**/*.{css,json,md}': files => {
+  // Config files - format with Prettier
+  '**/*.{cjs,mjs,yaml,yml}': files => {
+    const nonSymlinks = filterSymlinks(files);
+    return nonSymlinks.length > 0 ? [`prettier --write ${nonSymlinks.join(' ')}`] : [];
+  },
+
+  // All other supported files - just format
+  '**/*.{css,json,md,html,svg}': files => {
     const nonSymlinks = filterSymlinks(files);
     return nonSymlinks.length > 0 ? [`prettier --write ${nonSymlinks.join(' ')}`] : [];
   },
