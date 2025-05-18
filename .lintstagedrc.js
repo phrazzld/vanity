@@ -27,6 +27,9 @@ module.exports = {
     return nonSymlinks.length > 0
       ? [
           `prettier --write ${nonSymlinks.join(' ')}`,
+          // First check for lint errors (will fail commit if errors found)
+          `eslint --config eslint.config.cjs ${nonSymlinks.join(' ')}`,
+          // Then fix what can be fixed
           `eslint --config eslint.config.cjs --fix ${nonSymlinks.join(' ')}`,
         ]
       : [];

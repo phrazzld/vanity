@@ -75,6 +75,39 @@ else
 fi
 
 # ========================================
+# Check ESLint
+# ========================================
+echo "🔍 Running ESLint check..."
+if npm run lint > lint_output.log 2>&1; then
+  echo "✅ ESLint check passed"
+  rm lint_output.log
+else
+  # Check if only warnings (no errors)
+  if grep -q "0 errors" lint_output.log && grep -q "warning" lint_output.log; then
+    echo "⚠️  ESLint check passed with warnings"
+    cat lint_output.log | grep -E "(warning|problems)"
+    rm lint_output.log
+  else
+    cat lint_output.log
+    rm lint_output.log
+    echo ""
+    echo "❌ ESLint check failed!"
+    echo ""
+    echo "To fix linting issues:"
+    echo "1. Review the errors above"
+    echo "2. Run 'npm run lint:fix' to auto-fix some issues"
+    echo "3. Manually fix remaining issues"
+    echo "4. Commit and push your changes"
+    echo ""
+    echo "📚 Common issues:"
+    echo "→ Unused variables: prefix with '_' or remove"
+    echo "→ Missing return types: add explicit TypeScript types"
+    echo "→ Import order: let ESLint auto-fix handle this"
+    exit 1
+  fi
+fi
+
+# ========================================
 # Check Edge Runtime compatibility
 # ========================================
 echo "🌐 Checking Edge Runtime compatibility..."

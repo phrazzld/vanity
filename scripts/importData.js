@@ -18,14 +18,14 @@ async function importData() {
     const quotesFile = fs.readFileSync(path.join(__dirname, '../src/app/quotes.ts'), 'utf8');
 
     // Extract READINGS array using regex
-    let readingsMatch = readingsFile.match(/export const READINGS[^\[]*(\[[\s\S]*\])/);
+    let readingsMatch = readingsFile.match(/export const READINGS[^[]*(\[[\s\S]*\])/);
     if (!readingsMatch) {
       console.error('Could not find READINGS array in data.ts');
       return;
     }
 
     // Extract QUOTES array using regex
-    let quotesMatch = quotesFile.match(/export const QUOTES[^\[]*(\[[\s\S]*\])/);
+    let quotesMatch = quotesFile.match(/export const QUOTES[^[]*(\[[\s\S]*\])/);
     if (!quotesMatch) {
       console.error('Could not find QUOTES array in quotes.ts');
       return;
