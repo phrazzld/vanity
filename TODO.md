@@ -334,8 +334,9 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Verification:** Bot creates dependency update PRs.
   - **Resolution:** Implemented GitHub Dependabot with daily npm scans and weekly GitHub Actions scans. Configured dependency grouping, semantic commit messages, and PR limits.
 
-- [ ] **T011:** Update General CI/CD Process and Troubleshooting in Documentation
+- [x] **T011:** Update General CI/CD Process and Troubleshooting in Documentation
 
   - **Action:** Update `CONTRIBUTING.md` and `DEVELOPMENT_SETUP.md` to reflect current CI/CD processes, code formatting standards, and common troubleshooting steps.
   - **Depends On:** None
   - **Verification:** Clear, accurate documentation of CI/CD processes.
+  - **Resolution:** Updated both documents with comprehensive CI/CD process documentation, troubleshooting guides, and environment setup instructions. Added details about automated dependency management, CI pipeline stages, and common CI failure solutions.

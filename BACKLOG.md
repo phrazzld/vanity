@@ -1,5 +1,6 @@
 # BACKLOG
 
+- migrate to pnpm
 - rework projects page to be active projects
 - redesign projects page to have clean project logos
 - experiment with neon mcp server

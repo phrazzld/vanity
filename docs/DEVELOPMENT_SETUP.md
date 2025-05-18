@@ -21,8 +21,9 @@ Before you begin, ensure you have the following installed on your system:
 
 ### Required Software
 
-- **Node.js**: Version 18 or higher
+- **Node.js**: Version 20 or higher (specified in `.nvmrc`)
   - We recommend using [NVM](https://github.com/nvm-sh/nvm) (Node Version Manager) to manage Node.js versions
+  - To use the correct version: `nvm use` (after installing nvm)
 - **npm**: Usually comes with Node.js
 - **Git**: For version control
 - **Docker**: To run the PostgreSQL database locally (optional, but recommended)
@@ -101,6 +102,12 @@ ls -la .husky/
 # - commit-msg
 # - pre-push
 # - post-commit
+
+# Verify commitlint is configured
+cat commitlint.config.js
+
+# Test a commit message
+echo "feat: test message" | npx commitlint
 ```
 
 If hooks are missing or not working, reinstall them:
@@ -114,6 +121,8 @@ npx husky install
 ```
 
 #### Testing Pre-commit Hooks
+
+#### Testing Code Quality Checks
 
 To test if your pre-commit hooks are working correctly:
 
@@ -132,6 +141,23 @@ git commit -m "test: testing hooks"
 ```
 
 You should see the pre-commit hook run and automatically fix the formatting.
+
+#### Testing Commit Message Validation
+
+To test commit message validation:
+
+```bash
+# This should fail (invalid type)
+git commit -m "bad: invalid commit type"
+
+# This should succeed
+git commit -m "feat: add new feature"
+
+# This should succeed with scope
+git commit -m "fix(api): resolve authentication issue"
+```
+
+Valid commit types: `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style`, `test`
 
 #### Troubleshooting Git Hooks
 
@@ -463,6 +489,157 @@ npm run prepare
 ```
 
 For more detailed information about Git hooks setup and troubleshooting, see the [Git Hooks Setup section](#3-set-up-git-hooks).
+
+## CI/CD Setup
+
+### Local CI Check Simulation
+
+To run the same checks locally that CI runs:
+
+```bash
+# Run all CI checks in sequence
+npm run format:check && npm run lint && npm run typecheck && npm run test:coverage && npm run build && npm run build-storybook
+```
+
+Or create a custom script in your `package.json`:
+
+```json
+"scripts": {
+  "ci:local": "npm run format:check && npm run lint && npm run typecheck && npm run test:coverage && npm run build && npm run build-storybook"
+}
+```
+
+### VS Code Integration
+
+The project includes VS Code settings for optimal development experience:
+
+- **Format on Save**: Automatically formats with Prettier
+- **ESLint Integration**: Shows linting errors in real-time
+- **TypeScript Checking**: Real-time type checking
+
+To use these settings:
+
+1. Install recommended extensions (when prompted)
+2. Use the workspace settings in `.vscode/settings.json`
+
+### GitHub Actions Workflow
+
+The CI pipeline runs on:
+
+- Every push to `main` or `master` branches
+- Every pull request targeting these branches
+
+See `.github/workflows/ci.yml` for the complete workflow configuration.
+
+## Troubleshooting CI/CD Issues
+
+### Common CI Failures and Solutions
+
+#### 1. Dependency Installation Failures
+
+**Error**: `npm ci` fails in CI
+
+**Solutions**:
+
+- Ensure `package-lock.json` is committed and up to date
+- Run `npm ci` locally to reproduce the issue
+- Check if you have access to all npm registries
+- Try deleting `node_modules` and `package-lock.json`, then run `npm install`
+
+#### 2. Prisma Client Generation Failures
+
+**Error**: Prisma client generation fails
+
+**Solutions**:
+
+- Check `prisma/schema.prisma` for syntax errors
+- Run `npm run prisma:generate` locally
+- Ensure database URL is properly configured (not needed for generation)
+
+#### 3. TypeScript Errors Only in CI
+
+**Error**: Type errors that don't appear locally
+
+**Solutions**:
+
+- Run `npm run typecheck` locally
+- Check if `tsconfig.json` includes all necessary files
+- Ensure your local TypeScript version matches CI
+- Clear TypeScript cache: `rm -rf node_modules/.cache/typescript`
+
+#### 4. Test Coverage Failures
+
+**Error**: Coverage below threshold
+
+**Solutions**:
+
+- Run `npm run test:coverage` locally
+- Check coverage requirements in `jest.config.js`
+- Add tests for uncovered code
+- Global minimum: 85%
+- Core logic (api/, lib/) minimum: 90%
+
+#### 5. Build Memory Issues
+
+**Error**: JavaScript heap out of memory
+
+**Solutions**:
+
+- Increase Node.js memory limit: `NODE_OPTIONS='--max-old-space-size=8192' npm run build`
+- Check for memory leaks in build process
+- Optimize imports and bundle size
+
+### Environment-Specific Issues
+
+#### Local vs CI Environment Differences
+
+1. **Environment Variables**:
+
+   - CI doesn't have `.env.local` - uses GitHub secrets
+   - Check which variables are required for build
+
+2. **Node.js Version**:
+
+   - Ensure local version matches CI (v20)
+   - Use `nvm use` to switch to correct version
+
+3. **Platform Differences**:
+   - CI runs on Ubuntu
+   - Local might be macOS or Windows
+   - File path and case sensitivity issues
+
+#### Debugging CI Failures
+
+1. **Check CI Logs**:
+
+   - Each step provides detailed error messages
+   - Look for the specific command that failed
+
+2. **Reproduce Locally**:
+
+   ```bash
+   # Clean environment
+   rm -rf node_modules .next
+
+   # Fresh install
+   npm ci
+
+   # Run failing command
+   npm run [command]
+   ```
+
+3. **Compare Environments**:
+
+   ```bash
+   # Check Node version
+   node --version
+
+   # Check npm version
+   npm --version
+
+   # Check installed packages
+   npm list
+   ```
 
 ## Additional Resources
 

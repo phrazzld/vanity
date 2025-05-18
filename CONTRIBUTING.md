@@ -269,6 +269,14 @@ The project follows the [Conventional Commits](https://www.conventionalcommits.o
 
 The project uses Husky and commitlint to enforce commit message format. Commits that don't follow the convention will be rejected automatically.
 
+Our pre-commit hooks run the following checks:
+
+1. **Code Formatting**: Prettier formats all staged files
+2. **Code Linting**: ESLint checks for code quality issues
+3. **Type Checking**: TypeScript checks for type errors
+4. **Commit Message**: Validates against Conventional Commits format
+5. **File Size**: Blocks commits with files over 5MB (use Git LFS instead)
+
 #### The "No `--no-verify`" Policy
 
 **IMPORTANT**: We have a strict policy against bypassing Git hooks. The use of `--no-verify` is strongly discouraged.
@@ -329,8 +337,72 @@ Our CI pipeline runs comprehensive quality checks on every PR:
    - Code formatting (Prettier)
    - Linting (ESLint)
    - Type checking (TypeScript)
-   - Test suite with coverage
+   - Test suite with coverage (85% minimum, 90% for core)
    - Build verification (Next.js and Storybook)
+
+#### CI Pipeline Stages
+
+1. **Dependency Installation**: Uses `npm ci` for reproducible installs
+2. **Prisma Client Generation**: Generates database client
+3. **Code Formatting Check**: Validates consistent formatting
+4. **Linting**: Checks code quality with ESLint
+5. **Type Checking**: Ensures TypeScript types are correct
+6. **Testing**: Runs full test suite with coverage requirements
+7. **Build**: Builds Next.js application
+8. **Storybook Build**: Builds component documentation
+
+#### CI Failure Troubleshooting
+
+**Formatting Failures**:
+
+- Run `npm run format` locally
+- Commit the formatted files
+- Enable format-on-save in VS Code (see `.vscode/settings.json`)
+
+**Linting Failures**:
+
+- Run `npm run lint` to see errors
+- Run `npm run lint:fix` to auto-fix some issues
+- Common issues:
+  - Unused variables: prefix with '\_' or remove
+  - Missing return types: add explicit TypeScript types
+  - Import order: let ESLint auto-fix handle this
+
+**Type Check Failures**:
+
+- Run `npm run typecheck` locally
+- Add missing type annotations
+- Fix type mismatches
+- Avoid using 'any' type
+- Check `DEVELOPMENT_PHILOSOPHY_APPENDIX_TYPESCRIPT.md`
+
+**Test Failures**:
+
+- Run `npm test` locally
+- Run specific test: `npm test -- path/to/test`
+- Update snapshots if needed: `npm test -- -u`
+- Coverage requirements:
+  - Global: 85% minimum
+  - Core logic (api/, lib/): 90% minimum
+
+**Build Failures**:
+
+- Run `npm run build` locally
+- Check for TypeScript errors
+- Verify all imports are correct
+- Ensure environment variables are set
+- Common issues:
+  - Missing environment variables
+  - Import errors in production-only code
+  - TypeScript errors not caught in dev mode
+
+**Storybook Build Failures**:
+
+- Run `npm run storybook` locally
+- Check for story syntax errors
+- Verify all component imports
+- Review `.storybook` configuration
+- See `STORYBOOK_GUIDELINES.md` for help
 
 ### Deployment (Vercel)
 
@@ -350,6 +422,18 @@ Vercel handles production deployments with a focused build process:
 - Node.js version: **v20** (specified in `.nvmrc`, `package.json`, and both CI/CD configs)
 - Dependencies: Locked via `package-lock.json` and installed with `npm ci`
 - Build commands: Optimized for each environment's purpose
+
+### Automated Dependency Management
+
+The project uses GitHub Dependabot to automatically manage dependencies:
+
+- **NPM packages**: Scanned daily at 06:00 UTC
+- **GitHub Actions**: Scanned weekly on Mondays
+- **Pull Request Grouping**: Dependencies are grouped by type (production, development, types)
+- **Commit Messages**: Uses semantic commit format (e.g., `chore(deps): update dependencies`)
+- **PR Limits**: Maximum 5 open PRs for npm, 3 for GitHub Actions
+
+Dependabot PRs are labeled with `dependencies` and `automated` for easy filtering.
 
 ## Release Process
 
