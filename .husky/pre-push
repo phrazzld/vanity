@@ -108,6 +108,32 @@ else
 fi
 
 # ========================================
+# Check TypeScript types
+# ========================================
+echo "📝 Running TypeScript type check..."
+if npm run typecheck > typecheck_output.log 2>&1; then
+  echo "✅ TypeScript type check passed"
+  rm typecheck_output.log
+else
+  cat typecheck_output.log
+  rm typecheck_output.log
+  echo ""
+  echo "❌ TypeScript type check failed!"
+  echo ""
+  echo "To fix type errors:"
+  echo "1. Review the errors above"
+  echo "2. Add missing type annotations"
+  echo "3. Fix type mismatches"
+  echo "4. Avoid using 'any' type"
+  echo ""
+  echo "💡 Tips:"
+  echo "→ Enable strict mode in tsconfig.json"
+  echo "→ Use VS Code for real-time type checking"
+  echo "→ Check DEVELOPMENT_PHILOSOPHY_APPENDIX_TYPESCRIPT.md"
+  exit 1
+fi
+
+# ========================================
 # Check Edge Runtime compatibility
 # ========================================
 echo "🌐 Checking Edge Runtime compatibility..."

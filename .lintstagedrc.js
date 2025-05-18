@@ -24,15 +24,25 @@ module.exports = {
   // JavaScript and TypeScript files - run ESLint with flat config and Prettier
   '**/*.{js,jsx,ts,tsx}': files => {
     const nonSymlinks = filterSymlinks(files);
-    return nonSymlinks.length > 0
-      ? [
-          `prettier --write ${nonSymlinks.join(' ')}`,
-          // First check for lint errors (will fail commit if errors found)
-          `eslint --config eslint.config.cjs ${nonSymlinks.join(' ')}`,
-          // Then fix what can be fixed
-          `eslint --config eslint.config.cjs --fix ${nonSymlinks.join(' ')}`,
-        ]
-      : [];
+    if (nonSymlinks.length === 0) return [];
+
+    const commands = [
+      `prettier --write ${nonSymlinks.join(' ')}`,
+      // First check for lint errors (will fail commit if errors found)
+      `eslint --config eslint.config.cjs ${nonSymlinks.join(' ')}`,
+      // Then fix what can be fixed
+      `eslint --config eslint.config.cjs --fix ${nonSymlinks.join(' ')}`,
+    ];
+
+    // If any TypeScript files are staged, run a quick type check
+    const hasTypeScriptFiles = nonSymlinks.some(
+      file => file.endsWith('.ts') || file.endsWith('.tsx')
+    );
+    if (hasTypeScriptFiles) {
+      commands.push('npm run typecheck');
+    }
+
+    return commands;
   },
 
   // Config files - format with Prettier
