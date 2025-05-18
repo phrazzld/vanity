@@ -62,3 +62,22 @@ node -e "
 # Run TypeScript type checking
 echo "Running TypeScript type checking..."
 npm run typecheck || exit 1
+
+# Check test coverage (warning only, not blocking)
+echo "📊 Checking test coverage..."
+if npm run test:coverage > coverage_output.log 2>&1; then
+  echo "✅ Test coverage check passed"
+  rm coverage_output.log
+else
+  # Check if it's coverage threshold failure
+  if grep -q "coverage threshold" coverage_output.log; then
+    echo "⚠️  Warning: Test coverage is below thresholds"
+    grep -E "coverage threshold|not met" coverage_output.log | sed 's/^/  /' | head -5
+    echo ""
+    echo "  💡 Run 'npm run test:coverage' to see full report"
+    echo "  Note: Coverage check will block git push"
+  fi
+  rm coverage_output.log
+fi
+
+echo "✅ Pre-commit checks completed successfully!"
