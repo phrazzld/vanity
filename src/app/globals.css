@@ -185,11 +185,11 @@
   }
 
   .btn-outline {
-    @apply border border-border bg-transparent hover:bg-muted text-foreground focus-visible:ring-foreground/20;
+    @apply border border-border bg-transparent hover:bg-muted text-foreground focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-foreground focus-visible:ring-opacity-20;
   }
 
   .btn-ghost {
-    @apply bg-transparent hover:bg-muted text-foreground focus-visible:ring-foreground/20;
+    @apply bg-transparent hover:bg-muted text-foreground focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-foreground focus-visible:ring-opacity-20;
   }
 
   /* Button sizes */

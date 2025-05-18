@@ -1,61 +1,17 @@
-import winston from 'winston';
+/**
+ * Runtime-safe logger that works in both Edge Runtime and Node.js environments
+ */
+
 import { nanoid } from 'nanoid';
 
-// Define log levels
-const levels = {
-  error: 0,
-  warn: 1,
-  info: 2,
-  http: 3,
-  debug: 4,
-};
-
-// Define log colors
-const colors = {
-  error: 'red',
-  warn: 'yellow',
-  info: 'green',
-  http: 'magenta',
-  debug: 'blue',
-};
-
-// Add colors to winston
-winston.addColors(colors);
-
-// Define log format for development
-const developmentFormat = winston.format.combine(
-  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
-  winston.format.colorize({ all: true }),
-  winston.format.printf(
-    info =>
-      `${info.timestamp} ${info.level}: ${info.message}${info.metadata ? ` ${JSON.stringify(info.metadata)}` : ''}`
-  )
-);
-
-// Define log format for production (JSON)
-const productionFormat = winston.format.combine(winston.format.timestamp(), winston.format.json());
-
-// Determine which format to use based on environment
-const format = process.env.NODE_ENV === 'production' ? productionFormat : developmentFormat;
-
-// Create the logger
-const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info',
-  levels,
-  format,
-  defaultMeta: { service: 'vanity' },
-  transports: [
-    // Write logs to console
-    new winston.transports.Console(),
-
-    // Write all logs with level 'error' and below to error.log
-    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
-
-    // Write all logs to combined.log
-    new winston.transports.File({ filename: 'logs/combined.log' }),
-  ],
-  exitOnError: false, // Don't exit on handled exceptions
-});
+// Simple logger interface
+interface LoggerInterface {
+  error(_message: string, _metadata?: Record<string, unknown>): void;
+  warn(_message: string, _metadata?: Record<string, unknown>): void;
+  info(_message: string, _metadata?: Record<string, unknown>): void;
+  http(_message: string, _metadata?: Record<string, unknown>): void;
+  debug(_message: string, _metadata?: Record<string, unknown>): void;
+}
 
 // Create a correlation ID context for tracking requests through the system
 class CorrelationContext {
@@ -77,57 +33,57 @@ class CorrelationContext {
   }
 }
 
-// Enhanced logging interface
-interface LoggerInterface {
-  error(message: string, metadata?: Record<string, unknown>): void;
-  warn(message: string, metadata?: Record<string, unknown>): void;
-  info(message: string, metadata?: Record<string, unknown>): void;
-  http(message: string, metadata?: Record<string, unknown>): void;
-  debug(message: string, metadata?: Record<string, unknown>): void;
-}
+// Create the logger
+const createLogger = (): LoggerInterface => {
+  const log = (level: string, message: string, metadata: Record<string, unknown> = {}) => {
+    const timestamp = new Date().toISOString();
+    const correlationId = CorrelationContext.current.correlationId;
 
-// Proxy to enhance logger with correlation ID
-const loggerProxy: LoggerInterface = {
-  error(message: string, metadata: Record<string, unknown> = {}) {
-    logger.error(message, {
-      metadata: {
-        ...metadata,
-        correlation_id: CorrelationContext.current.correlationId,
-      },
-    });
-  },
-  warn(message: string, metadata: Record<string, unknown> = {}) {
-    logger.warn(message, {
-      metadata: {
-        ...metadata,
-        correlation_id: CorrelationContext.current.correlationId,
-      },
-    });
-  },
-  info(message: string, metadata: Record<string, unknown> = {}) {
-    logger.info(message, {
-      metadata: {
-        ...metadata,
-        correlation_id: CorrelationContext.current.correlationId,
-      },
-    });
-  },
-  http(message: string, metadata: Record<string, unknown> = {}) {
-    logger.http(message, {
-      metadata: {
-        ...metadata,
-        correlation_id: CorrelationContext.current.correlationId,
-      },
-    });
-  },
-  debug(message: string, metadata: Record<string, unknown> = {}) {
-    logger.debug(message, {
-      metadata: {
-        ...metadata,
-        correlation_id: CorrelationContext.current.correlationId,
-      },
-    });
-  },
+    const logEntry = {
+      timestamp,
+      level,
+      message,
+      correlation_id: correlationId,
+      ...metadata,
+    };
+
+    // Simple console logging that works in all environments
+    if (process.env.NODE_ENV !== 'production') {
+      const logString = `${timestamp} [${level.toUpperCase()}]: ${message}`;
+      const logData = Object.keys(metadata).length > 0 ? metadata : undefined;
+
+      switch (level) {
+        case 'error':
+          console.error(logString, logData);
+          break;
+        case 'warn':
+          console.warn(logString, logData);
+          break;
+        case 'info':
+          console.info(logString, logData);
+          break;
+        case 'http':
+        case 'debug':
+          console.log(logString, logData);
+          break;
+        default:
+          console.log(logString, logData);
+      }
+    } else {
+      // In production, use structured JSON logging
+      console.log(JSON.stringify(logEntry));
+    }
+  };
+
+  return {
+    error: (message: string, metadata?: Record<string, unknown>) => log('error', message, metadata),
+    warn: (message: string, metadata?: Record<string, unknown>) => log('warn', message, metadata),
+    info: (message: string, metadata?: Record<string, unknown>) => log('info', message, metadata),
+    http: (message: string, metadata?: Record<string, unknown>) => log('http', message, metadata),
+    debug: (message: string, metadata?: Record<string, unknown>) => log('debug', message, metadata),
+  };
 };
 
-export { loggerProxy as logger, CorrelationContext };
+// Create and export the logger
+export const logger = createLogger();
+export { CorrelationContext };

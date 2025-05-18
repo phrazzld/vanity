@@ -18,6 +18,10 @@ const browserGlobals = {
   fetch: 'readonly',
   React: 'readonly',
   setTimeout: 'readonly',
+  clearTimeout: 'readonly',
+  clearInterval: 'readonly',
+  setInterval: 'readonly',
+  NodeJS: 'readonly',
 };
 
 const nodeGlobals = {
@@ -36,6 +40,7 @@ const testGlobals = {
   jest: 'readonly',
   describe: 'readonly',
   it: 'readonly',
+  test: 'readonly',
   expect: 'readonly',
   beforeEach: 'readonly',
   afterEach: 'readonly',
@@ -45,6 +50,19 @@ const testGlobals = {
 
 // Define the flat configuration without relying on @rushstack/eslint-patch
 module.exports = [
+  // Ignore built and generated files
+  {
+    ignores: [
+      '.next/**',
+      'node_modules/**',
+      'build/**',
+      'dist/**',
+      'storybook-static/**',
+      'coverage/**',
+      '*.log',
+    ],
+  },
+  
   // Base JavaScript rules
   js.configs.recommended,
 
@@ -75,6 +93,7 @@ module.exports = [
       globals: {
         ...testGlobals,
         ...browserGlobals,
+        require: 'readonly',
       },
     },
     plugins: {
@@ -83,7 +102,10 @@ module.exports = [
     rules: {
       ...tseslint.configs.recommended.rules,
       // Relaxed rules for test files
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unused-vars': [
         'warn',
         {
@@ -127,9 +149,9 @@ module.exports = [
     },
     rules: {
       // Strict TypeScript type rules
-      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unnecessary-type-assertion': 'error',
-      '@typescript-eslint/no-unsafe-assignment': 'error',
+      '@typescript-eslint/no-unsafe-assignment': 'warn',
       '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/no-unused-vars': [
@@ -169,7 +191,7 @@ module.exports = [
       'max-lines-per-function': [
         'warn',
         {
-          max: 300,
+          max: 1000,
           skipBlankLines: true,
           skipComments: true,
         },

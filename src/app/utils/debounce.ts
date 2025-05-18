@@ -11,8 +11,8 @@
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number
-): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout | null = null;
+): (..._args: Parameters<T>) => void {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
 
   return function (...args: Parameters<T>): void {
     const later = () => {
@@ -39,8 +39,8 @@ export function debounce<T extends (...args: any[]) => any>(
  * @returns A debounced function that takes an event and extracts its value
  */
 export function useDebouncedSearch<T = string>(
-  callback: (value: T) => void,
+  callback: (_value: T) => void,
   delay: number
-): (value: T) => void {
+): (_value: T) => void {
   return debounce(callback, delay);
 }

@@ -117,7 +117,7 @@ function extractReadingObject(objectText) {
   if (finishedDateMatch) {
     try {
       reading.finishedDate = new Date(finishedDateMatch[1]);
-    } catch (e) {
+    } catch (_e) {
       reading.finishedDate = null;
     }
   }

@@ -1,4 +1,4 @@
-import { GET, POST, PUT, DELETE } from '../quotes/route';
+import { GET, POST, PUT as _PUT, DELETE as _DELETE } from '../quotes/route';
 import * as db from '@/lib/db';
 import type { Quote, QuoteInput } from '@/types';
 import { NextRequest } from 'next/server';
@@ -17,7 +17,7 @@ jest.mock('next/server', () => {
   return {
     __esModule: true,
     NextResponse: {
-      json: jest.fn((data, options) => {
+      json: jest.fn((data: any, options?: { status?: number }) => {
         return {
           status: options?.status || 200,
           headers: new Map(),
@@ -26,7 +26,7 @@ jest.mock('next/server', () => {
         };
       }),
     },
-    NextRequest: jest.fn().mockImplementation(url => {
+    NextRequest: jest.fn().mockImplementation((url?: string) => {
       const actualUrl = url || 'http://localhost:3000/api/quotes';
       return {
         url: actualUrl,

@@ -50,6 +50,8 @@ export function createFocusTrap(
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
 
+    if (!firstElement || !lastElement) return;
+
     // Handle shift+tab
     if (event.shiftKey) {
       // If focus is on first element, move to last element
@@ -79,9 +81,12 @@ export function createFocusTrap(
 
       // If there are focusable elements and container is visible
       if (focusableElements.length > 0 && isVisible(container)) {
-        // Focus the first element to maintain the trap
-        event.preventDefault();
-        focusableElements[0].focus({ preventScroll: true });
+        const firstElement = focusableElements[0];
+        if (firstElement) {
+          // Focus the first element to maintain the trap
+          event.preventDefault();
+          firstElement.focus({ preventScroll: true });
+        }
       }
     }
   };
@@ -115,6 +120,8 @@ export function trapTabKey(container: HTMLElement): () => void {
 
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (!firstElement || !lastElement) return;
 
     if (event.shiftKey && document.activeElement === firstElement) {
       lastElement.focus({ preventScroll: true });

@@ -26,13 +26,13 @@ export default function SearchLoadingIndicator({
   isLoading,
   className = '',
 }: SearchLoadingIndicatorProps) {
-  const { isDarkMode } = useTheme();
+  useTheme(); // Required for context
   const [visible, setVisible] = useState(false);
 
   // Add a small delay before showing the indicator to prevent flickering
   // for very quick operations
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
+    let timeout: ReturnType<typeof setTimeout>;
 
     if (isLoading) {
       timeout = setTimeout(() => {

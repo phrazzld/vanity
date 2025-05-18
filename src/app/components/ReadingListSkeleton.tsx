@@ -17,7 +17,7 @@ interface ReadingListSkeletonProps {
 }
 
 export default function ReadingListSkeleton({ count = 5 }: ReadingListSkeletonProps) {
-  const { isDarkMode } = useTheme();
+  useTheme(); // Required for context but value not used
 
   // Create an array of length 'count' to map over
   const items = Array.from({ length: count }, (_, i) => i);

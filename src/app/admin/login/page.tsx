@@ -53,7 +53,7 @@ function LoginForm() {
       // If not a redirect, parse response for potential error
       const contentType = response.headers.get('content-type');
       if (contentType && contentType.includes('application/json')) {
-        const data = await response.json();
+        const data = (await response.json()) as { error?: string };
         setErrorMessage(data.error || 'Authentication failed');
       } else {
         setErrorMessage('Authentication failed. Please try again.');

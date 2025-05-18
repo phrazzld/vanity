@@ -20,8 +20,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-  const { isDarkMode } = useTheme();
+  const { isDarkMode: _isDarkMode } = useTheme();
 
   // Check authentication status on mount
   useEffect(() => {

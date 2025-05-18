@@ -5,15 +5,7 @@ import type { KeyCombination, ShortcutHandler, RegisteredShortcut } from './type
 // We don't need KeyboardKeys in this file
 // import { KeyboardKeys } from './constants';
 
-/**
- * Map of modifier key names to their corresponding properties on KeyboardEvent
- */
-const _MODIFIER_MAP: Record<string, keyof KeyboardEvent> = {
-  ctrl: 'ctrlKey',
-  alt: 'altKey',
-  shift: 'shiftKey',
-  meta: 'metaKey',
-};
+// Removed unused MODIFIER_MAP constant
 
 /**
  * Parse a key combination string (e.g., "ctrl+shift+s") into individual keys and modifiers

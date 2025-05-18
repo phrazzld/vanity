@@ -7,7 +7,7 @@ type ThemeContextType = {
   toggleDarkMode: () => void;
 };
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Initialize with system preference, but use localStorage value if available

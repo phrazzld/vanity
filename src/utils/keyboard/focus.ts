@@ -60,8 +60,11 @@ export function focusFirstElement(
 ): boolean {
   const focusableElements = getFocusableElements(container);
   if (focusableElements.length > 0) {
-    focusableElements[0].focus(options);
-    return true;
+    const firstElement = focusableElements[0];
+    if (firstElement) {
+      firstElement.focus(options);
+      return true;
+    }
   }
   return false;
 }
@@ -79,8 +82,11 @@ export function focusLastElement(
 ): boolean {
   const focusableElements = getFocusableElements(container);
   if (focusableElements.length > 0) {
-    focusableElements[focusableElements.length - 1].focus(options);
-    return true;
+    const lastElement = focusableElements[focusableElements.length - 1];
+    if (lastElement) {
+      lastElement.focus(options);
+      return true;
+    }
   }
   return false;
 }
@@ -126,14 +132,14 @@ export function getNextFocusableElement(
   if (focusableElements.length === 0) return null;
 
   const currentIndex = focusableElements.indexOf(currentElement);
-  if (currentIndex === -1) return focusableElements[0];
+  if (currentIndex === -1) return focusableElements[0] || null;
 
   const nextIndex = currentIndex + 1;
   if (nextIndex >= focusableElements.length) {
-    return loop ? focusableElements[0] : null;
+    return loop ? focusableElements[0] || null : null;
   }
 
-  return focusableElements[nextIndex];
+  return focusableElements[nextIndex] || null;
 }
 
 /**
@@ -153,14 +159,14 @@ export function getPreviousFocusableElement(
   if (focusableElements.length === 0) return null;
 
   const currentIndex = focusableElements.indexOf(currentElement);
-  if (currentIndex === -1) return focusableElements[0];
+  if (currentIndex === -1) return focusableElements[0] || null;
 
   const prevIndex = currentIndex - 1;
   if (prevIndex < 0) {
-    return loop ? focusableElements[focusableElements.length - 1] : null;
+    return loop ? focusableElements[focusableElements.length - 1] || null : null;
   }
 
-  return focusableElements[prevIndex];
+  return focusableElements[prevIndex] || null;
 }
 
 /**

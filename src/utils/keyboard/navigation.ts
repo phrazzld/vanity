@@ -101,7 +101,7 @@ export function createGridNavigationHandler(
     preventScroll?: boolean;
     onNavigate?: (_rowIndex: number, _columnIndex: number) => void;
   } = {}
-): (event: KeyboardEvent) => boolean {
+): (_event: KeyboardEvent) => boolean {
   const { loop = true, preventScroll = true, onNavigate } = options;
 
   return (event: KeyboardEvent): boolean => {
@@ -126,7 +126,9 @@ export function createGridNavigationHandler(
     let currentCellIndex = -1;
 
     for (let i = 0; i < rows.length; i++) {
-      const cells = Array.from(rows[i].querySelectorAll(cellSelector));
+      const row = rows[i];
+      if (!row) continue;
+      const cells = Array.from(row.querySelectorAll(cellSelector));
       const cellIndex = cells.indexOf(currentElement);
 
       if (cellIndex !== -1) {
@@ -139,11 +141,13 @@ export function createGridNavigationHandler(
     // If focus is not in the grid, focus the first cell
     if (currentRowIndex === -1 || currentCellIndex === -1) {
       const firstRow = rows[0];
-      const firstCell = firstRow.querySelector(cellSelector) as HTMLElement;
+      if (firstRow) {
+        const firstCell = firstRow.querySelector(cellSelector) as HTMLElement;
 
-      if (firstCell) {
-        firstCell.focus({ preventScroll });
-        return true;
+        if (firstCell) {
+          firstCell.focus({ preventScroll });
+          return true;
+        }
       }
 
       return false;
@@ -178,8 +182,11 @@ export function createGridNavigationHandler(
               nextRowIndex = rows.length - 1;
             }
 
-            const cells = Array.from(rows[nextRowIndex].querySelectorAll(cellSelector));
-            nextCellIndex = cells.length - 1;
+            const nextRow = rows[nextRowIndex];
+            if (nextRow) {
+              const cells = Array.from(nextRow.querySelectorAll(cellSelector));
+              nextCellIndex = cells.length - 1;
+            }
           } else {
             nextCellIndex = 0;
           }
@@ -187,7 +194,9 @@ export function createGridNavigationHandler(
         break;
 
       case KeyboardKeys.ARROW_RIGHT: {
-        const currentCells = Array.from(rows[currentRowIndex].querySelectorAll(cellSelector));
+        const currentRow = rows[currentRowIndex];
+        if (!currentRow) break;
+        const currentCells = Array.from(currentRow.querySelectorAll(cellSelector));
         nextCellIndex = currentCellIndex + 1;
 
         if (nextCellIndex >= currentCells.length) {
@@ -209,6 +218,7 @@ export function createGridNavigationHandler(
     // Check if we can move to the calculated position
     if (nextRowIndex >= 0 && nextRowIndex < rows.length) {
       const nextRow = rows[nextRowIndex];
+      if (!nextRow) return false;
       const nextCells = Array.from(nextRow.querySelectorAll(cellSelector));
 
       // Adjust cellIndex if needed for the new row
@@ -217,11 +227,13 @@ export function createGridNavigationHandler(
       }
 
       if (nextCellIndex >= 0 && nextCellIndex < nextCells.length) {
-        const nextCell = nextCells[nextCellIndex] as HTMLElement;
-        nextCell.focus({ preventScroll });
-        onNavigate?.(nextRowIndex, nextCellIndex);
-        event.preventDefault();
-        return true;
+        const nextCell = nextCells[nextCellIndex];
+        if (nextCell) {
+          (nextCell as HTMLElement).focus({ preventScroll });
+          onNavigate?.(nextRowIndex, nextCellIndex);
+          event.preventDefault();
+          return true;
+        }
       }
     }
 
@@ -241,7 +253,7 @@ export function createHomeEndHandler(
   options: {
     preventScroll?: boolean;
   } = {}
-): (event: KeyboardEvent) => boolean {
+): (_event: KeyboardEvent) => boolean {
   const { preventScroll = true } = options;
 
   return (event: KeyboardEvent): boolean => {
@@ -275,8 +287,8 @@ export function createHomeEndHandler(
  * @returns A combined handler that tries each handler in sequence
  */
 export function createCompositeHandler(
-  handlers: ((event: KeyboardEvent) => boolean)[]
-): (event: KeyboardEvent) => boolean {
+  handlers: ((_event: KeyboardEvent) => boolean)[]
+): (_event: KeyboardEvent) => boolean {
   return (event: KeyboardEvent): boolean => {
     for (const handler of handlers) {
       if (handler(event)) {

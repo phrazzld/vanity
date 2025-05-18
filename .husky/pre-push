@@ -52,6 +52,79 @@ case "$BRANCH_NAME" in
 esac
 
 # ========================================
+# Check Edge Runtime compatibility
+# ========================================
+echo "🌐 Checking Edge Runtime compatibility..."
+
+# Create the edge compatibility check script
+cat > check-edge-compat.js << 'EOF'
+const fs = require('fs');
+const path = require('path');
+
+const edgeIncompatiblePkgs = ['winston', 'fs', 'path', 'crypto', 'os', 'child_process'];
+const clientFiles = [];
+
+function findFiles(dir, pattern) {
+  const files = fs.readdirSync(dir);
+  files.forEach(file => {
+    const filePath = path.join(dir, file);
+    const stat = fs.statSync(filePath);
+    if (stat.isDirectory() && !file.startsWith('.') && file !== 'node_modules') {
+      findFiles(filePath, pattern);
+    } else if (pattern.test(file)) {
+      clientFiles.push(filePath);
+    }
+  });
+}
+
+// Find all client components and pages
+findFiles('./src', /\.(tsx?|jsx?)$/);
+
+let hasIssues = false;
+
+clientFiles.forEach(file => {
+  const content = fs.readFileSync(file, 'utf-8');
+  // Check for 'use client' directive
+  if (content.includes("'use client'") || content.includes('"use client"')) {
+    edgeIncompatiblePkgs.forEach(pkg => {
+      const importPattern = new RegExp(`from\\s+['"\`](.*/)?${pkg}['"\`]|require\\s*\\(['"\`](.*/)?${pkg}['"\`]\\)`);
+      if (importPattern.test(content)) {
+        console.error(`❌ Edge Runtime incompatible: ${file} imports '${pkg}'`);
+        hasIssues = true;
+      }
+    });
+  }
+});
+
+if (hasIssues) {
+  console.error('\n🚨 Edge Runtime compatibility issues found!');
+  console.error('→ Client components cannot use Node.js APIs');
+  console.error('→ Use runtime checks or Edge-compatible alternatives');
+  process.exit(1);
+} else {
+  console.log('✅ All client components are Edge Runtime compatible');
+}
+EOF
+
+# Run the edge compatibility check
+if node check-edge-compat.js; then
+  rm check-edge-compat.js
+else
+  rm check-edge-compat.js
+  echo ""
+  echo "To fix Edge Runtime issues:"
+  echo "1. Remove Node.js-only imports from client components"
+  echo "2. Use runtime checks for Node.js APIs"
+  echo "3. Create Edge-compatible alternatives"
+  echo ""
+  echo "💡 Common solutions:"
+  echo "→ Use dynamic imports with runtime checks"
+  echo "→ Create separate Edge-compatible modules"
+  echo "→ Move Node.js logic to API routes"
+  exit 1
+fi
+
+# ========================================
 # Run the complete test suite
 # ========================================
 echo "🧪 Running the complete test suite..."

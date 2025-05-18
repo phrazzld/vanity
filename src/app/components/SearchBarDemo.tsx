@@ -12,8 +12,8 @@ import type { FilterConfig } from './SearchBar';
 import SearchBar from './SearchBar';
 
 export default function SearchBarDemo() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
+  const [_searchQuery, setSearchQuery] = useState('');
+  const [_activeFilters, setActiveFilters] = useState<Record<string, string>>({});
   const [results, setResults] = useState<string>('Search results will appear here');
 
   // Example filters for reading status

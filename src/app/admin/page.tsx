@@ -65,10 +65,22 @@ export default function AdminDashboardPage() {
       try {
         // Fetch session data
         const sessionRes = await fetch('/api/auth/session');
-        const sessionData = await sessionRes.json();
+        const sessionData = (await sessionRes.json()) as {
+          isAuthenticated?: boolean;
+          user?: {
+            name?: string | null;
+            email?: string | null;
+            image?: string | null;
+            role?: string | null;
+          };
+        };
 
         if (sessionData.isAuthenticated && sessionData.user) {
-          setUser(sessionData.user);
+          setUser({
+            name: sessionData.user.name || '',
+            email: sessionData.user.email || '',
+            role: sessionData.user.role || 'user',
+          });
         }
 
         // Fetch stats data
@@ -77,8 +89,8 @@ export default function AdminDashboardPage() {
           fetch('/api/quotes'),
         ]);
 
-        const readingsData = await readingsRes.json();
-        const quotesData = await quotesRes.json();
+        const readingsData = (await readingsRes.json()) as unknown[];
+        const quotesData = (await quotesRes.json()) as unknown[];
 
         setStats({
           readings: Array.isArray(readingsData) ? readingsData.length : 0,

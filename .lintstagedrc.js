@@ -11,7 +11,7 @@ function filterSymlinks(files) {
     try {
       const stats = fs.lstatSync(file);
       return !stats.isSymbolicLink();
-    } catch (e) {
+    } catch (_e) {
       // If we can't determine, assume it's not a symlink
       return true;
     }

@@ -66,9 +66,8 @@ export default function SearchBar({
   filtersUpdateOnChange = false,
   buttonVariant = 'primary',
 }: SearchBarProps) {
-  // Access theme context - used for theme-aware styling
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-  const { isDarkMode } = useTheme();
+  // Access theme context - required for context
+  useTheme();
 
   // Search input state (current value in input)
   const [query, setQuery] = useState(initialQuery);
@@ -100,14 +99,12 @@ export default function SearchBar({
   );
 
   // For debouncing search
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const searchTimeoutRef = useRef<any>(null);
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Clear any existing timeout on unmount
   useEffect(() => {
     return () => {
       if (searchTimeoutRef.current) {
-        // eslint-disable-next-line no-undef
         clearTimeout(searchTimeoutRef.current);
       }
     };
@@ -121,7 +118,6 @@ export default function SearchBar({
     // If searchAsYouType is enabled, trigger search with debounce
     if (searchAsYouType) {
       if (searchTimeoutRef.current) {
-        // eslint-disable-next-line no-undef
         clearTimeout(searchTimeoutRef.current);
       }
 
@@ -143,7 +139,6 @@ export default function SearchBar({
     // If filtersUpdateOnChange is true, trigger search
     if (filtersUpdateOnChange) {
       if (searchTimeoutRef.current) {
-        // eslint-disable-next-line no-undef
         clearTimeout(searchTimeoutRef.current);
       }
 

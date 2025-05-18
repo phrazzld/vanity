@@ -9,7 +9,6 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import type { Quote, QuoteInput } from '@/types';
 import { useQuotesList } from '@/app/hooks';
 import {
@@ -22,9 +21,6 @@ import {
 import type { FilterConfig } from '@/app/components/SearchBar';
 
 export default function QuotesManagementPage() {
-  // Keep router for potential future use
-  const _router = useRouter();
-
   // Use the quotes list hook for search, filter, and pagination
   const {
     items: quotes,
