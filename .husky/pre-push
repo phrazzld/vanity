@@ -227,8 +227,9 @@ else
     echo "3. Check jest.config.js for coverage requirements"
     echo ""
     echo "💡 Current thresholds:"
-    echo "→ Global: 85% minimum"
-    echo "→ Core logic (api/, lib/): 90% minimum"
+    echo "→ Global: 27% minimum (temporarily lowered from 85%)"
+    echo "→ Core logic (api/, lib/): 17-36% minimum (temporarily lowered from 90%)"
+    echo "→ See BACKLOG.md for coverage improvement plan"
     rm coverage_output.log
     exit 1
   else
