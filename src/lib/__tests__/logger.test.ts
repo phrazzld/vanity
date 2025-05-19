@@ -82,21 +82,22 @@ describe('Logger', () => {
     expect(consoleMocks.warn).toHaveBeenCalledTimes(1);
     expect(consoleMocks.error).toHaveBeenCalledTimes(1);
 
-    expect(consoleMocks.log.mock.calls[0][0] as string).toContain('[DEBUG]: Debug message');
-    expect(consoleMocks.info.mock.calls[0][0] as string).toContain('[INFO]: Info message');
-    expect(consoleMocks.warn.mock.calls[0][0] as string).toContain('[WARN]: Warning message');
-    expect(consoleMocks.error.mock.calls[0][0] as string).toContain('[ERROR]: Error message');
-    expect(consoleMocks.log.mock.calls[1][0] as string).toContain('[HTTP]: HTTP message');
+    expect(consoleMocks.log.mock.calls[0]?.[0] as string).toContain('[DEBUG]: Debug message');
+    expect(consoleMocks.info.mock.calls[0]?.[0] as string).toContain('[INFO]: Info message');
+    expect(consoleMocks.warn.mock.calls[0]?.[0] as string).toContain('[WARN]: Warning message');
+    expect(consoleMocks.error.mock.calls[0]?.[0] as string).toContain('[ERROR]: Error message');
+    expect(consoleMocks.log.mock.calls[1]?.[0] as string).toContain('[HTTP]: HTTP message');
   });
 
   it('uses structured JSON logging in production', () => {
+    // @ts-expect-error - NODE_ENV is readonly in TypeScript
     process.env.NODE_ENV = 'production';
 
     const metadata = { userId: '123' };
     logger.info('Production message', metadata);
 
     expect(consoleMocks.log).toHaveBeenCalledTimes(1);
-    const logOutput = consoleMocks.log.mock.calls[0][0] as string;
+    const logOutput = consoleMocks.log.mock.calls[0]?.[0] as string;
     const parsedLog = JSON.parse(logOutput) as Record<string, unknown>;
 
     expect(parsedLog).toMatchObject({
@@ -112,7 +113,7 @@ describe('Logger', () => {
     logger.info('Test message');
 
     expect(consoleMocks.info).toHaveBeenCalledTimes(1);
-    const logData = consoleMocks.info.mock.calls[0][1] as unknown;
+    const logData = consoleMocks.info.mock.calls[0]?.[1] as unknown;
     expect(logData).toBeUndefined();
   });
 });
