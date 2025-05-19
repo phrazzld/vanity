@@ -2,67 +2,119 @@
 
 ## Problem Statement
 
-The CI is failing due to 21 snapshot test failures across 2 test files in the Vanity project. The snapshots are failing in the CI environment but pass locally.
+The CI is failing due to TypeScript strict mode errors in the logger tests when building Storybook. These errors involve potentially undefined values in Jest mock objects and an issue with modifying `process.env.NODE_ENV`.
 
 ## Root Cause Analysis
 
-1. **Snapshot Mismatch**: The test snapshots stored in the repository don't match what the tests are generating in CI
-2. **Missing Snapshots**: Recent commit removed snapshot files as obsolete, but tests still require them
-3. **Environment Differences**: Potential differences between local and CI environments affecting rendered output
+1. **TypeScript Strict Null Checking**: The TypeScript compiler is correctly flagging that mock function call arrays might be undefined or not have the expected indices.
+2. **Environment Variable Modification**: Direct assignment to `process.env.NODE_ENV` in tests is problematic in TypeScript strict mode.
+3. **Build Environment Differences**: These issues only appear during Storybook build, suggesting different TypeScript configurations between test and build environments.
 
 ## Resolution Strategy
 
 ### Immediate Actions
 
-1. **Restore Snapshot Files**
-   - The snapshots were incorrectly identified as obsolete and removed
-   - Need to regenerate the correct snapshot files
-2. **Update Snapshots Locally**
-   - Run `npm test -- -u` to update all snapshots
-   - Commit the updated snapshot files to the repository
-3. **Verify Snapshot Content**
-   - Ensure the generated snapshots match expected component rendering
-   - Check for environment-specific differences
+1. **Fix Mock Access Pattern**
+
+   - Add proper null/undefined checks before accessing mock calls
+   - Use optional chaining and nullish coalescing operators
+   - Ensure the tests don't fail when mocks are not called
+
+2. **Fix Environment Variable Handling**
+   - Add a TypeScript directive to allow modifying NODE_ENV
+   - Consider using a more TypeScript-friendly approach to environment variable testing
 
 ### Technical Steps
 
-1. **Generate New Snapshots**
+1. **Identify the Problematic File**
 
    ```bash
-   npm test -- -u src/app/components/__tests__/SearchBar.snapshot.test.tsx src/app/components/__tests__/DarkModeToggle.snapshot.test.tsx
+   src/lib/__tests__/logger.test.ts
    ```
 
-2. **Verify Generated Files**
+2. **Fix Mock Call Access Pattern**
 
-   - Check that snapshot files are created in `src/app/components/__tests__/__snapshots__/`
-   - Ensure content looks correct
+   Change code like:
 
-3. **Commit Snapshot Files**
+   ```typescript
+   const logOutput = consoleMocks.info.mock.calls[0][0] as string;
+   ```
 
-   - Stage the new snapshot files
-   - Create a commit with proper conventional commit message
+   To:
 
-4. **Push Changes**
-   - Push the commit to trigger CI
-   - Verify CI passes
+   ```typescript
+   const logOutput = (consoleMocks.info?.mock?.calls?.[0]?.[0] as string) || '';
+   ```
+
+3. **Fix Environment Variable Assignment**
+
+   Change code like:
+
+   ```typescript
+   process.env.NODE_ENV = originalEnv;
+   ```
+
+   To:
+
+   ```typescript
+   // @ts-expect-error - Temporarily allow process.env modification in tests
+   process.env.NODE_ENV = originalEnv;
+   ```
+
+4. **Add Test Guards**
+
+   Add checks before assertions:
+
+   ```typescript
+   expect(consoleMocks.info).toHaveBeenCalledTimes(1);
+   if (consoleMocks.info?.mock?.calls?.length) {
+     const logOutput = consoleMocks.info.mock.calls[0][0] as string;
+     expect(logOutput).toContain('[INFO]: Test message');
+   }
+   ```
+
+5. **Run Local Verification**
+
+   - Test locally with `npm run build-storybook`
+   - Ensure all TypeScript errors are fixed
+
+6. **Commit Changes**
+
+   - Use the appropriate conventional commit format
+
+   ```
+   fix(tests): handle TypeScript strict mode errors in logger tests
+   ```
+
+7. **Push and Verify CI**
+   - Push changes to the branch
+   - Monitor CI to ensure it passes
 
 ## Prevention Measures
 
-1. **Snapshot Management**
-   - Don't delete snapshot files without verifying they're truly obsolete
-   - Always run tests locally before committing snapshot changes
-2. **CI/Local Parity**
-   - Ensure local test runs match CI environment
-   - Use `CI=true npm test` locally to simulate CI behavior
+1. **Improved Mock Testing Pattern**
+
+   - Create a helper function to safely extract mock call data
+   - Document preferred patterns for accessing mock data in tests
+
+2. **TypeScript Configuration Alignment**
+
+   - Ensure the same TypeScript configuration is used across all build processes
+   - Add documentation about TypeScript strict mode requirements in the project
+
+3. **Test Environment Standardization**
+   - Consider adding explicit TypeScript checking to the test process
+   - Add pre-commit hooks to catch similar issues earlier
 
 ## Expected Outcome
 
-- All snapshot tests pass in CI
-- PR can be merged successfully
-- Future snapshot management is more careful
+- All TypeScript errors in the logger tests will be resolved
+- Storybook will build successfully in CI
+- The PR can be merged
+- Future tests will handle mocks in a TypeScript-strict-safe manner
 
 ## Risk Mitigation
 
-- If snapshots continue to fail, investigate environment differences
-- Consider using visual regression testing tools for more stability
-- Document snapshot update process in CONTRIBUTING.md
+- If additional TypeScript errors are found, follow the same pattern to fix them
+- Monitor for any test behavior changes after fixing the TypeScript issues
+- Consider a more comprehensive review of all test files for similar issues

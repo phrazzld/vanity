@@ -2,66 +2,69 @@
 
 ## Build Information
 
-- **Workflow Run ID**: 15099477666
+- **Workflow Run ID**: 15118138987
 - **Branch**: plan/infrastructure-ci-cd
-- **PR**: phrazzld/vanity#22
+- **PR**: #22
 - **Triggered**: via pull_request
 - **Status**: FAILED
-- **Failed Job**: Build and Test
-- **Failed Step**: Run tests with coverage
+- **Failed Step**: Build Storybook
 
 ## Error Details
 
 ### Primary Error
 
-Snapshot tests failed in CI environment:
+Storybook build is failing due to TypeScript errors in the `src/lib/__tests__/logger.test.ts` file.
 
-- 21 snapshots failed from 2 test suites
-- 13 failed tests out of 164 total tests
+```
+TS2532: Object is possibly 'undefined'.
+```
 
-### Failed Test Suites
+The errors are occurring in multiple places where mock function calls are accessed:
 
-1. `src/app/components/__tests__/SearchBar.snapshot.test.tsx`
-2. `src/app/components/__tests__/DarkModeToggle.snapshot.test.tsx`
+1. `consoleMocks.info.mock.calls[0][0]`
+2. `consoleMocks.error.mock.calls[0][0]`
+3. `consoleMocks.warn.mock.calls[0][0]`
+4. `consoleMocks.warn.mock.calls[0][1]`
+
+Additionally, there's a TypeScript error with assigning to `process.env.NODE_ENV`.
 
 ### Root Cause
 
-The CI environment is detecting snapshot mismatches. The error states:
-
-> New snapshot was not written. The update flag must be explicitly passed to write a new snapshot.
-> This is likely because this test is run in a continuous integration (CI) environment in which snapshots are not written by default.
+The TypeScript compiler in strict mode is detecting that properties of the mock objects might be undefined, which could cause runtime errors. This issue specifically affects the Storybook build which seems to be using a stricter TypeScript configuration than the main Jest tests.
 
 ### Specific Failed Tests
 
-1. SearchBar Component Snapshots:
+The errors are in the logger tests at `src/lib/__tests__/logger.test.ts`, specifically:
 
-   - Basic Rendering tests (4 failures)
-   - Button Variants tests (2 failures)
-   - Responsive Behavior tests (2 failures)
-   - Theme Variants tests (2 failures)
+1. Environment setup code:
 
-2. DarkModeToggle Component Snapshots:
-   - Size Variants tests (3 failures)
-   - Theme Variants tests (4 failures)
-   - Custom Classes test (1 failure)
-   - Accessibility tests (2 failures)
+   ```typescript
+   process.env.NODE_ENV = originalEnv;
+   ```
+
+2. Mock access patterns:
+   ```typescript
+   const logOutput = consoleMocks.info.mock.calls[0][0] as string;
+   const logOutput = consoleMocks.error.mock.calls[0][0] as string;
+   const logOutput = consoleMocks.warn.mock.calls[0][0] as string;
+   const logData = consoleMocks.warn.mock.calls[0][1] as Record<string, unknown>;
+   ```
 
 ## Additional Context
 
-- The CI environment does not allow automatic snapshot updates
-- The snapshots were previously deleted as obsolete, but they appear to still be needed
-- The local tests pass, but CI detects mismatches
-- 10 linting warnings about unused variables in scripts and test files
+- The issue only appears during the Storybook build process
+- These errors don't appear to fail the main test run
+- The errors are specifically related to TypeScript's strict null checking
 
 ## Impact
 
-- Pull request cannot be merged
+- PR cannot be merged
 - CI pipeline blocked
-- Tests are failing even though coverage requirements are met
+- Storybook cannot be built
 
 ## Next Steps
 
-1. Investigate why snapshots are failing in CI but not locally
-2. Update snapshots appropriately
-3. Ensure snapshot files are properly committed
-4. Verify CI environment matches local development environment
+1. Fix TypeScript strict mode errors in logger tests
+2. Add proper null/undefined checks before accessing mock call properties
+3. Address issue with modifying `process.env.NODE_ENV` in tests
+4. Re-run CI to verify the fix works
