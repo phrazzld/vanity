@@ -23,10 +23,12 @@ describe('Logger', () => {
     // Clear the correlation context between tests
     CorrelationContext.clear();
     // Set to development to test console output
+    // @ts-expect-error - Temporarily allow process.env modification in tests
     process.env.NODE_ENV = 'development';
   });
 
   afterEach(() => {
+    // @ts-expect-error - Temporarily allow process.env modification in tests
     process.env.NODE_ENV = originalEnv;
   });
 
@@ -34,7 +36,7 @@ describe('Logger', () => {
     logger.info('Test message');
 
     expect(consoleMocks.info).toHaveBeenCalledTimes(1);
-    const logOutput = consoleMocks.info.mock.calls[0][0] as string;
+    const logOutput = (consoleMocks.info?.mock?.calls?.[0]?.[0] as string) || '';
     expect(logOutput).toContain('[INFO]: Test message');
     expect(logOutput).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/);
   });
@@ -54,7 +56,7 @@ describe('Logger', () => {
 
     expect(CorrelationContext.current.correlationId).toBe(customId);
     expect(consoleMocks.error).toHaveBeenCalledTimes(1);
-    const logOutput = consoleMocks.error.mock.calls[0][0] as string;
+    const logOutput = (consoleMocks.error?.mock?.calls?.[0]?.[0] as string) || '';
     expect(logOutput).toContain('[ERROR]: Test error message');
   });
 
@@ -63,10 +65,10 @@ describe('Logger', () => {
     logger.warn('Test warning', metadata);
 
     expect(consoleMocks.warn).toHaveBeenCalledTimes(1);
-    const logOutput = consoleMocks.warn.mock.calls[0][0] as string;
+    const logOutput = (consoleMocks.warn?.mock?.calls?.[0]?.[0] as string) || '';
     expect(logOutput).toContain('[WARN]: Test warning');
 
-    const logData = consoleMocks.warn.mock.calls[0][1] as Record<string, unknown>;
+    const logData = (consoleMocks.warn?.mock?.calls?.[0]?.[1] as Record<string, unknown>) || {};
     expect(logData).toEqual(metadata);
   });
 
@@ -97,7 +99,7 @@ describe('Logger', () => {
     logger.info('Production message', metadata);
 
     expect(consoleMocks.log).toHaveBeenCalledTimes(1);
-    const logOutput = consoleMocks.log.mock.calls[0]?.[0] as string;
+    const logOutput = (consoleMocks.log?.mock?.calls?.[0]?.[0] as string) || '{}';
     const parsedLog = JSON.parse(logOutput) as Record<string, unknown>;
 
     expect(parsedLog).toMatchObject({
@@ -113,7 +115,7 @@ describe('Logger', () => {
     logger.info('Test message');
 
     expect(consoleMocks.info).toHaveBeenCalledTimes(1);
-    const logData = consoleMocks.info.mock.calls[0]?.[1] as unknown;
+    const logData = consoleMocks.info?.mock?.calls?.[0]?.[1] as unknown;
     expect(logData).toBeUndefined();
   });
 });
