@@ -24,15 +24,23 @@ module.exports = {
     const snapshotFilename = path.basename(snapshotFilePath);
 
     // Extract parent directory (should be __snapshots__)
+    const snapshotDir = path.basename(dirname);
+
+    if (snapshotDir !== '__snapshots__') {
+      throw new Error(
+        `Expected snapshot to be in __snapshots__ directory, but found in ${snapshotDir}`
+      );
+    }
+
     const parentDir = path.dirname(dirname);
 
     // Remove snapshot extension from filename
-    const testFileName = snapshotFilename.replace(snapshotExtension, '');
+    const testFileName = snapshotFilename.slice(0, -snapshotExtension.length);
 
     // The test file should be directly in the parent directory
     return path.join(parentDir, testFileName);
   },
 
   // Example test path, used for preflight consistency check
-  testPathForConsistencyCheck: 'src/app/components/__tests__/example.test.tsx',
+  testPathForConsistencyCheck: 'src/app/components/__tests__/SearchBar.snapshot.test.tsx',
 };
