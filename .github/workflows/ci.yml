@@ -250,3 +250,20 @@ jobs:
             echo "→ Ensure package-lock.json is committed and up to date"
             exit 1
           }
+
+      - name: Run npm audit for high and critical vulnerabilities
+        run: |
+          echo "🔒 Checking for high and critical security vulnerabilities..."
+          npm audit --audit-level=high || {
+            echo "❌ Security vulnerabilities detected!"
+            echo ""
+            echo "To fix security issues:"
+            echo "1. Review the vulnerabilities listed above"
+            echo "2. Run 'npm audit fix' to fix issues that can be automatically resolved"
+            echo "3. For remaining issues, manually update affected dependencies"
+            echo ""
+            echo "💡 If you cannot fix an issue immediately:"
+            echo "→ Document the issue in the security allowlist (coming soon)"
+            echo "→ Include justification and timeline for remediation"
+            exit 1
+          }

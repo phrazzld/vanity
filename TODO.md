@@ -18,7 +18,7 @@ Implement a simpler approach to dependency security scanning using the native pa
     1. Review workflow file for correct job configuration
   - **Depends-on:** None
 
-- [ ] **T002 · Feature · P0: Implement npm Audit in CI Pipeline**
+- [x] **T002 · Feature · P0: Implement npm Audit in CI Pipeline**
 
   - **Action:**
     1. Add step to CI job: `npm audit --audit-level=high`
