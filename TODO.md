@@ -72,7 +72,7 @@ Implement a simpler approach to dependency security scanning using the native pa
     1. Run `npm run security:scan` locally and confirm it executes audit
   - **Depends-on:** None
 
-- [ ] **T006 · Documentation · P2: Document developer workflow for security scanning**
+- [x] **T006 · Documentation · P2: Document developer workflow for security scanning**
   - **Action:**
     1. Add instructions for running security scans locally
     2. Document process for dealing with found vulnerabilities
