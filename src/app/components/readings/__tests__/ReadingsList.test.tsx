@@ -19,13 +19,13 @@ jest.mock('next/image', () => ({
   __esModule: true,
   default: ({
     // These properties are required for type checking but not used in the mock
-     
+
     src: _src,
     alt,
     width,
     height,
     className,
-     
+
     onError: _onError,
   }: {
     src: string;
