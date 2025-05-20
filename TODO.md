@@ -99,7 +99,7 @@ Implement a simpler approach to dependency security scanning using the native pa
     1. Document reviewed for completeness and clarity
   - **Depends-on:** [T003]
 
-- [ ] **T008 · Documentation · P2: Update README with Security Scan Information**
+- [x] **T008 · Documentation · P2: Update README with Security Scan Information**
 
   - **Action:**
     1. Add subsection in README under "CI" or "Quality Gates" about security scanning
