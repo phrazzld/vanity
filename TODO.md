@@ -31,7 +31,7 @@ Implement a simpler approach to dependency security scanning using the native pa
     1. CI logs show successful execution of npm audit scan
   - **Depends-on:** [T001]
 
-- [ ] **T003 · Feature · P2: Create allowlist script for known vulnerabilities**
+- [x] **T003 · Feature · P2: Create allowlist script for known vulnerabilities**
 
   - **Action:**
     1. Create a simple script (e.g., `scripts/audit-filter.js`) that runs `npm audit --json` and filters results

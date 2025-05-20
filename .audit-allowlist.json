@@ -1,0 +1,10 @@
+[
+  {
+    "id": "example-id-1",
+    "package": "example-package",
+    "reason": "Vulnerability is in a development dependency and does not affect production builds.",
+    "notes": "Internal tracking issue: SEC-001",
+    "expires": "2025-12-31",
+    "reviewedOn": "2025-05-20"
+  }
+]
