@@ -2,7 +2,7 @@
 
 ## Build Information
 
-- **Workflow Run ID**: 15118138987
+- **Workflow Run ID**: 15123905101
 - **Branch**: plan/infrastructure-ci-cd
 - **PR**: #22
 - **Triggered**: via pull_request
@@ -11,60 +11,59 @@
 
 ## Error Details
 
-### Primary Error
+### Current Status
 
-Storybook build is failing due to TypeScript errors in the `src/lib/__tests__/logger.test.ts` file.
+We successfully fixed the TypeScript errors in `src/lib/__tests__/logger.test.ts`, but new TypeScript errors are now visible in other test files during the Storybook build process.
 
-```
-TS2532: Object is possibly 'undefined'.
-```
+### Remaining Errors
 
-The errors are occurring in multiple places where mock function calls are accessed:
+The Storybook build is now failing due to TypeScript errors in test files related to components:
 
-1. `consoleMocks.info.mock.calls[0][0]`
-2. `consoleMocks.error.mock.calls[0][0]`
-3. `consoleMocks.warn.mock.calls[0][0]`
-4. `consoleMocks.warn.mock.calls[0][1]`
+1. Unused imports warning:
 
-Additionally, there's a TypeScript error with assigning to `process.env.NODE_ENV`.
+   ```
+   TS6133: 'ThemeProvider' is declared but its value is never read.
+   ```
+
+2. Unused variables warnings:
+
+   ```
+   TS6133: 'src' is declared but its value is never read.
+   TS6133: 'onError' is declared but its value is never read.
+   ```
+
+3. Type errors involving potentially undefined values:
+   ```
+   TS2345: Argument of type 'Element | undefined' is not assignable to parameter of type 'Window | Document | Node | Element'.
+   TS2322: Type 'Reading | undefined' is not assignable to type 'Reading'.
+   ```
+
+### Affected Files
+
+Based on the error messages, the following files likely contain these issues:
+
+1. `src/app/components/readings/__tests__/ReadingsList.test.tsx`
+2. `src/app/components/readings/__tests__/YearSection.test.tsx`
 
 ### Root Cause
 
-The TypeScript compiler in strict mode is detecting that properties of the mock objects might be undefined, which could cause runtime errors. This issue specifically affects the Storybook build which seems to be using a stricter TypeScript configuration than the main Jest tests.
+The TypeScript compiler in strict mode is detecting:
 
-### Specific Failed Tests
-
-The errors are in the logger tests at `src/lib/__tests__/logger.test.ts`, specifically:
-
-1. Environment setup code:
-
-   ```typescript
-   process.env.NODE_ENV = originalEnv;
-   ```
-
-2. Mock access patterns:
-   ```typescript
-   const logOutput = consoleMocks.info.mock.calls[0][0] as string;
-   const logOutput = consoleMocks.error.mock.calls[0][0] as string;
-   const logOutput = consoleMocks.warn.mock.calls[0][0] as string;
-   const logData = consoleMocks.warn.mock.calls[0][1] as Record<string, unknown>;
-   ```
-
-## Additional Context
-
-- The issue only appears during the Storybook build process
-- These errors don't appear to fail the main test run
-- The errors are specifically related to TypeScript's strict null checking
+1. Unused imports and variables (lint errors)
+2. Potential undefined values in DOM element selections
+3. Missing null/undefined checks for array accesses
+4. Type mismatch where an array element that might be undefined is being used in a context that requires a non-nullable type
 
 ## Impact
 
-- PR cannot be merged
-- CI pipeline blocked
+- PR still cannot be merged
+- CI pipeline remains blocked
 - Storybook cannot be built
 
 ## Next Steps
 
-1. Fix TypeScript strict mode errors in logger tests
-2. Add proper null/undefined checks before accessing mock call properties
-3. Address issue with modifying `process.env.NODE_ENV` in tests
-4. Re-run CI to verify the fix works
+1. Fix remaining TypeScript errors in component test files
+2. Add proper null/undefined checks for array access in tests
+3. Add type assertions where appropriate
+4. Use proper TypeScript syntax for potentially undefined values
+5. Re-run CI to verify all fixes work
