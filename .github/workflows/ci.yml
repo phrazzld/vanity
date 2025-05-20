@@ -251,19 +251,30 @@ jobs:
             exit 1
           }
 
-      - name: Run npm audit for high and critical vulnerabilities
+      - name: Build security audit filter script
         run: |
-          echo "🔒 Checking for high and critical security vulnerabilities..."
-          npm audit --audit-level=high || {
+          echo "🔧 Building security audit filter script..."
+          npm run build:audit-filter || {
+            echo "❌ Failed to build audit filter script!"
+            echo "→ Check TypeScript errors in scripts/audit-filter.ts"
+            exit 1
+          }
+
+      - name: Run security scan with allowlist filtering
+        run: |
+          echo "🔒 Checking for non-allowlisted high and critical security vulnerabilities..."
+          node dist/scripts/audit-filter.js || {
             echo "❌ Security vulnerabilities detected!"
             echo ""
             echo "To fix security issues:"
-            echo "1. Review the vulnerabilities listed above"
-            echo "2. Run 'npm audit fix' to fix issues that can be automatically resolved"
-            echo "3. For remaining issues, manually update affected dependencies"
+            echo "1. Update dependencies to resolve vulnerabilities"
+            echo "2. OR add entries to .audit-allowlist.json with proper justification"
             echo ""
-            echo "💡 If you cannot fix an issue immediately:"
-            echo "→ Document the issue in the security allowlist (coming soon)"
-            echo "→ Include justification and timeline for remediation"
+            echo "💡 Allowlist entries must include:"
+            echo "→ Package name and vulnerability ID"
+            echo "→ Clear justification for why it's being allowlisted"
+            echo "→ Expiration date for when it should be fixed"
+            echo ""
+            echo "See docs/SECURITY_VULNERABILITY_MANAGEMENT.md for details"
             exit 1
           }

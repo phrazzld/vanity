@@ -45,7 +45,7 @@ Implement a simpler approach to dependency security scanning using the native pa
     2. Verify it passes with allowlisted vulnerabilities but fails with new ones
   - **Depends-on:** [T002]
 
-- [ ] **T004 · Chore · P1: Update CI to use audit filter script**
+- [x] **T004 · Chore · P1: Update CI to use audit filter script**
   - **Action:**
     1. Modify CI workflow to use the audit filter script instead of direct npm audit
     2. Ensure CI fails only on non-allowlisted high/critical vulnerabilities
