@@ -490,4 +490,32 @@ export const PLACES: Place[] = [
     lng: -99.1332,
     note: 'cdmx hustle, dope street food, cultural overload',
   },
+  {
+    id: '70',
+    name: 'tokyo',
+    lat: 35.6762,
+    lng: 139.6503,
+    note: 'neon metropolis, sensory overload, futuristic nostalgia',
+  },
+  {
+    id: '71',
+    name: 'osaka',
+    lat: 34.6937,
+    lng: 135.5023,
+    note: 'street food paradise, vibrant nightlife, kuidaore culture',
+  },
+  {
+    id: '72',
+    name: 'kyoto',
+    lat: 35.0116,
+    lng: 135.7681,
+    note: 'ancient temples, serene gardens, geisha traditions',
+  },
+  {
+    id: '73',
+    name: 'hiroshima',
+    lat: 34.3853,
+    lng: 132.4553,
+    note: 'resilient city, peace memorial, okonomiyaki heaven',
+  },
 ];
