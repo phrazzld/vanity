@@ -99,9 +99,13 @@ describe('YearSection Component', () => {
   });
 
   it('renders correct count with singular form', () => {
-    render(<YearSection year="2022" readings={[sampleReadings[0]]} />);
-
-    expect(screen.getByText(/1 book/)).toBeInTheDocument();
+    const reading = sampleReadings[0];
+    if (reading) {
+      render(<YearSection year="2022" readings={[reading]} />);
+      expect(screen.getByText(/1 book/)).toBeInTheDocument();
+    } else {
+      throw new Error('Sample reading not found, but was expected');
+    }
   });
 
   it('displays "Currently Reading" section with appropriate styling', () => {
