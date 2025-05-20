@@ -110,7 +110,7 @@ Implement a simpler approach to dependency security scanning using the native pa
     1. Review README to ensure information is clear and accurate
   - **Depends-on:** [T007]
 
-- [ ] **T009 · Documentation · P2: Update CONTRIBUTING.md with Security Guidelines**
+- [x] **T009 · Documentation · P2: Update CONTRIBUTING.md with Security Guidelines**
   - **Action:**
     1. Add information about security scanning requirements
     2. Recommend running local scans before creating PRs
