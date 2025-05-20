@@ -138,7 +138,7 @@
 
   /* Main content */
   main {
-    @apply p-8 relative max-w-7xl mx-auto;
+    @apply p-8 relative;
   }
 
   /* Heading styles */

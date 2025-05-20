@@ -334,7 +334,7 @@ export default function TypewriterQuotes() {
         data-testid="quote-text"
         style={{
           fontSize: '1.25rem',
-          fontWeight: 500,
+          fontWeight: 500, // Original font weight
           lineHeight: 1.6, // Comfortable reading for multi-line quotes
           whiteSpace: 'pre-wrap', // Preserve actual line breaks in text
           marginBottom: '0.75rem',
