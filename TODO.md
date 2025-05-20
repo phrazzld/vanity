@@ -58,7 +58,7 @@ Implement a simpler approach to dependency security scanning using the native pa
 
 ## Developer Experience
 
-- [ ] **T005 · Feature · P2: Add NPM Scripts for Local Security Scanning**
+- [x] **T005 · Feature · P2: Add NPM Scripts for Local Security Scanning**
 
   - **Action:**
     1. Add to `package.json` scripts section:
