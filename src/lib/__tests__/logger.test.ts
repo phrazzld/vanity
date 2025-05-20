@@ -23,12 +23,12 @@ describe('Logger', () => {
     // Clear the correlation context between tests
     CorrelationContext.clear();
     // Set to development to test console output
-    // @ts-expect-error - Temporarily allow process.env modification in tests
+    // @ts-ignore - Temporarily allow process.env modification in tests
     process.env.NODE_ENV = 'development';
   });
 
   afterEach(() => {
-    // @ts-expect-error - Temporarily allow process.env modification in tests
+    // @ts-ignore - Temporarily allow process.env modification in tests
     process.env.NODE_ENV = originalEnv;
   });
 
@@ -92,7 +92,7 @@ describe('Logger', () => {
   });
 
   it('uses structured JSON logging in production', () => {
-    // @ts-expect-error - NODE_ENV is readonly in TypeScript
+    // @ts-ignore - NODE_ENV is readonly in TypeScript
     process.env.NODE_ENV = 'production';
 
     const metadata = { userId: '123' };

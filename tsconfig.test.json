@@ -3,16 +3,24 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "types": ["jest", "node", "@testing-library/jest-dom"],
+
+    /* Allow unused variables in tests for mocks and spies */
     "noUnusedLocals": false,
-    "noUnusedParameters": false
+    "noUnusedParameters": false,
+
+    /* Keep strict array and object access checking */
+    "noUncheckedIndexedAccess": true,
+    "strictNullChecks": true
   },
   "include": [
     "**/*.test.ts",
     "**/*.test.tsx",
     "src/**/__tests__/**/*.ts",
     "src/**/__tests__/**/*.tsx",
-    "src/test-utils/**",
-    "tests/**",
+    "src/test-utils/**/*.ts",
+    "src/test-utils/**/*.tsx",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
     "jest.setup.js"
   ],
   "exclude": ["node_modules"]

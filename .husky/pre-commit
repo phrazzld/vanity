@@ -59,7 +59,7 @@ node -e "
   }
 " || exit 1
 
-# Run TypeScript type checking
+# Run TypeScript type checking (includes test files)
 echo "Running TypeScript type checking..."
 npm run typecheck || exit 1
 
