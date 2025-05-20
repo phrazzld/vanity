@@ -355,8 +355,8 @@ export default function ReadingCard({
       >
         {coverImageSrc && (
           <Image
-            // Access environment variable safely using window.ENV_ pattern for client
-            src={`${(typeof window !== 'undefined' && window.ENV_NEXT_PUBLIC_SPACES_BASE_URL) || ''}${coverImageSrc}`}
+            // Use direct URL with the known base for book covers
+            src={`https://book-covers.nyc3.digitaloceanspaces.com${coverImageSrc}`}
             alt={`${title} cover`}
             fill={true}
             sizes="(max-width: 480px) 33vw, (max-width: 768px) 25vw, (max-width: 1024px) 20vw, 200px"
