@@ -84,7 +84,7 @@ Implement a simpler approach to dependency security scanning using the native pa
 
 ## Documentation & Policies
 
-- [ ] **T007 · Documentation · P1: Create Security Vulnerability Management Guide**
+- [x] **T007 · Documentation · P1: Create Security Vulnerability Management Guide**
 
   - **Action:**
     1. Create `docs/SECURITY_VULNERABILITY_MANAGEMENT.md` including:
