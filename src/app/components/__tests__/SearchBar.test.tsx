@@ -9,8 +9,8 @@
 
 /* eslint-env jest */
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-import { renderWithTheme, screen, waitFor, setupUser, act } from '@/test-utils';
+// Import only what we use
+import { renderWithTheme, screen, setupUser, act } from '@/test-utils';
 import '@testing-library/jest-dom';
 import SearchBar from '../SearchBar';
 import type { FilterConfig } from '../SearchBar';

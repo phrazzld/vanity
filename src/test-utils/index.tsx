@@ -305,6 +305,34 @@ export function createResponsiveSnapshots(
 // Import and export accessibility testing helpers
 export * from './a11y-helpers';
 
+// Custom matcher for testing theme differences
+declare global {
+  namespace jest {
+    interface Matchers<R> {
+      toMatchThemeSnapshots: (darkRender: unknown) => R;
+    }
+  }
+}
+
+// Add the matcher to Jest's expect
+expect.extend({
+  toMatchThemeSnapshots(received, comparison) {
+    const pass = received.cleanHtml !== comparison.cleanHtml;
+
+    if (pass) {
+      return {
+        message: () => `Expected theme snapshots to be different and they are.`,
+        pass: true,
+      };
+    } else {
+      return {
+        message: () => `Expected theme snapshots to be different, but they are the same.`,
+        pass: false,
+      };
+    }
+  },
+});
+
 // Export everything from testing library for convenience
 export * from '@testing-library/react';
 export { userEvent };

@@ -46,8 +46,13 @@ describe('Pagination Component', () => {
     const buttons = screen.getAllByRole('button');
     expect(buttons.length).toBeGreaterThan(0);
 
-    // Click one of the buttons
-    fireEvent.click(buttons[0]);
+    // Click one of the buttons - using non-null assertion since we already checked length above
+    const firstButton = buttons[0];
+    if (firstButton) {
+      fireEvent.click(firstButton);
+    } else {
+      throw new Error('No buttons found, but expected at least one');
+    }
 
     // Verify that the onPageChange was called
     expect(defaultProps.onPageChange).toHaveBeenCalled();

@@ -5,8 +5,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ReadingsList from '../ReadingsList';
-// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-import { ThemeProvider } from '../../../context/ThemeContext';
+// We're not directly using ThemeProvider here, just its mock
+// So we don't need to import it
 
 // Mock ThemeContext because it's used in the component
 jest.mock('../../../context/ThemeContext', () => ({
@@ -18,14 +18,15 @@ jest.mock('../../../context/ThemeContext', () => ({
 jest.mock('next/image', () => ({
   __esModule: true,
   default: ({
-    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-    src,
+    // These properties are required for type checking but not used in the mock
+     
+    src: _src,
     alt,
     width,
     height,
     className,
-    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-    onError,
+     
+    onError: _onError,
   }: {
     src: string;
     alt: string;
@@ -149,8 +150,17 @@ describe('ReadingsList Component', () => {
 
     // Find the first reading item using role and click it
     const readingItems = container.querySelectorAll('[role="button"]');
-    fireEvent.click(readingItems[0]);
-    expect(mockHandleSelectReading).toHaveBeenCalledWith(mockReadings[0]);
+    if (readingItems.length > 0) {
+      const firstReadingItem = readingItems[0];
+      if (firstReadingItem) {
+        fireEvent.click(firstReadingItem);
+        expect(mockHandleSelectReading).toHaveBeenCalledWith(mockReadings[0]);
+      } else {
+        throw new Error('First reading item is undefined');
+      }
+    } else {
+      throw new Error('No reading items with role="button" found');
+    }
   });
 
   it('highlights search terms in title and author', () => {

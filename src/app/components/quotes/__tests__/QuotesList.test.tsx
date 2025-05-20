@@ -91,8 +91,17 @@ describe('QuotesList Component', () => {
 
     // Find the first quote item using role and click it
     const quoteItems = container.querySelectorAll('[role="button"]');
-    fireEvent.click(quoteItems[0]);
-    expect(mockHandleSelectQuote).toHaveBeenCalledWith(mockQuotes[0]);
+    if (quoteItems.length > 0) {
+      const firstQuoteItem = quoteItems[0];
+      if (firstQuoteItem) {
+        fireEvent.click(firstQuoteItem);
+        expect(mockHandleSelectQuote).toHaveBeenCalledWith(mockQuotes[0]);
+      } else {
+        throw new Error('First quote item is undefined');
+      }
+    } else {
+      throw new Error('No quote items with role="button" found');
+    }
   });
 
   it('highlights search terms in text and author', () => {

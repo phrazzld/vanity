@@ -15,7 +15,7 @@
 /* eslint-env jest */
 
 import React from 'react';
-import { renderWithTheme, screen, setupUser, within } from '@/test-utils';
+import { renderWithTheme, screen, setupUser } from '@/test-utils';
 import ReadingCard from '../ReadingCard';
 import type { ReadingListItem } from '@/types';
 
@@ -463,7 +463,10 @@ describe('ReadingCard Component', () => {
       // For an empty author, we can verify the element exists inside the ribbon container
       // but doesn't have any text content
       const ribbonContainer = screen.getByTestId('ribbon-container');
-      const authorElement = within(ribbonContainer).queryByText(/./i, { selector: '.book-author' });
+
+      // We're intentionally not checking for author element text content
+      // because it doesn't exist in this test case
+      // const authorElement = within(ribbonContainer).queryByText(/./i, { selector: '.book-author' });
 
       // Since there's no text, we can't query by text, so we'll check the ribbon structure
       expect(ribbonContainer).toBeInTheDocument();

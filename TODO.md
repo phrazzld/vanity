@@ -349,11 +349,11 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Depends On:** None
   - **Resolution:** Added optional chaining for mock function access and ts-expect-error for process.env modification.
 
-- [ ] **CI2:** Fix Component Test TypeScript Errors
+- [x] **CI2:** Fix Component Test TypeScript Errors
 
   - **Action:** Fix remaining TypeScript errors in component test files that are causing Storybook build failure.
   - **Depends On:** [CI1]
-  - **Status:** Identified issues in ReadingsList.test.tsx and YearSection.test.tsx. Need to add null checks for array and DOM element access.
+  - **Resolution:** Fixed TypeScript strict mode errors across multiple test files: added null checks for DOM elements and array access in ReadingsList, QuotesList, and Pagination; removed unused imports (waitFor, within); implemented missing toMatchThemeSnapshots custom matcher. All tests now pass and the Storybook build completes successfully.
 
 - [ ] **CI3:** Standardize TypeScript Configuration for Tests
   - **Action:** Ensure consistent TypeScript checking between development, test, and build environments.
