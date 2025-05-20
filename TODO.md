@@ -340,3 +340,22 @@ This file contains all remaining tasks for the Vanity project. Each task is atom
   - **Depends On:** None
   - **Verification:** Clear, accurate documentation of CI/CD processes.
   - **Resolution:** Updated both documents with comprehensive CI/CD process documentation, troubleshooting guides, and environment setup instructions. Added details about automated dependency management, CI pipeline stages, and common CI failure solutions.
+
+## Current CI/CD Work
+
+- [x] **CI1:** Fix logger.test.ts TypeScript Errors
+
+  - **Action:** Fix TypeScript strict mode errors in the logger tests that were causing Storybook build failure in CI.
+  - **Depends On:** None
+  - **Resolution:** Added optional chaining for mock function access and ts-expect-error for process.env modification.
+
+- [ ] **CI2:** Fix Component Test TypeScript Errors
+
+  - **Action:** Fix remaining TypeScript errors in component test files that are causing Storybook build failure.
+  - **Depends On:** [CI1]
+  - **Status:** Identified issues in ReadingsList.test.tsx and YearSection.test.tsx. Need to add null checks for array and DOM element access.
+
+- [ ] **CI3:** Standardize TypeScript Configuration for Tests
+  - **Action:** Ensure consistent TypeScript checking between development, test, and build environments.
+  - **Depends On:** [CI2]
+  - **Status:** Planning needed to ensure all build processes use compatible TypeScript configurations.
