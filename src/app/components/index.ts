@@ -1,6 +1,6 @@
 /**
  * Components Barrel File
- * 
+ *
  * Exports all components for easier imports elsewhere in the application.
  */
 

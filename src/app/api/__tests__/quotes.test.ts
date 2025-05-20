@@ -1,4 +1,4 @@
-import { GET, POST, PUT, DELETE } from '../quotes/route';
+import { GET, POST, PUT as _PUT, DELETE as _DELETE } from '../quotes/route';
 import * as db from '@/lib/db';
 import type { Quote, QuoteInput } from '@/types';
 import { NextRequest } from 'next/server';
@@ -17,7 +17,7 @@ jest.mock('next/server', () => {
   return {
     __esModule: true,
     NextResponse: {
-      json: jest.fn((data, options) => {
+      json: jest.fn((data: any, options?: { status?: number }) => {
         return {
           status: options?.status || 200,
           headers: new Map(),
@@ -26,7 +26,7 @@ jest.mock('next/server', () => {
         };
       }),
     },
-    NextRequest: jest.fn().mockImplementation((url) => {
+    NextRequest: jest.fn().mockImplementation((url?: string) => {
       const actualUrl = url || 'http://localhost:3000/api/quotes';
       return {
         url: actualUrl,
@@ -50,23 +50,23 @@ describe('/api/quotes endpoint', () => {
         { id: 1, text: 'Quote 1', author: 'Author 1' },
         { id: 2, text: 'Quote 2', author: 'Author 2' },
       ];
-      
+
       // Mock database function response
       (db.getQuotes as jest.Mock).mockResolvedValueOnce(mockQuotes);
-      
+
       // Create request
       const req = new NextRequest('http://localhost:3000/api/quotes');
-      
+
       // Call the handler
       const response = await GET(req);
-      
+
       // Check the response
       expect(response.status).toBe(200);
-      
+
       // Verify correct data was returned
       const data = await response.json();
       expect(data).toEqual(mockQuotes);
-      
+
       // Verify database function was called
       expect(db.getQuotes).toHaveBeenCalledTimes(1);
       expect(db.getQuote).not.toHaveBeenCalled();
@@ -105,16 +105,16 @@ describe('/api/quotes endpoint', () => {
     it('handles database errors', async () => {
       // Mock database error
       (db.getQuotes as jest.Mock).mockRejectedValueOnce(new Error('Database error'));
-      
+
       // Create request
       const req = new NextRequest('http://localhost:3000/api/quotes');
-      
+
       // Call the handler
       const response = await GET(req);
-      
+
       // Check error response
       expect(response.status).toBe(500);
-      
+
       // Verify error message
       const data = await response.json();
       expect(data).toHaveProperty('error');
@@ -126,13 +126,13 @@ describe('/api/quotes endpoint', () => {
       // Mock quote input and created quote
       const mockInput: QuoteInput = {
         text: 'New Quote',
-        author: 'New Author'
+        author: 'New Author',
       };
 
       const mockCreatedQuote: Quote = {
         id: 3,
         text: 'New Quote',
-        author: 'New Author'
+        author: 'New Author',
       };
 
       // Mock database function and request json

@@ -1,47 +1,67 @@
 /**
- * NextAuth.js Middleware
- * 
- * This middleware protects admin routes by checking for authentication.
- * It redirects unauthenticated users to the login page.
+ * NextAuth.js Middleware with Structured Logging
+ *
+ * This middleware:
+ * 1. Sets up request logging with correlation IDs for tracking requests
+ * 2. Protects admin routes by checking for authentication
+ * 3. Redirects unauthenticated users to the login page
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+import { requestLoggingMiddleware } from './middleware/logging';
+import { logger } from './lib/logger';
 
-// Simple middleware to protect admin routes
+// Main middleware to handle all middleware functions
 export function middleware(request: NextRequest) {
-  console.log(`Middleware running for: ${request.nextUrl.pathname}`);
-  
+  // First apply the request logging middleware
+  const response = requestLoggingMiddleware(request);
+
+  // If the logging middleware returned a response (e.g. a redirect), use it
+  if (response && !(response instanceof NextResponse.next().constructor)) {
+    return response;
+  }
+
   // Skip the login page - it should be accessible
   if (request.nextUrl.pathname === '/admin/login') {
-    console.log('Allowing access to login page');
+    logger.debug('Allowing access to login page');
     return NextResponse.next();
   }
 
   // Also skip auth API endpoints to prevent redirect loops
   if (request.nextUrl.pathname.startsWith('/api/auth')) {
-    console.log('Allowing access to auth API endpoints');
+    logger.debug('Allowing access to auth API endpoints');
     return NextResponse.next();
   }
 
   // Check if the path is an admin route
   if (request.nextUrl.pathname.startsWith('/admin')) {
-    console.log('Admin route detected, checking authentication...');
-    
+    logger.info('Admin route access attempt', { path: request.nextUrl.pathname });
+
     // Use a simple cookie check for demo purposes
     const isAuthenticated = request.cookies.has('admin_authenticated');
-    console.log(`Authentication status: ${isAuthenticated}`);
-    
+
     if (!isAuthenticated) {
-      console.log('Not authenticated, redirecting to login page');
+      logger.warn('Unauthenticated admin access attempt', {
+        path: request.nextUrl.pathname,
+        // ip address is not directly accessible in NextRequest
+        headers: {
+          userAgent: request.headers.get('user-agent') || 'unknown',
+          forwarded: request.headers.get('x-forwarded-for') || 'unknown',
+        },
+      });
+
       const url = new URL('/admin/login', request.url);
       // Add the original URL as a callback parameter
       url.searchParams.set('callbackUrl', request.nextUrl.pathname);
       return NextResponse.redirect(url);
     }
-    
-    console.log('Authenticated, allowing access to admin route');
+
+    logger.info('Authenticated admin access', {
+      path: request.nextUrl.pathname,
+    });
   }
-  
+
   // Allow all other routes
   return NextResponse.next();
 }
@@ -49,7 +69,7 @@ export function middleware(request: NextRequest) {
 // Specify which routes this middleware should run on
 export const config = {
   matcher: [
-    // Match all routes under /admin
-    '/admin/:path*',
+    // Match all paths for logging, but only protect admin paths
+    '/((?!_next/static|_next/image|favicon.ico|public).*)',
   ],
 };

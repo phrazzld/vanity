@@ -1,12 +1,12 @@
-'use client'
+'use client';
 
 /**
  * @file ReadingCard component displays an individual book or reading in a card format
  * @module components/readings/ReadingCard
- * 
+ *
  * The ReadingCard component renders a book cover with a slide-up animation on hover,
  * revealing additional information about the reading status.
- * 
+ *
  * Features:
  * - Responsive design that works on all device sizes
  * - Dark mode support via ThemeContext
@@ -17,11 +17,11 @@
  * - Accessibility enhancements
  */
 
-import Image from 'next/image'
-import { useState, useEffect } from 'react'
-import type { ReadingListItem } from '@/types'
-import { getSeededPlaceholderStyles } from './placeholderUtils'
-import { useTheme } from '@/app/context/ThemeContext'
+import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import type { ReadingListItem } from '@/types';
+import { getSeededPlaceholderStyles } from './placeholderUtils';
+import { useTheme } from '@/app/context/ThemeContext';
 
 /**
  * Animation timing constants for consistent, reusable animations across the component
@@ -29,21 +29,21 @@ import { useTheme } from '@/app/context/ThemeContext'
 const ANIMATION_TIMING = {
   // Dramatic, elegant timing for hover/enter states with a pronounced overshoot
   ELEGANT_ENTRANCE: 'cubic-bezier(0.19, 1, 0.22, 1)',
-  
+
   // Standard material design timing for exits/non-hover states
   STANDARD_EXIT: 'cubic-bezier(0.4, 0, 0.2, 1)',
-  
+
   // Refined timing for content elements with subtle acceleration and deceleration
   CONTENT_ENTRANCE: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
-  
+
   // Simple ease timing for basic transitions
-  SIMPLE: 'ease'
-}
+  SIMPLE: 'ease',
+};
 
 /**
  * Icon component for a book that is currently being read
  * Renders an open book SVG icon
- * 
+ *
  * @param {Object} props - Component properties
  * @param {string} [props.color='#3b82f6'] - Color for the icon (default: blue)
  * @returns {JSX.Element} SVG icon of an open book
@@ -67,7 +67,7 @@ const ReadingIcon = ({ color = '#3b82f6' }: { color?: string }) => (
 /**
  * Icon component for a finished book
  * Renders a checkmark in a circle SVG icon
- * 
+ *
  * @param {Object} props - Component properties
  * @param {string} [props.color='#10b981'] - Color for the icon (default: green)
  * @returns {JSX.Element} SVG icon of a checkmark in a circle
@@ -91,7 +91,7 @@ const FinishedIcon = ({ color = '#10b981' }: { color?: string }) => (
 /**
  * Icon component for a book that was paused/dropped
  * Renders a pause symbol SVG icon (two vertical bars)
- * 
+ *
  * @param {Object} props - Component properties
  * @param {string} [props.color='#6b7280'] - Color for the icon (default: gray)
  * @returns {JSX.Element} SVG icon of a pause symbol
@@ -117,7 +117,7 @@ const PausedIcon = ({ color = '#6b7280' }: { color?: string }) => (
  * Uses ReadingListItem which includes title, author, status info, and cover image
  * @typedef {ReadingListItem} ReadingCardProps
  */
-type ReadingCardProps = ReadingListItem
+type ReadingCardProps = ReadingListItem;
 
 /**
  * Formats a date to a human-readable format (e.g., "Jan 2023")
@@ -125,17 +125,17 @@ type ReadingCardProps = ReadingListItem
  */
 function formatDate(date: Date | string | null): string {
   if (!date) return '';
-  
-  // BUG FIX: When using API data from raw SQL queries, 
+
+  // BUG FIX: When using API data from raw SQL queries,
   // dates are returned as strings and not automatically converted to Date objects.
   // We need to handle both Date objects and date strings.
-  
+
   // Convert string date to Date object if needed
   const dateObj = typeof date === 'string' ? new Date(date) : date;
-  
+
   return dateObj.toLocaleDateString('en-US', {
     month: 'short',
-    year: 'numeric'
+    year: 'numeric',
   });
 }
 
@@ -147,17 +147,21 @@ function formatDate(date: Date | string | null): string {
 function hexToRgb(hex: string): string {
   // Remove the # if present
   const cleanHex = hex.replace('#', '');
-  
+
   // Convert shorthand (3 chars) to full form (6 chars)
-  const fullHex = cleanHex.length === 3 
-    ? cleanHex.split('').map(c => c + c).join('')
-    : cleanHex;
-    
+  const fullHex =
+    cleanHex.length === 3
+      ? cleanHex
+          .split('')
+          .map(c => c + c)
+          .join('')
+      : cleanHex;
+
   // Parse the hex values
   const r = parseInt(fullHex.substring(0, 2), 16);
   const g = parseInt(fullHex.substring(2, 4), 16);
   const b = parseInt(fullHex.substring(4, 6), 16);
-  
+
   // Return as RGB string
   return `${r}, ${g}, ${b}`;
 }
@@ -165,7 +169,7 @@ function hexToRgb(hex: string): string {
 /**
  * ReadingCard component that displays a book cover with ribbon unfurl animation on hover
  * The component uses a modern card design with smooth transitions and status-colored ribbon
- * 
+ *
  * Key features:
  * - Ribbon unfurls across the bottom of the cover on hover
  * - Status-specific coloring and icons (reading, finished, paused)
@@ -185,30 +189,30 @@ function hexToRgb(hex: string): string {
  * @param {Date|null} props.finishedDate - When the reading was completed, or null if in progress
  * @returns {JSX.Element} A card with book cover and ribbon unfurl animation on hover
  */
-export default function ReadingCard({ 
-  slug, 
+export default function ReadingCard({
+  slug,
   title,
   author,
-  coverImageSrc, 
-  dropped, 
-  finishedDate 
+  coverImageSrc,
+  dropped,
+  finishedDate,
 }: ReadingCardProps) {
   // Generate a consistent placeholder background if no cover image is available
-  const placeholderStyles = !coverImageSrc ? getSeededPlaceholderStyles(slug) : {}
-  
+  const placeholderStyles = !coverImageSrc ? getSeededPlaceholderStyles(slug) : {};
+
   // State for hover effects
-  const [isHovered, setIsHovered] = useState(false)
-  
+  const [isHovered, setIsHovered] = useState(false);
+
   // State for performance optimization - tracks if animation is active
-  const [isAnimating, setIsAnimating] = useState(false)
-  
+  const [isAnimating, setIsAnimating] = useState(false);
+
   // State to detect if device is touch-capable
   // We'll use this to adjust behavior for touch devices
-  const [isTouchDevice, setIsTouchDevice] = useState(false)
-  
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
   // Get current theme from context
-  const { isDarkMode } = useTheme()
-  
+  const { isDarkMode } = useTheme();
+
   // Check if device is touch-capable on first render
   // This helps us provide appropriate behavior for touch devices
   // where hover states aren't as useful
@@ -216,84 +220,82 @@ export default function ReadingCard({
     // Only run on client-side
     if (typeof window !== 'undefined') {
       // Check if device has touch capabilities
-      const hasTouchCapability = 
-        'ontouchstart' in window || 
-        navigator.maxTouchPoints > 0;
-      
+      const hasTouchCapability = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
       setIsTouchDevice(hasTouchCapability);
     }
   }, []);
-  
+
   // Manage animation state for performance optimization
   useEffect(() => {
     // When hover state changes, update animation state
     if (isHovered) {
       // Set animating state to true when animation starts
       setIsAnimating(true);
+      // Return an empty cleanup function for the true condition path
+      return () => {
+        // No cleanup needed for this path
+      };
     } else {
       // When hover ends, delay cleanup until animations complete
       // Use a timeout slightly longer than the longest animation duration
       const animationCleanupDelay = 700; // Slightly longer than our longest animation (0.6s)
-      
+
       const cleanupTimer = setTimeout(() => {
         setIsAnimating(false);
       }, animationCleanupDelay);
-      
+
       // Clean up timer if component unmounts or hover state changes again
-      return () => clearTimeout(cleanupTimer);
+      return () => {
+        // Use window.clearTimeout to be explicit about the global function
+        window.clearTimeout(cleanupTimer);
+      };
     }
   }, [isHovered]);
-  
+
   // Determine reading status
-  const isCurrentlyReading = finishedDate === null && !dropped
-  const isFinished = finishedDate !== null && !dropped
-  const isPaused = dropped
-  
+  const isCurrentlyReading = finishedDate === null && !dropped;
+  const isFinished = finishedDate !== null && !dropped;
+  const isPaused = dropped;
+
   // Format finish date for display
-  const formattedFinishDate = formatDate(finishedDate)
-  
+  const formattedFinishDate = formatDate(finishedDate);
+
   // Status colors - expanded with variations for gradients
   // Colors adjusted for better text contrast on ribbons
   const colors = {
     current: {
-      main: '#3b82f6',      // blue
-      light: '#4b93f7',     // slightly darker blue for highlights (darkened for better text contrast)
-      dark: '#2563eb',      // darker blue for shadows
-      lighter: '#93c5fd',   // very light blue for edge highlights
-      darker: '#1d4ed8'     // very dark blue for deep shadows
+      main: '#3b82f6', // blue
+      light: '#4b93f7', // slightly darker blue for highlights (darkened for better text contrast)
+      dark: '#2563eb', // darker blue for shadows
+      lighter: '#93c5fd', // very light blue for edge highlights
+      darker: '#1d4ed8', // very dark blue for deep shadows
     },
     finished: {
-      main: '#10b981',      // green
-      light: '#0ea974',     // slightly darker green for highlights (darkened for better text contrast)
-      dark: '#059669',      // darker green for shadows
-      lighter: '#6ee7b7',   // very light green for edge highlights
-      darker: '#047857'     // very dark green for deep shadows
+      main: '#10b981', // green
+      light: '#0ea974', // slightly darker green for highlights (darkened for better text contrast)
+      dark: '#059669', // darker green for shadows
+      lighter: '#6ee7b7', // very light green for edge highlights
+      darker: '#047857', // very dark green for deep shadows
     },
     paused: {
-      main: '#6b7280',      // gray
-      light: '#7c8490',     // slightly darker gray for highlights (darkened for better text contrast)
-      dark: '#4b5563',      // darker gray for shadows
-      lighter: '#d1d5db',   // very light gray for edge highlights
-      darker: '#374151'     // very dark gray for deep shadows
-    }
-  }
-  
-  // Status badge text
-  const statusText = isCurrentlyReading 
-    ? 'Reading' 
-    : isFinished 
-      ? formattedFinishDate 
-      : 'Paused'
-      
+      main: '#6b7280', // gray
+      light: '#7c8490', // slightly darker gray for highlights (darkened for better text contrast)
+      dark: '#4b5563', // darker gray for shadows
+      lighter: '#d1d5db', // very light gray for edge highlights
+      darker: '#374151', // very dark gray for deep shadows
+    },
+  };
+
   // Status color object for the current status
-  const statusColor = isCurrentlyReading 
-    ? colors.current 
-    : isFinished 
-      ? colors.finished 
-      : colors.paused
-      
+  const statusColor = isCurrentlyReading
+    ? colors.current
+    : isFinished
+      ? colors.finished
+      : colors.paused;
+
   // Main color for simple uses (string)
-  const statusMainColor = statusColor.main
+  const statusMainColor = statusColor.main;
 
   return (
     <div
@@ -311,14 +313,14 @@ export default function ReadingCard({
         borderRadius: '8px',
         overflow: 'hidden',
         boxShadow: isDarkMode
-          ? isHovered 
-            ? '0 10px 20px -6px rgba(0,0,0,0.35), 0 3px 6px -3px rgba(0,0,0,0.25)' 
+          ? isHovered
+            ? '0 10px 20px -6px rgba(0,0,0,0.35), 0 3px 6px -3px rgba(0,0,0,0.25)'
             : '0 1px 3px rgba(0,0,0,0.2), 0 1px 2px -1px rgba(0,0,0,0.15)'
-          : isHovered 
-            ? '0 10px 20px -6px rgba(0,0,0,0.15), 0 3px 6px -3px rgba(0,0,0,0.1)' 
+          : isHovered
+            ? '0 10px 20px -6px rgba(0,0,0,0.15), 0 3px 6px -3px rgba(0,0,0,0.1)'
             : '0 1px 3px rgba(0,0,0,0.05), 0 1px 2px -1px rgba(0,0,0,0.03)',
         // More pronounced lift effect but with smoother animation
-        transform: isHovered ? 'translateY(-4px) scale(1.01)' : 'translateY(0) scale(1)', 
+        transform: isHovered ? 'translateY(-4px) scale(1.01)' : 'translateY(0) scale(1)',
         cursor: 'pointer',
         // Responsive adaptations
         minHeight: '240px', // Minimum height for very small screens
@@ -334,9 +336,11 @@ export default function ReadingCard({
       onTouchEnd={() => isTouchDevice && setTimeout(() => setIsHovered(false), 1500)}
       title={title}
       aria-label={`Book: ${title} by ${author}, Status: ${
-        isCurrentlyReading ? 'Currently Reading' : 
-        isFinished ? `Finished on ${formattedFinishDate}` : 
-        'Reading Paused'
+        isCurrentlyReading
+          ? 'Currently Reading'
+          : isFinished
+            ? `Finished on ${formattedFinishDate}`
+            : 'Reading Paused'
       }`} // Accessibility improvement
     >
       {/* Book cover image */}
@@ -351,7 +355,8 @@ export default function ReadingCard({
       >
         {coverImageSrc && (
           <Image
-            src={`${process.env.NEXT_PUBLIC_SPACES_BASE_URL}${coverImageSrc}`}
+            // Use direct URL with the known base for book covers
+            src={`https://book-covers.nyc3.digitaloceanspaces.com${coverImageSrc}`}
             alt={`${title} cover`}
             fill={true}
             sizes="(max-width: 480px) 33vw, (max-width: 768px) 25vw, (max-width: 1024px) 20vw, 200px"
@@ -359,10 +364,10 @@ export default function ReadingCard({
             style={{
               objectFit: 'cover',
               // Enhanced status-specific image treatments
-              filter: isPaused 
-                ? 'grayscale(50%) brightness(0.95)' 
-                : isFinished 
-                  ? 'brightness(1.03) contrast(1.02) saturate(1.05)' 
+              filter: isPaused
+                ? 'grayscale(50%) brightness(0.95)'
+                : isFinished
+                  ? 'brightness(1.03) contrast(1.02) saturate(1.05)'
                   : 'brightness(1.02) contrast(1.01)',
               // Subtle zoom with smoother animations in both directions
               transition: isHovered
@@ -375,7 +380,7 @@ export default function ReadingCard({
           />
         )}
       </div>
-      
+
       {/* Meta ribbon container - refined with transform-based animations */}
       <div
         className="ribbon-container"
@@ -387,9 +392,7 @@ export default function ReadingCard({
           opacity: isHovered ? 1 : 0,
           visibility: isHovered ? 'visible' : 'hidden', // Hide when not hovered for accessibility
           // Transform-based animations create more elegant motion
-          transform: isHovered 
-            ? 'translateY(0) scale(1)' 
-            : 'translateY(15px) scale(0.98)',
+          transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(15px) scale(0.98)',
           transformOrigin: 'center bottom', // Scale from bottom center for a natural reveal
           // Refined animation timing with better sequencing
           transition: isHovered
@@ -412,9 +415,7 @@ export default function ReadingCard({
           // Performance optimizations - only when actually animating
           willChange: isAnimating ? 'transform, opacity, min-height, max-height' : 'auto',
           // Add a subtle shadow to enhance depth perception during animation
-          boxShadow: isHovered 
-            ? '0 -10px 20px -10px rgba(0, 0, 0, 0.1)' 
-            : 'none',
+          boxShadow: isHovered ? '0 -10px 20px -10px rgba(0, 0, 0, 0.1)' : 'none',
         }}
         data-testid="ribbon-container"
         aria-hidden={!isHovered}
@@ -433,22 +434,24 @@ export default function ReadingCard({
             // Subtle border effect for depth
             borderTop: '1px solid rgba(255, 255, 255, 0.12)',
             // Complex shadow for depth - outer shadow and inner highlight
-            boxShadow: 'rgba(0, 0, 0, 0.15) 0px 10px 15px -3px, rgba(0, 0, 0, 0.1) 0px 4px 6px -4px, inset 0 0 0 1px rgba(255, 255, 255, 0.08)',
+            boxShadow:
+              'rgba(0, 0, 0, 0.15) 0px 10px 15px -3px, rgba(0, 0, 0, 0.1) 0px 4px 6px -4px, inset 0 0 0 1px rgba(255, 255, 255, 0.08)',
             // Add a subtle noise texture for realism
-            backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")',
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E\")",
             backgroundBlendMode: 'overlay',
             // Animation additions
             opacity: isHovered ? 1 : 0,
             transform: isHovered ? 'scale(1)' : 'scale(0.98)',
             transformOrigin: 'center bottom',
-            transition: isHovered 
-              ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.1s, transform 0.5s ${ANIMATION_TIMING.ELEGANT_ENTRANCE} 0.05s` 
+            transition: isHovered
+              ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.1s, transform 0.5s ${ANIMATION_TIMING.ELEGANT_ENTRANCE} 0.05s`
               : `opacity 0.3s ${ANIMATION_TIMING.SIMPLE}, transform 0.35s ${ANIMATION_TIMING.STANDARD_EXIT}`,
             zIndex: 1,
             willChange: isAnimating ? 'opacity, transform' : 'auto',
           }}
         />
-        
+
         {/* Gradient background layer - primary color layer */}
         <div
           className="ribbon-gradient-bg"
@@ -465,14 +468,14 @@ export default function ReadingCard({
             opacity: isHovered ? 0.95 : 0,
             transform: isHovered ? 'scale(1) translateY(0)' : 'scale(0.97) translateY(5px)',
             transformOrigin: 'center bottom',
-            transition: isHovered 
-              ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.05s, transform 0.55s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}` 
+            transition: isHovered
+              ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.05s, transform 0.55s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}`
               : `opacity 0.3s ${ANIMATION_TIMING.SIMPLE}, transform 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}`,
             zIndex: 2,
             willChange: isAnimating ? 'opacity, transform' : 'auto',
           }}
         />
-        
+
         {/* Accent gradient layer - adds depth with diagonal highlights */}
         <div
           className="ribbon-accent-gradient"
@@ -491,18 +494,18 @@ export default function ReadingCard({
               radial-gradient(circle at 85% 75%, rgba(${hexToRgb(statusColor.darker)}, 0.12) 0%, transparent 50%)
             `,
             backgroundBlendMode: 'overlay',
-            // Animation additions 
+            // Animation additions
             opacity: isHovered ? 1 : 0,
             transform: isHovered ? 'scale(1) translateY(0)' : 'scale(0.96) translateY(8px)',
             transformOrigin: 'center bottom',
-            transition: isHovered 
-              ? `opacity 0.5s ${ANIMATION_TIMING.SIMPLE} 0.1s, transform 0.6s ${ANIMATION_TIMING.ELEGANT_ENTRANCE} 0.05s` 
+            transition: isHovered
+              ? `opacity 0.5s ${ANIMATION_TIMING.SIMPLE} 0.1s, transform 0.6s ${ANIMATION_TIMING.ELEGANT_ENTRANCE} 0.05s`
               : `opacity 0.3s ${ANIMATION_TIMING.SIMPLE}, transform 0.45s ${ANIMATION_TIMING.STANDARD_EXIT}`,
             zIndex: 3,
             willChange: isAnimating ? 'opacity, transform' : 'auto',
           }}
         />
-        
+
         {/* Top edge highlight - creates a glossy edge effect with status-specific color */}
         <div
           className="ribbon-edge-highlight"
@@ -522,9 +525,7 @@ export default function ReadingCard({
             // Enhanced animation
             opacity: isHovered ? 0.85 : 0,
             // Combine horizontal and vertical motion for more refined animation
-            transform: isHovered 
-              ? 'scaleX(1) translateY(0)' 
-              : 'scaleX(0.92) translateY(-3px)', // Slight upward motion when hidden
+            transform: isHovered ? 'scaleX(1) translateY(0)' : 'scaleX(0.92) translateY(-3px)', // Slight upward motion when hidden
             transformOrigin: 'center top',
             transition: isHovered
               ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.25s, transform 0.5s ${ANIMATION_TIMING.ELEGANT_ENTRANCE} 0.2s`
@@ -533,7 +534,7 @@ export default function ReadingCard({
             willChange: isAnimating ? 'opacity, transform' : 'auto',
           }}
         />
-        
+
         {/* Bottom edge shadow - adds depth with status-specific darker color */}
         <div
           className="ribbon-edge-shadow"
@@ -549,9 +550,7 @@ export default function ReadingCard({
               rgba(${hexToRgb(statusColor.darker)}, 0.15) 100%)`,
             // Enhanced animation
             opacity: isHovered ? 0.7 : 0,
-            transform: isHovered 
-              ? 'scaleY(1)' 
-              : 'scaleY(0.5)', // Subtle scale effect on the shadow
+            transform: isHovered ? 'scaleY(1)' : 'scaleY(0.5)', // Subtle scale effect on the shadow
             transformOrigin: 'center bottom',
             transition: isHovered
               ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.15s, transform 0.5s ${ANIMATION_TIMING.ELEGANT_ENTRANCE} 0.1s`
@@ -561,9 +560,9 @@ export default function ReadingCard({
             willChange: isAnimating ? 'opacity, transform' : 'auto',
           }}
         />
-        
+
         {/* Layered semi-transparent overlay for depth */}
-        <div 
+        <div
           className="ribbon-overlay"
           style={{
             position: 'absolute',
@@ -575,7 +574,7 @@ export default function ReadingCard({
               rgba(0, 0, 0, 0) 100%)`,
             // Enhanced animation
             opacity: isHovered ? 1 : 0,
-            transform: isHovered ? 'translateY(0)' : 'translateY(5px)', 
+            transform: isHovered ? 'translateY(0)' : 'translateY(5px)',
             transition: isHovered
               ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.15s, transform 0.45s ${ANIMATION_TIMING.ELEGANT_ENTRANCE} 0.1s`
               : `opacity 0.3s ${ANIMATION_TIMING.SIMPLE}, transform 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}`,
@@ -585,9 +584,9 @@ export default function ReadingCard({
             willChange: isAnimating ? 'opacity, transform' : 'auto',
           }}
         />
-        
+
         {/* Status-specific light reflections - subtle shine effect with color tint */}
-        <div 
+        <div
           className="ribbon-reflections"
           style={{
             position: 'absolute',
@@ -609,7 +608,7 @@ export default function ReadingCard({
             backgroundBlendMode: 'overlay',
             // Enhanced animation
             opacity: isHovered ? 1 : 0,
-            transform: isHovered ? 'scale(1) translateY(0)' : 'scale(0.98) translateY(10px)', 
+            transform: isHovered ? 'scale(1) translateY(0)' : 'scale(0.98) translateY(10px)',
             transformOrigin: 'center bottom',
             transition: isHovered
               ? `opacity 0.5s ${ANIMATION_TIMING.SIMPLE} 0.2s, transform 0.65s ${ANIMATION_TIMING.ELEGANT_ENTRANCE} 0.15s`
@@ -620,7 +619,7 @@ export default function ReadingCard({
             willChange: isAnimating ? 'opacity, transform' : 'auto',
           }}
         />
-      
+
         {/* Fallback for browsers without backdrop-filter support */}
         <div
           className="ribbon-fallback"
@@ -634,7 +633,7 @@ export default function ReadingCard({
               rgba(${hexToRgb(statusColor.main)}, 0.97) 50%, 
               rgba(${hexToRgb(statusColor.dark)}, 0.99) 100%)`,
             // Add semi-transparent black overlay for text contrast
-            boxShadow: 'inset 0 0 0 1000px rgba(0, 0, 0, 0.1)',
+            // boxShadow is set below after other properties
             // Add a subtle texture overlay for interest
             backgroundImage: `
               linear-gradient(135deg, 
@@ -652,8 +651,9 @@ export default function ReadingCard({
               ? `opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.05s, transform 0.55s ${ANIMATION_TIMING.ELEGANT_ENTRANCE}`
               : `opacity 0.3s ${ANIMATION_TIMING.SIMPLE}, transform 0.4s ${ANIMATION_TIMING.STANDARD_EXIT}`,
             zIndex: 8,
-            // Extra depth and polish for the fallback
-            boxShadow: `inset 0 1px 0 rgba(255, 255, 255, 0.15), 
+            // Extra depth and polish for the fallback plus the semi-transparent overlay
+            boxShadow: `inset 0 0 0 1000px rgba(0, 0, 0, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.15), 
               inset 0 -1px 0 rgba(${hexToRgb(statusColor.darker)}, 0.1)`,
             borderRadius: '0 0 8px 8px',
             willChange: isAnimating ? 'opacity, transform' : 'auto',
@@ -673,7 +673,7 @@ export default function ReadingCard({
             // Increased fixed height for better spacing
             height: '160px',
             // More generous top padding
-            padding: '20px 20px 16px', 
+            padding: '20px 20px 16px',
             // Remove any default margins
             margin: 0,
             boxSizing: 'border-box',
@@ -687,21 +687,21 @@ export default function ReadingCard({
           }}
         >
           {/* Book metadata section - with more generous height */}
-          <div 
-            className="book-metadata" 
-            style={{ 
+          <div
+            className="book-metadata"
+            style={{
               marginBottom: '12px', // Increased bottom margin
               width: '100%', // Ensure full width
               // More generous height for better spacing
-              height: '100px', 
+              height: '100px',
               overflow: 'hidden', // Hide any overflow
               position: 'relative', // For children positioning
             }}
           >
             {/* Book title - refined typography with precise line clamping */}
-            <div 
+            <div
               className="book-title"
-              style={{ 
+              style={{
                 // Refined typography for more elegant appearance
                 fontWeight: 650, // Slightly increased for better definition
                 fontSize: '13.5px', // Slightly larger for better readability
@@ -709,7 +709,8 @@ export default function ReadingCard({
                 marginBottom: '10px', // Increased spacing after title
                 letterSpacing: '-0.015em', // Slightly tighter letter spacing for elegance
                 // Subtle gradient for depth in text coloring
-                background: 'linear-gradient(to bottom, rgba(255,255,255,0.98), rgba(255,255,255,0.92))',
+                background:
+                  'linear-gradient(to bottom, rgba(255,255,255,0.98), rgba(255,255,255,0.92))',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 color: 'rgba(255,255,255,0.95)', // Fallback for browsers without gradient text support
@@ -733,17 +734,17 @@ export default function ReadingCard({
                   ? `transform 0.45s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.25s, opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.25s`
                   : `transform 0.25s ${ANIMATION_TIMING.CONTENT_ENTRANCE}, opacity 0.2s ${ANIMATION_TIMING.SIMPLE}`,
                 width: '100%', // Full width utilization
-                willChange: isAnimating ? 'opacity, transform' : 'auto' // Only apply during animation
+                willChange: isAnimating ? 'opacity, transform' : 'auto', // Only apply during animation
               }}
               data-testid="book-title"
             >
               {title}
             </div>
-            
+
             {/* Author name - elegant, refined typography */}
-            <div 
+            <div
               className="book-author"
-              style={{ 
+              style={{
                 // Refined typography for author
                 fontSize: '11.8px', // Slightly larger for better readability
                 fontWeight: 450, // Lighter weight for contrast with title
@@ -754,7 +755,8 @@ export default function ReadingCard({
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
                 // Subtle gradient for author text
-                background: 'linear-gradient(to bottom, rgba(255,255,255,0.82), rgba(255,255,255,0.74))',
+                background:
+                  'linear-gradient(to bottom, rgba(255,255,255,0.82), rgba(255,255,255,0.74))',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 color: 'rgba(255,255,255,0.78)', // Fallback
@@ -769,24 +771,24 @@ export default function ReadingCard({
                 // Font smoothing for cleaner text
                 WebkitFontSmoothing: 'antialiased',
                 MozOsxFontSmoothing: 'grayscale',
-                // Animation 
-                transform: isHovered ? 'translateY(0)' : 'translateY(5px)', 
+                // Animation
+                transform: isHovered ? 'translateY(0)' : 'translateY(5px)',
                 opacity: isHovered ? 1 : 0, // Make explicit for animation
                 transformOrigin: 'left center', // Scale from left for text elements
                 transition: isHovered
                   ? `transform 0.45s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.35s, opacity 0.4s ${ANIMATION_TIMING.SIMPLE} 0.35s, color 0.2s ${ANIMATION_TIMING.SIMPLE} 0.3s`
                   : `transform 0.25s ${ANIMATION_TIMING.CONTENT_ENTRANCE} 0.05s, opacity 0.2s ${ANIMATION_TIMING.SIMPLE}, color 0.2s ${ANIMATION_TIMING.SIMPLE}`,
                 width: '100%', // Full width
-                willChange: isAnimating ? 'opacity, transform' : 'auto' // Only apply during animation
+                willChange: isAnimating ? 'opacity, transform' : 'auto', // Only apply during animation
               }}
               data-testid="book-author"
             >
               {author}
             </div>
           </div>
-          
+
           {/* Status-specific divider line for visual separation */}
-          <div 
+          <div
             className="ribbon-divider"
             style={{
               height: '1px',
@@ -820,7 +822,7 @@ export default function ReadingCard({
               willChange: isAnimating ? 'opacity, transform' : 'auto',
             }}
           />
-          
+
           {/* Status container - fixed position at bottom with exact spacing */}
           <div
             className="status-container"
@@ -828,7 +830,7 @@ export default function ReadingCard({
               display: 'flex',
               justifyContent: 'space-between', // Allows for future elements on the right
               alignItems: 'center',
-              width: '100%', // Full width 
+              width: '100%', // Full width
               // Absolutely positioned at the bottom with more space
               position: 'absolute',
               bottom: '25px',
@@ -841,7 +843,7 @@ export default function ReadingCard({
             }}
           >
             {/* Status indicator with status-specific treatments */}
-            <div 
+            <div
               className={`reading-status ${isCurrentlyReading ? 'currently-reading-status' : isFinished ? 'finished-status' : 'paused-status'}`}
               style={{
                 display: 'inline-flex',
@@ -881,12 +883,12 @@ export default function ReadingCard({
               role="status"
             >
               {/* Status-specific icon styling */}
-              <span 
+              <span
                 className="status-icon"
                 style={{
                   opacity: isHovered ? 1 : 0,
                   transition: `opacity 0.2s ease ${isHovered ? '0.45s' : '0s'}`,
-                  width: '13px', 
+                  width: '13px',
                   height: '13px',
                   display: 'flex',
                   alignItems: 'center',
@@ -902,7 +904,7 @@ export default function ReadingCard({
                   ...(isFinished && {
                     // Slight emphasis for finished
                     transform: isHovered ? 'scale(1.2)' : 'scale(1)',
-                    transition: isHovered 
+                    transition: isHovered
                       ? `opacity 0.2s ease ${isHovered ? '0.45s' : '0s'}, transform 0.3s ease ${isHovered ? '0.5s' : '0s'}`
                       : `opacity 0.2s ease, transform 0.2s ease`,
                   }),
@@ -913,11 +915,11 @@ export default function ReadingCard({
                 {isFinished && <FinishedIcon color="#ffffff" />}
                 {isPaused && <PausedIcon color="#ffffff" />}
               </span>
-              
+
               {/* Status-specific text styling */}
-              <span 
+              <span
                 className="status-label"
-                style={{ 
+                style={{
                   fontSize: '10.5px',
                   fontWeight: 650,
                   letterSpacing: '0.01em',
@@ -953,24 +955,30 @@ export default function ReadingCard({
                 {isCurrentlyReading && 'Currently reading'}
                 {isPaused && 'Reading paused'}
               </span>
-              
+
               {/* Status-specific decorative elements removed */}
             </div>
-            
+
             {/* Define animations for status indicators */}
-            <style jsx global>{`              
+            <style jsx global>{`
               @keyframes pulseReading {
-                0% { opacity: 1; }
-                50% { opacity: 0.6; }
-                100% { opacity: 1; }
+                0% {
+                  opacity: 1;
+                }
+                50% {
+                  opacity: 0.6;
+                }
+                100% {
+                  opacity: 1;
+                }
               }
             `}</style>
-          
-          {/* Space for future right-aligned elements if needed */}
-          <div className="reading-actions" style={{ opacity: 0 }}></div>
-        </div>
+
+            {/* Space for future right-aligned elements if needed */}
+            <div className="reading-actions" style={{ opacity: 0 }}></div>
+          </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

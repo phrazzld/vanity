@@ -21,7 +21,7 @@ async function main() {
           finishedDate: new Date('2024-01-15'),
           coverImageSrc: '/readings/lotr.jpg',
           thoughts: 'A true classic!',
-          dropped: false
+          dropped: false,
         },
         {
           slug: 'dune',
@@ -30,7 +30,7 @@ async function main() {
           finishedDate: new Date('2024-02-20'),
           coverImageSrc: '/readings/dune.jpg',
           thoughts: 'Epic sci-fi masterpiece',
-          dropped: false
+          dropped: false,
         },
         {
           slug: 'current-reading',
@@ -39,9 +39,9 @@ async function main() {
           finishedDate: null,
           coverImageSrc: null,
           thoughts: '',
-          dropped: false
-        }
-      ]
+          dropped: false,
+        },
+      ],
     });
 
     // Create sample quotes
@@ -49,18 +49,18 @@ async function main() {
     await prisma.quote.createMany({
       data: [
         {
-          text: "Not all those who wander are lost.",
-          author: "J.R.R. Tolkien"
+          text: 'Not all those who wander are lost.',
+          author: 'J.R.R. Tolkien',
         },
         {
           text: "The mystery of life isn't a problem to solve, but a reality to experience.",
-          author: "Frank Herbert, Dune"
+          author: 'Frank Herbert, Dune',
         },
         {
-          text: "Fear is the mind-killer.",
-          author: "Frank Herbert, Dune"
-        }
-      ]
+          text: 'Fear is the mind-killer.',
+          author: 'Frank Herbert, Dune',
+        },
+      ],
     });
 
     console.log('Database seeded successfully!');

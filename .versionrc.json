@@ -1,0 +1,19 @@
+{
+  "header": "# Changelog\n\nAll notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.\n",
+  "types": [
+    { "type": "feat", "section": "Features" },
+    { "type": "fix", "section": "Bug Fixes" },
+    { "type": "docs", "section": "Documentation" },
+    { "type": "style", "section": "Styling" },
+    { "type": "refactor", "section": "Code Refactoring" },
+    { "type": "perf", "section": "Performance Improvements" },
+    { "type": "test", "section": "Tests" },
+    { "type": "build", "section": "Build System" },
+    { "type": "ci", "section": "CI/CD" },
+    { "type": "chore", "section": "Maintenance", "hidden": false }
+  ],
+  "releaseCommitMessageFormat": "chore(release): {{currentTag}} [skip ci]",
+  "commitUrlFormat": "https://github.com/phrazzld/vanity/commit/{{hash}}",
+  "compareUrlFormat": "https://github.com/phrazzld/vanity/compare/{{previousTag}}...{{currentTag}}",
+  "issueUrlFormat": "https://github.com/phrazzld/vanity/issues/{{id}}"
+}

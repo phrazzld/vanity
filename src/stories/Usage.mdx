@@ -1,0 +1,145 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Introduction/Usage Guide" />
+
+# Component Usage Guide
+
+## Creating New Components
+
+When creating new components for the Vanity project, follow these guidelines:
+
+### 1. Component Structure
+
+```tsx
+// Imports
+import { useState } from 'react';
+import { useTheme } from '../context/ThemeContext';
+
+// Define prop types with JSDoc comments
+export interface ButtonProps {
+  /** The button's content */
+  children: React.ReactNode;
+  /** Variant style to apply */
+  variant?: 'primary' | 'secondary' | 'text';
+  /** Whether the button is disabled */
+  disabled?: boolean;
+  /** Click handler */
+  onClick?: () => void;
+}
+
+// Component implementation
+export default function Button({
+  children,
+  variant = 'primary',
+  disabled = false,
+  onClick,
+}: ButtonProps) {
+  const { isDarkMode } = useTheme();
+
+  // Component logic
+
+  // Return JSX
+  return (
+    <button
+      className={`button ${variant} ${isDarkMode ? 'dark' : ''}`}
+      disabled={disabled}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+}
+```
+
+### 2. Creating Stories
+
+For each component, create a corresponding `.stories.ts` file:
+
+```tsx
+import type { Meta, StoryObj } from '@storybook/react';
+import Button from './Button';
+
+const meta = {
+  title: 'Components/Button',
+  component: Button,
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        component: 'A reusable button component with various styling options.',
+      },
+    },
+  },
+  tags: ['autodocs'],
+  argTypes: {
+    variant: {
+      control: { type: 'select' },
+      options: ['primary', 'secondary', 'text'],
+    },
+    onClick: { action: 'clicked' },
+  },
+} satisfies Meta<typeof Button>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Primary: Story = {
+  args: {
+    children: 'Primary Button',
+    variant: 'primary',
+  },
+};
+
+export const Secondary: Story = {
+  args: {
+    children: 'Secondary Button',
+    variant: 'secondary',
+  },
+};
+```
+
+### 3. Testing Components
+
+Always include tests for your components:
+
+```tsx
+import { render, screen, fireEvent } from '@testing-library/react';
+import Button from './Button';
+import { ThemeProvider } from '../context/ThemeContext';
+
+// Wrap with theme provider for context
+const renderWithTheme = (ui: React.ReactElement) => {
+  return render(<ThemeProvider>{ui}</ThemeProvider>);
+};
+
+describe('Button', () => {
+  it('renders button text correctly', () => {
+    renderWithTheme(<Button>Click me</Button>);
+    expect(screen.getByText('Click me')).toBeInTheDocument();
+  });
+
+  it('calls onClick handler when clicked', () => {
+    const handleClick = jest.fn();
+    renderWithTheme(<Button onClick={handleClick}>Click me</Button>);
+    fireEvent.click(screen.getByText('Click me'));
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('applies correct class for variant', () => {
+    renderWithTheme(<Button variant="secondary">Secondary</Button>);
+    const button = screen.getByText('Secondary');
+    expect(button).toHaveClass('secondary');
+  });
+});
+```
+
+## Component Best Practices
+
+- Use TypeScript interfaces for prop definitions
+- Add JSDoc comments to props for automated documentation
+- Keep components focused on a single responsibility
+- Use composition over complex conditional rendering
+- Handle loading, error, and empty states
+- Ensure accessibility (keyboard navigation, screen readers, etc.)
+- Support both light and dark modes
+- Test all component variants and states

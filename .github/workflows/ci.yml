@@ -1,0 +1,227 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          echo "📦 Installing project dependencies..."
+          npm ci || {
+            echo "❌ Failed to install dependencies!"
+            echo "→ Try running 'npm ci' locally to reproduce the issue"
+            echo "→ Ensure package-lock.json is committed and up to date"
+            echo "→ Check if you have access to all npm registries"
+            exit 1
+          }
+
+      - name: Generate Prisma client
+        run: |
+          echo "🗄️ Generating Prisma client..."
+          npm run prisma:generate || {
+            echo "❌ Failed to generate Prisma client!"
+            echo "→ Ensure prisma schema is valid"
+            echo "→ Check prisma/schema.prisma for syntax errors"
+            echo "→ Run 'npm run prisma:generate' locally to debug"
+            exit 1
+          }
+
+      - name: Check formatting
+        run: |
+          echo "🎨 Checking code formatting..."
+          npm run format:check || {
+            echo "❌ Code formatting check failed!"
+            echo ""
+            echo "To fix formatting issues:"
+            echo "1. Run 'npm run format' locally"
+            echo "2. Commit the formatted files"
+            echo "3. Push your changes"
+            echo ""
+            echo "💡 Tip: Enable format-on-save in VS Code"
+            echo "   See .vscode/settings.json for recommended settings"
+            exit 1
+          }
+
+      - name: Lint
+        run: |
+          echo "🔍 Running ESLint..."
+          npm run lint || {
+            echo "❌ Linting failed!"
+            echo ""
+            echo "To fix linting issues:"
+            echo "1. Review the errors above"
+            echo "2. Run 'npm run lint:fix' to auto-fix some issues"
+            echo "3. Manually fix remaining issues"
+            echo "4. Commit and push your changes"
+            echo ""
+            echo "📚 Common issues:"
+            echo "→ Unused variables: prefix with '_' or remove"
+            echo "→ Missing return types: add explicit TypeScript types"
+            echo "→ Import order: let ESLint auto-fix handle this"
+            exit 1
+          }
+
+      - name: Type check
+        run: |
+          echo "📝 Running TypeScript type check..."
+          npm run typecheck || {
+            echo "❌ TypeScript type check failed!"
+            echo ""
+            echo "To fix type errors:"
+            echo "1. Review the errors above"
+            echo "2. Add missing type annotations"
+            echo "3. Fix type mismatches"
+            echo "4. Avoid using 'any' type"
+            echo ""
+            echo "💡 Tips:"
+            echo "→ Enable strict mode in tsconfig.json"
+            echo "→ Use VS Code for real-time type checking"
+            echo "→ Check DEVELOPMENT_PHILOSOPHY_APPENDIX_TYPESCRIPT.md"
+            exit 1
+          }
+
+      - name: Run tests with coverage
+        run: |
+          echo "🧪 Running tests with coverage..."
+          npm run test:coverage || {
+            echo "❌ Tests failed!"
+            echo ""
+            echo "To debug test failures:"
+            echo "1. Run 'npm test' locally"
+            echo "2. For specific test: 'npm test -- path/to/test'"
+            echo "3. Update snapshots if needed: 'npm test -- -u'"
+            echo "4. Check test coverage thresholds in jest.config.js"
+            echo ""
+            echo "📊 Coverage requirements:"
+            echo "→ Global: 27% minimum (temporarily lowered from 85%)"
+            echo "→ Core logic (api/, lib/): 17-36% minimum (temporarily lowered from 90%)"
+            echo "→ See BACKLOG.md for coverage improvement plan"
+            exit 1
+          }
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+
+      - name: Check Edge Runtime compatibility
+        run: |
+          echo "🌐 Checking Edge Runtime compatibility..."
+          # Create a simple script to check for Edge Runtime issues
+          cat > check-edge-compat.js << 'EOF'
+          const fs = require('fs');
+          const path = require('path');
+
+          const edgeIncompatiblePkgs = ['winston', 'fs', 'path', 'crypto', 'os', 'child_process'];
+          const clientFiles = [];
+
+          function findFiles(dir, pattern) {
+            const files = fs.readdirSync(dir);
+            files.forEach(file => {
+              const filePath = path.join(dir, file);
+              const stat = fs.statSync(filePath);
+              if (stat.isDirectory() && !file.startsWith('.') && file !== 'node_modules') {
+                findFiles(filePath, pattern);
+              } else if (pattern.test(file)) {
+                clientFiles.push(filePath);
+              }
+            });
+          }
+
+          // Find all client components and pages
+          findFiles('./src', /\.(tsx?|jsx?)$/);
+
+          let hasIssues = false;
+
+          clientFiles.forEach(file => {
+            const content = fs.readFileSync(file, 'utf-8');
+            // Check for 'use client' directive
+            if (content.includes("'use client'") || content.includes('"use client"')) {
+              edgeIncompatiblePkgs.forEach(pkg => {
+                const importPattern = new RegExp(`from\\s+['"\`](.*/)?${pkg}['"\`]|require\\s*\\(['"\`](.*/)?${pkg}['"\`]\\)`);
+                if (importPattern.test(content)) {
+                  console.error(`❌ Edge Runtime incompatible: ${file} imports '${pkg}'`);
+                  hasIssues = true;
+                }
+              });
+            }
+          });
+
+          if (hasIssues) {
+            console.error('\n🚨 Edge Runtime compatibility issues found!');
+            console.error('→ Client components cannot use Node.js APIs');
+            console.error('→ Use runtime checks or Edge-compatible alternatives');
+            process.exit(1);
+          } else {
+            console.log('✅ All client components are Edge Runtime compatible');
+          }
+          EOF
+
+          node check-edge-compat.js || {
+            echo ""
+            echo "To fix Edge Runtime issues:"
+            echo "1. Remove Node.js-only imports from client components"
+            echo "2. Use runtime checks for Node.js APIs"
+            echo "3. Create Edge-compatible alternatives"
+            echo ""
+            echo "💡 Common solutions:"
+            echo "→ Use dynamic imports with runtime checks"
+            echo "→ Create separate Edge-compatible modules"
+            echo "→ Move Node.js logic to API routes"
+            exit 1
+          }
+
+      - name: Build
+        run: |
+          echo "🔨 Building Next.js application..."
+          npm run build || {
+            echo "❌ Build failed!"
+            echo ""
+            echo "To fix build issues:"
+            echo "1. Run 'npm run build' locally"
+            echo "2. Check for TypeScript errors"
+            echo "3. Verify all imports are correct"
+            echo "4. Ensure environment variables are set"
+            echo ""
+            echo "💡 Common build issues:"
+            echo "→ Missing environment variables"
+            echo "→ Import errors in production-only code"
+            echo "→ TypeScript errors not caught in dev mode"
+            echo "→ Edge Runtime compatibility issues"
+            echo "→ Invalid Tailwind CSS classes"
+            exit 1
+          }
+
+      - name: Build Storybook
+        run: |
+          echo "📚 Building Storybook..."
+          npm run build-storybook || {
+            echo "❌ Storybook build failed!"
+            echo ""
+            echo "To fix Storybook build issues:"
+            echo "1. Run 'npm run storybook' locally"
+            echo "2. Check for story syntax errors"
+            echo "3. Verify all component imports"
+            echo "4. Review .storybook configuration"
+            echo ""
+            echo "📖 See STORYBOOK_GUIDELINES.md for help"
+            exit 1
+          }

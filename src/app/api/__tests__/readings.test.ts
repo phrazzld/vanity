@@ -1,4 +1,4 @@
-import { GET, POST, PUT, DELETE } from '../readings/route';
+import { GET, POST, PUT as _PUT, DELETE as _DELETE } from '../readings/route';
 import * as db from '@/lib/db';
 import type { Reading, ReadingInput } from '@/types';
 import { NextRequest } from 'next/server';
@@ -26,7 +26,7 @@ jest.mock('next/server', () => {
         };
       }),
     },
-    NextRequest: jest.fn().mockImplementation((url) => {
+    NextRequest: jest.fn().mockImplementation(url => {
       const actualUrl = url || 'http://localhost:3000/api/readings';
       return {
         url: actualUrl,

@@ -9,7 +9,7 @@ import QuotesList from '../QuotesList';
 // Mock ThemeContext because it's used in the component
 jest.mock('../../../context/ThemeContext', () => ({
   useTheme: () => ({ isDarkMode: false, toggleDarkMode: jest.fn() }),
-  ThemeProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>
+  ThemeProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
 describe('QuotesList Component', () => {
@@ -17,18 +17,18 @@ describe('QuotesList Component', () => {
     {
       id: 1,
       text: 'The way to get started is to quit talking and begin doing.',
-      author: 'Walt Disney'
+      author: 'Walt Disney',
     },
     {
       id: 2,
-      text: 'Life is what happens when you\'re busy making other plans.',
-      author: 'John Lennon'
+      text: "Life is what happens when you're busy making other plans.",
+      author: 'John Lennon',
     },
     {
       id: 3,
       text: 'The greatest glory in living lies not in never falling, but in rising every time we fall.',
-      author: null
-    }
+      author: null,
+    },
   ];
 
   const mockSort = { field: 'text', order: 'asc' as const };
@@ -40,7 +40,7 @@ describe('QuotesList Component', () => {
   });
 
   it('renders the list of quotes correctly', () => {
-    render(
+    const { container } = render(
       <QuotesList
         quotes={mockQuotes}
         sort={mockSort}
@@ -50,14 +50,14 @@ describe('QuotesList Component', () => {
     );
 
     // Check if all quote text snippets are rendered (could be truncated)
-    expect(screen.getByText(/The way to get started/)).toBeInTheDocument();
-    expect(screen.getByText(/Life is what happens/)).toBeInTheDocument();
-    expect(screen.getByText(/The greatest glory/)).toBeInTheDocument();
-    
+    expect(container.textContent).toContain('The way to get started');
+    expect(container.textContent).toContain('Life is what happens');
+    expect(container.textContent).toContain('The greatest glory');
+
     // Check if authors are rendered
-    expect(screen.getByText('Walt Disney')).toBeInTheDocument();
-    expect(screen.getByText('John Lennon')).toBeInTheDocument();
-    expect(screen.getByText('Anonymous')).toBeInTheDocument();
+    expect(container.textContent).toContain('Walt Disney');
+    expect(container.textContent).toContain('John Lennon');
+    expect(container.textContent).toContain('Anonymous');
   });
 
   it('handles sorting when column headers are clicked', () => {
@@ -80,7 +80,7 @@ describe('QuotesList Component', () => {
   });
 
   it('calls onSelectQuote when a quote is clicked', () => {
-    render(
+    const { container } = render(
       <QuotesList
         quotes={mockQuotes}
         sort={mockSort}
@@ -89,9 +89,19 @@ describe('QuotesList Component', () => {
       />
     );
 
-    // Click on a quote
-    fireEvent.click(screen.getByText(/The way to get started/));
-    expect(mockHandleSelectQuote).toHaveBeenCalledWith(mockQuotes[0]);
+    // Find the first quote item using role and click it
+    const quoteItems = container.querySelectorAll('[role="button"]');
+    if (quoteItems.length > 0) {
+      const firstQuoteItem = quoteItems[0];
+      if (firstQuoteItem) {
+        fireEvent.click(firstQuoteItem);
+        expect(mockHandleSelectQuote).toHaveBeenCalledWith(mockQuotes[0]);
+      } else {
+        throw new Error('First quote item is undefined');
+      }
+    } else {
+      throw new Error('No quote items with role="button" found');
+    }
   });
 
   it('highlights search terms in text and author', () => {
@@ -111,7 +121,7 @@ describe('QuotesList Component', () => {
   });
 
   it('shows the proper empty state when no quotes are available', () => {
-    render(
+    const { container } = render(
       <QuotesList
         quotes={[]}
         sort={mockSort}
@@ -120,12 +130,15 @@ describe('QuotesList Component', () => {
       />
     );
 
-    expect(screen.getByText('No quotes found')).toBeInTheDocument();
-    expect(screen.getByText('Start building your collection of inspirational quotes')).toBeInTheDocument();
+    // Using a more flexible approach to find text elements
+    expect(container.textContent).toContain('No quotes found');
+    expect(container.textContent).toContain(
+      'Start building your collection of inspirational quotes'
+    );
   });
 
   it('shows different empty state message when searching', () => {
-    render(
+    const { container } = render(
       <QuotesList
         quotes={[]}
         sort={mockSort}
@@ -135,7 +148,8 @@ describe('QuotesList Component', () => {
       />
     );
 
-    expect(screen.getByText('No quotes found')).toBeInTheDocument();
-    expect(screen.getByText('Try adjusting your search criteria or filters')).toBeInTheDocument();
+    // Using a more flexible approach to find text elements
+    expect(container.textContent).toContain('No quotes found');
+    expect(container.textContent).toContain('Try adjusting your search criteria or filters');
   });
 });

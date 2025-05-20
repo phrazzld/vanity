@@ -9,9 +9,11 @@ declare global {
 }
 
 // Create a new client or use the existing one
-const prisma = global.prisma || new PrismaClient({
-  log: ['query', 'info', 'warn', 'error'],
-});
+const prisma =
+  global.prisma ||
+  new PrismaClient({
+    log: ['query', 'info', 'warn', 'error'],
+  });
 
 // In development, we want to attach the client to the global object to prevent multiple instances
 if (process.env.NODE_ENV === 'development') {

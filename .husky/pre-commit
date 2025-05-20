@@ -1,0 +1,83 @@
+#\!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-commit checks..."
+
+# Run lint-staged for formatting and linting
+echo "Checking code formatting and linting..."
+npx lint-staged || exit 1
+
+# Check for sensitive data and large files
+echo "Checking for sensitive data and large files..."
+node -e "
+  const fs = require('fs');
+  const execSync = require('child_process').execSync;
+  
+  try {
+    // Get staged files
+    const stagedFiles = execSync('git diff --staged --name-only', { encoding: 'utf8' }).split('\n').filter(Boolean);
+    
+    // Skip certain files
+    const skipFiles = ['.lintstagedrc.js', 'README.md', 'eslint.config.cjs'];
+    const binaryExtensions = /\\.(jpg|jpeg|png|gif|webp|ico|svg|woff|woff2|ttf|eot|otf|mp4|webm|ogg|mp3|wav|flac|aac|obj|gz|zip|rar|tar|7z|bin|exe|dll|so|dylib)$/i;
+    
+    // Define maximum file size (5MB)
+    const MAX_FILE_SIZE = 5 * 1024 * 1024;
+    
+    // Check files
+    const largeFiles = [];
+    
+    for (const file of stagedFiles) {
+      // Skip certain files
+      if (skipFiles.some(f => file.endsWith(f)) || binaryExtensions.test(file)) {
+        continue;
+      }
+      
+      try {
+        // Check file size
+        const stats = fs.statSync(file);
+        if (stats.size > MAX_FILE_SIZE) {
+          largeFiles.push(\`\${file} (\${(stats.size / 1024 / 1024).toFixed(2)}MB)\`);
+        }
+      } catch (e) {
+        console.error(\`Error checking file \${file}: \${e.message}\`);
+      }
+    }
+    
+    // Report large files
+    if (largeFiles.length > 0) {
+      console.error('🚨 Files exceeding size limit (5MB) detected:');
+      largeFiles.forEach(file => console.error(\`  - \${file}\`));
+      console.error('\\nPlease remove large files before committing or use Git LFS.');
+      process.exit(1);
+    }
+    
+    process.exit(0);
+  } catch (error) {
+    console.error('Error in pre-commit hook:', error);
+    process.exit(1);
+  }
+" || exit 1
+
+# Run TypeScript type checking (includes test files)
+echo "Running TypeScript type checking..."
+npm run typecheck || exit 1
+
+# Check test coverage (warning only, not blocking)
+echo "📊 Checking test coverage..."
+if npm run test:coverage > coverage_output.log 2>&1; then
+  echo "✅ Test coverage check passed"
+  rm coverage_output.log
+else
+  # Check if it's coverage threshold failure
+  if grep -q "coverage threshold" coverage_output.log; then
+    echo "⚠️  Warning: Test coverage is below thresholds"
+    grep -E "coverage threshold|not met" coverage_output.log | sed 's/^/  /' | head -5
+    echo ""
+    echo "  💡 Run 'npm run test:coverage' to see full report"
+    echo "  Note: Coverage check will block git push"
+  fi
+  rm coverage_output.log
+fi
+
+echo "✅ Pre-commit checks completed successfully!"

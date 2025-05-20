@@ -16,12 +16,12 @@ function findAllIndices(str, substring) {
   const indices = [];
   let startIndex = 0;
   let index;
-  
+
   while ((index = str.indexOf(substring, startIndex)) > -1) {
     indices.push(index);
     startIndex = index + substring.length;
   }
-  
+
   return indices;
 }
 
@@ -29,12 +29,12 @@ function findAllIndices(str, substring) {
 function extractObjectsFromString(content, startMarker, endMarker) {
   const startIndices = findAllIndices(content, startMarker);
   const objects = [];
-  
+
   for (const startIndex of startIndices) {
     // Find the closing bracket that matches the opening bracket
     let openBrackets = 1;
     let endIndex = startIndex + startMarker.length;
-    
+
     while (openBrackets > 0 && endIndex < content.length) {
       if (content[endIndex] === '{') {
         openBrackets++;
@@ -43,14 +43,14 @@ function extractObjectsFromString(content, startMarker, endMarker) {
       }
       endIndex++;
     }
-    
+
     if (openBrackets === 0) {
       // We found a complete object
       const objectText = content.substring(startIndex + startMarker.length - 1, endIndex);
       objects.push(objectText);
     }
   }
-  
+
   return objects;
 }
 

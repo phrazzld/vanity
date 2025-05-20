@@ -1,15 +1,15 @@
-'use client'
+'use client';
 
-import Image from 'next/image'
+import Image from 'next/image';
 
 interface ProjectCardProps {
-  title: string
-  description: string
-  techStack: string[]
-  siteUrl?: string
-  codeUrl?: string
-  imageSrc: string
-  altText: string
+  title: string;
+  description: string;
+  techStack: string[];
+  siteUrl?: string;
+  codeUrl?: string;
+  imageSrc: string;
+  altText: string;
 }
 
 export default function ProjectCard({
@@ -19,7 +19,7 @@ export default function ProjectCard({
   siteUrl,
   codeUrl,
   imageSrc,
-  altText
+  altText,
 }: ProjectCardProps) {
   return (
     <article className="project-card">
@@ -39,24 +39,34 @@ export default function ProjectCard({
           <h2>{title}</h2>
           <p>{description}</p>
           <ul className="tech-stack">
-            {techStack.map((tech) => (
+            {techStack.map(tech => (
               <li key={tech}>{tech}</li>
             ))}
           </ul>
         </div>
         <div className="project-links">
           {siteUrl && (
-            <a href={siteUrl} target="_blank" className="content-link secondary-link" rel="noreferrer">
+            <a
+              href={siteUrl}
+              target="_blank"
+              className="content-link secondary-link"
+              rel="noreferrer"
+            >
               view site
             </a>
           )}
           {codeUrl && (
-            <a href={codeUrl} target="_blank" className="content-link secondary-link" rel="noreferrer">
+            <a
+              href={codeUrl}
+              target="_blank"
+              className="content-link secondary-link"
+              rel="noreferrer"
+            >
               view code
             </a>
           )}
         </div>
       </div>
     </article>
-  )
+  );
 }

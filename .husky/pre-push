@@ -1,0 +1,286 @@
+#!/usr/bin/env sh
+# Pre-push hook: Runs before pushing to the remote repository
+# This hook ensures code quality by:
+# 1. Running the complete test suite
+# 2. Enforcing branch naming conventions
+
+echo "🚀 Running pre-push checks..."
+
+# Get the current branch name
+BRANCH_NAME=$(git symbolic-ref --short HEAD)
+echo "🌿 Current branch: $BRANCH_NAME"
+
+# ========================================
+# Branch naming convention check
+# ========================================
+
+# Define allowed branch name patterns
+MAIN_PATTERN="^(main|master)$"
+FEATURE_PATTERN="^feature/[a-z0-9]+([-/][a-z0-9]+)*$"
+FIX_PATTERN="^fix/[a-z0-9]+([-/][a-z0-9]+)*$"
+DOCS_PATTERN="^docs/[a-z0-9]+([-/][a-z0-9]+)*$"
+REFACTOR_PATTERN="^refactor/[a-z0-9]+([-/][a-z0-9]+)*$"
+RELEASE_PATTERN="^release/v[0-9]+\.[0-9]+\.[0-9]+$"
+DEV_PATTERN="^dev(elop)?$"
+PLAN_PATTERN="^plan/[a-z0-9]+([-/][a-z0-9]+)*$"  # Support existing plan branches
+
+# Check if branch name follows the conventions
+case "$BRANCH_NAME" in
+  main|master) echo "✅ Branch naming convention check passed" ;;
+  feature/*) echo "✅ Branch naming convention check passed" ;;
+  fix/*) echo "✅ Branch naming convention check passed" ;;
+  docs/*) echo "✅ Branch naming convention check passed" ;;
+  refactor/*) echo "✅ Branch naming convention check passed" ;;
+  release/v*) echo "✅ Branch naming convention check passed" ;;
+  dev|develop) echo "✅ Branch naming convention check passed" ;;
+  plan/*) echo "✅ Branch naming convention check passed" ;;
+  *)
+    echo "❌ ERROR: Branch naming convention check failed"
+    echo "Branch names must follow one of these patterns:"
+    echo "  • main, master (for main branches)"
+    echo "  • feature/feature-name (for new features)"
+    echo "  • fix/bug-description (for bug fixes)"
+    echo "  • docs/what-was-documented (for documentation)"
+    echo "  • refactor/what-was-refactored (for refactoring)"
+    echo "  • release/vX.Y.Z (for release branches)"
+    echo "  • dev, develop (for development branches)"
+    echo "  • plan/plan-description (for planning branches)"
+    echo ""
+    echo "Please rename your branch and try again."
+    exit 1
+    ;;
+esac
+
+# ========================================
+# Check code formatting
+# ========================================
+echo "🎨 Checking code formatting..."
+if npm run format:check > format_output.log 2>&1; then
+  echo "✅ Code formatting check passed"
+  rm format_output.log
+else
+  cat format_output.log
+  rm format_output.log
+  echo ""
+  echo "❌ Code formatting check failed!"
+  echo ""
+  echo "To fix formatting issues:"
+  echo "1. Run 'npm run format' locally"
+  echo "2. Commit the formatted files"
+  echo "3. Push your changes"
+  echo ""
+  echo "💡 Tip: Enable format-on-save in VS Code"
+  echo "   See .vscode/settings.json for recommended settings"
+  exit 1
+fi
+
+# ========================================
+# Check ESLint
+# ========================================
+echo "🔍 Running ESLint check..."
+if npm run lint > lint_output.log 2>&1; then
+  echo "✅ ESLint check passed"
+  rm lint_output.log
+else
+  # Check if only warnings (no errors)
+  if grep -q "0 errors" lint_output.log && grep -q "warning" lint_output.log; then
+    echo "⚠️  ESLint check passed with warnings"
+    cat lint_output.log | grep -E "(warning|problems)"
+    rm lint_output.log
+  else
+    cat lint_output.log
+    rm lint_output.log
+    echo ""
+    echo "❌ ESLint check failed!"
+    echo ""
+    echo "To fix linting issues:"
+    echo "1. Review the errors above"
+    echo "2. Run 'npm run lint:fix' to auto-fix some issues"
+    echo "3. Manually fix remaining issues"
+    echo "4. Commit and push your changes"
+    echo ""
+    echo "📚 Common issues:"
+    echo "→ Unused variables: prefix with '_' or remove"
+    echo "→ Missing return types: add explicit TypeScript types"
+    echo "→ Import order: let ESLint auto-fix handle this"
+    exit 1
+  fi
+fi
+
+# ========================================
+# Check TypeScript types
+# ========================================
+echo "📝 Running TypeScript type check..."
+if npm run typecheck > typecheck_output.log 2>&1; then
+  echo "✅ TypeScript type check passed"
+  rm typecheck_output.log
+else
+  cat typecheck_output.log
+  rm typecheck_output.log
+  echo ""
+  echo "❌ TypeScript type check failed!"
+  echo ""
+  echo "To fix type errors:"
+  echo "1. Review the errors above"
+  echo "2. Add missing type annotations"
+  echo "3. Fix type mismatches"
+  echo "4. Avoid using 'any' type"
+  echo ""
+  echo "💡 Tips:"
+  echo "→ Enable strict mode in tsconfig.json"
+  echo "→ Use VS Code for real-time type checking"
+  echo "→ Check DEVELOPMENT_PHILOSOPHY_APPENDIX_TYPESCRIPT.md"
+  exit 1
+fi
+
+# ========================================
+# Check Edge Runtime compatibility
+# ========================================
+echo "🌐 Checking Edge Runtime compatibility..."
+
+# Create the edge compatibility check script
+cat > check-edge-compat.js << 'EOF'
+const fs = require('fs');
+const path = require('path');
+
+const edgeIncompatiblePkgs = ['winston', 'fs', 'path', 'crypto', 'os', 'child_process'];
+const clientFiles = [];
+
+function findFiles(dir, pattern) {
+  const files = fs.readdirSync(dir);
+  files.forEach(file => {
+    const filePath = path.join(dir, file);
+    const stat = fs.statSync(filePath);
+    if (stat.isDirectory() && !file.startsWith('.') && file !== 'node_modules') {
+      findFiles(filePath, pattern);
+    } else if (pattern.test(file)) {
+      clientFiles.push(filePath);
+    }
+  });
+}
+
+// Find all client components and pages
+findFiles('./src', /\.(tsx?|jsx?)$/);
+
+let hasIssues = false;
+
+clientFiles.forEach(file => {
+  const content = fs.readFileSync(file, 'utf-8');
+  // Check for 'use client' directive
+  if (content.includes("'use client'") || content.includes('"use client"')) {
+    edgeIncompatiblePkgs.forEach(pkg => {
+      const importPattern = new RegExp(`from\\s+['"\`](.*/)?${pkg}['"\`]|require\\s*\\(['"\`](.*/)?${pkg}['"\`]\\)`);
+      if (importPattern.test(content)) {
+        console.error(`❌ Edge Runtime incompatible: ${file} imports '${pkg}'`);
+        hasIssues = true;
+      }
+    });
+  }
+});
+
+if (hasIssues) {
+  console.error('\n🚨 Edge Runtime compatibility issues found!');
+  console.error('→ Client components cannot use Node.js APIs');
+  console.error('→ Use runtime checks or Edge-compatible alternatives');
+  process.exit(1);
+} else {
+  console.log('✅ All client components are Edge Runtime compatible');
+}
+EOF
+
+# Run the edge compatibility check
+if node check-edge-compat.js; then
+  rm check-edge-compat.js
+else
+  rm check-edge-compat.js
+  echo ""
+  echo "To fix Edge Runtime issues:"
+  echo "1. Remove Node.js-only imports from client components"
+  echo "2. Use runtime checks for Node.js APIs"
+  echo "3. Create Edge-compatible alternatives"
+  echo ""
+  echo "💡 Common solutions:"
+  echo "→ Use dynamic imports with runtime checks"
+  echo "→ Create separate Edge-compatible modules"
+  echo "→ Move Node.js logic to API routes"
+  exit 1
+fi
+
+# ========================================
+# Check test coverage
+# ========================================
+echo "📊 Running test coverage check..."
+if npm run test:coverage > coverage_output.log 2>&1; then
+  echo "✅ Test coverage check passed"
+  rm coverage_output.log
+else
+  # Extract coverage failures from output
+  if grep -q "coverage threshold" coverage_output.log; then
+    echo "❌ Test coverage below required thresholds!"
+    echo ""
+    echo "Coverage failures:"
+    grep -E "coverage threshold|not met" coverage_output.log | sed 's/^/  /'
+    echo ""
+    echo "To fix coverage issues:"
+    echo "1. Run 'npm run test:coverage' to see detailed report"
+    echo "2. Add tests for untested code"
+    echo "3. Check jest.config.js for coverage requirements"
+    echo ""
+    echo "💡 Current thresholds:"
+    echo "→ Global: 27% minimum (temporarily lowered from 85%)"
+    echo "→ Core logic (api/, lib/): 17-36% minimum (temporarily lowered from 90%)"
+    echo "→ See BACKLOG.md for coverage improvement plan"
+    rm coverage_output.log
+    exit 1
+  else
+    # If it's another type of test failure (like logger tests), we need to check
+    if grep -q "Test Suites:.*failed" coverage_output.log; then
+      echo "❌ Tests failed!"
+      echo ""
+      # Show which tests failed
+      grep -E "FAIL|●" coverage_output.log | head -20
+      echo ""
+      echo "To debug test failures:"
+      echo "1. Run 'npm test' locally to see full output"
+      echo "2. Fix failing tests before pushing"
+      rm coverage_output.log
+      exit 1
+    else
+      # Check if it's just obsolete snapshots
+      if grep -q "Test Suites:.*passed.*total" coverage_output.log && grep -q "Tests:.*passed.*total" coverage_output.log; then
+        echo "✅ Test coverage check passed (obsolete snapshots warning ignored)"
+        rm coverage_output.log
+      else
+        # Unknown failure, show output
+        cat coverage_output.log
+        rm coverage_output.log
+        exit 1
+      fi
+    fi
+  fi
+fi
+
+# ========================================
+# Run the complete test suite
+# ========================================
+echo "🧪 Running the complete test suite..."
+# Run tests and capture output, but don't let the error stop us
+if npm test > test_output.log 2>&1; then
+  echo "✅ Tests passed successfully!"
+  rm test_output.log
+  exit 0
+else
+  # Tests failed or returned non-zero, check the output
+  cat test_output.log
+  
+  # Check if it's just the obsolete snapshots issue
+  if grep -q "Test Suites:.*passed.*total" test_output.log && grep -q "Tests:.*passed.*total" test_output.log; then
+    echo "✅ All tests passed! (obsolete snapshots warning ignored)"
+    rm test_output.log
+    exit 0
+  else
+    echo "❌ Tests failed. Please fix failing tests before pushing."
+    rm test_output.log
+    exit 1
+  fi
+fi

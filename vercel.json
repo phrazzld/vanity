@@ -1,0 +1,20 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run prisma:generate && NODE_OPTIONS='--max-old-space-size=4096' npm run build",
+  "outputDirectory": ".next",
+  "devCommand": "npm run dev",
+  "installCommand": "npm ci",
+  "env": {
+    "NODE_VERSION": "20",
+    "SKIP_STORYBOOK": "true",
+    "NEXT_PUBLIC_SPACES_BASE_URL": "https://book-covers.nyc3.digitaloceanspaces.com"
+  },
+  "functions": {
+    "app/api/auth/[...nextauth]/route.ts": {
+      "maxDuration": 30
+    }
+  },
+  "github": {
+    "silent": false
+  }
+}

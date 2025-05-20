@@ -1,0 +1,37 @@
+# Build output
+.next/
+out/
+build/
+dist/
+
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Testing
+coverage/
+
+# Generated files
+.vercel
+.turbo
+.swc/
+.cache
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env*
+!.env.example
+
+# Misc
+.DS_Store
+*.pem
+.vscode/
+tsconfig.tsbuildinfo
+
+# Prisma
+prisma/migrations/

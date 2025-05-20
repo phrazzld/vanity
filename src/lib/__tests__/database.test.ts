@@ -7,7 +7,7 @@ describe('Database Connection', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  
+
   afterAll(() => {
     consoleErrorSpy.mockRestore();
   });
@@ -15,7 +15,7 @@ describe('Database Connection', () => {
   it('creates a singleton Prisma instance', () => {
     // Import the client again to test the singleton pattern
     const prisma2 = require('../prisma').default;
-    
+
     // Should be the same instance
     expect(prisma).toBe(prisma2);
   });
