@@ -136,7 +136,7 @@ Implement a simpler approach to dependency security scanning using the native pa
     1. Baseline report exists with clear findings
   - **Depends-on:** None
 
-- [ ] **T011 · Chore · P1: Configure Initial Vulnerability Allowlist**
+- [x] **T011 · Chore · P1: Configure Initial Vulnerability Allowlist**
   - **Action:**
     1. For vulnerabilities that cannot be immediately fixed, add to allowlist
     2. Include justification and timeline for each allowlisted vulnerability

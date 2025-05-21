@@ -1,10 +1,18 @@
 [
   {
-    "id": "example-id-1",
+    "id": "GHSA-xvch-r4wf-h8w9",
     "package": "example-package",
-    "reason": "Vulnerability is in a development dependency and does not affect production builds.",
-    "notes": "Internal tracking issue: SEC-001",
-    "expires": "2025-12-31",
+    "reason": "Vulnerability is in a development dependency and does not affect production builds. Fix expected in next major version.",
+    "notes": "Internal tracking issue: SEC-001. This is an example entry only - no actual vulnerabilities exist in the current codebase.",
+    "expires": "2025-08-20",
+    "reviewedOn": "2025-05-20"
+  },
+  {
+    "id": "GHSA-abcd-1234-5678",
+    "package": "demo-package",
+    "reason": "Vulnerability cannot be exploited in our usage context as we don't use the affected feature. All inputs are properly sanitized.",
+    "notes": "This is an example entry demonstrating a different allowlist justification pattern. No actual vulnerabilities exist in the codebase.",
+    "expires": "2025-07-20",
     "reviewedOn": "2025-05-20"
   }
 ]
