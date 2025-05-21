@@ -13,7 +13,7 @@
     2. Core functionality can be imported and tested without running the CLI
   - **Depends-on:** none
 
-- [ ] **T002 · Test · P0: Set up mocking for external dependencies**
+- [x] **T002 · Test · P0: Set up mocking for external dependencies**
 
   - **Action:**
     1. Implement Jest mocks for `child_process.execSync`, `fs.readFileSync`, and `fs.existsSync`
@@ -23,7 +23,7 @@
     2. Mock configurations are reusable across test suites
   - **Depends-on:** [T001]
 
-- [ ] **T003 · Test · P0: Implement Jest tests for npm audit output scenarios**
+- [x] **T003 · Test · P0: Implement Jest tests for npm audit output scenarios**
 
   - **Action:**
     1. Write tests covering no vulnerabilities, high/critical vulnerabilities, and allowlisted items
