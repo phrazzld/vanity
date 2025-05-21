@@ -4,11 +4,11 @@
     "noEmit": true,
     "incremental": false,
 
-    /* Temporarily disable strict checks for pre-commit */
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noImplicitReturns": false,
-    "noUncheckedIndexedAccess": false
+    /* Enable strict checks to catch errors early */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": [

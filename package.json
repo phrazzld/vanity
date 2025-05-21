@@ -90,6 +90,7 @@
     "migrate:quotes": "node scripts/migrate-quotes.js",
     "migrate:all": "./scripts/migration-deploy.sh",
     "build:audit-filter": "tsc scripts/audit-filter.ts --esModuleInterop --resolveJsonModule --outDir dist/scripts --skipLibCheck",
+    "build:verify": "tsc -p tsconfig.typecheck.json --noEmit && tsc scripts/audit-filter.ts --esModuleInterop --resolveJsonModule --noEmit --skipLibCheck",
     "security:audit": "npm audit --audit-level=high",
     "security:scan": "npm run build:audit-filter && node dist/scripts/audit-filter.js",
     "prepare": "husky",

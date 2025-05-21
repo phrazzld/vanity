@@ -169,6 +169,11 @@ function main() {
   for (const advisoryId in auditResult.advisories) {
     const advisory = auditResult.advisories[advisoryId];
 
+    // Skip if advisory is undefined or doesn't have a severity property
+    if (!advisory || typeof advisory !== 'object') {
+      continue;
+    }
+
     // We only care about high and critical vulnerabilities
     if (advisory.severity !== 'high' && advisory.severity !== 'critical') {
       continue;

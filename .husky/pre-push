@@ -261,6 +261,31 @@ else
 fi
 
 # ========================================
+# Verify build
+# ========================================
+echo "🏗️ Verifying production build..."
+if npm run build:verify > build_output.log 2>&1; then
+  echo "✅ Build verification passed"
+  rm build_output.log
+else
+  cat build_output.log
+  rm build_output.log
+  echo ""
+  echo "❌ Build verification failed!"
+  echo ""
+  echo "To fix build issues:"
+  echo "1. Run 'npm run build:verify' locally"
+  echo "2. Fix the TypeScript errors that only appear in production builds"
+  echo "3. Look for issues in script files that aren't normally type-checked"
+  echo ""
+  echo "💡 Common build issues:"
+  echo "→ TypeScript errors in scripts/ directory"
+  echo "→ Type mismatches only caught in strict mode"
+  echo "→ Missing type guards for indexed access"
+  exit 1
+fi
+
+# ========================================
 # Run the complete test suite
 # ========================================
 echo "🧪 Running the complete test suite..."
