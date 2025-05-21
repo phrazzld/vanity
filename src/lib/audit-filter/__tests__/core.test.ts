@@ -123,19 +123,33 @@ describe('parseAndValidateAllowlist', () => {
 
   test('should throw error for missing required fields', () => {
     // Missing id
-    const missingId = JSON.stringify([{ package: 'test', reason: 'test' }]);
+    const missingId = JSON.stringify([{ package: 'test', reason: 'test', expires: '2099-12-31' }]);
     expect(() => parseAndValidateAllowlist(missingId)).toThrow('must have a non-empty id string');
 
     // Missing package
-    const missingPackage = JSON.stringify([{ id: 'test', reason: 'test' }]);
+    const missingPackage = JSON.stringify([{ id: 'test', reason: 'test', expires: '2099-12-31' }]);
     expect(() => parseAndValidateAllowlist(missingPackage)).toThrow(
       'must have a non-empty package string'
     );
 
     // Missing reason
-    const missingReason = JSON.stringify([{ id: 'test', package: 'test' }]);
+    const missingReason = JSON.stringify([{ id: 'test', package: 'test', expires: '2099-12-31' }]);
     expect(() => parseAndValidateAllowlist(missingReason)).toThrow(
       'must have a non-empty reason string'
+    );
+
+    // Missing expires
+    const missingExpires = JSON.stringify([{ id: 'test', package: 'test', reason: 'test' }]);
+    expect(() => parseAndValidateAllowlist(missingExpires)).toThrow(
+      'must have a non-empty expires string'
+    );
+
+    // Empty expires
+    const emptyExpires = JSON.stringify([
+      { id: 'test', package: 'test', reason: 'test', expires: '' },
+    ]);
+    expect(() => parseAndValidateAllowlist(emptyExpires)).toThrow(
+      'must have a non-empty expires string'
     );
   });
 });

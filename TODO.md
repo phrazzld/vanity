@@ -54,7 +54,7 @@
 
 ## Security Policy Enforcement
 
-- [ ] **T006 · Bugfix · P0: Enforce expiration dates on allowlist entries**
+- [x] **T006 · Bugfix · P0: Enforce expiration dates on allowlist entries**
 
   - **Action:**
     1. Update `isAllowlistEntryExpired` to treat undefined/missing expiration dates as expired
@@ -267,6 +267,7 @@
   - **Depends-on:** none
 
 - [ ] **T027 · Chore · P3: Clean up planning artifacts**
+
   - **Action:**
     1. Remove temporary planning files
     2. Archive completed documentation

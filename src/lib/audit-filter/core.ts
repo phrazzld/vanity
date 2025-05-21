@@ -124,20 +124,21 @@ export function parseAndValidateAllowlist(jsonString: string | null): AllowlistE
         throw new Error(`Allowlist entry at index ${index} must have a non-empty reason string`);
       }
 
+      if (typeof typedEntry.expires !== 'string' || !typedEntry.expires) {
+        throw new Error(`Allowlist entry at index ${index} must have a non-empty expires string`);
+      }
+
       // Create a properly typed AllowlistEntry
       const allowlistEntry: AllowlistEntry = {
         id: typedEntry.id, // We already checked this is a string above
         package: typedEntry.package, // We already checked this is a string above
         reason: typedEntry.reason, // We already checked this is a string above
+        expires: typedEntry.expires, // We already checked this is a string above
       };
 
       // Add optional fields if they exist
       if (typedEntry.notes && typeof typedEntry.notes === 'string') {
         allowlistEntry.notes = typedEntry.notes;
-      }
-
-      if (typedEntry.expires && typeof typedEntry.expires === 'string') {
-        allowlistEntry.expires = typedEntry.expires;
       }
 
       if (typedEntry.reviewedOn && typeof typedEntry.reviewedOn === 'string') {
