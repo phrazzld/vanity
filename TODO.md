@@ -43,7 +43,7 @@
     2. Tests contribute to >90% code coverage goal
   - **Depends-on:** [T001, T002, T009]
 
-- [ ] **T005 · Test · P0: Implement tests for exit codes and logging output**
+- [x] **T005 · Test · P0: Implement tests for exit codes and logging output**
   - **Action:**
     1. Verify correct exit codes for success, vulnerability found, and error conditions
     2. Validate logging output format and content for each scenario
@@ -273,6 +273,16 @@
   - **Done-when:**
     1. No unused planning files remain
   - **Depends-on:** none
+
+- [ ] **T028 · Chore · P1: Fix ESLint configuration for test files**
+  - **Action:**
+    1. Update ESLint configuration to properly handle Jest globals and Node.js globals
+    2. Refactor test files to use proper ESLint comments or configurations
+    3. Ensure all test files pass linting without warnings
+  - **Done-when:**
+    1. All test files pass ESLint checks without errors/warnings
+    2. No need to use --no-verify when committing test files
+  - **Depends-on:** [T002]
 
 ## Assumptions & Clarifications Needed
 
