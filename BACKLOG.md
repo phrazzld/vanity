@@ -39,7 +39,7 @@
   - **Expected Outcome**: All instances of `eval()` in `scripts/importData.js` (and any other scripts) are replaced with safer parsing methods (e.g., `JSON.parse`). Data migration processes are free from `eval()`-related vulnerabilities.
   - **Dependencies**: None
 
-- **[Enhancement] Integrate Automated Security Vulnerability Scanning into CI Pipeline**
+- [x] **[Enhancement] Integrate Automated Security Vulnerability Scanning into CI Pipeline**
 
   - **Complexity**: Medium
   - **Rationale**: To proactively prevent new high-risk security vulnerabilities in code and dependencies from being merged by adding a mandatory CI stage, as per the "Automation (CI/CD Quality Gates)" and "Security (Dependency Management Security)" philosophies.
