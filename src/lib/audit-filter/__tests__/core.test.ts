@@ -72,11 +72,9 @@ describe('parseNpmAuditJson', () => {
     expect(() => parseNpmAuditJson(invalidJson)).toThrow('missing or invalid advisories field');
   });
 
-  test('should throw error for missing metadata.vulnerabilities field', () => {
+  test('should throw error for missing metadata', () => {
     const invalidJson = JSON.stringify({ advisories: {} });
-    expect(() => parseNpmAuditJson(invalidJson)).toThrow(
-      'missing or invalid metadata.vulnerabilities field'
-    );
+    expect(() => parseNpmAuditJson(invalidJson)).toThrow('missing or invalid metadata field');
   });
 });
 
