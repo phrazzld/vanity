@@ -12,7 +12,8 @@
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": [
-    "node_modules"
-    /* No longer exclude test files - they'll be checked by the same rules */
+    "node_modules",
+    "src/lib/audit-filter/__tests__" /* Exclude audit-filter tests which have their own looser tsconfig */
+    /* Most test files are checked by the same rules */
   ]
 }
