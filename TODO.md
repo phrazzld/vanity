@@ -123,7 +123,7 @@ Implement a simpler approach to dependency security scanning using the native pa
 
 ## Baseline & Vulnerability Management
 
-- [ ] **T010 · Chore · P1: Perform Initial Scan and Document Baseline**
+- [x] **T010 · Chore · P1: Perform Initial Scan and Document Baseline**
 
   - **Action:**
     1. Run `npm audit` on main branch
