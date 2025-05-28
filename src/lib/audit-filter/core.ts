@@ -6,6 +6,10 @@
  * is designed to be easily testable.
  */
 
+import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
+import { allowlistSchema } from './allowlist.schema';
+import { formatAllowlistValidationErrors } from './validationErrorFormatter';
 import type {
   AllowlistEntry,
   Advisory,
@@ -13,6 +17,11 @@ import type {
   VulnerabilityInfo,
   AnalysisResult,
 } from './types';
+
+// Initialize AJV with formats support for schema validation
+const ajv = new Ajv({ allErrors: true });
+addFormats(ajv);
+const validateAllowlist = ajv.compile<AllowlistEntry[]>(allowlistSchema);
 
 /**
  * Parse npm audit --json output into a structured object
@@ -100,56 +109,29 @@ export function parseAndValidateAllowlist(jsonString: string | null): AllowlistE
   try {
     const parsed = JSON.parse(jsonString) as unknown;
 
-    if (!Array.isArray(parsed)) {
-      throw new Error('Allowlist must be an array');
+    // Validate against JSON schema using AJV
+    if (!validateAllowlist(parsed)) {
+      const errorMessages = formatAllowlistValidationErrors(validateAllowlist.errors || []);
+      throw new Error(
+        `Allowlist file validation failed. The JSON structure does not match the required schema.\n` +
+          `${errorMessages}\n` +
+          `Please ensure your .audit-allowlist.json file follows the correct format.`
+      );
     }
 
-    // Validate each entry
-    return parsed.map((entry: unknown, index: number) => {
-      if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
-        throw new Error(`Allowlist entry at index ${index} must be an object`);
-      }
-
-      const typedEntry = entry as Record<string, unknown>;
-
-      if (typeof typedEntry.id !== 'string' || !typedEntry.id) {
-        throw new Error(`Allowlist entry at index ${index} must have a non-empty id string`);
-      }
-
-      if (typeof typedEntry.package !== 'string' || !typedEntry.package) {
-        throw new Error(`Allowlist entry at index ${index} must have a non-empty package string`);
-      }
-
-      if (typeof typedEntry.reason !== 'string' || !typedEntry.reason) {
-        throw new Error(`Allowlist entry at index ${index} must have a non-empty reason string`);
-      }
-
-      if (typeof typedEntry.expires !== 'string' || !typedEntry.expires) {
-        throw new Error(`Allowlist entry at index ${index} must have a non-empty expires string`);
-      }
-
-      // Create a properly typed AllowlistEntry
-      const allowlistEntry: AllowlistEntry = {
-        id: typedEntry.id, // We already checked this is a string above
-        package: typedEntry.package, // We already checked this is a string above
-        reason: typedEntry.reason, // We already checked this is a string above
-        expires: typedEntry.expires, // We already checked this is a string above
-      };
-
-      // Add optional fields if they exist
-      if (typedEntry.notes && typeof typedEntry.notes === 'string') {
-        allowlistEntry.notes = typedEntry.notes;
-      }
-
-      if (typedEntry.reviewedOn && typeof typedEntry.reviewedOn === 'string') {
-        allowlistEntry.reviewedOn = typedEntry.reviewedOn;
-      }
-
-      return allowlistEntry;
-    });
+    // If validation passes, parsed is guaranteed to be AllowlistEntry[]
+    return parsed;
   } catch (error) {
     if (error instanceof SyntaxError) {
-      throw new Error(`Failed to parse allowlist as JSON: ${error.message}`);
+      throw new Error(
+        `Failed to parse allowlist file as JSON. The file contains invalid JSON syntax.\n` +
+          `Error details: ${error.message}\n` +
+          `Please check your .audit-allowlist.json file for:\n` +
+          `  - Missing or extra commas\n` +
+          `  - Unclosed brackets or braces\n` +
+          `  - Invalid quotes or unescaped characters\n` +
+          `  - Trailing commas in arrays or objects`
+      );
     }
     throw error;
   }

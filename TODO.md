@@ -85,7 +85,7 @@
 
 ## Error Handling & Robustness
 
-- [ ] **T009 · Feature · P1: Exit with clear error on corrupt allowlist**
+- [x] **T009 · Feature · P1: Exit with clear error on corrupt allowlist**
 
   - **Action:**
     1. Add proper error handling for malformed JSON in allowlist

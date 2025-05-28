@@ -112,8 +112,23 @@ describe('parseAndValidateAllowlist', () => {
   test('should throw error for invalid JSON', () => {
     const invalidJson = '{not valid json';
     expect(() => parseAndValidateAllowlist(invalidJson)).toThrow(
-      'Failed to parse allowlist as JSON'
+      'Failed to parse allowlist file as JSON'
     );
+  });
+
+  test('should throw descriptive error for malformed JSON with helpful guidance', () => {
+    const invalidJson = '{"test": "value",}'; // trailing comma
+    try {
+      parseAndValidateAllowlist(invalidJson);
+      fail('Expected parseAndValidateAllowlist to throw an error');
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error);
+      const errorMessage = (error as Error).message;
+      expect(errorMessage).toContain('Failed to parse allowlist file as JSON');
+      expect(errorMessage).toContain('invalid JSON syntax');
+      expect(errorMessage).toContain('Missing or extra commas');
+      expect(errorMessage).toContain('Trailing commas');
+    }
   });
 
   test('should throw error if allowlist is not an array', () => {

@@ -1,6 +1,6 @@
 /**
  * Exit code tests for audit-filter
- * 
+ *
  * These tests verify that the audit-filter CLI correctly sets exit codes
  * based on the analysis results in different scenarios.
  */
@@ -19,7 +19,8 @@ import * as childProcessMock from '../__mocks__/child_process';
 import * as fsMock from '../__mocks__/fs';
 
 // Mock process.exit
-const mockExit = jest.spyOn(process, 'exit').mockImplementation((code) => {
+// eslint-disable-next-line no-undef
+const mockExit = jest.spyOn(process, 'exit').mockImplementation(code => {
   throw new Error(`Process.exit called with code: ${code}`);
 });
 
@@ -80,96 +81,107 @@ describe('Exit Code Tests', () => {
       // Set up a clean audit scenario
       const cleanAudit = createCleanAuditResult();
       const emptyAllowlist = createMockAllowlist([]);
-      
+
       // Analyze the results
       const results = analyzeAuditReport(cleanAudit, emptyAllowlist, CURRENT_DATE);
-      
+
       // Verify results
       expect(results.vulnerabilities).toHaveLength(0);
       expect(results.allowedVulnerabilities).toHaveLength(0);
       expect(results.expiredAllowlistEntries).toHaveLength(0);
       expect(results.isSuccessful).toBe(true);
-      
+
       // Verify exit code
       expect(getExitCode(results)).toBe(0);
     });
-    
+
+    test('should throw error for corrupt allowlist JSON', () => {
+      // Set up a clean audit scenario
+      const cleanAudit = createCleanAuditResult();
+      const corruptAllowlist = '{invalid json with trailing comma,}';
+
+      // Verify that corrupt JSON throws an error
+      expect(() => analyzeAuditReport(cleanAudit, corruptAllowlist, CURRENT_DATE)).toThrow(
+        'Failed to parse allowlist file as JSON'
+      );
+    });
+
     test('should exit with code 1 for new vulnerabilities', () => {
       // Set up a scenario with vulnerabilities not in allowlist
       const highVulnAudit = createHighVulnerabilitiesAuditResult();
       const emptyAllowlist = createMockAllowlist([]);
-      
+
       // Analyze the results
       const results = analyzeAuditReport(highVulnAudit, emptyAllowlist, CURRENT_DATE);
-      
+
       // Verify results
       expect(results.vulnerabilities.length).toBeGreaterThan(0);
       expect(results.isSuccessful).toBe(false);
-      
+
       // Verify exit code
       expect(getExitCode(results)).toBe(1);
     });
-    
+
     test('should exit with code 1 for expired allowlist entries', () => {
       // Set up a scenario with vulnerabilities that have expired allowlist entries
       const highVulnAudit = createHighVulnerabilitiesAuditResult();
-      
+
       // Create an allowlist with expired entries
       const expiredAllowlist = createMockAllowlist([
         {
           id: '1234',
           package: 'vulnerable-package-1',
           reason: 'Test reason',
-          expires: '2022-01-01', // Expired
+          expires: '2022-01-01T00:00:00Z', // Expired
         },
         {
           id: '5678',
           package: 'vulnerable-package-2',
           reason: 'Test reason',
-          expires: '2022-01-01', // Expired
+          expires: '2022-01-01T00:00:00Z', // Expired
         },
       ]);
-      
+
       // Analyze the results
       const results = analyzeAuditReport(highVulnAudit, expiredAllowlist, CURRENT_DATE);
-      
+
       // Verify results
       expect(results.expiredAllowlistEntries.length).toBeGreaterThan(0);
       expect(results.isSuccessful).toBe(false);
-      
+
       // Verify exit code
       expect(getExitCode(results)).toBe(1);
     });
-    
+
     test('should exit with code 0 for vulnerabilities with valid allowlist entries', () => {
       // Set up a scenario with vulnerabilities covered by allowlist
       const highVulnAudit = createHighVulnerabilitiesAuditResult();
-      
+
       // Create a valid allowlist
       const validAllowlist = createMockAllowlist([
         {
           id: '1234',
           package: 'vulnerable-package-1',
           reason: 'Test reason 1',
-          expires: '2099-01-01',
+          expires: '2099-01-01T00:00:00Z',
         },
         {
           id: '5678',
           package: 'vulnerable-package-2',
           reason: 'Test reason 2',
-          expires: '2099-01-01',
+          expires: '2099-01-01T00:00:00Z',
         },
       ]);
-      
+
       // Analyze the results
       const results = analyzeAuditReport(highVulnAudit, validAllowlist, CURRENT_DATE);
-      
+
       // Verify results
       expect(results.allowedVulnerabilities.length).toBeGreaterThan(0);
       expect(results.vulnerabilities).toHaveLength(0);
       expect(results.expiredAllowlistEntries).toHaveLength(0);
       expect(results.isSuccessful).toBe(true);
-      
+
       // Verify exit code
       expect(getExitCode(results)).toBe(0);
     });
@@ -180,7 +192,7 @@ describe('Exit Code Tests', () => {
     test('should call process.exit(1) when parseNpmAuditJson throws an error', () => {
       // Set up malformed JSON
       const malformedJson = '{not valid json';
-      
+
       // Verify that analyzing malformed JSON throws an error
       expect(() => {
         analyzeAuditReport(malformedJson, null, CURRENT_DATE);
@@ -190,10 +202,10 @@ describe('Exit Code Tests', () => {
     test('should call process.exit(1) when parseAndValidateAllowlist throws an error', () => {
       // Set up clean audit
       const cleanAudit = createCleanAuditResult();
-      
+
       // Malformed allowlist
       const malformedAllowlist = '{not valid json';
-      
+
       // Verify that analyzing with malformed allowlist throws an error
       expect(() => {
         analyzeAuditReport(cleanAudit, malformedAllowlist, CURRENT_DATE);
