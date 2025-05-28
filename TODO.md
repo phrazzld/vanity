@@ -64,7 +64,7 @@
     2. Unit tests verify this specific behavior
   - **Depends-on:** [T001]
 
-- [ ] **T007 · Feature · P0: Implement schema validation for allowlist file**
+- [x] **T007 · Feature · P0: Implement schema validation for allowlist file**
 
   - **Action:**
     1. Add zod or ajv for schema validation
@@ -74,7 +74,7 @@
     2. Invalid files are rejected with clear error messages
   - **Depends-on:** [T001]
 
-- [ ] **T008 · Feature · P0: Validate required fields and date formats**
+- [x] **T008 · Feature · P0: Validate required fields and date formats**
   - **Action:**
     1. Enforce presence of required fields (id, package, reason, expires)
     2. Add strict validation for date format (ISO 8601 UTC)

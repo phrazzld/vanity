@@ -90,8 +90,8 @@ describe('parseAndValidateAllowlist', () => {
         id: 'GHSA-1234',
         package: 'test-package',
         reason: 'Test reason',
-        expires: '2099-12-31',
-        reviewedOn: '2023-01-01',
+        expires: '2099-12-31T00:00:00Z',
+        reviewedOn: '2023-01-01T00:00:00Z',
       },
     ]);
 
@@ -103,7 +103,7 @@ describe('parseAndValidateAllowlist', () => {
       expect(result[0].id).toBe('GHSA-1234');
       expect(result[0].package).toBe('test-package');
       expect(result[0].reason).toBe('Test reason');
-      expect(result[0].expires).toBe('2099-12-31');
+      expect(result[0].expires).toBe('2099-12-31T00:00:00Z');
     } else {
       fail('Expected result to have at least one entry');
     }
@@ -123,34 +123,73 @@ describe('parseAndValidateAllowlist', () => {
 
   test('should throw error for missing required fields', () => {
     // Missing id
-    const missingId = JSON.stringify([{ package: 'test', reason: 'test', expires: '2099-12-31' }]);
-    expect(() => parseAndValidateAllowlist(missingId)).toThrow('must have a non-empty id string');
+    const missingId = JSON.stringify([
+      { package: 'test', reason: 'test', expires: '2099-12-31T00:00:00Z' },
+    ]);
+    expect(() => parseAndValidateAllowlist(missingId)).toThrow(/missing required property 'id'/);
 
     // Missing package
-    const missingPackage = JSON.stringify([{ id: 'test', reason: 'test', expires: '2099-12-31' }]);
+    const missingPackage = JSON.stringify([
+      { id: 'test', reason: 'test', expires: '2099-12-31T00:00:00Z' },
+    ]);
     expect(() => parseAndValidateAllowlist(missingPackage)).toThrow(
-      'must have a non-empty package string'
+      /missing required property 'package'/
     );
 
     // Missing reason
-    const missingReason = JSON.stringify([{ id: 'test', package: 'test', expires: '2099-12-31' }]);
+    const missingReason = JSON.stringify([
+      { id: 'test', package: 'test', expires: '2099-12-31T00:00:00Z' },
+    ]);
     expect(() => parseAndValidateAllowlist(missingReason)).toThrow(
-      'must have a non-empty reason string'
+      /missing required property 'reason'/
     );
 
     // Missing expires
     const missingExpires = JSON.stringify([{ id: 'test', package: 'test', reason: 'test' }]);
     expect(() => parseAndValidateAllowlist(missingExpires)).toThrow(
-      'must have a non-empty expires string'
+      /missing required property 'expires'/
     );
 
     // Empty expires
     const emptyExpires = JSON.stringify([
       { id: 'test', package: 'test', reason: 'test', expires: '' },
     ]);
-    expect(() => parseAndValidateAllowlist(emptyExpires)).toThrow(
-      'must have a non-empty expires string'
-    );
+    expect(() => parseAndValidateAllowlist(emptyExpires)).toThrow(/invalid format/);
+  });
+
+  test('should throw error for invalid date formats', () => {
+    const invalidDate = JSON.stringify([
+      { id: 'test', package: 'test', reason: 'test', expires: 'not-a-date' },
+    ]);
+    expect(() => parseAndValidateAllowlist(invalidDate)).toThrow(/invalid format/);
+  });
+
+  test('should throw error for wrong data types', () => {
+    const wrongType = JSON.stringify([
+      { id: 123, package: 'test', reason: 'test', expires: '2099-12-31T00:00:00Z' },
+    ]);
+    expect(() => parseAndValidateAllowlist(wrongType)).toThrow(/must be a string/);
+  });
+
+  test('should throw error for additional properties', () => {
+    const extraProps = JSON.stringify([
+      {
+        id: 'test',
+        package: 'test',
+        reason: 'test',
+        expires: '2099-12-31T00:00:00Z',
+        extraField: 'value',
+      },
+    ]);
+    expect(() => parseAndValidateAllowlist(extraProps)).toThrow(/unexpected property/);
+  });
+
+  test('should throw error for empty string fields', () => {
+    // Test empty string for non-date field (should trigger minLength error)
+    const emptyId = JSON.stringify([
+      { id: '', package: 'test', reason: 'test', expires: '2099-12-31T00:00:00Z' },
+    ]);
+    expect(() => parseAndValidateAllowlist(emptyId)).toThrow(/cannot be empty/);
   });
 });
 
@@ -169,7 +208,7 @@ describe('isAllowlistEntryExpired', () => {
       id: 'test',
       package: 'test',
       reason: 'test',
-      expires: '2020-01-01',
+      expires: '2020-01-01T00:00:00Z',
     };
     expect(isAllowlistEntryExpired(entry, new Date('2023-01-01'))).toBe(true);
   });
@@ -179,7 +218,7 @@ describe('isAllowlistEntryExpired', () => {
       id: 'test',
       package: 'test',
       reason: 'test',
-      expires: '2099-01-01',
+      expires: '2099-01-01T00:00:00Z',
     };
     expect(isAllowlistEntryExpired(entry, new Date('2023-01-01'))).toBe(false);
   });
@@ -220,7 +259,7 @@ describe('willExpireSoon', () => {
       id: 'test',
       package: 'test',
       reason: 'test',
-      expires: '2020-01-01',
+      expires: '2020-01-01T00:00:00Z',
     };
     expect(willExpireSoon(entry, new Date('2023-01-01'), 30)).toBe(false);
   });
@@ -231,7 +270,7 @@ describe('willExpireSoon', () => {
       id: 'test',
       package: 'test',
       reason: 'test',
-      expires: '2023-01-15', // 14 days in the future
+      expires: '2023-01-15T00:00:00Z', // 14 days in the future
     };
     expect(willExpireSoon(entry, currentDate, 30)).toBe(true);
   });
@@ -242,7 +281,7 @@ describe('willExpireSoon', () => {
       id: 'test',
       package: 'test',
       reason: 'test',
-      expires: '2023-02-15', // More than 30 days in the future
+      expires: '2023-02-15T00:00:00Z', // More than 30 days in the future
     };
     expect(willExpireSoon(entry, currentDate, 30)).toBe(false);
   });
@@ -377,19 +416,19 @@ describe('filterVulnerabilities', () => {
       id: '1234',
       package: 'allowed-package',
       reason: 'Allowed reason',
-      expires: '2099-01-01',
+      expires: '2099-01-01T00:00:00Z',
     },
     {
       id: '5678',
       package: 'expired-package',
       reason: 'Expired reason',
-      expires: '2022-01-01', // Expired
+      expires: '2022-01-01T00:00:00Z', // Expired
     },
     {
       id: '7890',
       package: 'expiring-package',
       reason: 'Expiring reason',
-      expires: '2023-01-15', // Will expire in 14 days
+      expires: '2023-01-15T00:00:00Z', // Will expire in 14 days
     },
   ];
 
@@ -523,7 +562,7 @@ describe('analyzeAuditReport', () => {
       id: '1234',
       package: 'allowed-package',
       reason: 'Allowed reason',
-      expires: '2099-01-01',
+      expires: '2099-01-01T00:00:00Z',
     },
   ]);
 

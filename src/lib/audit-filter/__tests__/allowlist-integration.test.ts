@@ -31,13 +31,13 @@ describe('Expired allowlist entries', () => {
         id: '1234',
         package: 'vulnerable-package-1',
         reason: 'Test reason 1',
-        expires: '2022-01-01', // Expired
+        expires: '2022-01-01T00:00:00Z', // Expired
       },
       {
         id: '5678',
         package: 'vulnerable-package-2',
         reason: 'Test reason 2',
-        expires: '2022-06-30', // Expired
+        expires: '2022-06-30T00:00:00Z', // Expired
       },
     ]);
 
@@ -67,13 +67,13 @@ describe('Expired allowlist entries', () => {
         id: '1234',
         package: 'vulnerable-package-1',
         reason: 'Test reason 1',
-        expires: '2023-01-15', // 14 days from test date
+        expires: '2023-01-15T00:00:00Z', // 14 days from test date
       },
       {
         id: '5678',
         package: 'vulnerable-package-2',
         reason: 'Test reason 2',
-        expires: '2023-01-30', // 29 days from test date
+        expires: '2023-01-30T00:00:00Z', // 29 days from test date
       },
     ]);
 
@@ -94,13 +94,13 @@ describe('Expired allowlist entries', () => {
         id: '1234',
         package: 'vulnerable-package-1',
         reason: 'Test reason 1',
-        expires: '2023-01-15', // 14 days from test date (expiring soon)
+        expires: '2023-01-15T00:00:00Z', // 14 days from test date (expiring soon)
       },
       {
         id: '5678',
         package: 'vulnerable-package-2',
         reason: 'Test reason 2',
-        expires: '2023-02-15', // 45 days from test date (not expiring soon)
+        expires: '2023-02-15T00:00:00Z', // 45 days from test date (not expiring soon)
       },
     ]);
 
@@ -141,11 +141,11 @@ describe('Expired allowlist entries', () => {
 
     // Test full analysis should now throw an error during parsing
     expect(() => analyzeAuditReport(highVulnAudit, noExpirationAllowlist, CURRENT_DATE)).toThrow(
-      'must have a non-empty expires string'
+      /missing required property 'expires'/
     );
   });
 
-  test('should treat invalid date formats as expired', () => {
+  test('should reject invalid date formats during parsing', () => {
     const invalidDateAllowlist = createMockAllowlist([
       {
         id: '1234',
@@ -155,7 +155,7 @@ describe('Expired allowlist entries', () => {
       },
     ]);
 
-    // Test the direct function first
+    // Test the direct function first (this still works with TypeScript objects)
     const testEntry: AllowlistEntry = {
       id: '1234',
       package: 'test-package',
@@ -165,12 +165,10 @@ describe('Expired allowlist entries', () => {
 
     expect(isAllowlistEntryExpired(testEntry, CURRENT_DATE)).toBe(true);
 
-    // Test full analysis
-    const result = analyzeAuditReport(highVulnAudit, invalidDateAllowlist, CURRENT_DATE);
-
-    // Entry with invalid date should be treated as expired
-    expect(result.expiredAllowlistEntries).toHaveLength(1);
-    expect(result.isSuccessful).toBe(false);
+    // Test full analysis should now throw an error during parsing
+    expect(() => analyzeAuditReport(highVulnAudit, invalidDateAllowlist, CURRENT_DATE)).toThrow(
+      /invalid format/
+    );
   });
 });
 
@@ -186,13 +184,13 @@ describe('Allowlist matching behavior', () => {
         id: '1234', // Correct ID
         package: 'vulnerable-package-1-wrong', // Wrong package
         reason: 'Test reason',
-        expires: '2099-01-01',
+        expires: '2099-01-01T00:00:00Z',
       },
       {
         id: '5679', // Wrong ID
         package: 'vulnerable-package-2', // Correct package
         reason: 'Test reason',
-        expires: '2099-01-01',
+        expires: '2099-01-01T00:00:00Z',
       },
     ]);
 
@@ -228,13 +226,13 @@ describe('Allowlist matching behavior', () => {
         id: '1234', // Covers one high vulnerability
         package: 'vulnerable-package-1',
         reason: 'Test reason 1',
-        expires: '2099-01-01',
+        expires: '2099-01-01T00:00:00Z',
       },
       {
         id: '9012', // Covers the critical vulnerability
         package: 'vulnerable-package-3',
         reason: 'Test reason 3',
-        expires: '2099-01-01',
+        expires: '2099-01-01T00:00:00Z',
       },
       // Missing allowlist entry for 5678 (vulnerable-package-2)
     ]);
@@ -269,13 +267,13 @@ describe('Allowlist matching behavior', () => {
         id: '1234',
         package: 'vulnerable-package-1',
         reason: 'Test reason 1',
-        expires: '2099-01-01', // Valid
+        expires: '2099-01-01T00:00:00Z', // Valid
       },
       {
         id: '5678',
         package: 'vulnerable-package-2',
         reason: 'Test reason 2',
-        expires: '2022-01-01', // Expired
+        expires: '2022-01-01T00:00:00Z', // Expired
       },
     ]);
 
