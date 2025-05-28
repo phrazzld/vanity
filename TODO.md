@@ -33,7 +33,7 @@
     2. Tests contribute to >90% code coverage goal
   - **Depends-on:** [T001, T002]
 
-- [ ] **T004 · Test · P0: Implement Jest tests for allowlist file scenarios**
+- [x] **T004 · Test · P0: Implement Jest tests for allowlist file scenarios**
 
   - **Action:**
     1. Write tests covering missing, empty, malformed, and invalid schema allowlist files
