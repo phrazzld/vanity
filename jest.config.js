@@ -53,6 +53,7 @@ const customJestConfig = {
   },
   coverageReporters: ['json', 'lcov', 'text', 'clover', 'html'],
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
+  transformIgnorePatterns: ['/node_modules/(?!(nanoid)/)'],
   transform: {
     // Use babel-jest to transpile tests with the next/babel preset
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],

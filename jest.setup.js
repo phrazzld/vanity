@@ -1,5 +1,5 @@
 /* eslint-env jest, node */
-/* global global, URLSearchParams, process */
+/* global global, process */
 
 // Import Jest DOM extensions and other test utilities
 import '@testing-library/jest-dom';
