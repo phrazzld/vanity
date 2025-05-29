@@ -188,7 +188,7 @@
     2. CI type checking includes security scripts
   - **Depends-on:** none
 
-- [ ] **T019 · Chore · P2: Remove --skipLibCheck from build**
+- [x] **T019 · Chore · P2: Remove --skipLibCheck from build**
   - **Action:**
     1. Remove skipLibCheck from build processes
     2. Fix any type errors that arise
