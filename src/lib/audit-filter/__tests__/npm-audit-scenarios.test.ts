@@ -17,7 +17,7 @@ import {
 } from '../__mocks__/mockHelpers';
 
 // Import fail from Jest to be used in conditionals
- 
+
 const { fail } = expect as any;
 
 // Set up a reference date for testing

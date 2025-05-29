@@ -178,7 +178,7 @@
     2. Those that do are documented and justified
   - **Depends-on:** [T001]
 
-- [ ] **T018 · Chore · P2: Include security script in main TypeScript checking**
+- [x] **T018 · Chore · P2: Include security script in main TypeScript checking**
 
   - **Action:**
     1. Update tsconfig.json to include audit-filter.ts
