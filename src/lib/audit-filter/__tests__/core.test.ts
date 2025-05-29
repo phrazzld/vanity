@@ -4,6 +4,7 @@
 
 import {
   parseNpmAuditJson,
+  parseNpmAuditJsonCanonical,
   parseAndValidateAllowlist,
   isAllowlistEntryExpired,
   willExpireSoon,
@@ -11,10 +12,15 @@ import {
   filterVulnerabilities,
   analyzeAuditReport,
 } from '../core';
+import { logger } from '../../logger';
 import type { AllowlistEntry, Advisory, NpmAuditResult } from '../types';
 
+// Mock nanoid for consistent correlation IDs
+jest.mock('nanoid', () => ({
+  nanoid: jest.fn(() => 'test-correlation-id'),
+}));
+
 // Import fail from Jest to be used in conditionals
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const { fail } = expect as any;
 
 describe('parseNpmAuditJson', () => {
@@ -615,5 +621,211 @@ describe('analyzeAuditReport', () => {
 
   test('should throw error for invalid allowlist JSON', () => {
     expect(() => analyzeAuditReport(mockNpmAuditJson, 'not json', currentDate)).toThrow();
+  });
+});
+
+describe('Structured Error Logging', () => {
+  let loggerErrorSpy: jest.SpyInstance;
+  let loggerDebugSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    loggerErrorSpy = jest.spyOn(logger, 'error').mockImplementation();
+    loggerDebugSpy = jest.spyOn(logger, 'debug').mockImplementation();
+  });
+
+  afterEach(() => {
+    loggerErrorSpy.mockRestore();
+    loggerDebugSpy.mockRestore();
+  });
+
+  describe('parseNpmAuditJsonCanonical error logging', () => {
+    test('should log structured error for JSON parse failure', () => {
+      const invalidJson = '{ invalid json }';
+
+      expect(() => parseNpmAuditJsonCanonical(invalidJson)).toThrow();
+
+      expect(loggerErrorSpy).toHaveBeenCalledWith(
+        'Failed to parse npm audit output as JSON',
+        expect.objectContaining({
+          function_name: 'parseNpmAuditJsonCanonical',
+          module_name: 'audit-filter/core',
+          error_type: 'JSON_PARSE_ERROR',
+          input_length: invalidJson.length,
+          input_source: 'npm_audit_output',
+        }),
+        expect.any(Error)
+      );
+    });
+
+    test('should log structured error for unsupported audit format', () => {
+      const unsupportedFormat = JSON.stringify({
+        unknown_structure: {
+          some_field: 'some_value',
+        },
+      });
+
+      expect(() => parseNpmAuditJsonCanonical(unsupportedFormat)).toThrow();
+
+      expect(loggerErrorSpy).toHaveBeenCalledWith(
+        'Unsupported npm audit format detected',
+        expect.objectContaining({
+          function_name: 'parseNpmAuditJsonCanonical',
+          module_name: 'audit-filter/core',
+          error_type: 'UNSUPPORTED_FORMAT',
+          input_length: unsupportedFormat.length,
+          has_advisories: false,
+          has_vulnerabilities: false,
+        }),
+        expect.any(Error)
+      );
+    });
+
+    test('should log structured error for invalid object type', () => {
+      const arrayInput = JSON.stringify([1, 2, 3]);
+
+      expect(() => parseNpmAuditJsonCanonical(arrayInput)).toThrow();
+
+      expect(loggerErrorSpy).toHaveBeenCalledWith(
+        'Invalid npm audit output structure',
+        expect.objectContaining({
+          function_name: 'parseNpmAuditJsonCanonical',
+          module_name: 'audit-filter/core',
+          error_type: 'INVALID_STRUCTURE',
+          input_type: 'array',
+          expected_type: 'object',
+        }),
+        expect.any(Error)
+      );
+    });
+
+    test('should log debug information for successful parsing', () => {
+      const validJson = JSON.stringify({
+        vulnerabilities: {},
+        metadata: {
+          vulnerabilities: { info: 0, low: 0, moderate: 0, high: 0, critical: 0, total: 0 },
+        },
+      });
+
+      parseNpmAuditJsonCanonical(validJson);
+
+      expect(loggerDebugSpy).toHaveBeenCalledWith(
+        'Parsing npm audit JSON output',
+        expect.objectContaining({
+          function_name: 'parseNpmAuditJsonCanonical',
+          module_name: 'audit-filter/core',
+          input_length: validJson.length,
+        })
+      );
+    });
+  });
+
+  describe('parseAndValidateAllowlist error logging', () => {
+    test('should log structured error for JSON parse failure', () => {
+      const invalidJson = '{ invalid allowlist json }';
+
+      expect(() => parseAndValidateAllowlist(invalidJson)).toThrow();
+
+      expect(loggerErrorSpy).toHaveBeenCalledWith(
+        'Failed to parse allowlist file as JSON',
+        expect.objectContaining({
+          function_name: 'parseAndValidateAllowlist',
+          module_name: 'audit-filter/core',
+          error_type: 'JSON_PARSE_ERROR',
+          input_length: invalidJson.length,
+          input_source: 'allowlist_file',
+        }),
+        expect.any(Error)
+      );
+    });
+
+    test('should log structured error for schema validation failure', () => {
+      const invalidSchema = JSON.stringify([
+        { id: 'test', package: 'test' }, // Missing required fields
+      ]);
+
+      expect(() => parseAndValidateAllowlist(invalidSchema)).toThrow();
+
+      expect(loggerErrorSpy).toHaveBeenCalledWith(
+        'Allowlist validation failed',
+        expect.objectContaining({
+          function_name: 'parseAndValidateAllowlist',
+          module_name: 'audit-filter/core',
+          error_type: 'SCHEMA_VALIDATION_ERROR',
+          validation_errors_count: expect.any(Number),
+          entry_count: 1,
+        }),
+        expect.any(Error)
+      );
+    });
+
+    test('should log debug information for successful parsing', () => {
+      const validAllowlist = JSON.stringify([
+        {
+          id: 'test-id',
+          package: 'test-package',
+          reason: 'test reason',
+          expires: '2099-12-31T00:00:00Z',
+        },
+      ]);
+
+      parseAndValidateAllowlist(validAllowlist);
+
+      expect(loggerDebugSpy).toHaveBeenCalledWith(
+        'Parsing and validating allowlist file',
+        expect.objectContaining({
+          function_name: 'parseAndValidateAllowlist',
+          module_name: 'audit-filter/core',
+          input_length: validAllowlist.length,
+        })
+      );
+    });
+
+    test('should log debug for null allowlist (no file)', () => {
+      const result = parseAndValidateAllowlist(null);
+
+      expect(result).toEqual([]);
+      expect(loggerDebugSpy).toHaveBeenCalledWith(
+        'No allowlist file provided, using empty allowlist',
+        expect.objectContaining({
+          function_name: 'parseAndValidateAllowlist',
+          module_name: 'audit-filter/core',
+        })
+      );
+    });
+  });
+
+  describe('sensitive data protection', () => {
+    test('should not log sensitive file contents in error logs', () => {
+      const sensitiveContent = '{ "secret": "api-key-12345", "password": "secret123" }';
+
+      expect(() => parseNpmAuditJsonCanonical(sensitiveContent)).toThrow();
+
+      // Verify that the actual content is not logged
+      const logCall = loggerErrorSpy.mock.calls[0];
+      const logMessage = logCall[0];
+      const logContext = logCall[1];
+
+      expect(logMessage).not.toContain('api-key-12345');
+      expect(logMessage).not.toContain('secret123');
+      expect(JSON.stringify(logContext)).not.toContain('api-key-12345');
+      expect(JSON.stringify(logContext)).not.toContain('secret123');
+    });
+  });
+
+  describe('context consistency', () => {
+    test('should include all mandatory context fields in error logs', () => {
+      const invalidJson = '{ invalid }';
+
+      expect(() => parseNpmAuditJsonCanonical(invalidJson)).toThrow();
+
+      const logContext = loggerErrorSpy.mock.calls[0][1];
+
+      // Verify all mandatory fields are present
+      expect(logContext).toHaveProperty('function_name');
+      expect(logContext).toHaveProperty('module_name');
+      expect(logContext).toHaveProperty('error_type');
+      expect(logContext.function_name).toBe('parseNpmAuditJsonCanonical');
+      expect(logContext.module_name).toBe('audit-filter/core');
+    });
   });
 });

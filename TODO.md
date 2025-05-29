@@ -95,7 +95,7 @@
     2. Error message clearly indicates the nature of the problem
   - **Depends-on:** [T007, T008]
 
-- [ ] **T010 · Refactor · P1: Improve npm audit output parsing**
+- [x] **T010 · Refactor · P1: Improve npm audit output parsing**
 
   - **Action:**
     1. Make parsing more robust against different npm audit formats
@@ -105,7 +105,7 @@
     2. Tests verify compatibility with multiple formats
   - **Depends-on:** [T001]
 
-- [ ] **T011 · Feature · P1: Add structured error logging**
+- [x] **T011 · Feature · P1: Add structured error logging**
   - **Action:**
     1. Ensure all error conditions produce structured logs
     2. Include context like filenames, error types in logs
@@ -116,7 +116,7 @@
 
 ## Observability & Logging
 
-- [ ] **T012 · Refactor · P1: Implement structured logging**
+- [x] **T012 · Refactor · P1: Implement structured logging**
 
   - **Action:**
     1. Replace all console.log/error calls with structured logger
@@ -126,7 +126,7 @@
     2. All logs are structured and machine-parseable
   - **Depends-on:** [T001]
 
-- [ ] **T013 · Feature · P1: Add standard fields to all logs**
+- [x] **T013 · Feature · P1: Add standard fields to all logs**
 
   - **Action:**
     1. Ensure all logs include timestamp, level, service name, message
@@ -136,7 +136,7 @@
     2. Required fields are present in all log entries
   - **Depends-on:** [T012]
 
-- [ ] **T014 · Feature · P1: Sanitize sensitive data in logs**
+- [x] **T014 · Feature · P1: Sanitize sensitive data in logs**
   - **Action:**
     1. Ensure vulnerability details are not exposed in CI logs
     2. Log only minimal identifiers (package, ID, severity)
@@ -147,7 +147,7 @@
 
 ## Date Handling & Timezone Safety
 
-- [ ] **T015 · Feature · P1: Standardize date operations on UTC**
+- [x] **T015 · Feature · P1: Standardize date operations on UTC**
 
   - **Action:**
     1. Integrate a robust date library (date-fns or similar)
@@ -157,7 +157,7 @@
     2. Tests verify correct behavior across timezones
   - **Depends-on:** none
 
-- [ ] **T016 · Refactor · P1: Make expiration logic timezone-independent**
+- [x] **T016 · Refactor · P1: Make expiration logic timezone-independent**
   - **Action:**
     1. Update expiration checking to use UTC dates
     2. Ensure consistent behavior regardless of server timezone
@@ -168,7 +168,7 @@
 
 ## Type Safety Improvements
 
-- [ ] **T017 · Refactor · P1: Replace unsafe type assertions**
+- [x] **T017 · Refactor · P1: Replace unsafe type assertions**
 
   - **Action:**
     1. Remove `as` casts where possible
@@ -275,7 +275,8 @@
     1. No unused planning files remain
   - **Depends-on:** none
 
-- [ ] **T028 · Chore · P1: Fix ESLint configuration for test files**
+- [x] **T028 · Chore · P1: Fix ESLint configuration for test files**
+
   - **Action:**
     1. Update ESLint configuration to properly handle Jest globals and Node.js globals
     2. Refactor test files to use proper ESLint comments or configurations
@@ -284,6 +285,16 @@
     1. All test files pass ESLint checks without errors/warnings
     2. No need to use --no-verify when committing test files
   - **Depends-on:** [T002]
+
+- [ ] **T029 · Chore · P2: Clean up unused test variables**
+  - **Action:**
+    1. Review all test files for unused variables and either use them or prefix with underscore
+    2. Convert unused test data into reusable test fixtures or remove if not needed
+    3. Ensure all test files pass linting without unused variable warnings
+  - **Done-when:**
+    1. No unused variable warnings remain in test files
+    2. Test data is properly organized and reusable
+  - **Depends-on:** [T028]
 
 ## Assumptions & Clarifications Needed
 

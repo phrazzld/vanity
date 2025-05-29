@@ -24,7 +24,7 @@ export interface AllowlistEntry {
 export interface Advisory {
   id: number | string;
   module_name: string;
-  severity: 'low' | 'moderate' | 'high' | 'critical';
+  severity: 'info' | 'low' | 'moderate' | 'high' | 'critical';
   title: string;
   url: string;
   vulnerable_versions: string;
@@ -71,4 +71,41 @@ export interface AnalysisResult {
   expiredAllowlistEntries: VulnerabilityInfo[];
   expiringEntries: VulnerabilityInfo[];
   isSuccessful: boolean;
+}
+
+/**
+ * Canonical vulnerability representation
+ *
+ * This is the standardized internal format that all npm audit formats
+ * are normalized to, regardless of the original npm version format.
+ */
+export interface CanonicalVulnerability {
+  id: string;
+  package: string;
+  severity: 'info' | 'low' | 'moderate' | 'high' | 'critical';
+  title: string;
+  url: string;
+  vulnerableVersions: string;
+  source: 'npm-v6' | 'npm-v7+';
+}
+
+/**
+ * Canonical npm audit report representation
+ *
+ * This is the standardized internal format that replaces NpmAuditResult
+ * for the new schema-driven parsing approach. All npm audit formats
+ * are normalized to this structure.
+ */
+export interface CanonicalNpmAuditReport {
+  vulnerabilities: CanonicalVulnerability[];
+  metadata: {
+    vulnerabilities: {
+      info: number;
+      low: number;
+      moderate: number;
+      high: number;
+      critical: number;
+      total: number;
+    };
+  };
 }

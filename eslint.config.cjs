@@ -127,9 +127,10 @@ module.exports = [
     },
   },
 
-  // TypeScript parser configuration for all TS files
+  // TypeScript parser configuration for all TS files (excluding test files)
   {
     files: ['**/*.{ts,tsx}'],
+    ignores: ['**/*.test.{ts,tsx}', '**/__tests__/**/*.{ts,tsx}', '**/test-utils/**/*.{ts,tsx}'],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {

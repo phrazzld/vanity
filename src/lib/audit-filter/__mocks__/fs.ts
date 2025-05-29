@@ -1,9 +1,11 @@
 /**
  * Mock implementation for Node.js fs module
- * 
+ *
  * This module provides mock implementations of fs.readFileSync and fs.existsSync
  * for testing the audit-filter functionality without touching the actual filesystem.
  */
+
+/* global jest */
 
 import { createDefaultMockFileSystem } from './mockHelpers';
 import type { MockFileSystem } from './mockHelpers';
@@ -24,46 +26,53 @@ export const mockState = {
 
 /**
  * Mock implementation of fs.readFileSync
- * 
+ *
  * This mock will:
  * - Record the file path in mockState.lastReadFilePath
  * - Return the content from the mock file system if it exists
  * - Throw an error if the file doesn't exist or shouldThrowOnRead is true
- * 
+ *
  * @param filePath - Path to the file to read
  * @param options - Encoding or options object
  * @returns The simulated file content
  */
-export const readFileSync = jest.fn((filePath: string, _options?: string | { encoding?: string; flag?: string }): string => {
-  mockState.lastReadFilePath = filePath;
+export const readFileSync = jest.fn(
+  (filePath: string, _options?: string | { encoding?: string; flag?: string }): string => {
+    mockState.lastReadFilePath = filePath;
 
-  // Check if we're configured to throw an error
-  if (mockState.shouldThrowOnRead) {
-    throw new Error(mockState.readErrorMessage);
+    // Check if we're configured to throw an error
+    if (mockState.shouldThrowOnRead) {
+      throw new Error(mockState.readErrorMessage);
+    }
+
+    // Check if the file exists in our mock file system
+    if (filePath in mockState.fileSystem.files) {
+      const content = mockState.fileSystem.files[filePath];
+      if (content !== undefined) {
+        return content;
+      }
+    }
+
+    // File not found - throw ENOENT error similar to the real fs module
+    const error = new Error(
+      `ENOENT: no such file or directory, open '${filePath}'`
+    ) as NodeJS.ErrnoException;
+    error.code = 'ENOENT';
+    error.errno = -2;
+    error.syscall = 'open';
+    error.path = filePath;
+    throw error;
   }
-
-  // Check if the file exists in our mock file system
-  if (filePath in mockState.fileSystem.files) {
-    return mockState.fileSystem.files[filePath];
-  }
-
-  // File not found - throw ENOENT error similar to the real fs module
-  const error = new Error(`ENOENT: no such file or directory, open '${filePath}'`) as NodeJS.ErrnoException;
-  error.code = 'ENOENT';
-  error.errno = -2;
-  error.syscall = 'open';
-  error.path = filePath;
-  throw error;
-});
+);
 
 /**
  * Mock implementation of fs.existsSync
- * 
+ *
  * This mock will:
  * - Record the file path in mockState.lastExistsFilePath
  * - Return true if the file exists in the mock file system
  * - Return false otherwise
- * 
+ *
  * @param filePath - Path to the file to check
  * @returns Whether the file exists in the mock file system
  */
@@ -74,7 +83,7 @@ export const existsSync = jest.fn((filePath: string): boolean => {
 
 /**
  * Configure the mock file system
- * 
+ *
  * @param fileSystem - The new mock file system state
  */
 export function setMockFileSystem(fileSystem: MockFileSystem): void {
@@ -83,7 +92,7 @@ export function setMockFileSystem(fileSystem: MockFileSystem): void {
 
 /**
  * Add a file to the mock file system
- * 
+ *
  * @param filePath - Path to the file
  * @param content - Content of the file
  */
@@ -93,7 +102,7 @@ export function addMockFile(filePath: string, content: string): void {
 
 /**
  * Remove a file from the mock file system
- * 
+ *
  * @param filePath - Path to the file to remove
  */
 export function removeMockFile(filePath: string): void {
@@ -102,7 +111,7 @@ export function removeMockFile(filePath: string): void {
 
 /**
  * Configure the mock to throw an error when reading a file
- * 
+ *
  * @param errorMessage - The error message to use
  */
 export function mockReadFileFailure(errorMessage = 'Mock file read error'): void {

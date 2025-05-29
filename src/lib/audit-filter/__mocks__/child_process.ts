@@ -1,9 +1,11 @@
 /**
  * Mock implementation for Node.js child_process module
- * 
+ *
  * This module provides a mock implementation of the child_process.execSync function
  * for testing the audit-filter functionality without actually spawning processes.
  */
+
+/* global jest */
 
 import { createExecSyncError, createNpmAuditMockScenarios } from './mockHelpers';
 
@@ -12,7 +14,7 @@ const npmAuditScenarios = createNpmAuditMockScenarios();
 
 // Mock state that can be configured in tests
 export const mockState = {
-  // Whether execSync should throw an error 
+  // Whether execSync should throw an error
   shouldThrow: false,
   // The command that was last executed
   lastCommand: '',
@@ -26,12 +28,12 @@ export const mockState = {
 
 /**
  * Mock implementation of child_process.execSync
- * 
+ *
  * This mock will:
  * - Record the command in mockState.lastCommand
  * - Return a predefined output based on the command
  * - Throw an error if mockState.shouldThrow is true
- * 
+ *
  * @param command - The command to execute
  * @param options - Options for executing the command
  * @returns The simulated command output
@@ -60,7 +62,7 @@ export const execSync = jest.fn((command: string, _options: any = {}): string =>
 
 /**
  * Configure the mock to return a specific npm audit result
- * 
+ *
  * @param scenarioName - The name of the predefined scenario to use
  */
 export function mockNpmAuditResult(scenarioName: keyof typeof npmAuditScenarios): void {
@@ -69,7 +71,7 @@ export function mockNpmAuditResult(scenarioName: keyof typeof npmAuditScenarios)
 
 /**
  * Configure the mock to set a custom output for a specific command
- * 
+ *
  * @param command - The exact command string
  * @param output - The output to return when this command is executed
  */
@@ -79,7 +81,7 @@ export function mockCommandOutput(command: string, output: string): void {
 
 /**
  * Configure the mock to throw an error for execSync
- * 
+ *
  * @param error - Optional custom error to throw
  */
 export function mockExecSyncFailure(
@@ -104,7 +106,10 @@ export function resetMock(): void {
   mockState.lastCommand = '';
   mockState.commandOutputs.clear();
   mockState.defaultNpmAuditOutput = npmAuditScenarios.clean;
-  mockState.defaultError = createExecSyncError('npm audit --json', npmAuditScenarios.withHighVulnerabilities);
+  mockState.defaultError = createExecSyncError(
+    'npm audit --json',
+    npmAuditScenarios.withHighVulnerabilities
+  );
   jest.clearAllMocks();
 }
 

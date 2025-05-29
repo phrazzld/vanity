@@ -1,12 +1,14 @@
 /**
  * Common utilities for mocking external dependencies in tests
- * 
+ *
  * This module provides helper functions for setting up and managing mocks
  * for the audit-filter tests. It includes:
  * - Type definitions for mock scenarios
  * - Factory functions for creating mock data
  * - Utilities for resetting mocks between tests
  */
+
+/* global jest */
 
 import type { SpawnSyncReturns } from 'child_process';
 
@@ -194,14 +196,16 @@ export function createNpmAuditMockScenarios(): NpmAuditMockScenarios {
 /**
  * Factory function to create a mock allowlist file content
  */
-export function createMockAllowlist(entries: Array<{
-  id: string;
-  package: string;
-  reason: string;
-  expires?: string;
-  notes?: string;
-  reviewedOn?: string;
-}>): string {
+export function createMockAllowlist(
+  entries: Array<{
+    id: string;
+    package: string;
+    reason: string;
+    expires?: string;
+    notes?: string;
+    reviewedOn?: string;
+  }>
+): string {
   return JSON.stringify(entries);
 }
 

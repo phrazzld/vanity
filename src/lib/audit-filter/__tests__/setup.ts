@@ -1,11 +1,13 @@
 /**
  * Jest setup file for audit-filter tests
- * 
+ *
  * This file is automatically loaded by Jest before running tests
  * and ensures the mocks are properly initialized.
- * 
+ *
  * @jest-environment node
  */
+
+/* global process */
 
 // This file is not a test file - it's a setup file
 

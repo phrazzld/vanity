@@ -1,10 +1,13 @@
 /**
  * Jest setup for audit-filter integration tests
- * 
+ *
  * This file is used to properly set up manual mocks for external dependencies
  *
  * @jest-environment node
  */
+
+/* eslint-env node, jest */
+/* global process */
 
 // This file is not a test file - it's a setup file
 
@@ -32,7 +35,7 @@ jest.spyOn(process, 'cwd').mockReturnValue('/path/to');
 
 // Mock process.exit to prevent tests from actually exiting
 const originalExit = process.exit;
-jest.spyOn(process, 'exit').mockImplementation((code) => {
+jest.spyOn(process, 'exit').mockImplementation(code => {
   console.log(`[Mock] process.exit called with code: ${code}`);
   return undefined;
 });

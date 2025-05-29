@@ -1,6 +1,6 @@
 /**
  * Logging output tests for audit-filter
- * 
+ *
  * These tests verify that the audit-filter CLI correctly outputs
  * appropriate logging messages based on the analysis results.
  */
@@ -141,12 +141,8 @@ describe('Logging Output Tests', () => {
       expect(consoleLogSpy).toHaveBeenCalledWith(
         expect.stringContaining('test-package@1234 (high): Test Vulnerability')
       );
-      expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Reason: Test reason')
-      );
-      expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Expires: 2099-01-01')
-      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Reason: Test reason'));
+      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Expires: 2099-01-01'));
     });
 
     test('should log details of expired allowlist entries for unsuccessful result', () => {
@@ -210,7 +206,9 @@ describe('Logging Output Tests', () => {
 
       // Verify expiring soon warnings are logged
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('⚠️  Warning: The following allowlist entries will expire within 30 days:')
+        expect.stringContaining(
+          '⚠️  Warning: The following allowlist entries will expire within 30 days:'
+        )
       );
       expect(consoleLogSpy).toHaveBeenCalledWith(
         expect.stringContaining('test-package@1234 expires on 2023-01-15')
@@ -224,13 +222,13 @@ describe('Logging Output Tests', () => {
       // Set up a clean audit scenario
       const cleanAudit = createCleanAuditResult();
       const emptyAllowlist = createMockAllowlist([]);
-      
+
       // Analyze the results
       const results = analyzeAuditReport(cleanAudit, emptyAllowlist, CURRENT_DATE);
-      
+
       // Display the results
       displayResults(results);
-      
+
       // Verify success message is logged
       expect(consoleLogSpy).toHaveBeenCalledWith('✅ Security scan passed!');
       expect(consoleErrorSpy).not.toHaveBeenCalled();
@@ -240,13 +238,13 @@ describe('Logging Output Tests', () => {
       // Set up a scenario with vulnerabilities not in allowlist
       const highVulnAudit = createHighVulnerabilitiesAuditResult();
       const emptyAllowlist = createMockAllowlist([]);
-      
+
       // Analyze the results
       const results = analyzeAuditReport(highVulnAudit, emptyAllowlist, CURRENT_DATE);
-      
+
       // Display the results
       displayResults(results);
-      
+
       // Verify error message is logged
       expect(consoleErrorSpy).toHaveBeenCalledWith('❌ Security scan failed!');
       expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -257,7 +255,7 @@ describe('Logging Output Tests', () => {
     test('should log details of allowed vulnerabilities', () => {
       // Set up a scenario with vulnerabilities covered by allowlist
       const highVulnAudit = createHighVulnerabilitiesAuditResult();
-      
+
       // Create a valid allowlist
       const validAllowlist = createMockAllowlist([
         {
@@ -273,13 +271,13 @@ describe('Logging Output Tests', () => {
           expires: '2099-01-01',
         },
       ]);
-      
+
       // Analyze the results
       const results = analyzeAuditReport(highVulnAudit, validAllowlist, CURRENT_DATE);
-      
+
       // Display the results
       displayResults(results);
-      
+
       // Verify allowed vulnerabilities are logged
       expect(consoleLogSpy).toHaveBeenCalledWith('✅ Security scan passed!');
       expect(consoleLogSpy).toHaveBeenCalledWith(
@@ -288,27 +286,25 @@ describe('Logging Output Tests', () => {
       expect(consoleLogSpy).toHaveBeenCalledWith(
         expect.stringContaining('vulnerable-package-1@1234')
       );
-      expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Reason: Test reason 1')
-      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Reason: Test reason 1'));
     });
 
     test('should sanitize sensitive data in logs', () => {
       // Set up a scenario with vulnerabilities not in allowlist
       const highVulnAudit = createHighVulnerabilitiesAuditResult();
       const emptyAllowlist = createMockAllowlist([]);
-      
+
       // Analyze the results
       const results = analyzeAuditReport(highVulnAudit, emptyAllowlist, CURRENT_DATE);
-      
+
       // Display the results
       displayResults(results);
-      
+
       // Verify only minimal identifiers are logged (no detailed vulnerability information)
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         expect.stringContaining('vulnerable-package-1@1234 (high): Remote Code Execution')
       );
-      
+
       // Make sure vulnerable_versions is not logged
       const allErrorCalls = consoleErrorSpy.mock.calls.flat().join(' ');
       expect(allErrorCalls).not.toContain('vulnerable_versions');

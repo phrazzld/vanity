@@ -12,6 +12,11 @@ import {
   createHighVulnerabilitiesAuditResult,
 } from '../__mocks__/mockHelpers';
 
+// Mock nanoid for consistent correlation IDs
+jest.mock('nanoid', () => ({
+  nanoid: jest.fn(() => 'test-correlation-id'),
+}));
+
 // Mocking console and process.exit
 let consoleLogSpy: jest.SpyInstance;
 let consoleErrorSpy: jest.SpyInstance;
@@ -27,7 +32,7 @@ function simulateCliExecution(auditOutput: string, allowlistContent: string | nu
     const results = analyzeResults(auditOutput, allowlistContent, CURRENT_DATE);
 
     // Display results
-    displayResults(results);
+    displayResults(results, true); // Use legacy output for test compatibility
 
     // Get exit code
     return getExitCode(results);

@@ -1,6 +1,6 @@
 /**
  * Jest configuration for audit-filter tests
- * 
+ *
  * @jest-environment node
  */
 
@@ -26,7 +26,7 @@ const _auditFilterConfig = {
     '<rootDir>/src/lib/audit-filter/__tests__/setup.ts',
     '<rootDir>/src/lib/audit-filter/__tests__/jest.config.js',
     '<rootDir>/src/lib/audit-filter/__tests__/.eslintrc.js',
-    '<rootDir>/src/lib/audit-filter/__tests__/tsconfig.json'
+    '<rootDir>/src/lib/audit-filter/__tests__/tsconfig.json',
   ],
 };
 

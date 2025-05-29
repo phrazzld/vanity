@@ -1,9 +1,11 @@
 /**
  * Setup and configuration for audit-filter mocks
- * 
+ *
  * This module provides functions to set up common test scenarios
  * using the mock implementations of fs and child_process.
  */
+
+/* global jest */
 
 import childProcessMock from './child_process';
 import fsMock from './fs';

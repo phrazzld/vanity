@@ -1,9 +1,11 @@
 /**
  * Integration tests for audit-filter using mocked dependencies
- * 
+ *
  * These tests demonstrate how to use the mock implementations for fs and child_process
  * to test the audit-filter CLI wrapper without touching the filesystem or spawning processes.
  */
+
+/* global process */
 
 // Import path is not used
 // import { join } from 'path';
@@ -15,6 +17,8 @@ import * as childProcess from 'child_process';
 
 // Import our mock helpers
 import {
+  // createDefaultMockFileSystem not used directly
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   createDefaultMockFileSystem,
   createCleanAuditResult,
   createHighVulnerabilitiesAuditResult,
@@ -41,15 +45,17 @@ const mockFiles: Record<string, string> = {
       package: 'vulnerable-package-2',
       reason: 'Working on upgrade',
       expires: '2099-12-31',
-    }
-  ])
+    },
+  ]),
 };
 
 // Create a simplified version of the readAllowlistFile function from audit-filter-new.ts
 function readAllowlistFile(allowlistPath: string): string | null {
   try {
     if (!fs.existsSync(allowlistPath)) {
-      console.log('Allowlist file not found. All high/critical vulnerabilities will fail the audit.');
+      console.log(
+        'Allowlist file not found. All high/critical vulnerabilities will fail the audit.'
+      );
       return null;
     }
 
@@ -83,10 +89,10 @@ function executeNpmAudit(): string {
 function setupCleanAudit(): void {
   // Mock the execSync function to return a clean audit result
   jest.spyOn(childProcess, 'execSync').mockReturnValue(createCleanAuditResult());
-  
+
   // Mock the filesystem functions
-  jest.spyOn(fs, 'existsSync').mockImplementation((path) => path === MOCK_ALLOWLIST_PATH);
-  jest.spyOn(fs, 'readFileSync').mockImplementation((path) => {
+  jest.spyOn(fs, 'existsSync').mockImplementation(path => path === MOCK_ALLOWLIST_PATH);
+  jest.spyOn(fs, 'readFileSync').mockImplementation(path => {
     if (path === MOCK_ALLOWLIST_PATH) {
       return mockFiles[MOCK_ALLOWLIST_PATH];
     }
@@ -99,8 +105,8 @@ function setupVulnerabilities(): void {
   jest.spyOn(childProcess, 'execSync').mockReturnValue(createHighVulnerabilitiesAuditResult());
 
   // Mock the filesystem functions (same as above)
-  jest.spyOn(fs, 'existsSync').mockImplementation((path) => path === MOCK_ALLOWLIST_PATH);
-  jest.spyOn(fs, 'readFileSync').mockImplementation((path) => {
+  jest.spyOn(fs, 'existsSync').mockImplementation(path => path === MOCK_ALLOWLIST_PATH);
+  jest.spyOn(fs, 'readFileSync').mockImplementation(path => {
     if (path === MOCK_ALLOWLIST_PATH) {
       return mockFiles[MOCK_ALLOWLIST_PATH];
     }
@@ -111,7 +117,7 @@ function setupVulnerabilities(): void {
 function setupMissingAllowlist(): void {
   // Mock the execSync function to return a clean audit result
   jest.spyOn(childProcess, 'execSync').mockReturnValue(createCleanAuditResult());
-  
+
   // Mock the filesystem functions to indicate the allowlist file doesn't exist
   jest.spyOn(fs, 'existsSync').mockReturnValue(false);
 }
@@ -119,7 +125,7 @@ function setupMissingAllowlist(): void {
 function setupMalformedAllowlist(): void {
   // Mock the execSync function to return a clean audit result
   jest.spyOn(childProcess, 'execSync').mockReturnValue(createCleanAuditResult());
-  
+
   // Mock the filesystem functions to return a malformed allowlist
   jest.spyOn(fs, 'existsSync').mockReturnValue(true);
   jest.spyOn(fs, 'readFileSync').mockReturnValue('{malformed json');
