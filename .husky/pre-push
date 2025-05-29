@@ -134,6 +134,16 @@ else
 fi
 
 # ========================================
+# Security vulnerability scan
+# ========================================
+echo "🔒 Running security vulnerability scan..."
+if .husky/pre-push-security; then
+  echo "✅ Security scan passed"
+else
+  exit 1
+fi
+
+# ========================================
 # Check Edge Runtime compatibility
 # ========================================
 echo "🌐 Checking Edge Runtime compatibility..."

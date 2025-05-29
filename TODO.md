@@ -198,7 +198,7 @@
 
 ## CI/CD Integration
 
-- [ ] **T020 · Feature · P2: Add security scan to pre-push hook**
+- [x] **T020 · Feature · P2: Add security scan to pre-push hook**
 
   - **Action:**
     1. Update pre-push Git hook to run security scan
