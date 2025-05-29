@@ -219,7 +219,7 @@
 
 ## Documentation & Developer Experience
 
-- [ ] **T022 · Docs · P2: Update allowlist documentation**
+- [x] **T022 · Docs · P2: Update allowlist documentation**
 
   - **Action:**
     1. Document allowlist schema requirements
