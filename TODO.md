@@ -257,7 +257,7 @@
     1. Node.js version constraints are documented
   - **Depends-on:** none
 
-- [ ] **T026 · Chore · P3: Streamline build verification**
+- [x] **T026 · Chore · P3: Streamline build verification**
 
   - **Action:**
     1. Remove redundant build verification steps
