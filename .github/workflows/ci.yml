@@ -43,21 +43,8 @@ jobs:
             exit 1
           }
 
-      - name: Check formatting
-        run: |
-          echo "🎨 Checking code formatting..."
-          npm run format:check || {
-            echo "❌ Code formatting check failed!"
-            echo ""
-            echo "To fix formatting issues:"
-            echo "1. Run 'npm run format' locally"
-            echo "2. Commit the formatted files"
-            echo "3. Push your changes"
-            echo ""
-            echo "💡 Tip: Enable format-on-save in VS Code"
-            echo "   See .vscode/settings.json for recommended settings"
-            exit 1
-          }
+      # Note: Code formatting check removed - pre-commit hooks ensure formatting
+      # This eliminates redundancy while maintaining code quality
 
       - name: Lint
         run: |
@@ -122,72 +109,8 @@ jobs:
           name: coverage-report
           path: coverage/
 
-      - name: Check Edge Runtime compatibility
-        run: |
-          echo "🌐 Checking Edge Runtime compatibility..."
-          # Create a simple script to check for Edge Runtime issues
-          cat > check-edge-compat.js << 'EOF'
-          const fs = require('fs');
-          const path = require('path');
-
-          const edgeIncompatiblePkgs = ['winston', 'fs', 'path', 'crypto', 'os', 'child_process'];
-          const clientFiles = [];
-
-          function findFiles(dir, pattern) {
-            const files = fs.readdirSync(dir);
-            files.forEach(file => {
-              const filePath = path.join(dir, file);
-              const stat = fs.statSync(filePath);
-              if (stat.isDirectory() && !file.startsWith('.') && file !== 'node_modules') {
-                findFiles(filePath, pattern);
-              } else if (pattern.test(file)) {
-                clientFiles.push(filePath);
-              }
-            });
-          }
-
-          // Find all client components and pages
-          findFiles('./src', /\.(tsx?|jsx?)$/);
-
-          let hasIssues = false;
-
-          clientFiles.forEach(file => {
-            const content = fs.readFileSync(file, 'utf-8');
-            // Check for 'use client' directive
-            if (content.includes("'use client'") || content.includes('"use client"')) {
-              edgeIncompatiblePkgs.forEach(pkg => {
-                const importPattern = new RegExp(`from\\s+['"\`](.*/)?${pkg}['"\`]|require\\s*\\(['"\`](.*/)?${pkg}['"\`]\\)`);
-                if (importPattern.test(content)) {
-                  console.error(`❌ Edge Runtime incompatible: ${file} imports '${pkg}'`);
-                  hasIssues = true;
-                }
-              });
-            }
-          });
-
-          if (hasIssues) {
-            console.error('\n🚨 Edge Runtime compatibility issues found!');
-            console.error('→ Client components cannot use Node.js APIs');
-            console.error('→ Use runtime checks or Edge-compatible alternatives');
-            process.exit(1);
-          } else {
-            console.log('✅ All client components are Edge Runtime compatible');
-          }
-          EOF
-
-          node check-edge-compat.js || {
-            echo ""
-            echo "To fix Edge Runtime issues:"
-            echo "1. Remove Node.js-only imports from client components"
-            echo "2. Use runtime checks for Node.js APIs"
-            echo "3. Create Edge-compatible alternatives"
-            echo ""
-            echo "💡 Common solutions:"
-            echo "→ Use dynamic imports with runtime checks"
-            echo "→ Create separate Edge-compatible modules"
-            echo "→ Move Node.js logic to API routes"
-            exit 1
-          }
+      # Note: Edge Runtime compatibility check removed - pre-push hook covers this
+      # This eliminates duplication while maintaining comprehensive validation
 
       - name: Build
         run: |

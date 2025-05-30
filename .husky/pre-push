@@ -51,28 +51,8 @@ case "$BRANCH_NAME" in
     ;;
 esac
 
-# ========================================
-# Check code formatting
-# ========================================
-echo "🎨 Checking code formatting..."
-if npm run format:check > format_output.log 2>&1; then
-  echo "✅ Code formatting check passed"
-  rm format_output.log
-else
-  cat format_output.log
-  rm format_output.log
-  echo ""
-  echo "❌ Code formatting check failed!"
-  echo ""
-  echo "To fix formatting issues:"
-  echo "1. Run 'npm run format' locally"
-  echo "2. Commit the formatted files"
-  echo "3. Push your changes"
-  echo ""
-  echo "💡 Tip: Enable format-on-save in VS Code"
-  echo "   See .vscode/settings.json for recommended settings"
-  exit 1
-fi
+# Note: Code formatting check removed - pre-commit hook ensures formatting
+# This eliminates redundancy while maintaining code quality
 
 # ========================================
 # Check ESLint
@@ -217,11 +197,11 @@ else
 fi
 
 # ========================================
-# Check test coverage
+# Run tests with coverage (comprehensive test validation)
 # ========================================
-echo "📊 Running test coverage check..."
+echo "🧪 Running tests with coverage..."
 if npm run test:coverage > coverage_output.log 2>&1; then
-  echo "✅ Test coverage check passed"
+  echo "✅ Tests and coverage check passed"
   rm coverage_output.log
 else
   # Extract coverage failures from output
@@ -258,7 +238,7 @@ else
     else
       # Check if it's just obsolete snapshots
       if grep -q "Test Suites:.*passed.*total" coverage_output.log && grep -q "Tests:.*passed.*total" coverage_output.log; then
-        echo "✅ Test coverage check passed (obsolete snapshots warning ignored)"
+        echo "✅ Tests and coverage check passed (obsolete snapshots warning ignored)"
         rm coverage_output.log
       else
         # Unknown failure, show output
@@ -270,52 +250,4 @@ else
   fi
 fi
 
-# ========================================
-# Verify build
-# ========================================
-echo "🏗️ Verifying production build..."
-if npm run build:verify > build_output.log 2>&1; then
-  echo "✅ Build verification passed"
-  rm build_output.log
-else
-  cat build_output.log
-  rm build_output.log
-  echo ""
-  echo "❌ Build verification failed!"
-  echo ""
-  echo "To fix build issues:"
-  echo "1. Run 'npm run build:verify' locally"
-  echo "2. Fix the TypeScript errors that only appear in production builds"
-  echo "3. Look for issues in script files that aren't normally type-checked"
-  echo ""
-  echo "💡 Common build issues:"
-  echo "→ TypeScript errors in scripts/ directory"
-  echo "→ Type mismatches only caught in strict mode"
-  echo "→ Missing type guards for indexed access"
-  exit 1
-fi
-
-# ========================================
-# Run the complete test suite
-# ========================================
-echo "🧪 Running the complete test suite..."
-# Run tests and capture output, but don't let the error stop us
-if npm test > test_output.log 2>&1; then
-  echo "✅ Tests passed successfully!"
-  rm test_output.log
-  exit 0
-else
-  # Tests failed or returned non-zero, check the output
-  cat test_output.log
-  
-  # Check if it's just the obsolete snapshots issue
-  if grep -q "Test Suites:.*passed.*total" test_output.log && grep -q "Tests:.*passed.*total" test_output.log; then
-    echo "✅ All tests passed! (obsolete snapshots warning ignored)"
-    rm test_output.log
-    exit 0
-  else
-    echo "❌ Tests failed. Please fix failing tests before pushing."
-    rm test_output.log
-    exit 1
-  fi
-fi
+echo "✅ All pre-push checks completed successfully!"

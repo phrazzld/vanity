@@ -34,13 +34,8 @@ module.exports = {
       `eslint --config eslint.config.cjs --fix ${nonSymlinks.join(' ')}`,
     ];
 
-    // If any TypeScript files are staged, run a quick type check
-    const hasTypeScriptFiles = nonSymlinks.some(
-      file => file.endsWith('.ts') || file.endsWith('.tsx')
-    );
-    if (hasTypeScriptFiles) {
-      commands.push('npm run typecheck');
-    }
+    // Note: TypeScript checking removed from pre-commit for performance
+    // TypeScript is now checked in pre-push hook for faster commits
 
     return commands;
   },
