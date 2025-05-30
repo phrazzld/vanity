@@ -248,7 +248,7 @@
     1. No example data in production allowlist
   - **Depends-on:** [T022]
 
-- [ ] **T025 · Chore · P3: Add Node.js version specification**
+- [x] **T025 · Chore · P3: Add Node.js version specification**
 
   - **Action:**
     1. Add engines field to package.json
