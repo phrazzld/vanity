@@ -239,7 +239,7 @@
 
 ## Technical Debt & Cleanup
 
-- [ ] **T024 · Chore · P3: Remove example data from production**
+- [x] **T024 · Chore · P3: Remove example data from production**
 
   - **Action:**
     1. Replace example entries in allowlist with documentation
