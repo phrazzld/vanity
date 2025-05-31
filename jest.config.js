@@ -12,6 +12,8 @@ const customJestConfig = {
   moduleNameMapper: {
     // Handle module aliases (this will be automatically configured for you when using `next/jest`)
     '^@/(.*)$': '<rootDir>/src/$1',
+    // Handle nanoid ES module issues
+    '^nanoid$': 'nanoid',
   },
   // Snapshot configuration
   snapshotResolver: '<rootDir>/snapshotResolver.js',
@@ -53,7 +55,7 @@ const customJestConfig = {
   },
   coverageReporters: ['json', 'lcov', 'text', 'clover', 'html'],
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
-  transformIgnorePatterns: ['/node_modules/(?!(nanoid)/)'],
+  transformIgnorePatterns: ['/node_modules/(?!(nanoid|@jest/transform)/)'],
   transform: {
     // Use babel-jest to transpile tests with the next/babel preset
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
