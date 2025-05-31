@@ -87,6 +87,9 @@ export const npmV7PlusOutputs = {
           version: '2.88.2',
           isSemVerMajor: false,
         },
+        effects: ['request'],
+        range: '<0.6.0',
+        nodes: ['node_modules/tunnel-agent'],
         via: [
           {
             source: 1181493,
@@ -95,11 +98,6 @@ export const npmV7PlusOutputs = {
             title: 'Memory Exposure',
             url: 'https://github.com/advisories/GHSA-xc7v-wxcw-j472',
             severity: 'moderate',
-            cwe: ['CWE-201'],
-            cvss: {
-              score: 5.3,
-              vectorString: 'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N',
-            },
             range: '<0.6.0',
           },
         ],
@@ -128,6 +126,9 @@ export const npmV7PlusOutputs = {
           version: '10.2.0',
           isSemVerMajor: true,
         },
+        effects: ['mocha'],
+        range: '<0.2.4',
+        nodes: ['node_modules/minimist'],
         via: [
           {
             source: 1179,
@@ -136,11 +137,6 @@ export const npmV7PlusOutputs = {
             title: 'Prototype Pollution',
             url: 'https://github.com/advisories/GHSA-7fhm-mqm4-2wp7',
             severity: 'critical',
-            cwe: ['CWE-1321'],
-            cvss: {
-              score: 9.8,
-              vectorString: 'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H',
-            },
             range: '<0.2.4',
           },
         ],
@@ -150,6 +146,9 @@ export const npmV7PlusOutputs = {
         severity: 'high',
         isDirect: true,
         fixAvailable: true,
+        effects: [],
+        range: '<8.5.1',
+        nodes: ['node_modules/jsonwebtoken'],
         via: [
           {
             source: 755,
@@ -201,6 +200,29 @@ export const expectedCanonicalFormats = {
         url: 'https://npmjs.com/advisories/118',
         vulnerableVersions: '<0.6.0',
         source: 'npm-v6',
+      },
+    ],
+    metadata: {
+      vulnerabilities: {
+        info: 0,
+        low: 0,
+        moderate: 1,
+        high: 0,
+        critical: 0,
+        total: 1,
+      },
+    },
+  },
+  singleVulnerabilityV7Plus: {
+    vulnerabilities: [
+      {
+        id: '1181493',
+        package: 'tunnel-agent',
+        severity: 'moderate',
+        title: 'Memory Exposure',
+        url: 'https://github.com/advisories/GHSA-xc7v-wxcw-j472',
+        vulnerableVersions: '<0.6.0',
+        source: 'npm-v7+',
       },
     ],
     metadata: {

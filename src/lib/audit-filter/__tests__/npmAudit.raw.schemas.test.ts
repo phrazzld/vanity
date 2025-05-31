@@ -6,7 +6,7 @@
  */
 
 import { describe, test, expect } from '@jest/globals';
-// import { RawNpmV6AuditSchema, RawNpmV7PlusAuditSchema } from '../npmAudit.raw.schemas';
+import { RawNpmV6AuditSchema, RawNpmV7PlusAuditSchema } from '../npmAudit.raw.schemas';
 
 describe('RawNpmV6AuditSchema', () => {
   test('should validate valid npm v6 audit output with advisories', () => {
@@ -33,11 +33,8 @@ describe('RawNpmV6AuditSchema', () => {
       },
     };
 
-    // TODO: Implement schema validation once RawNpmV6AuditSchema is created
-    expect(() => {
-      // const result = RawNpmV6AuditSchema.parse(validV6Output);
-      // expect(result).toEqual(validV6Output);
-    }).not.toThrow();
+    const result = RawNpmV6AuditSchema.parse(_validV6Output);
+    expect(result).toEqual(_validV6Output);
   });
 
   test('should validate npm v6 output with multiple advisories', () => {
@@ -72,11 +69,8 @@ describe('RawNpmV6AuditSchema', () => {
       },
     };
 
-    // TODO: Implement schema validation once RawNpmV6AuditSchema is created
-    expect(() => {
-      // const result = RawNpmV6AuditSchema.parse(multipleAdvisoriesV6);
-      // expect(result).toEqual(multipleAdvisoriesV6);
-    }).not.toThrow();
+    const result = RawNpmV6AuditSchema.parse(_multipleAdvisoriesV6);
+    expect(result).toEqual(_multipleAdvisoriesV6);
   });
 
   test('should reject invalid v6 output missing advisories field', () => {
@@ -93,9 +87,8 @@ describe('RawNpmV6AuditSchema', () => {
       },
     };
 
-    // TODO: Implement schema validation once RawNpmV6AuditSchema is created
     expect(() => {
-      // RawNpmV6AuditSchema.parse(invalidV6Output);
+      RawNpmV6AuditSchema.parse(_invalidV6Output);
     }).toThrow();
   });
 
@@ -104,9 +97,8 @@ describe('RawNpmV6AuditSchema', () => {
       advisories: {},
     };
 
-    // TODO: Implement schema validation once RawNpmV6AuditSchema is created
     expect(() => {
-      // RawNpmV6AuditSchema.parse(invalidV6Output);
+      RawNpmV6AuditSchema.parse(_invalidV6Output);
     }).toThrow();
   });
 
@@ -125,11 +117,8 @@ describe('RawNpmV6AuditSchema', () => {
       },
     };
 
-    // TODO: Implement schema validation once RawNpmV6AuditSchema is created
-    expect(() => {
-      // const result = RawNpmV6AuditSchema.parse(emptyAdvisoriesV6);
-      // expect(result).toEqual(emptyAdvisoriesV6);
-    }).not.toThrow();
+    const result = RawNpmV6AuditSchema.parse(_emptyAdvisoriesV6);
+    expect(result).toEqual(_emptyAdvisoriesV6);
   });
 });
 
@@ -170,11 +159,8 @@ describe('RawNpmV7PlusAuditSchema', () => {
       },
     };
 
-    // TODO: Implement schema validation once RawNpmV7PlusAuditSchema is created
-    expect(() => {
-      // const result = RawNpmV7PlusAuditSchema.parse(validV7PlusOutput);
-      // expect(result).toEqual(validV7PlusOutput);
-    }).not.toThrow();
+    const result = RawNpmV7PlusAuditSchema.parse(_validV7PlusOutput);
+    expect(result).toEqual(_validV7PlusOutput);
   });
 
   test('should validate npm v7+ output with complex vulnerability structure', () => {
@@ -217,11 +203,8 @@ describe('RawNpmV7PlusAuditSchema', () => {
       },
     };
 
-    // TODO: Implement schema validation once RawNpmV7PlusAuditSchema is created
-    expect(() => {
-      // const result = RawNpmV7PlusAuditSchema.parse(complexV7PlusOutput);
-      // expect(result).toEqual(complexV7PlusOutput);
-    }).not.toThrow();
+    const result = RawNpmV7PlusAuditSchema.parse(_complexV7PlusOutput);
+    expect(result).toEqual(_complexV7PlusOutput);
   });
 
   test('should reject invalid v7+ output missing vulnerabilities field', () => {
@@ -238,9 +221,8 @@ describe('RawNpmV7PlusAuditSchema', () => {
       },
     };
 
-    // TODO: Implement schema validation once RawNpmV7PlusAuditSchema is created
     expect(() => {
-      // RawNpmV7PlusAuditSchema.parse(invalidV7PlusOutput);
+      RawNpmV7PlusAuditSchema.parse(_invalidV7PlusOutput);
     }).toThrow();
   });
 
@@ -259,11 +241,8 @@ describe('RawNpmV7PlusAuditSchema', () => {
       },
     };
 
-    // TODO: Implement schema validation once RawNpmV7PlusAuditSchema is created
-    expect(() => {
-      // const result = RawNpmV7PlusAuditSchema.parse(emptyVulnerabilitiesV7Plus);
-      // expect(result).toEqual(emptyVulnerabilitiesV7Plus);
-    }).not.toThrow();
+    const result = RawNpmV7PlusAuditSchema.parse(_emptyVulnerabilitiesV7Plus);
+    expect(result).toEqual(_emptyVulnerabilitiesV7Plus);
   });
 
   test('should handle fixAvailable as boolean', () => {
@@ -302,11 +281,8 @@ describe('RawNpmV7PlusAuditSchema', () => {
       },
     };
 
-    // TODO: Implement schema validation once RawNpmV7PlusAuditSchema is created
-    expect(() => {
-      // const result = RawNpmV7PlusAuditSchema.parse(booleanFixAvailableV7Plus);
-      // expect(result).toEqual(booleanFixAvailableV7Plus);
-    }).not.toThrow();
+    const result = RawNpmV7PlusAuditSchema.parse(_booleanFixAvailableV7Plus);
+    expect(result).toEqual(_booleanFixAvailableV7Plus);
   });
 });
 
@@ -316,13 +292,12 @@ describe('Schema Error Handling', () => {
       invalid: 'structure',
     };
 
-    // TODO: Implement error message validation once schemas are created
     expect(() => {
-      // RawNpmV6AuditSchema.parse(malformedInput);
+      RawNpmV6AuditSchema.parse(_malformedInput);
     }).toThrow();
 
     expect(() => {
-      // RawNpmV7PlusAuditSchema.parse(malformedInput);
+      RawNpmV7PlusAuditSchema.parse(_malformedInput);
     }).toThrow();
   });
 
@@ -344,9 +319,8 @@ describe('Schema Error Handling', () => {
       },
     };
 
-    // TODO: Implement validation for required vs optional fields
     expect(() => {
-      // RawNpmV6AuditSchema.parse(partialV6Data);
+      RawNpmV6AuditSchema.parse(_partialV6Data);
     }).toThrow();
   });
 });
