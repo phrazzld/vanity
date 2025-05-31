@@ -10,7 +10,7 @@ import { describe, test, expect } from '@jest/globals';
 
 describe('RawNpmV6AuditSchema', () => {
   test('should validate valid npm v6 audit output with advisories', () => {
-    const validV6Output = {
+    const _validV6Output = {
       advisories: {
         '118': {
           id: 118,
@@ -41,7 +41,7 @@ describe('RawNpmV6AuditSchema', () => {
   });
 
   test('should validate npm v6 output with multiple advisories', () => {
-    const multipleAdvisoriesV6 = {
+    const _multipleAdvisoriesV6 = {
       advisories: {
         '118': {
           id: 118,
@@ -80,7 +80,7 @@ describe('RawNpmV6AuditSchema', () => {
   });
 
   test('should reject invalid v6 output missing advisories field', () => {
-    const invalidV6Output = {
+    const _invalidV6Output = {
       metadata: {
         vulnerabilities: {
           info: 0,
@@ -100,7 +100,7 @@ describe('RawNpmV6AuditSchema', () => {
   });
 
   test('should reject invalid v6 output missing metadata field', () => {
-    const invalidV6Output = {
+    const _invalidV6Output = {
       advisories: {},
     };
 
@@ -111,7 +111,7 @@ describe('RawNpmV6AuditSchema', () => {
   });
 
   test('should handle empty advisories object', () => {
-    const emptyAdvisoriesV6 = {
+    const _emptyAdvisoriesV6 = {
       advisories: {},
       metadata: {
         vulnerabilities: {
@@ -135,7 +135,7 @@ describe('RawNpmV6AuditSchema', () => {
 
 describe('RawNpmV7PlusAuditSchema', () => {
   test('should validate valid npm v7+ audit output with vulnerabilities', () => {
-    const validV7PlusOutput = {
+    const _validV7PlusOutput = {
       vulnerabilities: {
         'tunnel-agent': {
           name: 'tunnel-agent',
@@ -178,7 +178,7 @@ describe('RawNpmV7PlusAuditSchema', () => {
   });
 
   test('should validate npm v7+ output with complex vulnerability structure', () => {
-    const complexV7PlusOutput = {
+    const _complexV7PlusOutput = {
       vulnerabilities: {
         jsonwebtoken: {
           name: 'jsonwebtoken',
@@ -225,7 +225,7 @@ describe('RawNpmV7PlusAuditSchema', () => {
   });
 
   test('should reject invalid v7+ output missing vulnerabilities field', () => {
-    const invalidV7PlusOutput = {
+    const _invalidV7PlusOutput = {
       metadata: {
         vulnerabilities: {
           info: 0,
@@ -245,7 +245,7 @@ describe('RawNpmV7PlusAuditSchema', () => {
   });
 
   test('should handle empty vulnerabilities object', () => {
-    const emptyVulnerabilitiesV7Plus = {
+    const _emptyVulnerabilitiesV7Plus = {
       vulnerabilities: {},
       metadata: {
         vulnerabilities: {
@@ -267,7 +267,7 @@ describe('RawNpmV7PlusAuditSchema', () => {
   });
 
   test('should handle fixAvailable as boolean', () => {
-    const booleanFixAvailableV7Plus = {
+    const _booleanFixAvailableV7Plus = {
       vulnerabilities: {
         'some-package': {
           name: 'some-package',
@@ -312,7 +312,7 @@ describe('RawNpmV7PlusAuditSchema', () => {
 
 describe('Schema Error Handling', () => {
   test('should provide informative error messages for validation failures', () => {
-    const malformedInput = {
+    const _malformedInput = {
       invalid: 'structure',
     };
 
@@ -327,7 +327,7 @@ describe('Schema Error Handling', () => {
   });
 
   test('should handle partial data gracefully', () => {
-    const partialV6Data = {
+    const _partialV6Data = {
       advisories: {
         '123': {
           id: 123,

@@ -13,9 +13,6 @@ import {
 import type { AnalysisResult } from '../types';
 import { logger } from '../../logger';
 
-// Import the child_process module - this will be the actual module, not a mock
-import * as childProcess from 'child_process';
-
 // Jest will automatically mock child_process when imported
 jest.mock('child_process');
 

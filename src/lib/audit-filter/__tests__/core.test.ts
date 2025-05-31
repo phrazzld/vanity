@@ -658,13 +658,13 @@ describe('Structured Error Logging', () => {
     });
 
     test('should log structured error for unsupported audit format', () => {
-      const unsupportedFormat = JSON.stringify({
+      const _unsupportedFormat = JSON.stringify({
         unknown_structure: {
           some_field: 'some_value',
         },
       });
 
-      expect(() => parseNpmAuditJsonCanonical(unsupportedFormat)).toThrow();
+      expect(() => parseNpmAuditJsonCanonical(_unsupportedFormat)).toThrow();
 
       expect(loggerErrorSpy).toHaveBeenCalledWith(
         'Unsupported npm audit format detected',
@@ -672,7 +672,7 @@ describe('Structured Error Logging', () => {
           function_name: 'parseNpmAuditJsonCanonical',
           module_name: 'audit-filter/core',
           error_type: 'UNSUPPORTED_FORMAT',
-          input_length: unsupportedFormat.length,
+          input_length: _unsupportedFormat.length,
           has_advisories: false,
           has_vulnerabilities: false,
         }),
@@ -681,9 +681,9 @@ describe('Structured Error Logging', () => {
     });
 
     test('should log structured error for invalid object type', () => {
-      const arrayInput = JSON.stringify([1, 2, 3]);
+      const _arrayInput = JSON.stringify([1, 2, 3]);
 
-      expect(() => parseNpmAuditJsonCanonical(arrayInput)).toThrow();
+      expect(() => parseNpmAuditJsonCanonical(_arrayInput)).toThrow();
 
       expect(loggerErrorSpy).toHaveBeenCalledWith(
         'Invalid npm audit output structure',

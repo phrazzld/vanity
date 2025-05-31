@@ -14,7 +14,6 @@ import {
 } from '../__mocks__/mockHelpers';
 
 // Import fail from Jest to be used in conditionals
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const { fail } = expect as any;
 
 describe('Expired allowlist entries', () => {

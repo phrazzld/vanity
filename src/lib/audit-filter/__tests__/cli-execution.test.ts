@@ -5,7 +5,6 @@
  * including process exit codes and command line handling.
  */
 
-import { join } from 'path';
 import { analyzeAuditReport } from '../core';
 import {
   createCleanAuditResult,
@@ -22,7 +21,7 @@ jest.spyOn(process, 'cwd').mockReturnValue('/path/to'); // eslint-disable-line n
 
 // Create a reference date for testing
 const CURRENT_DATE = new Date('2023-01-01');
-const MOCK_ALLOWLIST_PATH = '/path/to/.audit-allowlist.json';
+const _MOCK_ALLOWLIST_PATH = '/path/to/.audit-allowlist.json';
 
 describe('CLI execution tests', () => {
   // Reset all mocks before each test

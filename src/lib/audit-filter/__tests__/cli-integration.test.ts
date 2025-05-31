@@ -26,10 +26,10 @@ let processExitSpy: jest.SpyInstance;
 const CURRENT_DATE = new Date('2023-01-01');
 
 // Helper function to simulate CLI execution flow
-function simulateCliExecution(auditOutput: string, allowlistContent: string | null): number {
+function simulateCliExecution(_auditOutput: string, allowlistContent: string | null): number {
   try {
     // Analyze results
-    const results = analyzeResults(auditOutput, allowlistContent, CURRENT_DATE);
+    const results = analyzeResults(_auditOutput, allowlistContent, CURRENT_DATE);
 
     // Display results
     displayResults(results, true); // Use legacy output for test compatibility
@@ -64,11 +64,11 @@ describe('CLI Integration Tests', () => {
 
   test('should display success message and exit with code 0 for clean audit', () => {
     // Set up clean audit scenario
-    const auditOutput = createCleanAuditResult();
+    const _auditOutput = createCleanAuditResult();
     const allowlistContent = createMockAllowlist([]);
 
     // Simulate CLI execution
-    const exitCode = simulateCliExecution(auditOutput, allowlistContent);
+    const exitCode = simulateCliExecution(_auditOutput, allowlistContent);
 
     // Verify successful execution
     expect(exitCode).toBe(0);
@@ -78,11 +78,11 @@ describe('CLI Integration Tests', () => {
 
   test('should display error message and exit with code 1 for vulnerabilities', () => {
     // Set up vulnerability scenario
-    const auditOutput = createHighVulnerabilitiesAuditResult();
+    const _auditOutput = createHighVulnerabilitiesAuditResult();
     const allowlistContent = createMockAllowlist([]);
 
     // Simulate CLI execution
-    const exitCode = simulateCliExecution(auditOutput, allowlistContent);
+    const exitCode = simulateCliExecution(_auditOutput, allowlistContent);
 
     // Verify failed execution
     expect(exitCode).toBe(1);
@@ -92,7 +92,7 @@ describe('CLI Integration Tests', () => {
 
   test('should display allowed vulnerabilities and exit with code 0 when allowlisted', () => {
     // Set up allowlisted vulnerability scenario
-    const auditOutput = createHighVulnerabilitiesAuditResult();
+    const _auditOutput = createHighVulnerabilitiesAuditResult();
 
     // Create an allowlist that covers the vulnerabilities
     const allowlistContent = createMockAllowlist([
@@ -111,7 +111,7 @@ describe('CLI Integration Tests', () => {
     ]);
 
     // Simulate CLI execution
-    const exitCode = simulateCliExecution(auditOutput, allowlistContent);
+    const exitCode = simulateCliExecution(_auditOutput, allowlistContent);
 
     // Verify successful execution with allowlist
     expect(exitCode).toBe(0);
@@ -124,7 +124,7 @@ describe('CLI Integration Tests', () => {
 
   test('should display expired allowlist entries and exit with code 1', () => {
     // Set up expired allowlist scenario
-    const auditOutput = createHighVulnerabilitiesAuditResult();
+    const _auditOutput = createHighVulnerabilitiesAuditResult();
 
     // Create an allowlist with expired entries
     const allowlistContent = createMockAllowlist([
@@ -143,7 +143,7 @@ describe('CLI Integration Tests', () => {
     ]);
 
     // Simulate CLI execution
-    const exitCode = simulateCliExecution(auditOutput, allowlistContent);
+    const exitCode = simulateCliExecution(_auditOutput, allowlistContent);
 
     // Verify failed execution due to expired allowlist entries
     expect(exitCode).toBe(1);
@@ -156,11 +156,11 @@ describe('CLI Integration Tests', () => {
 
   test('should exit with code 1 and display error message for malformed npm audit output', () => {
     // Set up malformed npm audit output
-    const malformedAuditOutput = '{malformed json';
+    const _malformedAuditOutput = '{malformed json';
     const allowlistContent = createMockAllowlist([]);
 
     // Simulate CLI execution
-    const exitCode = simulateCliExecution(malformedAuditOutput, allowlistContent);
+    const exitCode = simulateCliExecution(_malformedAuditOutput, allowlistContent);
 
     // Verify failed execution
     expect(exitCode).toBe(1);
@@ -170,11 +170,11 @@ describe('CLI Integration Tests', () => {
 
   test('should exit with code 1 and display error message for missing allowlist', () => {
     // Set up scenario with high vulnerabilities and missing allowlist
-    const auditOutput = createHighVulnerabilitiesAuditResult();
+    const _auditOutput = createHighVulnerabilitiesAuditResult();
     const allowlistContent = null; // Missing allowlist
 
     // Simulate CLI execution
-    const exitCode = simulateCliExecution(auditOutput, allowlistContent);
+    const exitCode = simulateCliExecution(_auditOutput, allowlistContent);
 
     // Verify failed execution
     expect(exitCode).toBe(1);

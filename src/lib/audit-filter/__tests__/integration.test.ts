@@ -143,11 +143,11 @@ describe('Audit Filter CLI Integration', () => {
 
     // Read allowlist and execute audit
     const allowlistContent = readAllowlistFile(MOCK_ALLOWLIST_PATH);
-    const auditOutput = executeNpmAudit();
+    const __auditOutput = executeNpmAudit();
     const currentDate = new Date('2023-01-01');
 
     // Analyze results
-    const result = analyzeAuditReport(auditOutput, allowlistContent, currentDate);
+    const result = analyzeAuditReport(__auditOutput, allowlistContent, currentDate);
 
     // Verify results
     expect(result.vulnerabilities).toHaveLength(0);
@@ -167,11 +167,11 @@ describe('Audit Filter CLI Integration', () => {
 
     // Read allowlist and execute audit
     const allowlistContent = readAllowlistFile(MOCK_ALLOWLIST_PATH);
-    const auditOutput = executeNpmAudit();
+    const __auditOutput = executeNpmAudit();
     const currentDate = new Date('2023-01-01');
 
     // Analyze results
-    const result = analyzeAuditReport(auditOutput, allowlistContent, currentDate);
+    const result = analyzeAuditReport(__auditOutput, allowlistContent, currentDate);
 
     // Verify results
     expect(result.vulnerabilities).toHaveLength(0);
@@ -192,14 +192,14 @@ describe('Audit Filter CLI Integration', () => {
 
     // Read allowlist and execute audit
     const allowlistContent = readAllowlistFile(MOCK_ALLOWLIST_PATH);
-    const auditOutput = executeNpmAudit();
+    const __auditOutput = executeNpmAudit();
     const currentDate = new Date('2023-01-01');
 
     // Verify allowlist is null when file doesn't exist
     expect(allowlistContent).toBeNull();
 
     // Analyze results
-    const result = analyzeAuditReport(auditOutput, allowlistContent, currentDate);
+    const result = analyzeAuditReport(__auditOutput, allowlistContent, currentDate);
 
     // With a clean audit, there should be no vulnerabilities despite no allowlist
     expect(result.vulnerabilities).toHaveLength(0);
@@ -218,7 +218,7 @@ describe('Audit Filter CLI Integration', () => {
 
     // Read allowlist and execute audit
     const allowlistContent = readAllowlistFile(MOCK_ALLOWLIST_PATH);
-    const auditOutput = executeNpmAudit();
+    const __auditOutput = executeNpmAudit();
     const currentDate = new Date('2023-01-01');
 
     // Verify we still got the content of the malformed file
@@ -226,7 +226,7 @@ describe('Audit Filter CLI Integration', () => {
 
     // Expect an error when analyzing with malformed JSON
     expect(() => {
-      analyzeAuditReport(auditOutput, allowlistContent, currentDate);
+      analyzeAuditReport(__auditOutput, allowlistContent, currentDate);
     }).toThrow('Failed to parse allowlist as JSON');
   });
 });

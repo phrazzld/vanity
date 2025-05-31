@@ -13,7 +13,6 @@ import { parseAndValidateAllowlist, isAllowlistEntryExpired, willExpireSoon } fr
 import type { AllowlistEntry } from '../types';
 
 // Import fail from Jest to be used in conditionals
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const { fail } = expect as any;
 
 describe('Allowlist file scenarios', () => {

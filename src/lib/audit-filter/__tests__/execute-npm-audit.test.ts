@@ -22,7 +22,7 @@ describe('executeNpmAudit', () => {
 
   test('should execute npm audit command and return output', () => {
     // Mock successful execution
-    const mockOutput = JSON.stringify({
+    const __mockOutput = JSON.stringify({
       advisories: {},
       metadata: {
         vulnerabilities: {
@@ -36,7 +36,7 @@ describe('executeNpmAudit', () => {
       },
     });
 
-    (execSync as jest.Mock).mockReturnValue(mockOutput);
+    (execSync as jest.Mock).mockReturnValue(__mockOutput);
 
     // Call the function
     const result = executeNpmAudit();
@@ -48,12 +48,12 @@ describe('executeNpmAudit', () => {
     });
 
     // Verify the output
-    expect(result).toBe(mockOutput);
+    expect(result).toBe(__mockOutput);
   });
 
   test('should handle execution errors with stdout', () => {
     // Mock execSync to throw an error with stdout
-    const mockOutput = JSON.stringify({
+    const __mockOutput = JSON.stringify({
       advisories: {
         '1234': {
           id: 1234,
@@ -77,7 +77,7 @@ describe('executeNpmAudit', () => {
     });
 
     const mockError = {
-      stdout: mockOutput,
+      stdout: __mockOutput,
       message: 'Command failed with exit code 1',
     };
 
@@ -89,7 +89,7 @@ describe('executeNpmAudit', () => {
     const result = executeNpmAudit();
 
     // Verify it returned stdout from the error
-    expect(result).toBe(mockOutput);
+    expect(result).toBe(__mockOutput);
   });
 
   test('should rethrow errors without stdout', () => {

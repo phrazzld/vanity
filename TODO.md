@@ -286,7 +286,7 @@
     2. No need to use --no-verify when committing test files
   - **Depends-on:** [T002]
 
-- [ ] **T029 · Chore · P2: Clean up unused test variables**
+- [x] **T029 · Chore · P2: Clean up unused test variables**
   - **Action:**
     1. Review all test files for unused variables and either use them or prefix with underscore
     2. Convert unused test data into reusable test fixtures or remove if not needed
@@ -295,11 +295,3 @@
     1. No unused variable warnings remain in test files
     2. Test data is properly organized and reusable
   - **Depends-on:** [T028]
-
-## Assumptions & Clarifications Needed
-
-- [ ] What is the approved structured logging library for this project?
-- [ ] What should be the exact schema for allowlist entries?
-- [ ] What is the minimum supported Node.js version?
-- [ ] Should allowlist expiration be enforced at midnight UTC or any time on the expiration date?
-- [ ] Which npm versions need to be supported by the audit output parser?

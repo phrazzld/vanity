@@ -8,6 +8,7 @@
 import { describe, test, expect } from '@jest/globals';
 import { normalizeAuditData } from '../npmAudit.normalizers';
 import { logger } from '../../logger';
+import { v6Inputs, expectedCanonical } from './fixtures/test-data/normalizerTestData';
 // import { normalizeV6Data, normalizeV7PlusData } from '../npmAudit.normalizers';
 // import type { CanonicalNpmAuditReport } from '../types';
 
@@ -18,69 +19,8 @@ jest.mock('nanoid', () => ({
 
 describe('normalizeV6Data', () => {
   test('should normalize valid npm v6 data to canonical format', () => {
-    const v6Input = {
-      advisories: {
-        '118': {
-          id: 118,
-          module_name: 'tunnel-agent',
-          severity: 'moderate' as const,
-          title: 'Memory Exposure in tunnel-agent',
-          url: 'https://npmjs.com/advisories/118',
-          vulnerable_versions: '<0.6.0',
-        },
-        '755': {
-          id: 755,
-          module_name: 'jsonwebtoken',
-          severity: 'high' as const,
-          title: 'Verification bypass in jsonwebtoken',
-          url: 'https://npmjs.com/advisories/755',
-          vulnerable_versions: '<8.5.1',
-        },
-      },
-      metadata: {
-        vulnerabilities: {
-          info: 0,
-          low: 0,
-          moderate: 1,
-          high: 1,
-          critical: 0,
-          total: 2,
-        },
-      },
-    };
-
-    const expectedCanonicalFormat = {
-      vulnerabilities: [
-        {
-          id: '118',
-          package: 'tunnel-agent',
-          severity: 'moderate',
-          title: 'Memory Exposure in tunnel-agent',
-          url: 'https://npmjs.com/advisories/118',
-          vulnerableVersions: '<0.6.0',
-          source: 'npm-v6',
-        },
-        {
-          id: '755',
-          package: 'jsonwebtoken',
-          severity: 'high',
-          title: 'Verification bypass in jsonwebtoken',
-          url: 'https://npmjs.com/advisories/755',
-          vulnerableVersions: '<8.5.1',
-          source: 'npm-v6',
-        },
-      ],
-      metadata: {
-        vulnerabilities: {
-          info: 0,
-          low: 0,
-          moderate: 1,
-          high: 1,
-          critical: 0,
-          total: 2,
-        },
-      },
-    };
+    const _v6Input = v6Inputs.multipleAdvisories;
+    const _expectedCanonicalFormat = expectedCanonical.multipleVulnerabilities;
 
     // TODO: Implement normalizer function and test
     expect(() => {
@@ -90,33 +30,8 @@ describe('normalizeV6Data', () => {
   });
 
   test('should handle empty advisories object', () => {
-    const emptyV6Input = {
-      advisories: {},
-      metadata: {
-        vulnerabilities: {
-          info: 0,
-          low: 0,
-          moderate: 0,
-          high: 0,
-          critical: 0,
-          total: 0,
-        },
-      },
-    };
-
-    const expectedCanonicalFormat = {
-      vulnerabilities: [],
-      metadata: {
-        vulnerabilities: {
-          info: 0,
-          low: 0,
-          moderate: 0,
-          high: 0,
-          critical: 0,
-          total: 0,
-        },
-      },
-    };
+    const _emptyV6Input = v6Inputs.empty;
+    const _expectedCanonicalFormat = expectedCanonical.empty;
 
     // TODO: Implement normalizer function and test
     expect(() => {
@@ -126,7 +41,7 @@ describe('normalizeV6Data', () => {
   });
 
   test('should handle missing optional fields with defaults', () => {
-    const minimalV6Input = {
+    const _minimalV6Input = {
       advisories: {
         '123': {
           id: 123,
@@ -158,7 +73,7 @@ describe('normalizeV6Data', () => {
   });
 
   test('should convert numeric IDs to strings consistently', () => {
-    const numericIdV6Input = {
+    const _numericIdV6Input = {
       advisories: {
         '999': {
           id: 999, // Numeric ID
@@ -191,7 +106,7 @@ describe('normalizeV6Data', () => {
 
 describe('normalizeV7PlusData', () => {
   test('should normalize valid npm v7+ data to canonical format', () => {
-    const v7PlusInput = {
+    const _v7PlusInput = {
       vulnerabilities: {
         'tunnel-agent': {
           name: 'tunnel-agent',
@@ -250,7 +165,7 @@ describe('normalizeV7PlusData', () => {
       },
     };
 
-    const expectedCanonicalFormat = {
+    const _expectedCanonicalFormat = {
       vulnerabilities: [
         {
           id: '118',
@@ -291,7 +206,7 @@ describe('normalizeV7PlusData', () => {
   });
 
   test('should handle empty vulnerabilities object', () => {
-    const emptyV7PlusInput = {
+    const _emptyV7PlusInput = {
       vulnerabilities: {},
       metadata: {
         vulnerabilities: {
@@ -305,7 +220,7 @@ describe('normalizeV7PlusData', () => {
       },
     };
 
-    const expectedCanonicalFormat = {
+    const _expectedCanonicalFormat = {
       vulnerabilities: [],
       metadata: {
         vulnerabilities: {
@@ -327,7 +242,7 @@ describe('normalizeV7PlusData', () => {
   });
 
   test('should extract vulnerability details from via array correctly', () => {
-    const multipleViaV7PlusInput = {
+    const _multipleViaV7PlusInput = {
       vulnerabilities: {
         'complex-package': {
           name: 'complex-package',
@@ -380,7 +295,7 @@ describe('normalizeV7PlusData', () => {
   });
 
   test('should handle missing optional fields gracefully', () => {
-    const minimalV7PlusInput = {
+    const _minimalV7PlusInput = {
       vulnerabilities: {
         'minimal-package': {
           name: 'minimal-package',
@@ -425,7 +340,7 @@ describe('normalizeV7PlusData', () => {
 
 describe('Normalizer Error Handling', () => {
   test('should handle malformed input data gracefully', () => {
-    const malformedV6Input = {
+    const _malformedV6Input = {
       advisories: {
         'bad-advisory': {
           // Missing required fields
@@ -447,7 +362,7 @@ describe('Normalizer Error Handling', () => {
   });
 
   test('should log warnings for unexpected data patterns', () => {
-    const unexpectedV7PlusInput = {
+    const _unexpectedV7PlusInput = {
       vulnerabilities: {
         'strange-package': {
           name: 'strange-package',
