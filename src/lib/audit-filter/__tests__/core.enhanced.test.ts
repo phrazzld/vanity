@@ -11,7 +11,7 @@ import {
   npmV7PlusOutputs,
   expectedCanonicalFormats,
   edgeCases,
-} from './fixtures/test-data/auditOutputs';
+} from '../fixtures/test-data/auditOutputs';
 import { parseNpmAuditJsonCanonical } from '../core';
 import type { CanonicalNpmAuditReport } from '../types';
 

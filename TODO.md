@@ -310,7 +310,7 @@
     3. Pre-push hooks pass without "Test suite failed to run" errors
   - **Depends-on:** none
 
-- [ ] **T036 · Refactor · P1: Move test fixture files outside **tests** directory structure**
+- [x] **T036 · Refactor · P1: Move test fixture files outside **tests** directory structure**
 
   - **Action:**
     1. Move fixtures/test-data/ directory from src/lib/audit-filter/**tests**/ to src/lib/audit-filter/

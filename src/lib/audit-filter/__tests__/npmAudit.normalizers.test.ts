@@ -8,7 +8,7 @@
 import { describe, test, expect } from '@jest/globals';
 import { normalizeAuditData } from '../npmAudit.normalizers';
 import { logger } from '../../logger';
-import { v6Inputs, expectedCanonical } from './fixtures/test-data/normalizerTestData';
+import { v6Inputs, expectedCanonical } from '../fixtures/test-data/normalizerTestData';
 import { normalizeV6Data, normalizeV7PlusData } from '../npmAudit.normalizers';
 import type { CanonicalNpmAuditReport } from '../types';
 
