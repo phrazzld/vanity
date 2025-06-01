@@ -322,7 +322,7 @@
     3. Jest does not attempt to run fixture files as tests
   - **Depends-on:** [T035]
 
-- [ ] **T037 · Bugfix · P2: Fix nanoid ES module import issues in remaining integration tests**
+- [x] **T037 · Bugfix · P2: Fix nanoid ES module import issues in remaining integration tests**
 
   - **Action:**
     1. Add proper nanoid mocking to integration test files that still fail
