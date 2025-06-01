@@ -295,3 +295,52 @@
     1. No unused variable warnings remain in test files
     2. Test data is properly organized and reusable
   - **Depends-on:** [T028]
+
+## Pre-Push Hook Fixes
+
+- [x] **T035 · Bugfix · P1: Fix Jest test discovery pattern to exclude non-test files**
+
+  - **Action:**
+    1. Update Jest configuration to only discover actual test files (_.test.ts, _.spec.ts)
+    2. Exclude data files, configuration files, and setup files from test discovery
+    3. Add proper testMatch patterns to prevent Jest from running non-test files
+  - **Done-when:**
+    1. Jest only discovers and runs actual test files
+    2. Test fixture files and configuration files are not executed as tests
+    3. Pre-push hooks pass without "Test suite failed to run" errors
+  - **Depends-on:** none
+
+- [ ] **T036 · Refactor · P1: Move test fixture files outside **tests** directory structure**
+
+  - **Action:**
+    1. Move fixtures/test-data/ directory from src/lib/audit-filter/**tests**/ to src/lib/audit-filter/
+    2. Update all import paths in test files to reference the new location
+    3. Ensure Jest ignores the new fixtures location for test discovery
+  - **Done-when:**
+    1. Test fixture files are no longer in **tests** directories
+    2. All test imports work correctly with new paths
+    3. Jest does not attempt to run fixture files as tests
+  - **Depends-on:** [T035]
+
+- [ ] **T037 · Bugfix · P2: Fix nanoid ES module import issues in remaining integration tests**
+
+  - **Action:**
+    1. Add proper nanoid mocking to integration test files that still fail
+    2. Update Jest configuration to handle nanoid ES module imports consistently
+    3. Ensure all audit-filter tests can run in Jest environment
+  - **Done-when:**
+    1. All integration tests run without ES module import errors
+    2. Nanoid is properly mocked across all test suites
+    3. No "Cannot use import statement outside a module" errors remain
+  - **Depends-on:** [T035, T036]
+
+- [ ] **T038 · Refactor · P1: Rename or relocate Jest configuration files that Jest mistakenly runs as tests**
+  - **Action:**
+    1. Remove or rename jest.config.js and jest.setup.js files from **tests** directories
+    2. Move setup.ts files outside of **tests** directories if they're not actual tests
+    3. Ensure Jest configuration files don't match test discovery patterns
+  - **Done-when:**
+    1. No Jest configuration files are discovered as test suites
+    2. Test setup and configuration works correctly
+    3. Jest only runs actual test files, not configuration files
+  - **Depends-on:** [T035]
