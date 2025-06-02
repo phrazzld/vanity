@@ -25,7 +25,7 @@ jest.spyOn(process, 'cwd').mockReturnValue('/path/to');
 
 // Mock process.exit to prevent tests from actually exiting
 const originalExit = process.exit;
-jest.spyOn(process, 'exit').mockImplementation((code?: number) => {
+jest.spyOn(process, 'exit').mockImplementation((code?: string | number | null | undefined) => {
   console.log(`[Mock] process.exit called with code: ${code}`);
   return undefined as never;
 });
