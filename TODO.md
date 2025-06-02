@@ -334,7 +334,7 @@
     3. No "Cannot use import statement outside a module" errors remain
   - **Depends-on:** [T035, T036]
 
-- [ ] **T038 · Refactor · P1: Rename or relocate Jest configuration files that Jest mistakenly runs as tests**
+- [x] **T038 · Refactor · P1: Rename or relocate Jest configuration files that Jest mistakenly runs as tests**
   - **Action:**
     1. Remove or rename jest.config.js and jest.setup.js files from **tests** directories
     2. Move setup.ts files outside of **tests** directories if they're not actual tests

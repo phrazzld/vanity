@@ -7,14 +7,14 @@
  */
 
 /* eslint-env node, jest */
-/* global process */
+/* global process, jest, require, afterAll */
 
 // This file is not a test file - it's a setup file
 
 // Mock the fs module
 jest.mock('fs', () => {
   // Import our custom mock implementation
-  const fsMock = require('../__mocks__/fs');
+  const fsMock = require('./__mocks__/fs');
   return {
     readFileSync: fsMock.readFileSync,
     existsSync: fsMock.existsSync,
@@ -24,7 +24,7 @@ jest.mock('fs', () => {
 // Mock the child_process module
 jest.mock('child_process', () => {
   // Import our custom mock implementation
-  const cpMock = require('../__mocks__/child_process');
+  const cpMock = require('./__mocks__/child_process');
   return {
     execSync: cpMock.execSync,
   };

@@ -7,12 +7,13 @@
  * @jest-environment node
  */
 
-/* global process */
+/* eslint-env jest */
+/* global process, jest, beforeEach, afterAll */
 
 // This file is not a test file - it's a setup file
 
 // Import setup functions
-import { resetMocks } from '../__mocks__/setupMocks';
+import { resetMocks } from './__mocks__/setupMocks';
 
 // Reset all mocks before each test
 beforeEach(() => {

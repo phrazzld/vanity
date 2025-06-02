@@ -15,16 +15,16 @@ const _auditFilterConfig = {
   transform: {
     '^.+\\.(ts|tsx)$': 'babel-jest',
   },
-  setupFilesAfterEnv: ['<rootDir>/src/lib/audit-filter/__tests__/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/src/lib/audit-filter/jest.setup.js'],
   testMatch: ['<rootDir>/src/lib/audit-filter/__tests__/**/*.test.{js,jsx,ts,tsx}'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   moduleDirectories: ['node_modules', '<rootDir>/src/lib/audit-filter/__mocks__'],
   // Skip the setup and config files when running tests
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
-    '<rootDir>/src/lib/audit-filter/__tests__/jest.setup.js',
-    '<rootDir>/src/lib/audit-filter/__tests__/setup.ts',
-    '<rootDir>/src/lib/audit-filter/__tests__/jest.config.js',
+    '<rootDir>/src/lib/audit-filter/jest.setup.js',
+    '<rootDir>/src/lib/audit-filter/setup.ts',
+    '<rootDir>/src/lib/audit-filter/jest.config.js',
     '<rootDir>/src/lib/audit-filter/__tests__/.eslintrc.js',
     '<rootDir>/src/lib/audit-filter/__tests__/tsconfig.json',
   ],
