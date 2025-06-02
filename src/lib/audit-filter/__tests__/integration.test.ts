@@ -38,13 +38,13 @@ const mockFiles: Record<string, string> = {
       id: '1234',
       package: 'vulnerable-package-1',
       reason: 'False positive, fixed in our usage',
-      expires: '2099-12-31',
+      expires: '2099-12-31T23:59:59.000Z',
     },
     {
       id: '5678',
       package: 'vulnerable-package-2',
       reason: 'Working on upgrade',
-      expires: '2099-12-31',
+      expires: '2099-12-31T23:59:59.000Z',
     },
   ]),
 };

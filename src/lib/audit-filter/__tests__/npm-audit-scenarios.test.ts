@@ -29,13 +29,13 @@ const VALID_ALLOWLIST = createMockAllowlist([
     id: '1234',
     package: 'vulnerable-package-1',
     reason: 'Test reason 1',
-    expires: '2099-01-01',
+    expires: '2099-01-01T23:59:59.000Z',
   },
   {
     id: '9012',
     package: 'vulnerable-package-3',
     reason: 'Test reason 3',
-    expires: '2099-01-01',
+    expires: '2099-01-01T23:59:59.000Z',
   },
 ]);
 
@@ -271,19 +271,19 @@ describe('npm audit output analysis', () => {
         id: '1234',
         package: 'vulnerable-package-1',
         reason: 'Test reason 1',
-        expires: '2099-01-01',
+        expires: '2099-01-01T23:59:59.000Z',
       },
       {
         id: '5678',
         package: 'vulnerable-package-2',
         reason: 'Test reason 2',
-        expires: '2099-01-01',
+        expires: '2099-01-01T23:59:59.000Z',
       },
       {
         id: '9012',
         package: 'vulnerable-package-3',
         reason: 'Test reason 3',
-        expires: '2099-01-01',
+        expires: '2099-01-01T23:59:59.000Z',
       },
     ]);
 

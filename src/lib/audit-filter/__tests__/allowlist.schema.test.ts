@@ -67,7 +67,7 @@ describe('allowlistSchema', () => {
       {
         package: 'test-package',
         reason: 'Test reason',
-        expires: '2099-12-31',
+        expires: '2099-12-31T23:59:59.000Z',
         // Missing id
       },
     ];
