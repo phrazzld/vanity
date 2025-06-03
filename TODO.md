@@ -344,3 +344,44 @@
     2. Test setup and configuration works correctly
     3. Jest only runs actual test files, not configuration files
   - **Depends-on:** [T035]
+
+## CI Pipeline Fixes
+
+- [x] **T039 · Bugfix · P0: Add TypeScript declarations for image file modules**
+
+  - **Action:**
+    1. Create `src/types/images.d.ts` with module declarations for image file extensions
+    2. Add declarations for .webp, .png, .jpg, .jpeg, .gif, .svg file imports
+    3. Ensure TypeScript recognizes image imports as valid modules with string default exports
+    4. Update tsconfig.json to include the new type declaration file if needed
+  - **Done-when:**
+    1. TypeScript type checking passes for all image imports in projects page
+    2. CI Build and Test step completes successfully
+    3. No TS2307 "Cannot find module" errors for image files
+  - **Depends-on:** none
+
+- [x] **T040 · Investigation · P1: Review and validate image import patterns**
+
+  - **Action:**
+    1. Analyze current import pattern `@/../public/images/...` vs Next.js standard `/images/...`
+    2. Verify image files exist at expected paths in CI environment
+    3. Test that images load correctly in browser after TypeScript fix
+    4. Document findings on import pattern effectiveness and performance
+  - **Done-when:**
+    1. Image import patterns are validated as working correctly
+    2. No broken images or 404 errors in deployed application
+    3. Performance impact (if any) is documented
+  - **Depends-on:** [T039]
+
+- [ ] **T041 · Enhancement · P2: Consider optimizing image import patterns for Next.js**
+
+  - **Action:**
+    1. Evaluate changing from `@/../public/images/...` to Next.js standard patterns
+    2. Research best practices for static asset imports in Next.js applications
+    3. Create implementation plan if changes are beneficial
+    4. Consider using Next.js Image component for better optimization
+  - **Done-when:**
+    1. Analysis complete on optimal image import strategy
+    2. Recommendation documented with pros/cons
+    3. Implementation plan created if changes are recommended
+  - **Depends-on:** [T040]
