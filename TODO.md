@@ -373,7 +373,7 @@
     3. Performance impact (if any) is documented
   - **Depends-on:** [T039]
 
-- [ ] **T041 · Enhancement · P2: Consider optimizing image import patterns for Next.js**
+- [x] **T041 · Enhancement · P2: Consider optimizing image import patterns for Next.js**
 
   - **Action:**
     1. Evaluate changing from `@/../public/images/...` to Next.js standard patterns
