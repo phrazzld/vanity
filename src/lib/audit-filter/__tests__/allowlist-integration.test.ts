@@ -50,9 +50,9 @@ describe('Expired allowlist entries', () => {
 
     // Verify expired entry details
     if (result.expiredAllowlistEntries.length >= 2) {
-      expect(result.expiredAllowlistEntries[0].id).toBe(1234);
+      expect(result.expiredAllowlistEntries[0].id).toBe('1234');
       expect(result.expiredAllowlistEntries[0].allowlistStatus).toBe('expired');
-      expect(result.expiredAllowlistEntries[1].id).toBe(5678);
+      expect(result.expiredAllowlistEntries[1].id).toBe('5678');
       expect(result.expiredAllowlistEntries[1].allowlistStatus).toBe('expired');
     } else {
       fail('Expected expiredAllowlistEntries to have at least two entries');
@@ -110,7 +110,7 @@ describe('Expired allowlist entries', () => {
 
     // Verify it's the correct one
     if (result.expiringEntries.length > 0) {
-      expect(result.expiringEntries[0].id).toBe(1234);
+      expect(result.expiringEntries[0].id).toBe('1234');
     } else {
       fail('Expected expiringEntries to have at least one entry');
     }
@@ -250,7 +250,7 @@ describe('Allowlist matching behavior', () => {
 
     // Verify the non-allowlisted vulnerability
     if (result.vulnerabilities.length > 0) {
-      expect(result.vulnerabilities[0].id).toBe(5678);
+      expect(result.vulnerabilities[0].id).toBe('5678');
       expect(result.vulnerabilities[0].package).toBe('vulnerable-package-2');
     } else {
       fail('Expected vulnerabilities to have one entry');
@@ -286,13 +286,13 @@ describe('Allowlist matching behavior', () => {
 
     // Verify the categories
     if (result.allowedVulnerabilities.length > 0) {
-      expect(result.allowedVulnerabilities[0].id).toBe(1234);
+      expect(result.allowedVulnerabilities[0].id).toBe('1234');
     } else {
       fail('Expected allowedVulnerabilities to have one entry');
     }
 
     if (result.expiredAllowlistEntries.length > 0) {
-      expect(result.expiredAllowlistEntries[0].id).toBe(5678);
+      expect(result.expiredAllowlistEntries[0].id).toBe('5678');
     } else {
       fail('Expected expiredAllowlistEntries to have one entry');
     }

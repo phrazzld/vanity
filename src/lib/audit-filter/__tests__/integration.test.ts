@@ -15,6 +15,10 @@ import { analyzeAuditReport } from '../core';
 import * as fs from 'fs';
 import * as childProcess from 'child_process';
 
+// Import mock control functions
+import fsMock from '../__mocks__/fs';
+import cpMock from '../__mocks__/child_process';
+
 // Import our mock helpers
 import {
   // createDefaultMockFileSystem not used directly
@@ -87,54 +91,58 @@ function executeNpmAudit(): string {
 
 // Mock setup functions to create different test scenarios
 function setupCleanAudit(): void {
-  // Mock the execSync function to return a clean audit result
-  jest.spyOn(childProcess, 'execSync').mockReturnValue(createCleanAuditResult());
+  // Reset mocks to clean state
+  fsMock.resetMock();
+  cpMock.resetMock();
 
-  // Mock the filesystem functions
-  jest.spyOn(fs, 'existsSync').mockImplementation(path => path === MOCK_ALLOWLIST_PATH);
-  jest.spyOn(fs, 'readFileSync').mockImplementation(path => {
-    if (path === MOCK_ALLOWLIST_PATH) {
-      return mockFiles[MOCK_ALLOWLIST_PATH];
-    }
-    throw new Error(`ENOENT: no such file or directory, open '${path}'`);
-  });
+  // Configure child_process mock to return clean audit result
+  cpMock.mockState.defaultNpmAuditOutput = createCleanAuditResult();
+
+  // Configure fs mock to have the allowlist file
+  fsMock.addMockFile(MOCK_ALLOWLIST_PATH, mockFiles[MOCK_ALLOWLIST_PATH]);
 }
 
 function setupVulnerabilities(): void {
-  // Mock the execSync function to return a result with vulnerabilities
-  jest.spyOn(childProcess, 'execSync').mockReturnValue(createHighVulnerabilitiesAuditResult());
+  // Reset mocks to clean state
+  fsMock.resetMock();
+  cpMock.resetMock();
 
-  // Mock the filesystem functions (same as above)
-  jest.spyOn(fs, 'existsSync').mockImplementation(path => path === MOCK_ALLOWLIST_PATH);
-  jest.spyOn(fs, 'readFileSync').mockImplementation(path => {
-    if (path === MOCK_ALLOWLIST_PATH) {
-      return mockFiles[MOCK_ALLOWLIST_PATH];
-    }
-    throw new Error(`ENOENT: no such file or directory, open '${path}'`);
-  });
+  // Configure child_process mock to return vulnerabilities
+  cpMock.mockState.defaultNpmAuditOutput = createHighVulnerabilitiesAuditResult();
+
+  // Configure fs mock to have the allowlist file
+  fsMock.addMockFile(MOCK_ALLOWLIST_PATH, mockFiles[MOCK_ALLOWLIST_PATH]);
 }
 
 function setupMissingAllowlist(): void {
-  // Mock the execSync function to return a clean audit result
-  jest.spyOn(childProcess, 'execSync').mockReturnValue(createCleanAuditResult());
+  // Reset mocks to clean state
+  fsMock.resetMock();
+  cpMock.resetMock();
 
-  // Mock the filesystem functions to indicate the allowlist file doesn't exist
-  jest.spyOn(fs, 'existsSync').mockReturnValue(false);
+  // Configure child_process mock to return clean audit result
+  cpMock.mockState.defaultNpmAuditOutput = createCleanAuditResult();
+
+  // Clear the default filesystem to ensure no allowlist file exists
+  fsMock.mockState.fileSystem = { files: {} };
 }
 
 function setupMalformedAllowlist(): void {
-  // Mock the execSync function to return a clean audit result
-  jest.spyOn(childProcess, 'execSync').mockReturnValue(createCleanAuditResult());
+  // Reset mocks to clean state
+  fsMock.resetMock();
+  cpMock.resetMock();
 
-  // Mock the filesystem functions to return a malformed allowlist
-  jest.spyOn(fs, 'existsSync').mockReturnValue(true);
-  jest.spyOn(fs, 'readFileSync').mockReturnValue('{malformed json');
+  // Configure child_process mock to return clean audit result
+  cpMock.mockState.defaultNpmAuditOutput = createCleanAuditResult();
+
+  // Configure fs mock to have a malformed allowlist file
+  fsMock.addMockFile(MOCK_ALLOWLIST_PATH, '{malformed json');
 }
 
 describe('Audit Filter CLI Integration', () => {
-  // Reset all mocks before each test to ensure isolation
+  // Reset custom mock state before each test, but don't reset Jest mocks
   beforeEach(() => {
-    jest.resetAllMocks();
+    fsMock.resetMock();
+    cpMock.resetMock();
   });
 
   test('should handle a clean audit with no vulnerabilities', () => {
@@ -156,9 +164,9 @@ describe('Audit Filter CLI Integration', () => {
     expect(result.isSuccessful).toBe(true);
 
     // Verify mocks were called correctly
-    expect(fs.existsSync).toHaveBeenCalledWith(MOCK_ALLOWLIST_PATH);
-    expect(fs.readFileSync).toHaveBeenCalledWith(MOCK_ALLOWLIST_PATH, 'utf-8');
-    expect(childProcess.execSync).toHaveBeenCalledWith('npm audit --json', expect.anything());
+    expect(fsMock.mockState.lastExistsFilePath).toBe(MOCK_ALLOWLIST_PATH);
+    expect(fsMock.mockState.lastReadFilePath).toBe(MOCK_ALLOWLIST_PATH);
+    expect(cpMock.mockState.lastCommand).toBe('npm audit --json');
   });
 
   test('should handle vulnerabilities with matching allowlist entries', () => {
@@ -207,9 +215,9 @@ describe('Audit Filter CLI Integration', () => {
     expect(result.expiredAllowlistEntries).toHaveLength(0);
     expect(result.isSuccessful).toBe(true);
 
-    // Verify existsSync was called but readFileSync was not
-    expect(fs.existsSync).toHaveBeenCalledWith(MOCK_ALLOWLIST_PATH);
-    expect(fs.readFileSync).not.toHaveBeenCalled();
+    // Verify existsSync was called but readFileSync was not (file doesn't exist)
+    expect(fsMock.mockState.lastExistsFilePath).toBe(MOCK_ALLOWLIST_PATH);
+    expect(fsMock.mockState.lastReadFilePath).toBe(''); // Empty because no file was read
   });
 
   test('should handle malformed allowlist JSON', () => {
@@ -227,6 +235,6 @@ describe('Audit Filter CLI Integration', () => {
     // Expect an error when analyzing with malformed JSON
     expect(() => {
       analyzeAuditReport(__auditOutput, allowlistContent, currentDate);
-    }).toThrow('Failed to parse allowlist as JSON');
+    }).toThrow('Failed to parse allowlist file as JSON');
   });
 });

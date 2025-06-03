@@ -134,7 +134,7 @@ describe('npm audit output parsing', () => {
     });
 
     expect(() => parseNpmAuditJson(missingAdvisories)).toThrow(
-      'missing or invalid advisories field'
+      'The provided npm audit JSON does not match any supported format'
     );
   });
 
@@ -143,7 +143,9 @@ describe('npm audit output parsing', () => {
       advisories: {},
     });
 
-    expect(() => parseNpmAuditJson(missingMetadata)).toThrow('missing or invalid metadata field');
+    expect(() => parseNpmAuditJson(missingMetadata)).toThrow(
+      'The provided npm audit JSON does not match any supported format'
+    );
   });
 
   test('should throw error for missing vulnerabilities field', () => {
@@ -153,7 +155,7 @@ describe('npm audit output parsing', () => {
     });
 
     expect(() => parseNpmAuditJson(missingVulnerabilities)).toThrow(
-      'missing or invalid metadata.vulnerabilities field'
+      'The provided npm audit JSON does not match any supported format'
     );
   });
 
@@ -174,7 +176,7 @@ describe('npm audit output parsing', () => {
     });
 
     expect(() => parseNpmAuditJson(invalidAdvisories)).toThrow(
-      'missing or invalid advisories field'
+      'The provided npm audit JSON does not match any supported format'
     );
   });
 });
@@ -202,7 +204,7 @@ describe('npm audit output analysis', () => {
 
     // Verify the allowed vulnerability is the one in the allowlist
     if (result.allowedVulnerabilities.length > 0) {
-      expect(result.allowedVulnerabilities[0].id).toBe(1234);
+      expect(result.allowedVulnerabilities[0].id).toBe('1234');
       expect(result.allowedVulnerabilities[0].package).toBe('vulnerable-package-1');
       expect(result.allowedVulnerabilities[0].allowlistStatus).toBe('allowed');
     } else {
@@ -211,7 +213,7 @@ describe('npm audit output analysis', () => {
 
     // Verify the new vulnerability is the one not in the allowlist
     if (result.vulnerabilities.length > 0) {
-      expect(result.vulnerabilities[0].id).toBe(5678);
+      expect(result.vulnerabilities[0].id).toBe('5678');
       expect(result.vulnerabilities[0].package).toBe('vulnerable-package-2');
       expect(result.vulnerabilities[0].allowlistStatus).toBe('new');
     } else {
@@ -231,7 +233,7 @@ describe('npm audit output analysis', () => {
 
     // Verify the allowed vulnerability details
     if (result.allowedVulnerabilities.length > 0) {
-      expect(result.allowedVulnerabilities[0].id).toBe(9012);
+      expect(result.allowedVulnerabilities[0].id).toBe('9012');
       expect(result.allowedVulnerabilities[0].package).toBe('vulnerable-package-3');
       expect(result.allowedVulnerabilities[0].severity).toBe('critical');
       expect(result.allowedVulnerabilities[0].allowlistStatus).toBe('allowed');

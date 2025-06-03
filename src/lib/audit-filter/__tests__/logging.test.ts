@@ -46,7 +46,7 @@ describe('Logging Output Tests', () => {
         isSuccessful: true,
       };
 
-      displayResults(result);
+      displayResults(result, true);
 
       // Verify console.log was called with success message
       expect(consoleLogSpy).toHaveBeenCalledWith('✅ Security scan passed!');
@@ -72,7 +72,7 @@ describe('Logging Output Tests', () => {
         isSuccessful: false,
       };
 
-      displayResults(result);
+      displayResults(result, true);
 
       // Verify console.error was called with failure message
       expect(consoleErrorSpy).toHaveBeenCalledWith('❌ Security scan failed!');
@@ -98,7 +98,7 @@ describe('Logging Output Tests', () => {
         isSuccessful: false,
       };
 
-      displayResults(result);
+      displayResults(result, true);
 
       // Verify vulnerability details are logged
       expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -132,7 +132,7 @@ describe('Logging Output Tests', () => {
         isSuccessful: true,
       };
 
-      displayResults(result);
+      displayResults(result, true);
 
       // Verify allowed vulnerability details are logged
       expect(consoleLogSpy).toHaveBeenCalledWith(
@@ -165,7 +165,7 @@ describe('Logging Output Tests', () => {
         isSuccessful: false,
       };
 
-      displayResults(result);
+      displayResults(result, true);
 
       // Verify expired allowlist entries are logged
       expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -202,7 +202,7 @@ describe('Logging Output Tests', () => {
         isSuccessful: true,
       };
 
-      displayResults(result);
+      displayResults(result, true);
 
       // Verify expiring soon warnings are logged
       expect(consoleLogSpy).toHaveBeenCalledWith(
@@ -227,7 +227,7 @@ describe('Logging Output Tests', () => {
       const results = analyzeAuditReport(cleanAudit, emptyAllowlist, CURRENT_DATE);
 
       // Display the results
-      displayResults(results);
+      displayResults(results, true);
 
       // Verify success message is logged
       expect(consoleLogSpy).toHaveBeenCalledWith('✅ Security scan passed!');
@@ -243,7 +243,7 @@ describe('Logging Output Tests', () => {
       const results = analyzeAuditReport(highVulnAudit, emptyAllowlist, CURRENT_DATE);
 
       // Display the results
-      displayResults(results);
+      displayResults(results, true);
 
       // Verify error message is logged
       expect(consoleErrorSpy).toHaveBeenCalledWith('❌ Security scan failed!');
@@ -276,7 +276,7 @@ describe('Logging Output Tests', () => {
       const results = analyzeAuditReport(highVulnAudit, validAllowlist, CURRENT_DATE);
 
       // Display the results
-      displayResults(results);
+      displayResults(results, true);
 
       // Verify allowed vulnerabilities are logged
       expect(consoleLogSpy).toHaveBeenCalledWith('✅ Security scan passed!');
@@ -298,7 +298,7 @@ describe('Logging Output Tests', () => {
       const results = analyzeAuditReport(highVulnAudit, emptyAllowlist, CURRENT_DATE);
 
       // Display the results
-      displayResults(results);
+      displayResults(results, true);
 
       // Verify only minimal identifiers are logged (no detailed vulnerability information)
       expect(consoleErrorSpy).toHaveBeenCalledWith(
