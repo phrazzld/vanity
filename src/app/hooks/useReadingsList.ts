@@ -7,18 +7,18 @@
  * built on top of the generic useListState hook.
  */
 
-import { useListState } from './useListState';
+import { useListState, type FetchParams } from './useListState';
 import type { Reading } from '@/types';
 
 // Define the filter type specific to readings
-export interface ReadingsFilter {
+export interface ReadingsFilter extends Record<string, unknown> {
   status?: 'read' | 'dropped' | 'all';
 }
 
 /**
  * Fetches readings with the provided parameters
  */
-async function fetchReadings(params: any) {
+async function fetchReadings(params: FetchParams<ReadingsFilter>) {
   // Construct URL with query parameters
   const queryParams = new URLSearchParams();
 

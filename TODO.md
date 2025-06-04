@@ -525,7 +525,7 @@
     3. Storybook webpack compilation includes test files without errors
   - **Depends-on:** none
 
-- [ ] **T055 · Bugfix · P0: Fix useListState hook implicit any types**
+- [x] **T055 · Bugfix · P0: Fix useListState hook implicit any types**
 
   - **Action:**
     1. Add explicit type parameters to `useListState` function in `src/app/hooks/useListState.ts`
