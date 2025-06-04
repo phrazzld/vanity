@@ -385,3 +385,153 @@
     2. Recommendation documented with pros/cons
     3. Implementation plan created if changes are recommended
   - **Depends-on:** [T040]
+
+## Critical Security Infrastructure Fixes
+
+- [x] **T042 · Bugfix · P0: Fix package.json to use correct security audit script**
+
+  - **Action:**
+    1. Change `build:audit-filter` script to compile `scripts/audit-filter-new.ts` instead of old version
+    2. Update `security:scan` script to execute `dist/scripts/audit-filter-new.js`
+  - **Done-when:**
+    1. package.json compiles the new robust audit script
+    2. security:scan command uses the correct compiled script
+    3. npm run security:scan executes without errors
+  - **Depends-on:** none
+
+- [x] **T043 · Bugfix · P0: Update CI workflow to use correct audit script**
+
+  - **Action:**
+    1. Modify `.github/workflows/ci.yml` line 176 to call `dist/scripts/audit-filter-new.js`
+    2. Ensure CI security step uses the robust audit implementation
+  - **Done-when:**
+    1. CI workflow executes the correct audit script
+    2. Security scanning step in CI uses new robust logic
+  - **Depends-on:** [T042]
+
+- [x] **T044 · Bugfix · P0: Update pre-push hook to use correct audit script**
+
+  - **Action:**
+    1. Modify `.husky/pre-push-security` line 21 to call `dist/scripts/audit-filter-new.js`
+    2. Ensure pre-push security validation uses robust implementation
+  - **Done-when:**
+    1. Pre-push hook executes the correct audit script
+    2. Local security validation matches CI behavior
+  - **Depends-on:** [T042]
+
+- [x] **T045 · Cleanup · P0: Remove obsolete audit script to prevent confusion**
+
+  - **Action:**
+    1. Delete `scripts/audit-filter.ts` (old buggy version)
+    2. Rename `scripts/audit-filter-new.ts` to `scripts/audit-filter.ts`
+    3. Update build script to use the renamed file
+  - **Done-when:**
+    1. Only one audit script exists in codebase
+    2. No references to obsolete script remain
+    3. Security pipeline still functions correctly
+  - **Depends-on:** [T042, T043, T044]
+
+- [x] **T046 · Test · P0: Validate security pipeline detects vulnerabilities correctly**
+
+  - **Action:**
+    1. Test security scan correctly rejects missing expiration dates
+    2. Verify invalid date formats are flagged as expired
+    3. Confirm both CI and pre-push hooks block security violations
+    4. Test with known vulnerability scenarios
+  - **Done-when:**
+    1. Security pipeline blocks missing/invalid expiration dates
+    2. CI fails appropriately on security violations
+    3. Pre-push hook prevents pushing vulnerable code
+    4. Test scenarios documented with results
+  - **Depends-on:** [T045]
+
+## CI/CD Quality Gate Restoration
+
+- [x] **T047 · Bugfix · P1: Fix pre-push hook to scan pushed files not staged files**
+
+  - **Action:**
+    1. Change `FILES_TO_CHECK` in `.husky/pre-push-security` from `git diff --name-only --staged`
+    2. Use `git diff --name-only $(git merge-base @{u} HEAD)..HEAD` to get files being pushed
+    3. Test hook scans correct file set during push operations
+  - **Done-when:**
+    1. Pre-push hook scans files actually being pushed
+    2. Secret detection covers committed files in push
+    3. Hook behavior verified with test push scenarios
+  - **Depends-on:** none
+
+- [x] **T048 · Feature · P1: Restore strict TypeScript checking in CI pipeline**
+
+  - **Action:**
+    1. Add dedicated CI step to run `npm run build:verify` (strict type checking)
+    2. Place step before Testing stage to catch type errors early
+    3. Ensure CI fails on unused variables, implicit returns, unsafe indexed access
+  - **Done-when:**
+    1. CI pipeline runs strict TypeScript checking with tsconfig.typecheck.json
+    2. Build fails on code quality violations caught by strict config
+    3. Type checking step positioned appropriately in CI workflow
+  - **Depends-on:** none
+
+## Type System Consistency Fixes
+
+- [x] **T049 · Bugfix · P2: Align AllowlistEntry.expires type with schema requirements**
+
+  - **Action:**
+    1. Change `expires?: string;` to `expires: string;` in `src/lib/audit-filter/types.ts`
+    2. Fix any TypeScript errors that arise from making field mandatory
+    3. Ensure type definition matches JSON schema validation
+  - **Done-when:**
+    1. TypeScript type requires expires field (no optional ?)
+    2. Type definition consistent with allowlist.schema.ts
+    3. No TypeScript compilation errors from the change
+  - **Depends-on:** none
+
+- [x] **T050 · Chore · P2: Actually remove skipLibCheck from tsconfig.json**
+
+  - **Action:**
+    1. Remove `"skipLibCheck": true` from root tsconfig.json compilerOptions
+    2. Fix any type errors that emerge from library type checking
+    3. Update T019 status if still marked as completed incorrectly
+  - **Done-when:**
+    1. skipLibCheck flag completely removed from tsconfig.json
+    2. Build passes with library type checking enabled
+    3. Any library type issues properly addressed
+  - **Depends-on:** none
+
+- [x] **T051 · Investigation · P2: Validate moduleResolution change in tsconfig.json**
+
+  - **Action:**
+    1. Test application build and runtime with moduleResolution: "node"
+    2. Verify no module resolution issues with Next.js bundling
+    3. Consider if "bundler" or "nodenext" would be more appropriate
+    4. Document decision and rationale
+  - **Done-when:**
+    1. Application builds and runs correctly with current setting
+    2. Module resolution compatibility confirmed with Next.js
+    3. Decision documented with technical justification
+  - **Depends-on:** none
+
+## Technical Debt Security Cleanup
+
+- [x] **T052 · Security · P3: Remove eval() usage in migration scripts**
+
+  - **Action:**
+    1. Replace eval() in `scripts/importData.js` lines 35-36 with safer parsing
+    2. Use JSON.parse or regex-based parsing like in migrate-data.js
+    3. Test migration scripts work without eval() security risk
+  - **Done-when:**
+    1. No eval() calls remain in migration scripts
+    2. Data migration functionality preserved
+    3. Security vulnerability eliminated
+  - **Depends-on:** none
+
+- [x] **T053 · Cleanup · P3: Remove redundant npm scripts**
+
+  - **Action:**
+    1. Evaluate if `build:verify` and `typecheck` scripts are truly redundant
+    2. Remove or consolidate scripts that perform identical functions
+    3. Update any references to removed scripts
+  - **Done-when:**
+    1. No duplicate functionality in npm scripts
+    2. All script references updated correctly
+    3. Script purposes clearly differentiated
+  - **Depends-on:** none
