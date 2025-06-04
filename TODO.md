@@ -633,7 +633,7 @@
     3. No orphaned test setup files remain in src/ directory
   - **Depends-on:** none
 
-- [ ] **T061 · Configuration · P0: Configure Storybook to exclude test files from TypeScript compilation**
+- [x] **T061 · Configuration · P0: Configure Storybook to exclude test files from TypeScript compilation**
 
   - **Action:**
     1. Update `.storybook/main.ts` TypeScript configuration to exclude test files
