@@ -10,7 +10,6 @@ import { normalizeAuditData } from '../npmAudit.normalizers';
 import { logger } from '../../logger';
 import { v6Inputs, expectedCanonical } from '../fixtures/test-data/normalizerTestData';
 import { normalizeV6Data, normalizeV7PlusData } from '../npmAudit.normalizers';
-import type { CanonicalNpmAuditReport } from '../types';
 
 // Mock nanoid for consistent correlation IDs
 jest.mock('nanoid', () => ({
@@ -60,7 +59,8 @@ describe('normalizeV6Data', () => {
     };
 
     const result = normalizeV6Data(_minimalV6Input);
-    expect(result.vulnerabilities[0].vulnerableVersions).toBe('*'); // Default value
+    expect(result.vulnerabilities).toHaveLength(1);
+    expect(result.vulnerabilities[0]!.vulnerableVersions).toBe('*'); // Default value
   });
 
   test('should convert numeric IDs to strings consistently', () => {
@@ -88,7 +88,8 @@ describe('normalizeV6Data', () => {
     };
 
     const result = normalizeV6Data(_numericIdV6Input);
-    expect(result.vulnerabilities[0].id).toBe('999'); // Should be string
+    expect(result.vulnerabilities).toHaveLength(1);
+    expect(result.vulnerabilities[0]!.id).toBe('999'); // Should be string
   });
 });
 
@@ -338,8 +339,8 @@ describe('Normalizer Error Handling', () => {
     expect(result).toBeDefined();
     expect(result.vulnerabilities).toHaveLength(1);
     // Check that null/undefined values are handled
-    expect(result.vulnerabilities[0].id).toBe('null');
-    expect(result.vulnerabilities[0].package).toBeUndefined();
+    expect(result.vulnerabilities[0]!.id).toBe('null');
+    expect(result.vulnerabilities[0]!.package).toBeUndefined();
   });
 
   test('should log warnings for unexpected data patterns', () => {

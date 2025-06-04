@@ -233,10 +233,10 @@ describe('npm audit output analysis', () => {
 
     // Verify the allowed vulnerability details
     if (result.allowedVulnerabilities.length > 0) {
-      expect(result.allowedVulnerabilities[0].id).toBe('9012');
-      expect(result.allowedVulnerabilities[0].package).toBe('vulnerable-package-3');
-      expect(result.allowedVulnerabilities[0].severity).toBe('critical');
-      expect(result.allowedVulnerabilities[0].allowlistStatus).toBe('allowed');
+      expect(result.allowedVulnerabilities[0]!.id).toBe('9012');
+      expect(result.allowedVulnerabilities[0]!.package).toBe('vulnerable-package-3');
+      expect(result.allowedVulnerabilities[0]!.severity).toBe('critical');
+      expect(result.allowedVulnerabilities[0]!.allowlistStatus).toBe('allowed');
     } else {
       fail('Expected allowedVulnerabilities to have at least one entry');
     }
