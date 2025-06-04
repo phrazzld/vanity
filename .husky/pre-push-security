@@ -57,8 +57,8 @@ FILES_TO_CHECK=$(git diff --name-only $(git merge-base @{u} HEAD)..HEAD)
 
 # Check the files
 for FILE in $FILES_TO_CHECK; do
-  # Skip binary files and non-existent files
-  if [ ! -f "$FILE" ] || [ -z "$(file -b --mime-type "$FILE" | grep -E 'text/')" ]; then
+  # Skip binary files, non-existent files, and this security script itself
+  if [ ! -f "$FILE" ] || [ -z "$(file -b --mime-type "$FILE" | grep -E 'text/')" ] || [ "$FILE" = ".husky/pre-push-security" ]; then
     continue
   fi
   
