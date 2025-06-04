@@ -23,7 +23,6 @@ const _auditFilterConfig = {
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
     '<rootDir>/src/lib/audit-filter/jest.setup.js',
-    '<rootDir>/src/lib/audit-filter/setup.ts',
     '<rootDir>/src/lib/audit-filter/jest.config.js',
     '<rootDir>/src/lib/audit-filter/__tests__/.eslintrc.js',
     '<rootDir>/src/lib/audit-filter/__tests__/tsconfig.json',

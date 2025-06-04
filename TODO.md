@@ -510,6 +510,88 @@
     3. Decision documented with technical justification
   - **Depends-on:** none
 
+## Critical CI Pipeline Fixes (PR #23)
+
+- [x] **T054 · Bugfix · P0: Fix test file null safety violations in Storybook build**
+
+  - **Action:**
+    1. Locate test file causing TS2532 errors (likely `src/lib/audit-filter/__tests__/core.enhanced.test.ts` lines 341-342)
+    2. Add proper null checks: `expect(result.vulnerabilities).toHaveLength(1)` before array access
+    3. Use optional chaining: `result.vulnerabilities[0]?.id` and `result.vulnerabilities[0]?.package`
+    4. Verify test still validates intended behavior with safety checks
+  - **Done-when:**
+    1. No TS2532 "Object is possibly 'undefined'" errors in any test files
+    2. Test assertions maintain their validation purpose
+    3. Storybook webpack compilation includes test files without errors
+  - **Depends-on:** none
+
+- [ ] **T055 · Bugfix · P0: Fix useListState hook implicit any types**
+
+  - **Action:**
+    1. Add explicit type parameters to `useListState` function in `src/app/hooks/useListState.ts`
+    2. Replace any implicit `any` types on lines 25 and 36 with proper generic constraints
+    3. Ensure all function parameters have explicit type annotations
+    4. Add return type annotation for the hook
+  - **Done-when:**
+    1. No TS7006 "Parameter implicitly has 'any' type" errors in useListState.ts
+    2. Hook maintains full type safety and inference
+    3. TypeScript strict mode compilation passes
+  - **Depends-on:** none
+
+- [ ] **T056 · Cleanup · P0: Remove unused variables in scripts to fix build warnings**
+
+  - **Action:**
+    1. Fix `scripts/validate-security-pipeline.js:58` - remove or use 'error' variable
+    2. Fix `scripts/migrate-all-data.js:96` - prefix unused catch parameter with underscore: `catch (_e)`
+    3. Fix `scripts/migrate-all-data.js:13` - remove 'findAllIndices' if truly unused
+    4. Fix `scripts/full-data-migration.js:120` - prefix with underscore: `catch (_e)`
+    5. Fix `scripts/csv-output.js:29` - remove 'endMarker' if unused or add underscore prefix
+    6. Fix `.lintstagedrc.js:14` - prefix with underscore: `catch (_e)`
+  - **Done-when:**
+    1. No ESLint unused variable warnings in any script files
+    2. Webpack compilation completes without warnings
+    3. All catch parameters follow naming convention for intentionally unused variables
+  - **Depends-on:** none
+
+- [ ] **T057 · Investigation · P1: Verify Storybook TypeScript configuration consistency**
+
+  - **Action:**
+    1. Check `.storybook/main.ts` TypeScript configuration settings
+    2. Compare with root `tsconfig.json` strictness settings
+    3. Ensure Storybook file inclusion patterns exclude test files from compilation
+    4. Verify Storybook webpack config matches main build TypeScript behavior
+  - **Done-when:**
+    1. Storybook and main build use consistent TypeScript checking rules
+    2. Test files are appropriately excluded from Storybook build if needed
+    3. TypeScript behavior is predictable across all build tools
+  - **Depends-on:** [T054, T055, T056]
+
+- [ ] **T058 · Test · P1: Verify CI pipeline restoration with local testing**
+
+  - **Action:**
+    1. Run `npm run build-storybook` locally to verify fixes resolve build failure
+    2. Test full CI pipeline steps locally: lint, typecheck, test, build, build-storybook
+    3. Verify Vercel deployment succeeds after Storybook build fix
+    4. Confirm all pre-push hooks pass with fixed code
+  - **Done-when:**
+    1. All build steps pass locally without errors or warnings
+    2. Storybook builds successfully and serves without issues
+    3. CI pipeline requirements satisfied locally before pushing
+  - **Depends-on:** [T054, T055, T056]
+
+- [ ] **T059 · Prevention · P2: Add Storybook build verification to pre-commit hooks**
+
+  - **Action:**
+    1. Update `.lintstagedrc.js` or pre-commit configuration to include Storybook build check
+    2. Ensure Storybook TypeScript errors are caught before commit
+    3. Add fast feedback for Storybook-specific compilation issues
+    4. Document Storybook build requirements in development guidelines
+  - **Done-when:**
+    1. Pre-commit hooks prevent commits that would break Storybook build
+    2. Developers get immediate feedback on Storybook TypeScript issues
+    3. CI pipeline failures from Storybook builds are prevented proactively
+  - **Depends-on:** [T057, T058]
+
 ## Technical Debt Security Cleanup
 
 - [x] **T052 · Security · P3: Remove eval() usage in migration scripts**
@@ -535,3 +617,57 @@
     2. All script references updated correctly
     3. Script purposes clearly differentiated
   - **Depends-on:** none
+
+## Critical Build Infrastructure Fixes
+
+- [x] **T060 · Bugfix · P0: Remove orphaned test setup file causing Vercel build failure**
+
+  - **Action:**
+    1. Remove `src/lib/audit-filter/setup.ts` file that imports test mocks in production build
+    2. Verify Jest configuration correctly uses `jest.setup.js` instead
+    3. Confirm no other references to the setup.ts file exist
+    4. Test that Vercel build succeeds without the problematic import
+  - **Done-when:**
+    1. Vercel build passes without "Cannot find module '**mocks**/setupMocks'" error
+    2. Jest tests continue to run successfully with existing jest.setup.js
+    3. No orphaned test setup files remain in src/ directory
+  - **Depends-on:** none
+
+- [ ] **T061 · Configuration · P0: Configure Storybook to exclude test files from TypeScript compilation**
+
+  - **Action:**
+    1. Update `.storybook/main.ts` TypeScript configuration to exclude test files
+    2. Add include/exclude patterns to prevent test file compilation in Storybook
+    3. Verify Storybook build ignores **tests** directories and _.test._ files
+    4. Test that Storybook build succeeds without TS2532 errors from test files
+  - **Done-when:**
+    1. Storybook build passes without TypeScript errors from test files
+    2. Stories compilation works correctly for actual component files
+    3. Test files are properly excluded from Storybook TypeScript checking
+  - **Depends-on:** none
+
+- [ ] **T062 · Bugfix · P1: Fix remaining test files with TS2532 null safety violations**
+
+  - **Action:**
+    1. Systematically review all test files for TS2532 "Object is possibly undefined" errors
+    2. Add non-null assertions (!) or proper null checks to array/object access
+    3. Focus on files in audit-filter, components, hooks, and app directories
+    4. Ensure test logic remains valid after safety fixes
+  - **Done-when:**
+    1. All test files compile without TS2532 errors in strict TypeScript mode
+    2. Test assertions maintain their validation purpose
+    3. No "Object is possibly undefined" errors remain in any test file
+  - **Depends-on:** [T061]
+
+- [ ] **T063 · Prevention · P0: Add build verification to pre-push hook to catch CI failures locally**
+
+  - **Action:**
+    1. Create new pre-push hook that runs build verification before security scan
+    2. Add `npm run build` and `npm run build-storybook` to pre-push checks
+    3. Ensure hook fails fast on build errors with clear error messages
+    4. Add option to skip build checks with environment variable if needed
+  - **Done-when:**
+    1. Pre-push hook catches Vercel and Storybook build failures locally
+    2. Developers get immediate feedback on build issues before CI
+    3. Build verification runs efficiently without significantly slowing push process
+  - **Depends-on:** [T060, T061]
