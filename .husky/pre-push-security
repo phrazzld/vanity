@@ -53,7 +53,7 @@ SECRET_PATTERNS=(
 )
 
 # Get changed files
-FILES_TO_CHECK=$(git diff --name-only --staged)
+FILES_TO_CHECK=$(git diff --name-only $(git merge-base @{u} HEAD)..HEAD)
 
 # Check the files
 for FILE in $FILES_TO_CHECK; do

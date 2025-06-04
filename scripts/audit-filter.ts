@@ -1,9 +1,14 @@
 #!/usr/bin/env node
 /**
- * Security vulnerability allowlist filter script
+ * Security vulnerability allowlist filter script - CLI wrapper
  *
- * This script runs npm audit --json, filters the results against an allowlist,
- * and exits with an error code only for non-allowlisted high/critical vulnerabilities.
+ * This script is a wrapper around the core audit-filter logic that handles:
+ * - Reading the allowlist file from the filesystem
+ * - Executing npm audit --json
+ * - Reporting results via console logging
+ * - Setting the appropriate exit code
+ *
+ * The core logic has been extracted to src/lib/audit-filter/core.ts for testability.
  */
 
 import { execSync } from 'child_process';
@@ -11,91 +16,52 @@ import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import process from 'process';
 
+import { analyzeAuditReport } from '../src/lib/audit-filter/core';
+import type { VulnerabilityInfo } from '../src/lib/audit-filter/types';
+
 // Path to the allowlist file
 const ALLOWLIST_PATH = join(process.cwd(), '.audit-allowlist.json');
 
-// TypeScript interfaces
-interface AllowlistEntry {
-  id: string;
-  package: string;
-  reason: string;
-  notes?: string;
-  expires?: string;
-  reviewedOn?: string;
-}
-
-interface Advisory {
-  id: number | string;
-  module_name: string;
-  severity: 'low' | 'moderate' | 'high' | 'critical';
-  title: string;
-  url: string;
-  vulnerable_versions: string;
-}
-
-interface NpmAuditResult {
-  advisories: { [key: string]: Advisory };
-  metadata: {
-    vulnerabilities: {
-      info: number;
-      low: number;
-      moderate: number;
-      high: number;
-      critical: number;
-      total: number;
-    };
-  };
-}
-
-interface VulnerabilityInfo {
-  id: string | number;
-  package: string;
-  severity: string;
-  title: string;
-  url: string;
-  allowlistStatus: 'new' | 'expired' | 'allowed';
-  reason?: string;
-  expiresOn?: string;
-}
-
 /**
- * Loads and parses the allowlist file
+ * Reads the allowlist file from the filesystem
+ *
+ * @param allowlistPath Path to the allowlist file
+ * @returns Content of the allowlist file as a string, or null if not found
  */
-function loadAllowlist(): AllowlistEntry[] {
+function readAllowlistFile(allowlistPath: string): string | null {
   try {
-    if (!existsSync(ALLOWLIST_PATH)) {
+    if (!existsSync(allowlistPath)) {
       console.log(
         'Allowlist file not found. All high/critical vulnerabilities will fail the audit.'
       );
-      return [];
+      return null;
     }
 
-    const allowlistContent = readFileSync(ALLOWLIST_PATH, 'utf-8');
-    return JSON.parse(allowlistContent) as AllowlistEntry[];
+    return readFileSync(allowlistPath, 'utf-8');
   } catch (error) {
     console.error('Error loading allowlist:', (error as Error).message);
-    return [];
+    process.exit(1);
   }
 }
 
 /**
- * Executes npm audit --json and returns the parsed results
+ * Executes npm audit --json and returns the output
+ *
+ * @returns The JSON output from npm audit
  */
-function runNpmAudit(): NpmAuditResult {
+function executeNpmAudit(): string {
   try {
-    const auditOutput = execSync('npm audit --json', {
+    return execSync('npm audit --json', {
       encoding: 'utf-8',
       stdio: ['pipe', 'pipe', 'pipe'],
     });
-
-    return JSON.parse(auditOutput) as NpmAuditResult;
   } catch (error) {
     // npm audit exits with non-zero code when it finds vulnerabilities
     // We need to parse the output and make our own decision
     if (error && typeof error === 'object' && 'stdout' in error) {
       try {
         const stdout = (error as { stdout: string }).stdout;
-        return JSON.parse(stdout) as NpmAuditResult;
+        return stdout;
       } catch (parseError) {
         console.error('Error parsing npm audit output:', (parseError as Error).message);
         process.exit(1);
@@ -108,133 +74,26 @@ function runNpmAudit(): NpmAuditResult {
 }
 
 /**
- * Checks if an allowlist entry has expired
+ * Logs the results of the analysis
+ *
+ * @param analysisResult The analysis result to log
  */
-function isAllowlistEntryExpired(entry: AllowlistEntry): boolean {
-  if (!entry.expires) return false;
+function logResults(analysisResult: {
+  vulnerabilities: VulnerabilityInfo[];
+  allowedVulnerabilities: VulnerabilityInfo[];
+  expiredAllowlistEntries: VulnerabilityInfo[];
+  expiringEntries: VulnerabilityInfo[];
+  isSuccessful: boolean;
+}): void {
+  const {
+    vulnerabilities,
+    allowedVulnerabilities,
+    expiredAllowlistEntries,
+    expiringEntries,
+    isSuccessful,
+  } = analysisResult;
 
-  const expirationDate = new Date(entry.expires);
-  const today = new Date();
-
-  return expirationDate < today;
-}
-
-/**
- * Checks if an allowlist entry will expire soon (within the next 30 days)
- */
-function willExpireSoon(entry: AllowlistEntry): boolean {
-  if (!entry.expires) return false;
-
-  const expirationDate = new Date(entry.expires);
-  const today = new Date();
-  const thirtyDaysFromNow = new Date();
-  thirtyDaysFromNow.setDate(today.getDate() + 30);
-
-  return expirationDate > today && expirationDate <= thirtyDaysFromNow;
-}
-
-/**
- * Finds a matching allowlist entry for a vulnerability
- */
-function findAllowlistEntry(
-  advisory: Advisory,
-  allowlist: AllowlistEntry[]
-): AllowlistEntry | undefined {
-  return allowlist.find(
-    entry => entry.id === advisory.id.toString() && entry.package === advisory.module_name
-  );
-}
-
-/**
- * Main function that runs the audit and filters results
- */
-function main() {
-  console.log('🔒 Running npm audit with allowlist filtering...');
-
-  // Load the allowlist
-  const allowlist = loadAllowlist();
-
-  // Run npm audit
-  const auditResult = runNpmAudit();
-
-  // Process vulnerabilities
-  const vulnerabilities: VulnerabilityInfo[] = [];
-  const allowedVulnerabilities: VulnerabilityInfo[] = [];
-  const expiredAllowlistEntries: VulnerabilityInfo[] = [];
-
-  // Track if any allowlist entries are expiring soon
-  const expiringEntries: VulnerabilityInfo[] = [];
-
-  // Process each advisory
-  for (const advisoryId in auditResult.advisories) {
-    const advisory = auditResult.advisories[advisoryId];
-
-    // Skip if advisory is undefined or doesn't have a severity property
-    if (!advisory || typeof advisory !== 'object') {
-      continue;
-    }
-
-    // We only care about high and critical vulnerabilities
-    if (advisory.severity !== 'high' && advisory.severity !== 'critical') {
-      continue;
-    }
-
-    // Find matching allowlist entry
-    const allowlistEntry = findAllowlistEntry(advisory, allowlist);
-
-    if (!allowlistEntry) {
-      // New vulnerability not in allowlist
-      vulnerabilities.push({
-        id: advisory.id,
-        package: advisory.module_name,
-        severity: advisory.severity,
-        title: advisory.title,
-        url: advisory.url,
-        allowlistStatus: 'new',
-      });
-    } else if (isAllowlistEntryExpired(allowlistEntry)) {
-      // Expired allowlist entry
-      expiredAllowlistEntries.push({
-        id: advisory.id,
-        package: advisory.module_name,
-        severity: advisory.severity,
-        title: advisory.title,
-        url: advisory.url,
-        allowlistStatus: 'expired',
-        reason: allowlistEntry.reason,
-        expiresOn: allowlistEntry.expires,
-      });
-    } else {
-      // Allowed vulnerability
-      allowedVulnerabilities.push({
-        id: advisory.id,
-        package: advisory.module_name,
-        severity: advisory.severity,
-        title: advisory.title,
-        url: advisory.url,
-        allowlistStatus: 'allowed',
-        reason: allowlistEntry.reason,
-        expiresOn: allowlistEntry.expires,
-      });
-
-      // Check if it will expire soon
-      if (willExpireSoon(allowlistEntry)) {
-        expiringEntries.push({
-          id: advisory.id,
-          package: advisory.module_name,
-          severity: advisory.severity,
-          title: advisory.title,
-          url: advisory.url,
-          allowlistStatus: 'allowed',
-          reason: allowlistEntry.reason,
-          expiresOn: allowlistEntry.expires,
-        });
-      }
-    }
-  }
-
-  // Display results
-  if (vulnerabilities.length === 0 && expiredAllowlistEntries.length === 0) {
+  if (isSuccessful) {
     console.log('✅ Security scan passed!');
 
     // Show allowed vulnerabilities
@@ -256,8 +115,6 @@ function main() {
         console.log(`  - ${entry.package}@${entry.id} expires on ${entry.expiresOn}`);
       });
     }
-
-    process.exit(0);
   } else {
     console.error('❌ Security scan failed!');
 
@@ -285,9 +142,38 @@ function main() {
     console.error('\nTo fix this issue:');
     console.error('1. Update dependencies to resolve vulnerabilities');
     console.error('2. Or add entries to .audit-allowlist.json with proper justification');
+  }
+}
 
+/**
+ * Main execution function
+ */
+function main(): void {
+  console.log('🔒 Running npm audit with allowlist filtering...');
+
+  // Read the allowlist file
+  const allowlistContent = readAllowlistFile(ALLOWLIST_PATH);
+
+  // Execute npm audit
+  const auditOutput = executeNpmAudit();
+
+  // Get current date
+  const currentDate = new Date();
+
+  try {
+    // Analyze the audit results
+    const analysisResult = analyzeAuditReport(auditOutput, allowlistContent, currentDate);
+
+    // Log the results
+    logResults(analysisResult);
+
+    // Exit with appropriate code
+    process.exit(analysisResult.isSuccessful ? 0 : 1);
+  } catch (error) {
+    console.error('Error analyzing audit results:', (error as Error).message);
     process.exit(1);
   }
 }
 
+// Execute the script
 main();

@@ -14,7 +14,7 @@ export interface AllowlistEntry {
   package: string;
   reason: string;
   notes?: string;
-  expires?: string;
+  expires: string;
   reviewedOn?: string;
 }
 

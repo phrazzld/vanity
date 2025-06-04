@@ -1,0 +1,7 @@
+[
+  {
+    "id": "TEST-001",
+    "package": "test-package-missing-expires",
+    "reason": "Test case for missing expiration date validation"
+  }
+]
