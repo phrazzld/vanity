@@ -659,7 +659,7 @@
     3. No "Object is possibly undefined" errors remain in any test file
   - **Depends-on:** [T061]
 
-- [~] **T063 · Prevention · P0: Add build verification to pre-push hook to catch CI failures locally**
+- [x] **T063 · Prevention · P0: Add build verification to pre-push hook to catch CI failures locally**
 
   - **Action:**
     1. Create new pre-push hook that runs build verification before security scan
