@@ -579,7 +579,7 @@
     3. CI pipeline requirements satisfied locally before pushing
   - **Depends-on:** [T054, T055, T056]
 
-- [ ] **T059 · Prevention · P2: Add Storybook build verification to pre-commit hooks**
+- [x] **T059 · Prevention · P2: Add Storybook build verification to pre-commit hooks**
 
   - **Action:**
     1. Update `.lintstagedrc.js` or pre-commit configuration to include Storybook build check

@@ -433,6 +433,53 @@ npm run build-storybook
 npm run test-storybook
 ```
 
+### Storybook Build Requirements
+
+To ensure your Storybook contributions work correctly in CI and prevent build failures:
+
+#### TypeScript Requirements
+
+Storybook has its own TypeScript configuration (`.storybook/tsconfig.json`) that:
+
+- Includes story files (`*.stories.ts`, `*.stories.tsx`) and Storybook configuration
+- Excludes test files to prevent compilation issues
+- Uses strict TypeScript checking for story components
+
+#### Pre-commit Validation
+
+The pre-commit hook automatically checks Storybook TypeScript compilation when story files are modified:
+
+```bash
+# Manual check (same as pre-commit hook runs)
+npx tsc --noEmit --project .storybook/tsconfig.json
+```
+
+This check only runs when you stage story files or Storybook configuration changes, keeping commits fast.
+
+#### Build Validation
+
+The pre-push hook runs a full Storybook build verification:
+
+```bash
+# Manual full build check (same as pre-push hook runs)
+npm run build-storybook
+```
+
+#### Common TypeScript Issues in Stories
+
+1. **Component prop types**: Ensure story args match component prop interfaces
+2. **Import paths**: Use project path aliases (`@/`) consistently
+3. **Story metadata**: Provide proper `Meta` and `StoryObj` types
+
+#### Troubleshooting Storybook Builds
+
+If Storybook builds fail:
+
+1. Run the TypeScript check: `npx tsc --noEmit --project .storybook/tsconfig.json`
+2. Fix any TypeScript errors in story files
+3. Ensure story files follow the naming convention: `*.stories.{ts,tsx}`
+4. Check that component imports are correct and accessible
+
 ## Troubleshooting
 
 ### Common Issues

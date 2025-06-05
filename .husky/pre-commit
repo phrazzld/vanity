@@ -62,6 +62,32 @@ node -e "
 # Note: TypeScript checking moved to pre-push hook for faster commits
 # This improves commit speed while maintaining comprehensive validation before push
 
+# Quick Storybook TypeScript check for stories and components (only when relevant files changed)
+STORYBOOK_FILES=$(git diff --staged --name-only | grep -E '\.(stories|mdx)\.(ts|tsx|js|jsx)$|\.storybook/' || true)
+if [ -n "$STORYBOOK_FILES" ]; then
+  echo "📚 Checking Storybook TypeScript compilation..."
+  if npx tsc --noEmit --project .storybook/tsconfig.json > storybook_check.log 2>&1; then
+    echo "✅ Storybook TypeScript check passed"
+    rm storybook_check.log
+  else
+    echo "❌ Storybook TypeScript errors detected!"
+    echo ""
+    echo "Storybook-specific TypeScript errors:"
+    cat storybook_check.log | head -10
+    rm storybook_check.log
+    echo ""
+    echo "To fix these errors:"
+    echo "1. Review the TypeScript errors above"
+    echo "2. Fix story files and component interfaces"
+    echo "3. Run 'npx tsc --noEmit --project .storybook/tsconfig.json' to verify"
+    echo ""
+    echo "💡 Note: This prevents Storybook build failures in CI"
+    exit 1
+  fi
+else
+  echo "⏭️  Skipping Storybook TypeScript check (no story files changed)"
+fi
+
 # Check test coverage (warning only, not blocking)
 echo "📊 Checking test coverage..."
 if npm run test:coverage > coverage_output.log 2>&1; then
