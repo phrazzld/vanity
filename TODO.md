@@ -538,7 +538,7 @@
     3. TypeScript strict mode compilation passes
   - **Depends-on:** none
 
-- [ ] **T056 · Cleanup · P0: Remove unused variables in scripts to fix build warnings**
+- [x] **T056 · Cleanup · P0: Remove unused variables in scripts to fix build warnings**
 
   - **Action:**
     1. Fix `scripts/validate-security-pipeline.js:58` - remove or use 'error' variable
