@@ -34,7 +34,14 @@ export function normalizeV6Data(rawData: RawNpmV6Audit): CanonicalNpmAuditReport
   return {
     vulnerabilities,
     metadata: {
-      vulnerabilities: rawData.metadata.vulnerabilities,
+      vulnerabilities: {
+        info: rawData.metadata.vulnerabilities.info || 0,
+        low: rawData.metadata.vulnerabilities.low || 0,
+        moderate: rawData.metadata.vulnerabilities.moderate || 0,
+        high: rawData.metadata.vulnerabilities.high || 0,
+        critical: rawData.metadata.vulnerabilities.critical || 0,
+        total: rawData.metadata.vulnerabilities.total || 0,
+      },
     },
   };
 }
@@ -68,7 +75,14 @@ export function normalizeV7PlusData(rawData: RawNpmV7PlusAudit): CanonicalNpmAud
   return {
     vulnerabilities,
     metadata: {
-      vulnerabilities: rawData.metadata.vulnerabilities,
+      vulnerabilities: {
+        info: rawData.metadata.vulnerabilities.info || 0,
+        low: rawData.metadata.vulnerabilities.low || 0,
+        moderate: rawData.metadata.vulnerabilities.moderate || 0,
+        high: rawData.metadata.vulnerabilities.high || 0,
+        critical: rawData.metadata.vulnerabilities.critical || 0,
+        total: rawData.metadata.vulnerabilities.total || 0,
+      },
     },
   };
 }

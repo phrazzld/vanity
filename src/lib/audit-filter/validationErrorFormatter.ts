@@ -29,22 +29,22 @@ export function formatAllowlistValidationErrors(errors: ErrorObject[]): string {
 
   // Collect statistics for logging
   const errorTypes = errors.map(err => err.keyword);
-  const uniqueErrorTypes = [...new Set(errorTypes)];
+  const uniqueErrorTypes = Array.from(new Set(errorTypes));
   const errorTypeCounts: Record<string, number> = {};
   for (const type of errorTypes) {
     errorTypeCounts[type] = (errorTypeCounts[type] || 0) + 1;
   }
 
-  const affectedEntries = [
-    ...new Set(
+  const affectedEntries = Array.from(
+    new Set(
       errors
         .map(err => {
           const match = err.instancePath.match(/^\/(\d+)/);
           return match && match[1] ? parseInt(match[1], 10) : null;
         })
         .filter(index => index !== null)
-    ),
-  ];
+    )
+  );
 
   logger.debug('Processing validation errors for formatting', {
     function_name: 'formatAllowlistValidationErrors',
