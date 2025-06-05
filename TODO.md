@@ -671,3 +671,83 @@
     2. Developers get immediate feedback on build issues before CI
     3. Build verification runs efficiently without significantly slowing push process
   - **Depends-on:** [T060, T061]
+
+## Critical CI Pipeline Fixes (Security Audit Filter)
+
+- [ ] **T064 · Bugfix · P0: Investigate and diagnose security audit filter build configuration**
+
+  - **Action:**
+    1. Examine current `scripts/audit-filter.ts` file and its import dependencies
+    2. Check existing TypeScript compilation approach and identify why output file is missing
+    3. Verify import paths and module resolution in current build command
+    4. Document specific issues found in module resolution
+  - **Done-when:**
+    1. Root cause of missing compiled file is clearly identified
+    2. All import dependencies and path resolution issues are documented
+    3. Current build configuration problems are understood
+  - **Depends-on:** none
+
+- [ ] **T065 · Refactor · P0: Create proper TypeScript configuration for security scripts**
+
+  - **Action:**
+    1. Create dedicated `tsconfig.scripts.json` for security script compilation
+    2. Add proper path mapping to resolve `src/lib/audit-filter/*` imports
+    3. Configure module resolution and output settings for standalone script compilation
+    4. Test locally that TypeScript can resolve all dependencies correctly
+  - **Done-when:**
+    1. Security script compiles successfully with proper tsconfig
+    2. All import paths resolve correctly without errors
+    3. Compiled output file is generated in expected location
+  - **Depends-on:** [T064]
+
+- [ ] **T066 · Bugfix · P0: Fix security audit filter build command and add verification**
+
+  - **Action:**
+    1. Update `package.json` build:audit-filter script to use proper tsconfig
+    2. Add output directory creation step to ensure `dist/scripts/` exists
+    3. Add verification step to check compiled file exists before attempting execution
+    4. Remove `--skipLibCheck` to show actual TypeScript compilation errors
+  - **Done-when:**
+    1. Build command reliably produces the expected compiled output file
+    2. Clear error messages shown if compilation fails
+    3. Build process includes verification that output exists
+  - **Depends-on:** [T065]
+
+- [ ] **T067 · Enhancement · P0: Add CI build verification and error handling**
+
+  - **Action:**
+    1. Update CI workflow to verify compiled file exists after build step
+    2. Add proper error handling and reporting for compilation failures
+    3. Include debugging information for troubleshooting build issues
+    4. Test CI workflow changes to ensure they catch and report failures correctly
+  - **Done-when:**
+    1. CI workflow includes verification that audit-filter.js exists after compilation
+    2. Clear error messages provided when security script build fails
+    3. CI failure provides actionable debugging information
+  - **Depends-on:** [T066]
+
+- [ ] **T068 · Test · P1: Validate security audit filter fix and add local testing**
+
+  - **Action:**
+    1. Test complete security scan process locally to verify fix works
+    2. Add npm script for local testing of security audit filter compilation
+    3. Verify security scan catches vulnerabilities correctly after fix
+    4. Test that CI pipeline runs successfully with fixed configuration
+  - **Done-when:**
+    1. Security audit filter builds and runs correctly locally
+    2. Local testing script allows developers to verify security scan before CI
+    3. Full CI pipeline passes with security scan working
+  - **Depends-on:** [T067]
+
+- [ ] **T069 · Documentation · P2: Update build process documentation and prevention**
+
+  - **Action:**
+    1. Update DEVELOPMENT_SETUP.md with new security script build process
+    2. Document TypeScript configuration for security scripts
+    3. Add troubleshooting guide for security scan build issues
+    4. Document local testing procedures for security audit filter
+  - **Done-when:**
+    1. Build process documentation is updated with new approach
+    2. Developers have clear guidance for working with security scripts
+    3. Troubleshooting information available for future issues
+  - **Depends-on:** [T068]
