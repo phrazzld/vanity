@@ -553,7 +553,7 @@
     3. All catch parameters follow naming convention for intentionally unused variables
   - **Depends-on:** none
 
-- [ ] **T057 · Investigation · P1: Verify Storybook TypeScript configuration consistency**
+- [x] **T057 · Investigation · P1: Verify Storybook TypeScript configuration consistency**
 
   - **Action:**
     1. Check `.storybook/main.ts` TypeScript configuration settings
@@ -566,7 +566,7 @@
     3. TypeScript behavior is predictable across all build tools
   - **Depends-on:** [T054, T055, T056]
 
-- [ ] **T058 · Test · P1: Verify CI pipeline restoration with local testing**
+- [x] **T058 · Test · P1: Verify CI pipeline restoration with local testing**
 
   - **Action:**
     1. Run `npm run build-storybook` locally to verify fixes resolve build failure
@@ -659,7 +659,7 @@
     3. No "Object is possibly undefined" errors remain in any test file
   - **Depends-on:** [T061]
 
-- [ ] **T063 · Prevention · P0: Add build verification to pre-push hook to catch CI failures locally**
+- [~] **T063 · Prevention · P0: Add build verification to pre-push hook to catch CI failures locally**
 
   - **Action:**
     1. Create new pre-push hook that runs build verification before security scan
