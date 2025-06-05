@@ -102,7 +102,7 @@ describe('Enhanced parseNpmAuditJson', () => {
       // TODO: Implement test to verify fallback behavior
       expect(() => {
         const result = parseNpmAuditJsonCanonical(_npmV6Output);
-        expect(result.vulnerabilities[0].source).toBe('npm-v6'); // Should indicate v6 format was used
+        expect(result.vulnerabilities[0]!.source).toBe('npm-v6'); // Should indicate v6 format was used
       }).not.toThrow();
     });
 

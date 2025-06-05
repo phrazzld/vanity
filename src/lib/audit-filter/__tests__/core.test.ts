@@ -110,10 +110,10 @@ describe('parseAndValidateAllowlist', () => {
 
     // Verify the result has the expected entry
     if (result.length > 0) {
-      expect(result[0].id).toBe('GHSA-1234');
-      expect(result[0].package).toBe('test-package');
-      expect(result[0].reason).toBe('Test reason');
-      expect(result[0].expires).toBe('2099-12-31T00:00:00Z');
+      expect(result[0]!.id).toBe('GHSA-1234');
+      expect(result[0]!.package).toBe('test-package');
+      expect(result[0]!.reason).toBe('Test reason');
+      expect(result[0]!.expires).toBe('2099-12-31T00:00:00Z');
     } else {
       fail('Expected result to have at least one entry');
     }
@@ -463,8 +463,8 @@ describe('filterVulnerabilities', () => {
     // New vulnerabilities
     expect(result.vulnerabilities).toHaveLength(1);
     if (result.vulnerabilities.length > 0) {
-      expect(result.vulnerabilities[0].id).toBe('9012'); // String now due to canonical format
-      expect(result.vulnerabilities[0].allowlistStatus).toBe('new');
+      expect(result.vulnerabilities[0]!.id).toBe('9012'); // String now due to canonical format
+      expect(result.vulnerabilities[0]!.allowlistStatus).toBe('new');
     } else {
       fail('Expected vulnerabilities to have at least one entry');
     }
@@ -472,11 +472,11 @@ describe('filterVulnerabilities', () => {
     // Allowed vulnerabilities
     expect(result.allowedVulnerabilities).toHaveLength(2);
     if (result.allowedVulnerabilities.length > 0) {
-      expect(result.allowedVulnerabilities[0].id).toBe('1234'); // String now due to canonical format
-      expect(result.allowedVulnerabilities[0].allowlistStatus).toBe('allowed');
+      expect(result.allowedVulnerabilities[0]!.id).toBe('1234'); // String now due to canonical format
+      expect(result.allowedVulnerabilities[0]!.allowlistStatus).toBe('allowed');
 
       if (result.allowedVulnerabilities.length > 1) {
-        expect(result.allowedVulnerabilities[1].id).toBe('7890'); // String now due to canonical format
+        expect(result.allowedVulnerabilities[1]!.id).toBe('7890'); // String now due to canonical format
       } else {
         fail('Expected allowedVulnerabilities to have at least two entries');
       }
@@ -487,8 +487,8 @@ describe('filterVulnerabilities', () => {
     // Expired allowlist entries
     expect(result.expiredAllowlistEntries).toHaveLength(1);
     if (result.expiredAllowlistEntries.length > 0) {
-      expect(result.expiredAllowlistEntries[0].id).toBe('5678'); // String now due to canonical format
-      expect(result.expiredAllowlistEntries[0].allowlistStatus).toBe('expired');
+      expect(result.expiredAllowlistEntries[0]!.id).toBe('5678'); // String now due to canonical format
+      expect(result.expiredAllowlistEntries[0]!.allowlistStatus).toBe('expired');
     } else {
       fail('Expected expiredAllowlistEntries to have at least one entry');
     }
@@ -496,7 +496,7 @@ describe('filterVulnerabilities', () => {
     // Expiring soon entries
     expect(result.expiringEntries).toHaveLength(1);
     if (result.expiringEntries.length > 0) {
-      expect(result.expiringEntries[0].id).toBe('7890'); // String now due to canonical format
+      expect(result.expiringEntries[0]!.id).toBe('7890'); // String now due to canonical format
     } else {
       fail('Expected expiringEntries to have at least one entry');
     }
@@ -596,14 +596,14 @@ describe('analyzeAuditReport', () => {
 
     expect(result.vulnerabilities).toHaveLength(1);
     if (result.vulnerabilities.length > 0) {
-      expect(result.vulnerabilities[0].id).toBe('9012'); // String now due to canonical format
+      expect(result.vulnerabilities[0]!.id).toBe('9012'); // String now due to canonical format
     } else {
       fail('Expected vulnerabilities to have at least one entry');
     }
 
     expect(result.allowedVulnerabilities).toHaveLength(1);
     if (result.allowedVulnerabilities.length > 0) {
-      expect(result.allowedVulnerabilities[0].id).toBe('1234'); // String now due to canonical format
+      expect(result.allowedVulnerabilities[0]!.id).toBe('1234'); // String now due to canonical format
     } else {
       fail('Expected allowedVulnerabilities to have at least one entry');
     }

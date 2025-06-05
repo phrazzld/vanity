@@ -204,18 +204,18 @@ describe('npm audit output analysis', () => {
 
     // Verify the allowed vulnerability is the one in the allowlist
     if (result.allowedVulnerabilities.length > 0) {
-      expect(result.allowedVulnerabilities[0].id).toBe('1234');
-      expect(result.allowedVulnerabilities[0].package).toBe('vulnerable-package-1');
-      expect(result.allowedVulnerabilities[0].allowlistStatus).toBe('allowed');
+      expect(result.allowedVulnerabilities[0]!.id).toBe('1234');
+      expect(result.allowedVulnerabilities[0]!.package).toBe('vulnerable-package-1');
+      expect(result.allowedVulnerabilities[0]!.allowlistStatus).toBe('allowed');
     } else {
       fail('Expected allowedVulnerabilities to have at least one entry');
     }
 
     // Verify the new vulnerability is the one not in the allowlist
     if (result.vulnerabilities.length > 0) {
-      expect(result.vulnerabilities[0].id).toBe('5678');
-      expect(result.vulnerabilities[0].package).toBe('vulnerable-package-2');
-      expect(result.vulnerabilities[0].allowlistStatus).toBe('new');
+      expect(result.vulnerabilities[0]!.id).toBe('5678');
+      expect(result.vulnerabilities[0]!.package).toBe('vulnerable-package-2');
+      expect(result.vulnerabilities[0]!.allowlistStatus).toBe('new');
     } else {
       fail('Expected vulnerabilities to have at least one entry');
     }

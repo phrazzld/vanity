@@ -189,8 +189,8 @@ describe('Audit Filter CLI Integration', () => {
 
     // Verify the allowed vulnerabilities
     if (result.allowedVulnerabilities.length > 0) {
-      expect(result.allowedVulnerabilities[0].package).toBe('vulnerable-package-1');
-      expect(result.allowedVulnerabilities[0].allowlistStatus).toBe('allowed');
+      expect(result.allowedVulnerabilities[0]!.package).toBe('vulnerable-package-1');
+      expect(result.allowedVulnerabilities[0]!.allowlistStatus).toBe('allowed');
     }
   });
 

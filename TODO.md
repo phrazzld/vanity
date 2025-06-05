@@ -646,7 +646,7 @@
     3. Test files are properly excluded from Storybook TypeScript checking
   - **Depends-on:** none
 
-- [ ] **T062 · Bugfix · P1: Fix remaining test files with TS2532 null safety violations**
+- [x] **T062 · Bugfix · P1: Fix remaining test files with TS2532 null safety violations**
 
   - **Action:**
     1. Systematically review all test files for TS2532 "Object is possibly undefined" errors

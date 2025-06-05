@@ -343,8 +343,8 @@ describe('Allowlist file scenarios', () => {
       const result = parseAndValidateAllowlist(largeAllowlistJson);
 
       expect(result).toHaveLength(1000);
-      expect(result[0].id).toBe('GHSA-0000');
-      expect(result[999].id).toBe('GHSA-0999');
+      expect(result[0]!.id).toBe('GHSA-0000');
+      expect(result[999]!.id).toBe('GHSA-0999');
     });
 
     test('should handle entries with optional fields', () => {
@@ -361,8 +361,8 @@ describe('Allowlist file scenarios', () => {
 
       const result = parseAndValidateAllowlist(allowlistWithOptionalFields);
       expect(result).toHaveLength(1);
-      expect(result[0].notes).toBe('This is a detailed note about the vulnerability');
-      expect(result[0].reviewedOn).toBe('2023-01-01T00:00:00Z');
+      expect(result[0]!.notes).toBe('This is a detailed note about the vulnerability');
+      expect(result[0]!.reviewedOn).toBe('2023-01-01T00:00:00Z');
     });
 
     test('should handle entries with null optional fields', () => {
@@ -379,8 +379,8 @@ describe('Allowlist file scenarios', () => {
 
       const result = parseAndValidateAllowlist(allowlistWithNullFields);
       expect(result).toHaveLength(1);
-      expect(result[0].notes).toBeNull();
-      expect(result[0].reviewedOn).toBeNull();
+      expect(result[0]!.notes).toBeNull();
+      expect(result[0]!.reviewedOn).toBeNull();
     });
 
     test('should handle special characters in string fields', () => {
@@ -396,9 +396,9 @@ describe('Allowlist file scenarios', () => {
 
       const result = parseAndValidateAllowlist(allowlistWithSpecialChars);
       expect(result).toHaveLength(1);
-      expect(result[0].package).toBe('test-package@2.0.0');
-      expect(result[0].reason).toContain('quotes');
-      expect(result[0].reason).toContain('unicode: 你好');
+      expect(result[0]!.package).toBe('test-package@2.0.0');
+      expect(result[0]!.reason).toContain('quotes');
+      expect(result[0]!.reason).toContain('unicode: 你好');
     });
   });
 });
