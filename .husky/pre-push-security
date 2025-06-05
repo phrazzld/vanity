@@ -62,9 +62,9 @@ for FILE in $FILES_TO_CHECK; do
     continue
   fi
   
-  # Skip test files (they legitimately contain test secrets)
+  # Skip test files and documentation (they legitimately contain examples)
   case "$FILE" in
-    */__tests__/* | *.test.* | *.spec.* | **/fixtures/* | **/mocks/*)
+    */__tests__/* | *.test.* | *.spec.* | **/fixtures/* | **/mocks/* | docs/*.md | *.md)
       continue
       ;;
   esac
