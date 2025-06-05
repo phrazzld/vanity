@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "noEmit": false,
+    "skipLibCheck": true,
+    "declaration": false,
+    "sourceMap": false,
+    "strict": false,
+    "baseUrl": ".",
+    "allowImportingTsExtensions": false,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["scripts/audit-filter.ts", "src/lib/audit-filter/**/*.ts", "src/lib/logger.ts"],
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/__tests__/**",
+    "**/__mocks__/**",
+    ".next",
+    "dist"
+  ]
+}

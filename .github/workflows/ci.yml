@@ -197,24 +197,100 @@ jobs:
           echo "🔧 Building security audit filter script..."
           npm run build:audit-filter || {
             echo "❌ Failed to build audit filter script!"
-            echo "→ Check TypeScript errors in scripts/audit-filter.ts"
+            echo ""
+            echo "To fix TypeScript compilation issues:"
+            echo "1. Check TypeScript errors in scripts/audit-filter.ts"
+            echo "2. Verify tsconfig.scripts.json is properly configured"
+            echo "3. Ensure all dependencies in src/lib/audit-filter/ compile correctly"
+            echo "4. Run 'npm run build:audit-filter' locally to reproduce"
+            echo ""
+            echo "💡 Common issues:"
+            echo "→ Missing TypeScript dependencies"
+            echo "→ Module resolution configuration problems"
+            echo "→ Import path errors in audit filter core files"
             exit 1
           }
+
+      - name: Verify audit filter compilation output
+        run: |
+          echo "✅ Verifying compiled audit filter exists..."
+          if [ ! -f "dist/scripts/audit-filter.js" ]; then
+            echo "❌ Compiled audit filter script not found!"
+            echo ""
+            echo "Expected file: dist/scripts/audit-filter.js"
+            echo "Debugging information:"
+            echo "→ Build directory contents:"
+            ls -la dist/ 2>/dev/null || echo "  dist/ directory does not exist"
+            if [ -d "dist/scripts" ]; then
+              echo "→ Scripts directory contents:"
+              ls -la dist/scripts/ || echo "  dist/scripts/ is empty or inaccessible"
+            else
+              echo "→ dist/scripts/ directory does not exist"
+            fi
+            echo ""
+            echo "This indicates the TypeScript compilation completed without errors"
+            echo "but failed to produce the expected output file."
+            echo ""
+            echo "To fix this issue:"
+            echo "1. Check tsconfig.scripts.json outDir configuration"
+            echo "2. Verify TypeScript compilation actually processes the target file"
+            echo "3. Review build logs for silent failures"
+            echo "4. Test locally: npm run build:audit-filter && ls -la dist/scripts/"
+            exit 1
+          fi
+          echo "✅ Audit filter script compilation verified successfully"
 
       - name: Run security scan with allowlist filtering
         run: |
           echo "🔒 Checking for non-allowlisted high and critical security vulnerabilities..."
+
+          # Verify the compiled script is executable before running
+          if [ ! -x "dist/scripts/audit-filter.js" ]; then
+            echo "⚠️  Warning: Audit filter script is not executable, attempting to make it executable..."
+            chmod +x dist/scripts/audit-filter.js || {
+              echo "❌ Failed to make audit filter script executable!"
+              echo "→ Check file permissions in CI environment"
+              exit 1
+            }
+          fi
+
+          # Run the security scan with enhanced error reporting
           node dist/scripts/audit-filter.js || {
-            echo "❌ Security vulnerabilities detected!"
+            EXIT_CODE=$?
+            echo "❌ Security scan failed with exit code: $EXIT_CODE"
             echo ""
-            echo "To fix security issues:"
-            echo "1. Update dependencies to resolve vulnerabilities"
-            echo "2. OR add entries to .audit-allowlist.json with proper justification"
-            echo ""
-            echo "💡 Allowlist entries must include:"
-            echo "→ Package name and vulnerability ID"
-            echo "→ Clear justification for why it's being allowlisted"
-            echo "→ Expiration date for when it should be fixed"
+            
+            if [ $EXIT_CODE -eq 1 ]; then
+              echo "🔍 Security vulnerabilities detected or scan failed!"
+              echo ""
+              echo "To fix security issues:"
+              echo "1. Update dependencies to resolve vulnerabilities"
+              echo "2. OR add entries to .audit-allowlist.json with proper justification"
+              echo ""
+              echo "💡 Allowlist entries must include:"
+              echo "→ Package name and vulnerability ID"
+              echo "→ Clear justification for why it's being allowlisted"
+              echo "→ Expiration date for when it should be fixed"
+              echo ""
+              echo "📋 Debugging information:"
+              echo "→ Check if npm audit itself is working: npm audit --version"
+              echo "→ Test allowlist file syntax: cat .audit-allowlist.json"
+              echo "→ Run security scan locally: npm run security:scan"
+            else
+              echo "❌ Unexpected error during security scan execution!"
+              echo ""
+              echo "Possible causes:"
+              echo "→ Runtime error in audit filter script"
+              echo "→ Missing Node.js dependencies"
+              echo "→ File system permissions issue"
+              echo "→ npm audit command failure"
+              echo ""
+              echo "To debug:"
+              echo "1. Run 'node dist/scripts/audit-filter.js' locally"
+              echo "2. Check Node.js version compatibility"
+              echo "3. Verify all required dependencies are installed"
+              echo "4. Test npm audit command: npm audit --json"
+            fi
             echo ""
             echo "See docs/SECURITY_VULNERABILITY_MANAGEMENT.md for details"
             exit 1
