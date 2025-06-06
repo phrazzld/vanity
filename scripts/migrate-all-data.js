@@ -9,20 +9,6 @@ const prisma = new PrismaClient();
 const readingsPath = path.join(__dirname, '../src/app/readings/data.ts');
 const quotesPath = path.join(__dirname, '../src/app/quotes.ts');
 
-// Function to find all indices of a substring in a string
-function findAllIndices(str, substring) {
-  const indices = [];
-  let startIndex = 0;
-  let index;
-
-  while ((index = str.indexOf(substring, startIndex)) > -1) {
-    indices.push(index);
-    startIndex = index + substring.length;
-  }
-
-  return indices;
-}
-
 // Extract all JS object literals from a string
 function extractJSObjects(content) {
   const objects = [];
@@ -93,7 +79,7 @@ function parseReading(objectStr) {
   if (finishedDateMatch) {
     try {
       reading.finishedDate = new Date(finishedDateMatch[1]);
-    } catch (e) {
+    } catch (_e) {
       reading.finishedDate = null;
     }
   }

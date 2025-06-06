@@ -26,7 +26,7 @@ function findAllIndices(str, substring) {
 }
 
 // Extract all objects from a string between the specified start and end markers
-function extractObjectsFromString(content, startMarker, endMarker) {
+function extractObjectsFromString(content, startMarker, _endMarker) {
   const startIndices = findAllIndices(content, startMarker);
   const objects = [];
 

@@ -1,0 +1,94 @@
+#!/usr/bin/env sh
+# Security scan for pre-push
+
+# Check if this is a security scan bypass
+if [ "$SKIP_SECURITY_SCAN" = "true" ]; then
+  echo "⚠️ Security scan bypassed by SKIP_SECURITY_SCAN=true"
+  exit 0
+fi
+
+echo "🔒 Running security vulnerability scan..."
+
+# Build the security audit filter script if needed
+if [ ! -f "dist/scripts/audit-filter.js" ]; then
+  echo "🔨 Building security audit filter script..."
+  npm run build:audit-filter > /dev/null 2>&1 || {
+    echo "❌ Failed to build audit filter script!"
+    echo "→ Try running 'npm run build:audit-filter' locally first"
+    exit 1
+  }
+fi
+
+# Run security scan
+echo "🔍 Checking for non-allowlisted high and critical security vulnerabilities..."
+if ! node dist/scripts/audit-filter.js; then
+  echo ""
+  echo "❌ Security vulnerabilities detected!"
+  echo ""
+  echo "To fix security issues:"
+  echo "1. Update dependencies to resolve vulnerabilities"
+  echo "2. OR add entries to .audit-allowlist.json with proper justification"
+  echo ""
+  echo "💡 Allowlist entries must include:"
+  echo "→ Package name and vulnerability ID"
+  echo "→ Clear justification for why it's being allowlisted"
+  echo "→ Expiration date for when it should be fixed"
+  echo ""
+  echo "See docs/SECURITY_VULNERABILITY_MANAGEMENT.md for details"
+  exit 1
+fi
+
+# Check for secrets using simple patterns
+echo "🔑 Checking for potential secrets in changes..."
+
+# Define patterns for secrets (simplified version)
+SECRET_PATTERNS=(
+  "password[=\"':= ]+"
+  "api[-_]?key[=\"':= ]+"
+  "secret[=\"':= ]+"
+  "token[=\"':= ]+"
+  "credential[=\"':= ]+"
+  "jwt[=\"':= ]+"
+  "auth[=\"':= ]+"
+)
+
+# Get changed files
+FILES_TO_CHECK=$(git diff --name-only $(git merge-base @{u} HEAD)..HEAD)
+
+# Check the files
+for FILE in $FILES_TO_CHECK; do
+  # Skip binary files, non-existent files, this security script itself, and test files
+  if [ ! -f "$FILE" ] || [ -z "$(file -b --mime-type "$FILE" | grep -E 'text/')" ] || [ "$FILE" = ".husky/pre-push-security" ]; then
+    continue
+  fi
+  
+  # Skip test files and documentation (they legitimately contain examples)
+  case "$FILE" in
+    */__tests__/* | *.test.* | *.spec.* | **/fixtures/* | **/mocks/* | docs/*.md | *.md)
+      continue
+      ;;
+  esac
+  
+  # Check for secret patterns
+  for PATTERN in "${SECRET_PATTERNS[@]}"; do
+    if grep -E "$PATTERN" "$FILE" > /dev/null; then
+      echo "⚠️ Potential secret found in $FILE"
+      echo "   Pattern: $PATTERN"
+      echo "   Please verify this isn't an actual secret before pushing."
+      
+      # Ask for confirmation
+      echo ""
+      echo "Do you want to continue with the push? (y/n)"
+      read -r CONTINUE
+      if [ "$CONTINUE" != "y" ] && [ "$CONTINUE" != "Y" ]; then
+        echo "Push aborted by user."
+        exit 1
+      fi
+      
+      break
+    fi
+  done
+done
+
+echo "✅ Security checks passed!"
+exit 0

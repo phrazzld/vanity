@@ -7,18 +7,18 @@
  * built on top of the generic useListState hook.
  */
 
-import { useListState } from './useListState';
+import { useListState, type FetchParams } from './useListState';
 import type { Quote } from '@/types';
 
 // Define the filter type specific to quotes
-export interface QuotesFilter {
+export interface QuotesFilter extends Record<string, unknown> {
   // Currently no specific filters for quotes, but we can add them later
 }
 
 /**
  * Fetches quotes with the provided parameters
  */
-async function fetchQuotes(params: any) {
+async function fetchQuotes(params: FetchParams<QuotesFilter>) {
   // Construct URL with query parameters
   const queryParams = new URLSearchParams();
 

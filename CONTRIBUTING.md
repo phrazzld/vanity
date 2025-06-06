@@ -38,6 +38,7 @@ For detailed setup instructions, please refer to our [Development Setup Guide](d
 - [DEVELOPMENT_PHILOSOPHY.md](docs/DEVELOPMENT_PHILOSOPHY.md): Core development principles
 - [STATE_MANAGEMENT.md](docs/STATE_MANAGEMENT.md): State management approach
 - [ACCESSIBILITY.md](docs/ACCESSIBILITY.md): Accessibility guidelines
+- [SECURITY_VULNERABILITY_MANAGEMENT.md](docs/SECURITY_VULNERABILITY_MANAGEMENT.md): Security vulnerability scanning and management
 
 ## Development Workflow
 
@@ -57,6 +58,7 @@ For detailed setup instructions, please refer to our [Development Setup Guide](d
    npm run test
    npm run lint
    npm run typecheck
+   npm run security:scan
    ```
 
 6. **Commit Your Changes**: Follow our [commit guidelines](#commit-guidelines).
@@ -170,6 +172,8 @@ Branches should follow a consistent naming pattern based on the type of change:
 
 - **Documentation**: Update relevant documentation for significant changes.
 
+- **Security**: Run security scans and address any vulnerabilities before submission.
+
 ### Review Process
 
 1. **CI Checks**: All automated checks must pass before review.
@@ -240,6 +244,15 @@ Branches should follow a consistent naming pattern based on the type of change:
 - Never expose sensitive information in client-side code.
 - Follow secure coding practices outlined in [DEVELOPMENT_PHILOSOPHY.md](docs/DEVELOPMENT_PHILOSOPHY.md#security-considerations).
 - Handle authentication and authorization properly.
+- Run security vulnerability scans to check for vulnerable dependencies:
+  ```bash
+  npm run security:scan
+  ```
+- Review the [Security Vulnerability Management Guide](docs/SECURITY_VULNERABILITY_MANAGEMENT.md) for details on:
+  - Understanding security scan results
+  - Handling detected vulnerabilities
+  - Using the allowlist mechanism for known issues
+  - Prioritizing and remediating security issues
 
 ## Commit Guidelines
 
@@ -338,6 +351,7 @@ Our CI pipeline runs comprehensive quality checks on every PR:
    - Linting (ESLint)
    - Type checking (TypeScript)
    - Test suite with coverage (85% minimum, 90% for core)
+   - Security vulnerability scanning
    - Build verification (Next.js and Storybook)
 
 #### CI Pipeline Stages
@@ -348,8 +362,9 @@ Our CI pipeline runs comprehensive quality checks on every PR:
 4. **Linting**: Checks code quality with ESLint
 5. **Type Checking**: Ensures TypeScript types are correct
 6. **Testing**: Runs full test suite with coverage requirements
-7. **Build**: Builds Next.js application
-8. **Storybook Build**: Builds component documentation
+7. **Security Scanning**: Checks for vulnerable dependencies with allowlist support
+8. **Build**: Builds Next.js application
+9. **Storybook Build**: Builds component documentation
 
 #### CI Failure Troubleshooting
 
@@ -403,6 +418,16 @@ Our CI pipeline runs comprehensive quality checks on every PR:
 - Verify all component imports
 - Review `.storybook` configuration
 - See `STORYBOOK_GUIDELINES.md` for help
+
+**Security Scanning Failures**:
+
+- Run `npm run security:scan` locally
+- Check for high or critical vulnerabilities
+- Review [SECURITY_VULNERABILITY_MANAGEMENT.md](docs/SECURITY_VULNERABILITY_MANAGEMENT.md) for remediation steps
+- Options to resolve:
+  - Update vulnerable dependencies
+  - Add to allowlist with proper justification if temporary exception is needed
+  - Replace the dependency with a secure alternative
 
 ### Deployment (Vercel)
 

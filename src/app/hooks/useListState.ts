@@ -22,7 +22,10 @@ export interface ListPaginationState {
   totalPages: number;
 }
 
-export interface ListState<TItem, TFilter extends Record<string, any> = Record<string, any>> {
+export interface ListState<
+  TItem,
+  TFilter extends Record<string, unknown> = Record<string, unknown>,
+> {
   items: TItem[];
   search: string;
   filters: TFilter;
@@ -33,25 +36,65 @@ export interface ListState<TItem, TFilter extends Record<string, any> = Record<s
 }
 
 // Action types for reducer
-type ListAction<TItem, TFilter extends Record<string, any> = Record<string, any>> =
+type ListAction<TItem, TFilter extends Record<string, unknown> = Record<string, unknown>> =
   | { type: 'SET_ITEMS'; payload: TItem[] }
   | { type: 'SET_TOTAL_ITEMS'; payload: number }
   | { type: 'SET_SEARCH'; payload: string }
   | { type: 'SET_FILTERS'; payload: TFilter }
-  | { type: 'UPDATE_FILTER'; payload: { key: string; value: any } }
+  | { type: 'UPDATE_FILTER'; payload: { key: string; value: unknown } }
   | { type: 'SET_SORT'; payload: ListSortOption }
   | { type: 'SET_PAGE'; payload: number }
   | { type: 'SET_PAGE_SIZE'; payload: number }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_ERROR'; payload: string | null };
 
+// Base fetch parameters interface
+export interface BaseFetchParams {
+  search: string;
+  sortBy: string;
+  sortOrder: 'asc' | 'desc';
+  limit: number;
+  offset: number;
+}
+
+// Fetch parameters with filters
+export type FetchParams<TFilter extends Record<string, unknown> = Record<string, unknown>> =
+  BaseFetchParams & TFilter;
+
+// Return type for the hook
+export interface UseListStateReturn<
+  TItem,
+  TFilter extends Record<string, unknown> = Record<string, unknown>,
+> {
+  // State
+  items: TItem[];
+  search: string;
+  filters: TFilter;
+  sort: ListSortOption;
+  pagination: ListPaginationState;
+  isLoading: boolean;
+  error: string | null;
+
+  // Actions
+  setSearch: (_search: string) => void;
+  updateFilter: (_key: string, _value: unknown) => void;
+  setFilters: (_filters: TFilter) => void;
+  setSort: (_field: string, _order?: 'asc' | 'desc') => void;
+  toggleSort: (_field: string) => void;
+  setPage: (_page: number) => void;
+  setPageSize: (_size: number) => void;
+
+  // Data fetching
+  refreshData: () => Promise<void>;
+}
+
 // Options for the hook
 export interface ListStateOptions<
   TItem,
-  TFilter extends Record<string, any> = Record<string, any>,
+  TFilter extends Record<string, unknown> = Record<string, unknown>,
 > {
   /** Function to fetch data */
-  fetchItems: (params: any) => Promise<{
+  fetchItems: (_params: FetchParams<TFilter>) => Promise<{
     data: TItem[];
     totalCount: number;
     currentPage: number;
@@ -75,7 +118,10 @@ export interface ListStateOptions<
 /**
  * Creates a reducer for the list state
  */
-function createListReducer<TItem, TFilter extends Record<string, any> = Record<string, any>>() {
+function createListReducer<
+  TItem,
+  TFilter extends Record<string, unknown> = Record<string, unknown>,
+>() {
   return (
     state: ListState<TItem, TFilter>,
     action: ListAction<TItem, TFilter>
@@ -159,9 +205,10 @@ function createListReducer<TItem, TFilter extends Record<string, any> = Record<s
 /**
  * A custom hook for managing admin list views with search, filter, sort and pagination
  */
-export function useListState<TItem, TFilter extends Record<string, any> = Record<string, any>>(
-  options: ListStateOptions<TItem, TFilter>
-) {
+export function useListState<
+  TItem,
+  TFilter extends Record<string, unknown> = Record<string, unknown>,
+>(options: ListStateOptions<TItem, TFilter>): UseListStateReturn<TItem, TFilter> {
   const {
     fetchItems,
     initialSearch = '',
@@ -278,7 +325,7 @@ export function useListState<TItem, TFilter extends Record<string, any> = Record
   );
 
   // Handler for updating a single filter
-  const updateFilter = useCallback((key: string, value: any) => {
+  const updateFilter = useCallback((key: string, value: unknown) => {
     dispatch({ type: 'UPDATE_FILTER', payload: { key, value } });
   }, []);
 

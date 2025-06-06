@@ -43,21 +43,8 @@ jobs:
             exit 1
           }
 
-      - name: Check formatting
-        run: |
-          echo "🎨 Checking code formatting..."
-          npm run format:check || {
-            echo "❌ Code formatting check failed!"
-            echo ""
-            echo "To fix formatting issues:"
-            echo "1. Run 'npm run format' locally"
-            echo "2. Commit the formatted files"
-            echo "3. Push your changes"
-            echo ""
-            echo "💡 Tip: Enable format-on-save in VS Code"
-            echo "   See .vscode/settings.json for recommended settings"
-            exit 1
-          }
+      # Note: Code formatting check removed - pre-commit hooks ensure formatting
+      # This eliminates redundancy while maintaining code quality
 
       - name: Lint
         run: |
@@ -97,6 +84,24 @@ jobs:
             exit 1
           }
 
+      - name: Strict TypeScript checking
+        run: |
+          echo "🔍 Running strict TypeScript checking..."
+          npm run typecheck || {
+            echo "❌ Strict TypeScript checking failed!"
+            echo ""
+            echo "To fix strict type violations:"
+            echo "1. Address unused variables (prefix with '_' or remove)"
+            echo "2. Add explicit return types where required"
+            echo "3. Fix unsafe indexed access patterns"
+            echo "4. Resolve implicit any types"
+            echo ""
+            echo "💡 This step enforces higher code quality standards"
+            echo "→ See tsconfig.typecheck.json for strict rules"
+            echo "→ Run 'npm run typecheck' locally to test"
+            exit 1
+          }
+
       - name: Run tests with coverage
         run: |
           echo "🧪 Running tests with coverage..."
@@ -122,72 +127,8 @@ jobs:
           name: coverage-report
           path: coverage/
 
-      - name: Check Edge Runtime compatibility
-        run: |
-          echo "🌐 Checking Edge Runtime compatibility..."
-          # Create a simple script to check for Edge Runtime issues
-          cat > check-edge-compat.js << 'EOF'
-          const fs = require('fs');
-          const path = require('path');
-
-          const edgeIncompatiblePkgs = ['winston', 'fs', 'path', 'crypto', 'os', 'child_process'];
-          const clientFiles = [];
-
-          function findFiles(dir, pattern) {
-            const files = fs.readdirSync(dir);
-            files.forEach(file => {
-              const filePath = path.join(dir, file);
-              const stat = fs.statSync(filePath);
-              if (stat.isDirectory() && !file.startsWith('.') && file !== 'node_modules') {
-                findFiles(filePath, pattern);
-              } else if (pattern.test(file)) {
-                clientFiles.push(filePath);
-              }
-            });
-          }
-
-          // Find all client components and pages
-          findFiles('./src', /\.(tsx?|jsx?)$/);
-
-          let hasIssues = false;
-
-          clientFiles.forEach(file => {
-            const content = fs.readFileSync(file, 'utf-8');
-            // Check for 'use client' directive
-            if (content.includes("'use client'") || content.includes('"use client"')) {
-              edgeIncompatiblePkgs.forEach(pkg => {
-                const importPattern = new RegExp(`from\\s+['"\`](.*/)?${pkg}['"\`]|require\\s*\\(['"\`](.*/)?${pkg}['"\`]\\)`);
-                if (importPattern.test(content)) {
-                  console.error(`❌ Edge Runtime incompatible: ${file} imports '${pkg}'`);
-                  hasIssues = true;
-                }
-              });
-            }
-          });
-
-          if (hasIssues) {
-            console.error('\n🚨 Edge Runtime compatibility issues found!');
-            console.error('→ Client components cannot use Node.js APIs');
-            console.error('→ Use runtime checks or Edge-compatible alternatives');
-            process.exit(1);
-          } else {
-            console.log('✅ All client components are Edge Runtime compatible');
-          }
-          EOF
-
-          node check-edge-compat.js || {
-            echo ""
-            echo "To fix Edge Runtime issues:"
-            echo "1. Remove Node.js-only imports from client components"
-            echo "2. Use runtime checks for Node.js APIs"
-            echo "3. Create Edge-compatible alternatives"
-            echo ""
-            echo "💡 Common solutions:"
-            echo "→ Use dynamic imports with runtime checks"
-            echo "→ Create separate Edge-compatible modules"
-            echo "→ Move Node.js logic to API routes"
-            exit 1
-          }
+      # Note: Edge Runtime compatibility check removed - pre-push hook covers this
+      # This eliminates duplication while maintaining comprehensive validation
 
       - name: Build
         run: |
@@ -223,5 +164,134 @@ jobs:
             echo "4. Review .storybook configuration"
             echo ""
             echo "📖 See STORYBOOK_GUIDELINES.md for help"
+            exit 1
+          }
+
+  security_scan:
+    name: Security Vulnerability Scan
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          echo "📦 Installing project dependencies..."
+          npm ci || {
+            echo "❌ Failed to install dependencies!"
+            echo "→ Try running 'npm ci' locally to reproduce the issue"
+            echo "→ Ensure package-lock.json is committed and up to date"
+            exit 1
+          }
+
+      - name: Build security audit filter script
+        run: |
+          echo "🔧 Building security audit filter script..."
+          npm run build:audit-filter || {
+            echo "❌ Failed to build audit filter script!"
+            echo ""
+            echo "To fix TypeScript compilation issues:"
+            echo "1. Check TypeScript errors in scripts/audit-filter.ts"
+            echo "2. Verify tsconfig.scripts.json is properly configured"
+            echo "3. Ensure all dependencies in src/lib/audit-filter/ compile correctly"
+            echo "4. Run 'npm run build:audit-filter' locally to reproduce"
+            echo ""
+            echo "💡 Common issues:"
+            echo "→ Missing TypeScript dependencies"
+            echo "→ Module resolution configuration problems"
+            echo "→ Import path errors in audit filter core files"
+            exit 1
+          }
+
+      - name: Verify audit filter compilation output
+        run: |
+          echo "✅ Verifying compiled audit filter exists..."
+          if [ ! -f "dist/scripts/audit-filter.js" ]; then
+            echo "❌ Compiled audit filter script not found!"
+            echo ""
+            echo "Expected file: dist/scripts/audit-filter.js"
+            echo "Debugging information:"
+            echo "→ Build directory contents:"
+            ls -la dist/ 2>/dev/null || echo "  dist/ directory does not exist"
+            if [ -d "dist/scripts" ]; then
+              echo "→ Scripts directory contents:"
+              ls -la dist/scripts/ || echo "  dist/scripts/ is empty or inaccessible"
+            else
+              echo "→ dist/scripts/ directory does not exist"
+            fi
+            echo ""
+            echo "This indicates the TypeScript compilation completed without errors"
+            echo "but failed to produce the expected output file."
+            echo ""
+            echo "To fix this issue:"
+            echo "1. Check tsconfig.scripts.json outDir configuration"
+            echo "2. Verify TypeScript compilation actually processes the target file"
+            echo "3. Review build logs for silent failures"
+            echo "4. Test locally: npm run build:audit-filter && ls -la dist/scripts/"
+            exit 1
+          fi
+          echo "✅ Audit filter script compilation verified successfully"
+
+      - name: Run security scan with allowlist filtering
+        run: |
+          echo "🔒 Checking for non-allowlisted high and critical security vulnerabilities..."
+
+          # Verify the compiled script is executable before running
+          if [ ! -x "dist/scripts/audit-filter.js" ]; then
+            echo "⚠️  Warning: Audit filter script is not executable, attempting to make it executable..."
+            chmod +x dist/scripts/audit-filter.js || {
+              echo "❌ Failed to make audit filter script executable!"
+              echo "→ Check file permissions in CI environment"
+              exit 1
+            }
+          fi
+
+          # Run the security scan with enhanced error reporting
+          node dist/scripts/audit-filter.js || {
+            EXIT_CODE=$?
+            echo "❌ Security scan failed with exit code: $EXIT_CODE"
+            echo ""
+            
+            if [ $EXIT_CODE -eq 1 ]; then
+              echo "🔍 Security vulnerabilities detected or scan failed!"
+              echo ""
+              echo "To fix security issues:"
+              echo "1. Update dependencies to resolve vulnerabilities"
+              echo "2. OR add entries to .audit-allowlist.json with proper justification"
+              echo ""
+              echo "💡 Allowlist entries must include:"
+              echo "→ Package name and vulnerability ID"
+              echo "→ Clear justification for why it's being allowlisted"
+              echo "→ Expiration date for when it should be fixed"
+              echo ""
+              echo "📋 Debugging information:"
+              echo "→ Check if npm audit itself is working: npm audit --version"
+              echo "→ Test allowlist file syntax: cat .audit-allowlist.json"
+              echo "→ Run security scan locally: npm run security:scan"
+            else
+              echo "❌ Unexpected error during security scan execution!"
+              echo ""
+              echo "Possible causes:"
+              echo "→ Runtime error in audit filter script"
+              echo "→ Missing Node.js dependencies"
+              echo "→ File system permissions issue"
+              echo "→ npm audit command failure"
+              echo ""
+              echo "To debug:"
+              echo "1. Run 'node dist/scripts/audit-filter.js' locally"
+              echo "2. Check Node.js version compatibility"
+              echo "3. Verify all required dependencies are installed"
+              echo "4. Test npm audit command: npm audit --json"
+            fi
+            echo ""
+            echo "See docs/SECURITY_VULNERABILITY_MANAGEMENT.md for details"
             exit 1
           }

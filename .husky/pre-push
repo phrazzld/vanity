@@ -51,28 +51,8 @@ case "$BRANCH_NAME" in
     ;;
 esac
 
-# ========================================
-# Check code formatting
-# ========================================
-echo "🎨 Checking code formatting..."
-if npm run format:check > format_output.log 2>&1; then
-  echo "✅ Code formatting check passed"
-  rm format_output.log
-else
-  cat format_output.log
-  rm format_output.log
-  echo ""
-  echo "❌ Code formatting check failed!"
-  echo ""
-  echo "To fix formatting issues:"
-  echo "1. Run 'npm run format' locally"
-  echo "2. Commit the formatted files"
-  echo "3. Push your changes"
-  echo ""
-  echo "💡 Tip: Enable format-on-save in VS Code"
-  echo "   See .vscode/settings.json for recommended settings"
-  exit 1
-fi
+# Note: Code formatting check removed - pre-commit hook ensures formatting
+# This eliminates redundancy while maintaining code quality
 
 # ========================================
 # Check ESLint
@@ -130,6 +110,79 @@ else
   echo "→ Enable strict mode in tsconfig.json"
   echo "→ Use VS Code for real-time type checking"
   echo "→ Check DEVELOPMENT_PHILOSOPHY_APPENDIX_TYPESCRIPT.md"
+  exit 1
+fi
+
+# ========================================
+# Build verification (Vercel and Storybook)
+# ========================================
+
+# Check if build verification should be skipped
+if [ "$SKIP_BUILD_CHECK" = "true" ]; then
+  echo "⚠️ Build verification bypassed by SKIP_BUILD_CHECK=true"
+else
+  echo "🔨 Verifying builds before push..."
+  
+  # Run main application build
+  echo "📦 Building main application..."
+  if npm run build > build_output.log 2>&1; then
+    echo "✅ Main application build passed"
+    rm build_output.log
+  else
+    echo ""
+    echo "❌ Main application build failed!"
+    echo ""
+    echo "The build that would run on Vercel is failing locally."
+    echo "Build errors:"
+    echo ""
+    cat build_output.log | tail -20
+    rm build_output.log
+    echo ""
+    echo "To fix build errors:"
+    echo "1. Run 'npm run build' locally to see full output"
+    echo "2. Fix TypeScript errors and build issues"
+    echo "3. Ensure all dependencies are properly imported"
+    echo ""
+    echo "To skip build verification (not recommended):"
+    echo "  SKIP_BUILD_CHECK=true git push"
+    exit 1
+  fi
+  
+  # Run Storybook build
+  echo "📚 Building Storybook..."
+  if npm run build-storybook > storybook_output.log 2>&1; then
+    echo "✅ Storybook build passed"
+    rm storybook_output.log
+  else
+    echo ""
+    echo "❌ Storybook build failed!"
+    echo ""
+    echo "The Storybook build that runs in CI is failing locally."
+    echo "Build errors:"
+    echo ""
+    cat storybook_output.log | tail -20
+    rm storybook_output.log
+    echo ""
+    echo "To fix Storybook build errors:"
+    echo "1. Run 'npm run build-storybook' locally to see full output"
+    echo "2. Fix TypeScript errors in stories and components"
+    echo "3. Check .storybook configuration"
+    echo ""
+    echo "To skip build verification (not recommended):"
+    echo "  SKIP_BUILD_CHECK=true git push"
+    exit 1
+  fi
+  
+  echo "🎉 All builds verified successfully!"
+fi
+
+# ========================================
+# Security vulnerability scan
+# ========================================
+echo "🔒 Running security vulnerability scan..."
+if .husky/pre-push-security; then
+  echo "✅ Security scan passed"
+else
   exit 1
 fi
 
@@ -207,11 +260,11 @@ else
 fi
 
 # ========================================
-# Check test coverage
+# Run tests with coverage (comprehensive test validation)
 # ========================================
-echo "📊 Running test coverage check..."
+echo "🧪 Running tests with coverage..."
 if npm run test:coverage > coverage_output.log 2>&1; then
-  echo "✅ Test coverage check passed"
+  echo "✅ Tests and coverage check passed"
   rm coverage_output.log
 else
   # Extract coverage failures from output
@@ -248,7 +301,7 @@ else
     else
       # Check if it's just obsolete snapshots
       if grep -q "Test Suites:.*passed.*total" coverage_output.log && grep -q "Tests:.*passed.*total" coverage_output.log; then
-        echo "✅ Test coverage check passed (obsolete snapshots warning ignored)"
+        echo "✅ Tests and coverage check passed (obsolete snapshots warning ignored)"
         rm coverage_output.log
       else
         # Unknown failure, show output
@@ -260,27 +313,4 @@ else
   fi
 fi
 
-# ========================================
-# Run the complete test suite
-# ========================================
-echo "🧪 Running the complete test suite..."
-# Run tests and capture output, but don't let the error stop us
-if npm test > test_output.log 2>&1; then
-  echo "✅ Tests passed successfully!"
-  rm test_output.log
-  exit 0
-else
-  # Tests failed or returned non-zero, check the output
-  cat test_output.log
-  
-  # Check if it's just the obsolete snapshots issue
-  if grep -q "Test Suites:.*passed.*total" test_output.log && grep -q "Tests:.*passed.*total" test_output.log; then
-    echo "✅ All tests passed! (obsolete snapshots warning ignored)"
-    rm test_output.log
-    exit 0
-  else
-    echo "❌ Tests failed. Please fix failing tests before pushing."
-    rm test_output.log
-    exit 1
-  fi
-fi
+echo "✅ All pre-push checks completed successfully!"

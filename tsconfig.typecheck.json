@@ -4,15 +4,16 @@
     "noEmit": true,
     "incremental": false,
 
-    /* Temporarily disable strict checks for pre-commit */
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noImplicitReturns": false,
-    "noUncheckedIndexedAccess": false
+    /* Enable strict checks to catch errors early */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": [
-    "node_modules"
-    /* No longer exclude test files - they'll be checked by the same rules */
+    "node_modules",
+    "src/lib/audit-filter/__tests__" /* Exclude audit-filter tests which have their own looser tsconfig */
+    /* Most test files are checked by the same rules */
   ]
 }

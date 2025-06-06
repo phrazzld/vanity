@@ -7,11 +7,13 @@ const createJestConfig = nextJest({
 
 // Add any custom config to be passed to Jest
 const customJestConfig = {
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js', '<rootDir>/src/lib/audit-filter/jest.setup.js'],
   testEnvironment: 'jest-environment-jsdom',
   moduleNameMapper: {
     // Handle module aliases (this will be automatically configured for you when using `next/jest`)
     '^@/(.*)$': '<rootDir>/src/$1',
+    // Mock nanoid to fix ES module import issues in Jest
+    '^nanoid$': '<rootDir>/src/__mocks__/nanoid',
   },
   // Snapshot configuration
   snapshotResolver: '<rootDir>/snapshotResolver.js',
@@ -53,6 +55,8 @@ const customJestConfig = {
   },
   coverageReporters: ['json', 'lcov', 'text', 'clover', 'html'],
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
+  testMatch: ['**/__tests__/**/*.(test|spec).(js|jsx|ts|tsx)', '**/*.(test|spec).(js|jsx|ts|tsx)'],
+  transformIgnorePatterns: ['/node_modules/(?!(@jest/transform)/)'],
   transform: {
     // Use babel-jest to transpile tests with the next/babel preset
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],

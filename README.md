@@ -68,7 +68,7 @@ A personal website built with Next.js, featuring a collection of readings, trave
 
 ### Prerequisites
 
-- Node.js 18+ and npm
+- Node.js 20+ and npm
 - PostgreSQL database (Neon recommended)
 - Git
 
@@ -147,6 +147,8 @@ A personal website built with Next.js, featuring a collection of readings, trave
 - `npm run format` - Format all files with Prettier
 - `npm run format:check` - Check formatting without making changes
 - `npm run typecheck` - Run TypeScript type checking
+- `npm run security:audit` - Run npm audit for high and critical vulnerabilities
+- `npm run security:scan` - Run security scan with allowlist filtering
 
 ### Database
 
@@ -331,6 +333,7 @@ This project uses GitHub Actions for continuous integration:
 - **Test**: Runs the full test suite
 - **Build**: Verifies the project builds successfully
 - **Storybook**: Builds Storybook to ensure component documentation is valid
+- **Security Scan**: Checks for high and critical security vulnerabilities in dependencies with allowlist support
 
 CI runs on each push to main and on pull requests. Check the [.github/workflows](https://github.com/phrazzld/vanity/actions/workflows/ci.yml) directory for details.
 
@@ -344,6 +347,7 @@ CI runs on each push to main and on pull requests. Check the [.github/workflows]
 - [DESIGN_TOKENS.md](docs/DESIGN_TOKENS.md) - Design system tokens
 - [RESPONSIVE_DESIGN.md](docs/RESPONSIVE_DESIGN.md) - Responsive design approach
 - [KEYBOARD_NAVIGATION.md](docs/KEYBOARD_NAVIGATION.md) - Keyboard navigation utilities
+- [SECURITY_VULNERABILITY_MANAGEMENT.md](docs/SECURITY_VULNERABILITY_MANAGEMENT.md) - Security vulnerability scanning and management
 
 ### Automatically Generated Documentation
 

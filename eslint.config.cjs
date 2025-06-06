@@ -22,6 +22,59 @@ const browserGlobals = {
   clearInterval: 'readonly',
   setInterval: 'readonly',
   NodeJS: 'readonly',
+  // DOM API types
+  URL: 'readonly',
+  URLSearchParams: 'readonly',
+  RequestInit: 'readonly',
+  Response: 'readonly',
+  Request: 'readonly',
+  Headers: 'readonly',
+  FormData: 'readonly',
+  File: 'readonly',
+  Blob: 'readonly',
+  Event: 'readonly',
+  EventTarget: 'readonly',
+  CustomEvent: 'readonly',
+  KeyboardEvent: 'readonly',
+  MouseEvent: 'readonly',
+  PointerEvent: 'readonly',
+  TouchEvent: 'readonly',
+  FocusEvent: 'readonly',
+  InputEvent: 'readonly',
+  // DOM element types
+  Element: 'readonly',
+  HTMLElement: 'readonly',
+  HTMLDivElement: 'readonly',
+  HTMLButtonElement: 'readonly',
+  HTMLInputElement: 'readonly',
+  HTMLSelectElement: 'readonly',
+  HTMLTextAreaElement: 'readonly',
+  HTMLFormElement: 'readonly',
+  HTMLImageElement: 'readonly',
+  HTMLAnchorElement: 'readonly',
+  HTMLCanvasElement: 'readonly',
+  HTMLVideoElement: 'readonly',
+  HTMLAudioElement: 'readonly',
+  // Collections and lists
+  NodeList: 'readonly',
+  NodeListOf: 'readonly',
+  HTMLCollection: 'readonly',
+  HTMLCollectionOf: 'readonly',
+  // Media queries
+  MediaQueryList: 'readonly',
+  MediaQueryListEvent: 'readonly',
+  // Storage
+  Storage: 'readonly',
+  localStorage: 'readonly',
+  sessionStorage: 'readonly',
+  // Location and history
+  Location: 'readonly',
+  History: 'readonly',
+  // Web APIs
+  IntersectionObserver: 'readonly',
+  MutationObserver: 'readonly',
+  ResizeObserver: 'readonly',
+  PerformanceObserver: 'readonly',
 };
 
 const nodeGlobals = {
@@ -127,9 +180,10 @@ module.exports = [
     },
   },
 
-  // TypeScript parser configuration for all TS files
+  // TypeScript parser configuration for all TS files (excluding test files)
   {
     files: ['**/*.{ts,tsx}'],
+    ignores: ['**/*.test.{ts,tsx}', '**/__tests__/**/*.{ts,tsx}', '**/test-utils/**/*.{ts,tsx}'],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {

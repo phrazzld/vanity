@@ -33,7 +33,6 @@ jest.mock('next/image', () => ({
     width: number;
     height: number;
     className?: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError?: (_e: any) => void;
   }) => (
     <div data-testid="mock-image" style={{ width, height }} className={className}>

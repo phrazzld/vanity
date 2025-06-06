@@ -12,6 +12,7 @@ This guide provides comprehensive instructions for setting up your development e
 - [Development Workflow](#development-workflow)
 - [Testing](#testing)
 - [Storybook](#storybook)
+- [Security Audit Filter](#security-audit-filter)
 - [Troubleshooting](#troubleshooting)
 - [Additional Resources](#additional-resources)
 
@@ -433,6 +434,53 @@ npm run build-storybook
 npm run test-storybook
 ```
 
+### Storybook Build Requirements
+
+To ensure your Storybook contributions work correctly in CI and prevent build failures:
+
+#### TypeScript Requirements
+
+Storybook has its own TypeScript configuration (`.storybook/tsconfig.json`) that:
+
+- Includes story files (`*.stories.ts`, `*.stories.tsx`) and Storybook configuration
+- Excludes test files to prevent compilation issues
+- Uses strict TypeScript checking for story components
+
+#### Pre-commit Validation
+
+The pre-commit hook automatically checks Storybook TypeScript compilation when story files are modified:
+
+```bash
+# Manual check (same as pre-commit hook runs)
+npx tsc --noEmit --project .storybook/tsconfig.json
+```
+
+This check only runs when you stage story files or Storybook configuration changes, keeping commits fast.
+
+#### Build Validation
+
+The pre-push hook runs a full Storybook build verification:
+
+```bash
+# Manual full build check (same as pre-push hook runs)
+npm run build-storybook
+```
+
+#### Common TypeScript Issues in Stories
+
+1. **Component prop types**: Ensure story args match component prop interfaces
+2. **Import paths**: Use project path aliases (`@/`) consistently
+3. **Story metadata**: Provide proper `Meta` and `StoryObj` types
+
+#### Troubleshooting Storybook Builds
+
+If Storybook builds fail:
+
+1. Run the TypeScript check: `npx tsc --noEmit --project .storybook/tsconfig.json`
+2. Fix any TypeScript errors in story files
+3. Ensure story files follow the naming convention: `*.stories.{ts,tsx}`
+4. Check that component imports are correct and accessible
+
 ## Troubleshooting
 
 ### Common Issues
@@ -530,6 +578,217 @@ The CI pipeline runs on:
 - Every pull request targeting these branches
 
 See `.github/workflows/ci.yml` for the complete workflow configuration.
+
+## Security Audit Filter
+
+The project includes an automated security vulnerability scanner that runs as part of the CI pipeline and can be executed locally. This scanner checks npm audit results against an allowlist of approved vulnerabilities.
+
+### Security Script Build Process
+
+The security audit filter is implemented as a TypeScript script (`scripts/audit-filter.ts`) that compiles to JavaScript before execution. The build process uses a dedicated TypeScript configuration optimized for standalone script compilation.
+
+#### Build Configuration
+
+- **Source**: `scripts/audit-filter.ts`
+- **TypeScript Config**: `tsconfig.scripts.json`
+- **Output**: `dist/scripts/audit-filter.js`
+- **Dependencies**: Core logic in `src/lib/audit-filter/`
+
+#### TypeScript Configuration for Security Scripts
+
+The `tsconfig.scripts.json` file provides specialized compilation settings for security scripts:
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "skipLibCheck": true,
+    "strict": false,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["scripts/audit-filter.ts", "src/lib/audit-filter/**/*.ts", "src/lib/logger.ts"],
+  "exclude": ["node_modules", "**/*.test.ts", "**/__tests__/**"]
+}
+```
+
+**Key Configuration Notes**:
+
+- Uses CommonJS modules for Node.js compatibility
+- Includes only necessary source files for standalone compilation
+- Excludes test files to prevent compilation issues
+- Uses project-relative path mapping for internal imports
+
+### Local Testing and Development
+
+#### Available npm Scripts
+
+```bash
+# Build the security audit filter script
+npm run build:audit-filter
+
+# Run security scan (builds and executes)
+npm run security:scan
+
+# Comprehensive local testing (recommended)
+npm run security:test
+```
+
+#### Local Testing Workflow
+
+For comprehensive validation before pushing to CI:
+
+```bash
+# Test the complete security audit filter workflow
+npm run security:test
+```
+
+This command:
+
+1. Builds the TypeScript script from clean state
+2. Verifies the compiled output exists
+3. Runs the complete security scan
+4. Validates all components work together
+
+#### Manual Testing Steps
+
+For debugging or detailed validation:
+
+```bash
+# 1. Clean build
+rm -f dist/scripts/audit-filter.js
+npm run build:audit-filter
+
+# 2. Verify compilation output
+ls -la dist/scripts/audit-filter.js
+
+# 3. Test execution
+node dist/scripts/audit-filter.js
+
+# 4. Test with npm wrapper
+npm run security:scan
+```
+
+### Troubleshooting Security Scan Build Issues
+
+#### Common Build Problems
+
+1. **TypeScript Compilation Failures**
+
+   **Error**: `tsc` fails with module resolution errors
+
+   **Solutions**:
+
+   - Verify `tsconfig.scripts.json` exists and is properly configured
+   - Check that all import paths in `scripts/audit-filter.ts` are correct
+   - Ensure dependencies in `src/lib/audit-filter/` compile successfully
+   - Run `npm run build:audit-filter` to see detailed error messages
+
+2. **Missing Compiled Output**
+
+   **Error**: `dist/scripts/audit-filter.js` not created after build
+
+   **Solutions**:
+
+   - Check TypeScript configuration `outDir` setting
+   - Verify `scripts/audit-filter.ts` is included in compilation
+   - Look for silent compilation failures in build output
+   - Test locally: `npm run build:audit-filter && ls -la dist/scripts/`
+
+3. **Runtime Import Errors**
+
+   **Error**: Module resolution failures when executing compiled script
+
+   **Solutions**:
+
+   - Verify all dependencies are properly resolved in `tsconfig.scripts.json`
+   - Check that relative imports use correct paths
+   - Ensure `src/lib/audit-filter/core.ts` and dependencies compile correctly
+   - Test import resolution: `node -e "require('./dist/scripts/audit-filter.js')"`
+
+#### CI-Specific Issues
+
+1. **Build Verification Failures**
+
+   CI includes dedicated verification steps that check:
+
+   - Compiled script exists at expected path
+   - Script is executable and runs without errors
+   - All dependencies are properly resolved
+
+   **Debugging**:
+
+   ```bash
+   # Local CI simulation
+   npm run build:audit-filter
+   test -f dist/scripts/audit-filter.js && echo "✅ File exists" || echo "❌ File missing"
+   node dist/scripts/audit-filter.js && echo "✅ Execution success" || echo "❌ Runtime error"
+   ```
+
+2. **Permission Issues**
+
+   **Error**: Script not executable in CI environment
+
+   **Solution**: CI automatically handles this with `chmod +x` if needed
+
+#### Allowlist Configuration Issues
+
+1. **Invalid JSON Syntax**
+
+   **Error**: Allowlist file parsing fails
+
+   **Solutions**:
+
+   - Validate `.audit-allowlist.json` syntax
+   - Check for trailing commas, missing quotes
+   - Test: `cat .audit-allowlist.json | jq .`
+
+2. **Schema Validation Failures**
+
+   **Error**: Allowlist entries don't match required schema
+
+   **Solutions**:
+
+   - Ensure all entries have required fields: `id`, `package`, `reason`, `expires`
+   - Use ISO 8601 date format for `expires` field
+   - Check expiration dates are not in the past
+
+#### Advanced Debugging
+
+For complex issues, enable debug logging:
+
+```bash
+# Run with debug output
+DEBUG=audit-filter:* npm run security:scan
+
+# Check raw npm audit output
+npm audit --json | jq .
+
+# Validate allowlist schema
+node -e "
+const { allowlistSchema } = require('./dist/src/lib/audit-filter/allowlist.schema.js');
+const allowlist = require('./.audit-allowlist.json');
+console.log('Valid:', allowlistSchema.safeParse(allowlist));
+"
+```
+
+### Security Scan Integration
+
+The security audit filter integrates with the development workflow at multiple points:
+
+- **Pre-push Hook**: Runs security scan before pushing code
+- **CI Pipeline**: Validates security in dedicated CI job
+- **Local Development**: Available via npm scripts for testing
+
+This multi-layered approach ensures security vulnerabilities are caught early and consistently across all environments.
 
 ## Troubleshooting CI/CD Issues
 

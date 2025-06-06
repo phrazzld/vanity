@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+*.backup
 
 # debug
 npm-debug.log*
@@ -43,6 +44,9 @@ yarn-error.log*
 next-env.d.ts
 .env.migration
 logs_result.json
+
+# compiled output
+/dist/
 
 # references
 PLAN.md

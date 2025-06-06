@@ -1,53 +1,32 @@
-declare module '*.jpg' {
-  const value: {
-    src: string;
-    height: number;
-    width: number;
-  };
-  export default value;
-}
+// TypeScript module declarations for image file imports
+// These declarations allow importing image files as modules with Next.js static asset handling
 
-declare module '*.jpeg' {
-  const value: {
-    src: string;
-    height: number;
-    width: number;
-  };
-  export default value;
+declare module '*.webp' {
+  const src: string;
+  export default { src };
 }
 
 declare module '*.png' {
-  const value: {
-    src: string;
-    height: number;
-    width: number;
-  };
-  export default value;
+  const src: string;
+  export default { src };
 }
 
-declare module '*.webp' {
-  const value: {
-    src: string;
-    height: number;
-    width: number;
-  };
-  export default value;
+declare module '*.jpg' {
+  const src: string;
+  export default { src };
 }
 
-declare module '*.svg' {
-  const value: {
-    src: string;
-    height: number;
-    width: number;
-  };
-  export default value;
+declare module '*.jpeg' {
+  const src: string;
+  export default { src };
 }
 
 declare module '*.gif' {
-  const value: {
-    src: string;
-    height: number;
-    width: number;
-  };
-  export default value;
+  const src: string;
+  export default { src };
+}
+
+declare module '*.svg' {
+  const src: string;
+  export default { src };
 }
