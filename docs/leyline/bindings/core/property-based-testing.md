@@ -22,23 +22,27 @@ The power of property-based testing lies in its ability to automatically explore
 This binding establishes guidelines for when and how to apply property-based testing effectively:
 
 - **Property Identification**: Use property-based testing for functions and systems where you can clearly articulate invariants:
+
   - **Mathematical Properties**: Commutativity, associativity, identity, inverse operations
   - **Data Structure Invariants**: Size relationships, ordering properties, structural constraints
   - **Business Rule Invariants**: Constraints that must hold regardless of specific input values
   - **Round-trip Properties**: Encode/decode, serialize/deserialize operations that should be reversible
 
 - **Complementary Coverage**: Property-based tests should complement, not replace, example-based tests:
+
   - **Example Tests**: Verify specific scenarios, edge cases, and known business rules
   - **Property Tests**: Verify general invariants and relationships across broad input ranges
   - **Integration**: Use both approaches for comprehensive coverage of critical functionality
 
 - **Property Design Principles**: Write properties that are:
+
   - **Specific**: Clearly define what relationship or constraint must hold
   - **Universal**: Apply to all valid inputs within the specified domain
   - **Testable**: Can be automatically verified with generated inputs
   - **Independent**: Don't rely on implementation details or specific algorithms
 
 - **Input Generation Strategy**: Design input generators that:
+
   - **Cover Edge Cases**: Include boundary values, empty collections, null values
   - **Reflect Real Usage**: Generate inputs that resemble actual system usage patterns
   - **Scale Appropriately**: Test with various input sizes and complexity levels
@@ -139,7 +143,7 @@ describe('URL parsing examples', () => {
     expect(parseURL('https://example.com')).toEqual({
       protocol: 'https',
       domain: 'example.com',
-      path: '/'
+      path: '/',
     });
   });
 
@@ -147,7 +151,7 @@ describe('URL parsing examples', () => {
     expect(parseURL('http://test.org/path')).toEqual({
       protocol: 'http',
       domain: 'test.org',
-      path: '/path'
+      path: '/path',
     });
   });
 });
@@ -155,23 +159,24 @@ describe('URL parsing examples', () => {
 // ✅ GOOD: Property-based testing for URL handling
 describe('URL parsing properties', () => {
   it('parsing and formatting are inverse operations', () => {
-    fc.assert(fc.property(
-      fc.webUrl(), // Built-in generator for valid URLs
-      (url) => {
-        const parsed = parseURL(url);
-        const formatted = formatURL(parsed);
+    fc.assert(
+      fc.property(
+        fc.webUrl(), // Built-in generator for valid URLs
+        url => {
+          const parsed = parseURL(url);
+          const formatted = formatURL(parsed);
 
-        // Round-trip property: parse(format(parse(url))) should equal parse(url)
-        const reparsed = parseURL(formatted);
-        expect(reparsed).toEqual(parsed);
-      }
-    ));
+          // Round-trip property: parse(format(parse(url))) should equal parse(url)
+          const reparsed = parseURL(formatted);
+          expect(reparsed).toEqual(parsed);
+        }
+      )
+    );
   });
 
   it('valid URLs always parse without throwing', () => {
-    fc.assert(fc.property(
-      fc.webUrl(),
-      (url) => {
+    fc.assert(
+      fc.property(fc.webUrl(), url => {
         // Property: Valid URLs should never cause parsing to throw
         expect(() => parseURL(url)).not.toThrow();
 
@@ -180,76 +185,82 @@ describe('URL parsing properties', () => {
         expect(result).toHaveProperty('protocol');
         expect(result).toHaveProperty('domain');
         expect(result).toHaveProperty('path');
-      }
-    ));
+      })
+    );
   });
 });
 
 // Testing data transformation properties
 describe('data encoding properties', () => {
   it('base64 encoding is reversible', () => {
-    fc.assert(fc.property(
-      fc.uint8Array(), // Generate arbitrary byte arrays
-      (data) => {
-        const encoded = base64Encode(data);
-        const decoded = base64Decode(encoded);
+    fc.assert(
+      fc.property(
+        fc.uint8Array(), // Generate arbitrary byte arrays
+        data => {
+          const encoded = base64Encode(data);
+          const decoded = base64Decode(encoded);
 
-        // Round-trip property
-        expect(decoded).toEqual(data);
+          // Round-trip property
+          expect(decoded).toEqual(data);
 
-        // Property: Encoded data should be valid base64
-        expect(encoded).toMatch(/^[A-Za-z0-9+/]*={0,2}$/);
-      }
-    ));
+          // Property: Encoded data should be valid base64
+          expect(encoded).toMatch(/^[A-Za-z0-9+/]*={0,2}$/);
+        }
+      )
+    );
   });
 });
 
 // Testing state machine properties
 describe('user session properties', () => {
   it('session operations maintain valid state', () => {
-    fc.assert(fc.property(
-      fc.array(fc.oneof(
-        fc.constant('login'),
-        fc.constant('logout'),
-        fc.constant('refresh'),
-        fc.constant('expire')
-      )),
-      (operations) => {
-        const session = new UserSession();
+    fc.assert(
+      fc.property(
+        fc.array(
+          fc.oneof(
+            fc.constant('login'),
+            fc.constant('logout'),
+            fc.constant('refresh'),
+            fc.constant('expire')
+          )
+        ),
+        operations => {
+          const session = new UserSession();
 
-        for (const operation of operations) {
-          // Property: Operations should never leave session in invalid state
-          switch (operation) {
-            case 'login':
-              if (!session.isLoggedIn()) {
-                session.login('user');
-              }
-              break;
-            case 'logout':
-              if (session.isLoggedIn()) {
-                session.logout();
-              }
-              break;
-            case 'refresh':
-              if (session.isLoggedIn()) {
-                session.refresh();
-              }
-              break;
-            case 'expire':
-              session.expire();
-              break;
-          }
+          for (const operation of operations) {
+            // Property: Operations should never leave session in invalid state
+            switch (operation) {
+              case 'login':
+                if (!session.isLoggedIn()) {
+                  session.login('user');
+                }
+                break;
+              case 'logout':
+                if (session.isLoggedIn()) {
+                  session.logout();
+                }
+                break;
+              case 'refresh':
+                if (session.isLoggedIn()) {
+                  session.refresh();
+                }
+                break;
+              case 'expire':
+                session.expire();
+                break;
+            }
 
-          // Invariant: Session state is always consistent
-          if (session.isLoggedIn()) {
-            expect(session.getUser()).toBeDefined();
-            expect(session.getExpirationTime()).toBeGreaterThan(Date.now());
-          } else {
-            expect(session.getUser()).toBeNull();
+            // Invariant: Session state is always consistent
+            if (session.isLoggedIn()) {
+              expect(session.getUser()).toBeDefined();
+              expect(session.getExpirationTime()).toBeGreaterThan(Date.now());
+            } else {
+              expect(session.getUser()).toBeNull();
+            }
           }
         }
-      }
-    ));
+      )
+    );
   });
 });
 ```

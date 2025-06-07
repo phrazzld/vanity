@@ -22,12 +22,14 @@ The challenge with YAGNI isn't understanding the principle; it's recognizing whe
 This binding establishes strict criteria for when new functionality should be implemented and clear procedures for preventing speculative development:
 
 - **Demonstrated Need Requirements**: All new features must meet at least one of these criteria:
+
   - **Current User Request**: Direct feedback from actual users experiencing a specific problem
   - **Business Requirement**: Explicit business case with measurable success criteria
   - **Technical Debt Remediation**: Addressing proven maintainability or performance issues
   - **Regulatory/Security Compliance**: Legal or security requirements with specific deadlines
 
 - **Prohibited Speculative Patterns**:
+
   - Features justified with "we might need this later"
   - Overly generic solutions "for future extensibility"
   - Complex configuration systems without proven variability needs
@@ -35,12 +37,14 @@ This binding establishes strict criteria for when new functionality should be im
   - Performance optimizations without measured bottlenecks
 
 - **Evidence Standards**: For any proposed feature, you must provide:
+
   - Specific use cases from real users or stakeholder requests
   - Clear success metrics that define when the feature has succeeded
   - Timeline constraints that justify implementation now rather than later
   - Cost analysis showing the problem's impact without the feature
 
 - **Evaluation Questions**: Before implementing any functionality, ask:
+
   - "Do we have concrete evidence this is needed now?"
   - "What happens if we defer this for six months?"
   - "Are we solving a real problem or an imagined one?"
@@ -192,7 +196,7 @@ class APIClient {
       attempts: 3,
       backoff: 'exponential',
       jitter: true,
-      retryCondition: (error) => error.status >= 500
+      retryCondition: error => error.status >= 500,
     };
 
     // Speculative: No current caching requirements
@@ -200,7 +204,7 @@ class APIClient {
     this.cacheConfig = config.cache || {
       ttl: 300000,
       maxSize: 1000,
-      strategy: 'lru'
+      strategy: 'lru',
     };
 
     // Speculative: No current need for request transformation
@@ -211,7 +215,7 @@ class APIClient {
     this.batchQueue = [];
     this.batchConfig = config.batch || {
       maxSize: 10,
-      timeout: 100
+      timeout: 100,
     };
   }
 
@@ -240,10 +244,10 @@ class APIClient {
     const response = await fetch(url, {
       ...options,
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
-        ...options.headers
-      }
+        ...options.headers,
+      },
     });
 
     if (!response.ok) {
@@ -260,7 +264,7 @@ class APIClient {
   async post(endpoint, data) {
     return this.request(endpoint, {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
   }
 }

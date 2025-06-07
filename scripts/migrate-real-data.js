@@ -3,18 +3,39 @@ const { PrismaClient } = require('@prisma/client');
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const { logger, createLogContext } = require('../src/lib/logger');
+const { nanoid } = require('nanoid');
 
 const prisma = new PrismaClient();
 
 async function migrateRealData() {
+  const startTime = Date.now();
+  const correlationId = nanoid();
+
   try {
     console.log('Starting data migration...');
+
+    logger.info(
+      'Data migration script started',
+      createLogContext('scripts/migrate-real-data', 'migrateRealData', {
+        correlation_id: correlationId,
+      })
+    );
 
     // Read data files
     const readingsFilePath = path.join(__dirname, '../src/app/readings/data.ts');
     const quotesFilePath = path.join(__dirname, '../src/app/quotes.ts');
 
     console.log(`Reading data from ${readingsFilePath} and ${quotesFilePath}`);
+
+    logger.info(
+      'Reading source data files',
+      createLogContext('scripts/migrate-real-data', 'migrateRealData', {
+        correlation_id: correlationId,
+        readings_file: readingsFilePath,
+        quotes_file: quotesFilePath,
+      })
+    );
 
     const readingsContent = fs.readFileSync(readingsFilePath, 'utf8');
     const quotesContent = fs.readFileSync(quotesFilePath, 'utf8');
@@ -116,6 +137,16 @@ async function migrateRealData() {
       } catch (error) {
         console.error(`Error parsing array string: ${error.message}`);
         console.error(`Problematic string: ${arrayString.slice(0, 200)}...`);
+
+        logger.error(
+          'Failed to parse readings array string',
+          createLogContext('scripts/migrate-real-data', 'migrateRealData', {
+            correlation_id: correlationId,
+            error_type: error.constructor.name,
+            string_preview: arrayString.slice(0, 200),
+          }),
+          error
+        );
         return [];
       }
     }
@@ -126,6 +157,15 @@ async function migrateRealData() {
         return parseArrayString(arr);
       } catch (error) {
         console.error(`Error parsing readings array: ${error.message}`);
+
+        logger.error(
+          'Failed to parse readings array content',
+          createLogContext('scripts/migrate-real-data', 'migrateRealData', {
+            correlation_id: correlationId,
+            error_type: error.constructor.name,
+          }),
+          error
+        );
         return [];
       }
     });
@@ -143,6 +183,15 @@ async function migrateRealData() {
         console.log(`Successfully parsed ${allQuotes.length} quotes`);
       } catch (error) {
         console.error(`Error parsing quotes array: ${error.message}`);
+
+        logger.error(
+          'Failed to parse quotes array',
+          createLogContext('scripts/migrate-real-data', 'migrateRealData', {
+            correlation_id: correlationId,
+            error_type: error.constructor.name,
+          }),
+          error
+        );
       }
     }
 
@@ -177,6 +226,17 @@ async function migrateRealData() {
           successCount++;
         } catch (error) {
           console.error(`Error migrating reading ${reading.slug}:`, error);
+
+          logger.error(
+            'Failed to migrate individual reading',
+            createLogContext('scripts/migrate-real-data', 'migrateRealData', {
+              correlation_id: correlationId,
+              reading_slug: reading.slug,
+              reading_title: reading.title,
+              error_type: error.constructor.name,
+            }),
+            error
+          );
         }
       }
 
@@ -201,6 +261,17 @@ async function migrateRealData() {
           successCount++;
         } catch (error) {
           console.error(`Error migrating quote:`, error);
+
+          logger.error(
+            'Failed to migrate individual quote',
+            createLogContext('scripts/migrate-real-data', 'migrateRealData', {
+              correlation_id: correlationId,
+              quote_preview: quote.text?.slice(0, 50),
+              quote_author: quote.author,
+              error_type: error.constructor.name,
+            }),
+            error
+          );
         }
       }
 
@@ -208,8 +279,28 @@ async function migrateRealData() {
     }
 
     console.log('Data migration completed successfully!');
+
+    logger.info(
+      'Data migration script completed successfully',
+      createLogContext('scripts/migrate-real-data', 'migrateRealData', {
+        correlation_id: correlationId,
+        execution_time: Date.now() - startTime,
+        total_readings: allReadings.length,
+        total_quotes: allQuotes.length,
+      })
+    );
   } catch (error) {
     console.error('Migration error:', error);
+
+    logger.error(
+      'Data migration script failed',
+      createLogContext('scripts/migrate-real-data', 'migrateRealData', {
+        correlation_id: correlationId,
+        execution_time: Date.now() - startTime,
+        error_type: error.constructor.name,
+      }),
+      error
+    );
   } finally {
     await prisma.$disconnect();
   }

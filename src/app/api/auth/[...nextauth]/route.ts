@@ -7,6 +7,8 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import auth from '@/auth';
+import { logger, createLogContext, CorrelationContext } from '@/lib/logger';
+import { nanoid } from 'nanoid';
 
 /**
  * Handlers for authentication routes
@@ -48,7 +50,12 @@ export async function GET(request: NextRequest) {
           const parsedUser = JSON.parse(userStr) as AdminUser;
           user = parsedUser;
         } catch (e) {
-          console.error('Failed to parse user cookie:', e);
+          logger.warn(
+            'Failed to parse user session cookie',
+            createLogContext('api/auth', 'GET', {
+              error_type: e instanceof Error ? e.constructor.name : 'Unknown',
+            })
+          );
         }
       }
 
@@ -65,30 +72,54 @@ export async function GET(request: NextRequest) {
 
 // Handle POST requests for login actions
 export async function POST(request: NextRequest) {
-  try {
-    console.log('POST request to auth endpoint received');
+  const startTime = Date.now();
+  const correlationId = request.headers.get('x-correlation-id') || nanoid();
+  CorrelationContext.set(correlationId);
 
+  logger.http(
+    'Authentication POST request received',
+    createLogContext('api/auth', 'POST', {
+      url: request.url,
+      method: 'POST',
+      user_agent: request.headers.get('user-agent'),
+      correlation_id: correlationId,
+    })
+  );
+
+  try {
     const formData = await request.formData();
     const username = formData.get('username') as string;
     const password = formData.get('password') as string;
     const callbackUrl = (formData.get('callbackUrl') as string) || '/admin';
 
-    console.log(`Login attempt: username=${username}, callbackUrl=${callbackUrl}`);
-    // Safely access environment variable
-
-    console.log(
-      `Current environment: ${typeof process !== 'undefined' && process.env ? process.env.NODE_ENV : 'unknown'}`
+    logger.info(
+      'Authentication attempt',
+      createLogContext('api/auth', 'POST', {
+        username: username ? '[PROVIDED]' : '[MISSING]', // Never log actual username
+        callback_url: callbackUrl,
+        environment:
+          typeof process !== 'undefined' && process.env ? process.env.NODE_ENV : 'unknown',
+      })
     );
 
     // Use our auth utility to validate credentials
     const result = auth.validateCredentials(username, password);
 
     if (result.success) {
-      console.log('Credentials validated successfully, setting cookies...');
+      logger.info(
+        'Authentication successful',
+        createLogContext('api/auth', 'POST', {
+          success: true,
+          callback_url: callbackUrl,
+        })
+      );
 
       // Build the callback URL
       const redirectUrl = new URL(callbackUrl, request.url);
-      console.log(`Redirecting to: ${redirectUrl.toString()}`);
+      logger.debug(
+        'Setting redirect URL',
+        createLogContext('api/auth', 'POST', { redirect_url: redirectUrl.toString() })
+      );
 
       // Set authentication cookie and redirect to callback URL
       const response = NextResponse.redirect(redirectUrl);
@@ -111,7 +142,10 @@ export async function POST(request: NextRequest) {
 
       // Store user info in a cookie for display purposes
       if (result.user) {
-        console.log('Setting user cookie...');
+        logger.debug(
+          'Setting user session cookie',
+          createLogContext('api/auth', 'POST', { user_role: result.user.role })
+        );
         response.cookies.set({
           name: 'admin_user',
           value: JSON.stringify({
@@ -132,21 +166,40 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      console.log('Returning redirect response...');
+      logger.http(
+        'Authentication successful - redirecting',
+        createLogContext('api/auth', 'POST', {
+          response_status: 302,
+          duration: Date.now() - startTime,
+          redirect_url: redirectUrl.toString(),
+        })
+      );
       return response;
     }
 
-    console.log('Authentication failed, redirecting to login page with error');
+    logger.warn(
+      'Authentication failed',
+      createLogContext('api/auth', 'POST', {
+        success: false,
+        username_provided: !!username,
+        callback_url: callbackUrl,
+      })
+    );
     // Redirect to login with error on failure
     const errorMessage = result.message || 'CredentialsSignin';
     return NextResponse.redirect(
       new URL(`/admin/login?error=${encodeURIComponent(errorMessage)}`, request.url)
     );
   } catch (error) {
-    console.error('Login error:', error);
-    // Provide more detailed error information for debugging
+    logger.error(
+      'Authentication error occurred',
+      createLogContext('api/auth', 'POST', {
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+        request_url: request.url,
+      }),
+      error instanceof Error ? error : new Error(String(error))
+    );
     const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error(`Error details: ${errorMessage}`);
 
     return NextResponse.redirect(
       new URL(
@@ -154,5 +207,7 @@ export async function POST(request: NextRequest) {
         request.url
       )
     );
+  } finally {
+    CorrelationContext.clear();
   }
 }

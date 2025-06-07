@@ -4,6 +4,7 @@ enforced_by: Code review, Automated a11y testing
 id: web-accessibility
 last_modified: '2025-05-14'
 ---
+
 # Binding: Web Accessibility
 
 Make all web interfaces accessible to people with disabilities by following WCAG 2.1 AA
@@ -28,7 +29,7 @@ stairs—it ensures everyone can enter your building, regardless of their abilit
 Beyond the ethical imperative, accessible applications deliver tangible business
 benefits. They reach larger audiences, comply with increasingly common legal
 requirements, rank better in search engines, and often provide better experiences for
-*all* users. Consider how voice interfaces like Siri and Alexa rely on the same semantic
+_all_ users. Consider how voice interfaces like Siri and Alexa rely on the same semantic
 structures that screen readers use, or how keyboard shortcuts benefit both power users
 and those with motor impairments. Properly implemented accessibility creates more
 robust, flexible interfaces that work better across different contexts and devices.
@@ -127,7 +128,7 @@ must be provided whenever possible.
          onClick={onClick}
          aria-haspopup="true"
          aria-expanded={isOpen}
-         onKeyDown={(e) => {
+         onKeyDown={e => {
            // Handle arrow key navigation
            if (e.key === 'ArrowDown') {
              e.preventDefault();
@@ -163,13 +164,7 @@ must be provided whenever possible.
 
      return (
        <div className="modal-overlay">
-         <div
-           ref={modalRef}
-           className="modal"
-           role="dialog"
-           aria-modal="true"
-           tabIndex={-1}
-         >
+         <div ref={modalRef} className="modal" role="dialog" aria-modal="true" tabIndex={-1}>
            {children}
            <button onClick={onClose}>Close</button>
          </div>
@@ -189,13 +184,13 @@ must be provided whenever possible.
    // Form with proper ARIA attributes
    <form>
      <div className="form-group">
-       <label id="nameLabel" htmlFor="name">Full Name</label>
-       <input
-         id="name"
-         aria-labelledby="nameLabel nameHint"
-         aria-required="true"
-       />
-       <p id="nameHint" className="hint">Enter your legal name as it appears on your ID</p>
+       <label id="nameLabel" htmlFor="name">
+         Full Name
+       </label>
+       <input id="name" aria-labelledby="nameLabel nameHint" aria-required="true" />
+       <p id="nameHint" className="hint">
+         Enter your legal name as it appears on your ID
+       </p>
      </div>
 
      <div className="form-group">
@@ -238,10 +233,7 @@ must be provided whenever possible.
 // ❌ BAD: Inaccessible button implementation
 function IconButton({ icon, onClick }) {
   return (
-    <div
-      className="icon-button"
-      onClick={onClick}
-    >
+    <div className="icon-button" onClick={onClick}>
       <i className={`icon-${icon}`} />
     </div>
   );
@@ -250,22 +242,14 @@ function IconButton({ icon, onClick }) {
 // ✅ GOOD: Accessible button implementation
 function IconButton({ icon, label, onClick }) {
   return (
-    <button
-      className="icon-button"
-      onClick={onClick}
-      aria-label={label}
-    >
+    <button className="icon-button" onClick={onClick} aria-label={label}>
       <i className={`icon-${icon}`} aria-hidden="true" />
     </button>
   );
 }
 
 // Usage
-<IconButton
-  icon="trash"
-  label="Delete item"
-  onClick={handleDelete}
-/>
+<IconButton icon="trash" label="Delete item" onClick={handleDelete} />;
 ```
 
 ```jsx
@@ -274,7 +258,7 @@ function ContactForm() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault();
     if (!isValidEmail(email)) {
       setError('Invalid email');
@@ -289,7 +273,7 @@ function ContactForm() {
         <input
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={e => setEmail(e.target.value)}
           placeholder="Enter your email"
         />
       </div>
@@ -307,7 +291,7 @@ function ContactForm() {
   const [error, setError] = useState('');
   const errorId = 'email-error';
 
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault();
     if (!isValidEmail(email)) {
       setError('Invalid email format. Please enter a valid email address.');
@@ -324,7 +308,7 @@ function ContactForm() {
           id="email"
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={e => setEmail(e.target.value)}
           aria-describedby={error ? errorId : undefined}
           aria-invalid={!!error}
           required
@@ -350,7 +334,9 @@ function Modal({ isOpen, children }) {
     <div className="modal-overlay">
       <div className="modal">
         {children}
-        <div className="close-btn" onClick={onClose}>×</div>
+        <div className="close-btn" onClick={onClose}>
+          ×
+        </div>
       </div>
     </div>
   );
@@ -372,7 +358,7 @@ function Modal({ isOpen, onClose, title, children }) {
       }
 
       // Add event listener for ESC key
-      const handleEsc = (e) => {
+      const handleEsc = e => {
         if (e.key === 'Escape') {
           onClose();
         }
@@ -406,17 +392,11 @@ function Modal({ isOpen, onClose, title, children }) {
         aria-modal="true"
         aria-labelledby="modal-title"
         tabIndex={-1}
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         <h2 id="modal-title">{title}</h2>
-        <div className="modal-content">
-          {children}
-        </div>
-        <button
-          className="close-btn"
-          onClick={onClose}
-          aria-label="Close modal"
-        >
+        <div className="modal-content">{children}</div>
+        <button className="close-btn" onClick={onClose} aria-label="Close modal">
           ×
         </button>
       </div>

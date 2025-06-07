@@ -6,6 +6,7 @@
  */
 
 import { QueryClient } from '@tanstack/react-query';
+import { logger, createLogContext } from './logger';
 
 // Enhanced dev options
 // Only enabled in development (client-side detection)
@@ -14,9 +15,30 @@ const devOptions =
   (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? {
         logger: {
-          log: console.log,
-          warn: console.warn,
-          error: console.error,
+          log: (message: string, ...args: unknown[]) => {
+            logger.debug(
+              message,
+              createLogContext('lib/query', 'tanstack-query', {
+                query_args: args.length > 0 ? args : undefined,
+              })
+            );
+          },
+          warn: (message: string, ...args: unknown[]) => {
+            logger.warn(
+              message,
+              createLogContext('lib/query', 'tanstack-query', {
+                query_args: args.length > 0 ? args : undefined,
+              })
+            );
+          },
+          error: (message: string, ...args: unknown[]) => {
+            logger.error(
+              message,
+              createLogContext('lib/query', 'tanstack-query', {
+                query_args: args.length > 0 ? args : undefined,
+              })
+            );
+          },
         },
       }
     : {};

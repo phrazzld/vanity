@@ -34,6 +34,7 @@ Runtime adaptability must implement these dynamic principles:
 - **Health-Based Routing**: Dynamically route requests based on real-time health and performance metrics of downstream services.
 
 **Adaptation Triggers:**
+
 - System performance metrics (CPU, memory, latency)
 - External service availability and response times
 - User traffic patterns and request volumes
@@ -41,6 +42,7 @@ Runtime adaptability must implement these dynamic principles:
 - Business rule changes and operational requirements
 
 **Adaptation Mechanisms:**
+
 - Dynamic configuration updates
 - Algorithm selection based on conditions
 - Resource pool resizing
@@ -64,10 +66,10 @@ Runtime adaptability must implement these dynamic principles:
 ```typescript
 // ❌ BAD: Static configuration and fixed behavior
 class ApiService {
-  private readonly maxConnections = 100;    // Fixed pool size
-  private readonly timeout = 5000;          // Fixed 5 second timeout
-  private readonly retryAttempts = 3;       // Fixed retry count
-  private readonly cacheSize = 1000;        // Fixed cache size
+  private readonly maxConnections = 100; // Fixed pool size
+  private readonly timeout = 5000; // Fixed 5 second timeout
+  private readonly retryAttempts = 3; // Fixed retry count
+  private readonly cacheSize = 1000; // Fixed cache size
 
   async makeRequest(endpoint: string): Promise<any> {
     // Fixed timeout regardless of system load
@@ -76,7 +78,7 @@ class ApiService {
 
     try {
       const response = await fetch(endpoint, {
-        signal: controller.signal
+        signal: controller.signal,
       });
 
       if (!response.ok) {
@@ -192,7 +194,7 @@ class AdaptiveApiService {
         setTimeout(() => controller.abort(), adaptiveTimeout);
 
         const response = await fetch(endpoint, {
-          signal: controller.signal
+          signal: controller.signal,
         });
 
         // Update metrics for future adaptations
@@ -241,7 +243,7 @@ class AdaptiveApiService {
       isHealthy: errorRate < 0.05 && averageLatency < 2000,
       averageLatency,
       errorRate,
-      lastFailure: recent.lastError
+      lastFailure: recent.lastError,
     };
   }
 
@@ -267,7 +269,7 @@ class AdaptiveApiService {
       cpuUsage: metrics.cpuUsage,
       memoryUsage: metrics.memoryUsage,
       connections: this.connectionPool.getCurrentSize(),
-      cacheSize: this.adaptiveCache.getCurrentSize()
+      cacheSize: this.adaptiveCache.getCurrentSize(),
     });
   }
 
@@ -356,7 +358,7 @@ class AdaptiveApiService {
 
     if (metrics.memoryUsage > 0.9) {
       // High memory pressure - only cache small, frequently accessed items
-      if (this.estimateSize(value) < 1024 && await this.isFrequentlyAccessed(key)) {
+      if (this.estimateSize(value) < 1024 && (await this.isFrequentlyAccessed(key))) {
         await this.adaptiveCache.set(key, value, { priority: 'high' });
       }
     } else {
@@ -458,14 +460,16 @@ class AdaptiveCache {
   async set(key: string, value: any, options?: { priority?: 'high' | 'normal' }): Promise<void> {
     // Check if eviction is needed
     if (this.cache.size >= this.config.maxSize) {
-      await this.evictEntries(options?.priority === 'high' ? 1 : Math.ceil(this.config.maxSize * 0.1));
+      await this.evictEntries(
+        options?.priority === 'high' ? 1 : Math.ceil(this.config.maxSize * 0.1)
+      );
     }
 
     const entry: CacheEntry = {
       value,
       timestamp: Date.now(),
       ttl: this.config.ttl,
-      priority: options?.priority || 'normal'
+      priority: options?.priority || 'normal',
     };
 
     this.cache.set(key, entry);
@@ -500,7 +504,7 @@ class AdaptiveCache {
       const bAge = Date.now() - b[1].timestamp;
 
       // Evict less frequently accessed and older items first
-      return (aAccess - bAccess) || (bAge - aAge);
+      return aAccess - bAccess || bAge - aAge;
     });
 
     for (let i = 0; i < count && i < entries.length; i++) {

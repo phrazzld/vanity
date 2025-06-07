@@ -34,11 +34,13 @@ Interface contracts must establish these essential elements:
 - **Immutability Guarantees**: Specify whether inputs will be modified and whether outputs can be safely modified by callers.
 
 These contracts should be:
+
 - **Verifiable**: Enforceable through type systems, runtime checks, or testing
 - **Stable**: Changes should be backward-compatible or follow explicit versioning protocols
 - **Complete**: Cover all aspects necessary for safe usage without requiring implementation knowledge
 
 Contracts may be relaxed when:
+
 - Rapid prototyping requires flexibility over stability
 - Internal APIs within a single module where coupling is acceptable
 - Performance-critical code where contract overhead is prohibitive (with explicit documentation)
@@ -329,7 +331,7 @@ type DataProcessor interface {
 }
 ```
 
-```rust
+````rust
 // ❌ BAD: Function with unclear error handling contract
 fn parse_config_file(path: &str) -> Option<Config> {
     // Unclear what None means:
@@ -456,7 +458,7 @@ pub fn parse_config_file(path: &str) -> Result<Config, ConfigError> {
 
     Ok(config)
 }
-```
+````
 
 ## Related Bindings
 

@@ -34,6 +34,7 @@ Centralized configuration must establish these organizational principles:
 - **Secret Management**: Handle sensitive configuration (API keys, database passwords) separately from non-sensitive settings using appropriate security measures.
 
 **Configuration Categories:**
+
 - Application behavior settings (timeouts, retry counts, feature flags)
 - External service endpoints and credentials
 - Database connection parameters
@@ -42,6 +43,7 @@ Centralized configuration must establish these organizational principles:
 - Business rules and thresholds
 
 **Anti-Patterns to Avoid:**
+
 - Hardcoding configuration values in source code
 - Duplicating the same setting in multiple configuration files
 - Using different configuration formats or locations across services
@@ -69,15 +71,15 @@ const userService = new UserService({
   port: 5432,
   database: 'myapp',
   username: 'user',
-  password: 'password'
+  password: 'password',
 });
 
 const orderService = new OrderService({
-  host: 'localhost',        // Duplicated
-  port: 5432,              // Duplicated
-  database: 'myapp',       // Duplicated
-  username: 'user',        // Duplicated
-  password: 'password'     // Duplicated - and insecure!
+  host: 'localhost', // Duplicated
+  port: 5432, // Duplicated
+  database: 'myapp', // Duplicated
+  username: 'user', // Duplicated
+  password: 'password', // Duplicated - and insecure!
 });
 
 // API endpoints hardcoded in different components
@@ -85,8 +87,8 @@ class PaymentService {
   async processPayment(amount: number) {
     const response = await fetch('https://api.stripe.com/v1/charges', {
       headers: {
-        'Authorization': 'Bearer sk_test_hardcoded_key'  // Hardcoded secret!
-      }
+        Authorization: 'Bearer sk_test_hardcoded_key', // Hardcoded secret!
+      },
     });
   }
 }
@@ -95,8 +97,8 @@ class EmailService {
   async sendEmail(to: string, subject: string) {
     const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
       headers: {
-        'Authorization': 'Bearer SG.hardcoded_key'  // Different hardcoded secret!
-      }
+        Authorization: 'Bearer SG.hardcoded_key', // Different hardcoded secret!
+      },
     });
   }
 }
@@ -182,7 +184,7 @@ class ConfigurationManager {
       server: {
         port: 3000,
         host: 'localhost',
-        corsOrigins: ['http://localhost:3000']
+        corsOrigins: ['http://localhost:3000'],
       },
       database: {
         host: 'localhost',
@@ -191,35 +193,35 @@ class ConfigurationManager {
         username: 'postgres',
         password: '',
         maxConnections: 10,
-        connectionTimeout: 30000
+        connectionTimeout: 30000,
       },
       externalServices: {
         stripe: {
           apiKey: this.requireEnv('STRIPE_API_KEY'),
           webhookSecret: this.requireEnv('STRIPE_WEBHOOK_SECRET'),
-          apiVersion: '2023-10-16'
+          apiVersion: '2023-10-16',
         },
         sendgrid: {
           apiKey: this.requireEnv('SENDGRID_API_KEY'),
           fromEmail: this.requireEnv('FROM_EMAIL'),
-          replyToEmail: this.getEnv('REPLY_TO_EMAIL', 'noreply@example.com')
+          replyToEmail: this.getEnv('REPLY_TO_EMAIL', 'noreply@example.com'),
         },
         redis: {
           url: this.getEnv('REDIS_URL', 'redis://localhost:6379'),
           keyPrefix: 'myapp:',
-          ttlSeconds: 3600
-        }
+          ttlSeconds: 3600,
+        },
       },
       features: {
         enableEmailNotifications: this.getBoolEnv('ENABLE_EMAIL_NOTIFICATIONS', true),
         enablePaymentProcessing: this.getBoolEnv('ENABLE_PAYMENT_PROCESSING', true),
-        enableAnalytics: this.getBoolEnv('ENABLE_ANALYTICS', false)
+        enableAnalytics: this.getBoolEnv('ENABLE_ANALYTICS', false),
       },
       logging: {
         level: this.getEnv('LOG_LEVEL', 'info') as any,
         destination: this.getEnv('LOG_DESTINATION', 'console') as any,
-        enableStructuredLogging: this.getBoolEnv('ENABLE_STRUCTURED_LOGGING', true)
-      }
+        enableStructuredLogging: this.getBoolEnv('ENABLE_STRUCTURED_LOGGING', true),
+      },
     };
 
     // Override with environment-specific values
@@ -228,12 +230,7 @@ class ConfigurationManager {
 
   private validateConfiguration(): void {
     // Validate required fields
-    const required = [
-      'STRIPE_API_KEY',
-      'STRIPE_WEBHOOK_SECRET',
-      'SENDGRID_API_KEY',
-      'FROM_EMAIL'
-    ];
+    const required = ['STRIPE_API_KEY', 'STRIPE_WEBHOOK_SECRET', 'SENDGRID_API_KEY', 'FROM_EMAIL'];
 
     for (const key of required) {
       if (!process.env[key]) {
@@ -291,7 +288,7 @@ class UserService {
       database: this.dbConfig.database,
       username: this.dbConfig.username,
       password: this.dbConfig.password,
-      maxConnections: this.dbConfig.maxConnections
+      maxConnections: this.dbConfig.maxConnections,
     });
   }
 }
@@ -306,9 +303,9 @@ class PaymentService {
   async processPayment(amount: number) {
     const response = await fetch('https://api.stripe.com/v1/charges', {
       headers: {
-        'Authorization': `Bearer ${this.stripeConfig.apiKey}`,
-        'Stripe-Version': this.stripeConfig.apiVersion
-      }
+        Authorization: `Bearer ${this.stripeConfig.apiKey}`,
+        'Stripe-Version': this.stripeConfig.apiVersion,
+      },
     });
   }
 }
@@ -332,16 +329,16 @@ class EmailService {
 
     const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
       headers: {
-        'Authorization': `Bearer ${this.sendgridConfig.apiKey}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${this.sendgridConfig.apiKey}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         personalizations: [{ to: [{ email: to }] }],
         from: { email: this.sendgridConfig.fromEmail },
         reply_to: { email: this.sendgridConfig.replyToEmail },
         subject,
-        content: [{ type: 'text/html', value: body }]
-      })
+        content: [{ type: 'text/html', value: body }],
+      }),
     });
   }
 }

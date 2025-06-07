@@ -4,6 +4,7 @@ enforced_by: code review & architecture analysis
 id: dependency-inversion
 last_modified: '2025-05-14'
 ---
+
 # Binding: Design Against Abstractions, Not Implementations
 
 High-level modules containing your business logic should never depend on low-level
@@ -236,11 +237,14 @@ export class MongoUserRepository implements UserRepository {
   }
 
   async save(user: User): Promise<void> {
-    await this.client.db('users').collection('users').updateOne(
-      { _id: user.id },
-      { $set: { name: user.name, email: user.email } },
-      { upsert: true }
-    );
+    await this.client
+      .db('users')
+      .collection('users')
+      .updateOne(
+        { _id: user.id },
+        { $set: { name: user.name, email: user.email } },
+        { upsert: true }
+      );
   }
 }
 ```

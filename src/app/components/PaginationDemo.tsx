@@ -4,6 +4,10 @@
  * PaginationDemo Component
  *
  * A simple demo of the Pagination component showing different configurations.
+ *
+ * LOGGING EXEMPTION: Console usage in demo components is acceptable for
+ * educational/demonstration purposes. These are not operational components.
+ * See: edge-cases-decisions.md
  */
 
 import { useState } from 'react';

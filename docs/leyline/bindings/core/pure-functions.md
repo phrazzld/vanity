@@ -4,6 +4,7 @@ id: pure-functions
 last_modified: '2025-05-14'
 enforced_by: code review & style guides
 ---
+
 # Binding: Write Pure Functions, Isolate Side Effects
 
 Structure your code to maximize the use of pure functions that always produce the same
@@ -131,7 +132,7 @@ codebase:
        name: userData.name,
        email: userData.email,
        role: 'user',
-       createdAt: new Date().toISOString()
+       createdAt: new Date().toISOString(),
      };
 
      return { success: true, user };
@@ -184,7 +185,7 @@ codebase:
        id: Math.random().toString(36).substring(2),
        name,
        email,
-       createdAt: new Date()
+       createdAt: new Date(),
      };
    }
 
@@ -194,7 +195,7 @@ codebase:
        id,
        name,
        email,
-       createdAt: timestamp
+       createdAt: timestamp,
      };
    }
 
@@ -270,8 +271,8 @@ function sendWelcomeMessage(user) {
     method: 'POST',
     body: JSON.stringify({
       user: user.id,
-      message
-    })
+      message,
+    }),
   });
 
   // Hidden side effect: modifying the user object
@@ -311,7 +312,7 @@ async function sendWelcomeMessage(user) {
     // Return new user state rather than modifying
     return {
       sent: true,
-      user: { ...user, hasWelcomeMessage: true }
+      user: { ...user, hasWelcomeMessage: true },
     };
   } catch (error) {
     await logger.error('Failed to send welcome', { userId: user.id, error });
@@ -337,7 +338,7 @@ function processOrder(items, userId) {
   // Apply discount if eligible
   const user = db.users.findOne({ id: userId });
   if (user.loyaltyPoints > 100) {
-    total *= 0.9;  // 10% discount
+    total *= 0.9; // 10% discount
 
     // Side effect: updating user
     user.loyaltyPoints -= 100;
@@ -349,7 +350,7 @@ function processOrder(items, userId) {
     userId,
     items,
     total,
-    date: new Date()
+    date: new Date(),
   };
   db.orders.insert(order);
 
@@ -364,7 +365,7 @@ function processOrder(items, userId) {
 // ✅ GOOD: Pure business logic separated from effects
 // Pure function: calculates total
 function calculateOrderTotal(items) {
-  return items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 }
 
 // Pure function: determines discount
@@ -372,12 +373,12 @@ function applyDiscount(total, loyaltyPoints) {
   if (loyaltyPoints >= 100) {
     return {
       newTotal: total * 0.9,
-      pointsUsed: 100
+      pointsUsed: 100,
     };
   }
   return {
     newTotal: total,
-    pointsUsed: 0
+    pointsUsed: 0,
   };
 }
 
@@ -387,7 +388,7 @@ function createOrder(userId, items, total, date) {
     userId,
     items,
     total,
-    date
+    date,
   };
 }
 
@@ -404,9 +405,7 @@ async function processOrder(items, userId) {
   // Side effects isolated and explicit
   try {
     // Update inventory in database
-    await Promise.all(items.map(item =>
-      db.inventory.updateStock(item.id, -item.quantity)
-    ));
+    await Promise.all(items.map(item => db.inventory.updateStock(item.id, -item.quantity)));
 
     // Update user loyalty points if needed
     if (pointsUsed > 0) {

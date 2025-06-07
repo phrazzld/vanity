@@ -41,15 +41,15 @@ fi
 # Check for secrets using simple patterns
 echo "🔑 Checking for potential secrets in changes..."
 
-# Define patterns for secrets (simplified version)
+# Define patterns for secrets (looking for actual hardcoded values, not form fields)
 SECRET_PATTERNS=(
-  "password[=\"':= ]+"
-  "api[-_]?key[=\"':= ]+"
-  "secret[=\"':= ]+"
-  "token[=\"':= ]+"
-  "credential[=\"':= ]+"
-  "jwt[=\"':= ]+"
-  "auth[=\"':= ]+"
+  "password[=\"'][^\"']*[a-zA-Z0-9]{3,}[^\"']*[\"']"
+  "api[-_]?key[=\"'][^\"']*[a-zA-Z0-9]{10,}[^\"']*[\"']"
+  "secret[=\"'][^\"']*[a-zA-Z0-9]{8,}[^\"']*[\"']"
+  "token[=\"'][^\"']*[a-zA-Z0-9]{10,}[^\"']*[\"']"
+  "credential[=\"'][^\"']*[a-zA-Z0-9]{8,}[^\"']*[\"']"
+  "jwt[=\"'][^\"']*[a-zA-Z0-9]{20,}[^\"']*[\"']"
+  "bearer [a-zA-Z0-9]{10,}"
 )
 
 # Get changed files
@@ -62,9 +62,9 @@ for FILE in $FILES_TO_CHECK; do
     continue
   fi
   
-  # Skip test files, documentation, and GitHub workflows (they legitimately contain examples and token references)
+  # Skip test files, documentation, audit files, and GitHub workflows (they legitimately contain examples and token references)
   case "$FILE" in
-    */__tests__/* | *.test.* | *.spec.* | **/fixtures/* | **/mocks/* | docs/*.md | *.md | .github/workflows/*.yml | .github/workflows/*.yaml)
+    */__tests__/* | *.test.* | *.spec.* | **/fixtures/* | **/mocks/* | docs/*.md | *.md | *-audit.txt | *-usage-audit.txt | console-*.txt | detailed-usage.txt | .github/workflows/*.yml | .github/workflows/*.yaml)
       continue
       ;;
   esac

@@ -4,6 +4,7 @@ id: code-size
 last_modified: '2025-05-14'
 enforced_by: code review & style guides
 ---
+
 # Binding: Keep Code Units Small and Focused
 
 Limit the size of all code units—functions, methods, classes, and files—to maintain
@@ -102,18 +103,24 @@ internal structure to mitigate the increased complexity.
    module.exports = {
      rules: {
        // Limit function size
-       'max-lines-per-function': ['error', {
-         max: 25,
-         skipBlankLines: true,
-         skipComments: true
-       }],
+       'max-lines-per-function': [
+         'error',
+         {
+           max: 25,
+           skipBlankLines: true,
+           skipComments: true,
+         },
+       ],
 
        // Limit file size
-       'max-lines': ['error', {
-         max: 500,
-         skipBlankLines: true,
-         skipComments: true
-       }],
+       'max-lines': [
+         'error',
+         {
+           max: 500,
+           skipBlankLines: true,
+           skipComments: true,
+         },
+       ],
 
        // Limit parameter count
        'max-params': ['error', 3],
@@ -122,8 +129,8 @@ internal structure to mitigate the increased complexity.
        'max-depth': ['error', 3],
 
        // Limit complexity
-       'complexity': ['error', 10],
-     }
+       complexity: ['error', 10],
+     },
    };
    ```
 
@@ -137,13 +144,10 @@ internal structure to mitigate the increased complexity.
    function processUser(userData) {
      // 20 lines of validation logic
      // ...
-
      // 30 lines of business rule application
      // ...
-
      // 25 lines of database operations
      // ...
-
      // 15 lines of notification sending
      // ...
    }
@@ -311,9 +315,7 @@ function processPayment(user, cart, paymentInfo) {
   if (cart.couponCode) {
     const coupon = getCoupon(cart.couponCode);
     if (coupon && coupon.isValid) {
-      discount += coupon.type === 'percentage'
-        ? subtotal * (coupon.value / 100)
-        : coupon.value;
+      discount += coupon.type === 'percentage' ? subtotal * (coupon.value / 100) : coupon.value;
     }
   }
 
@@ -334,10 +336,7 @@ function processPayment(user, cart, paymentInfo) {
       total
     );
   } else if (paymentInfo.method === 'paypal') {
-    paymentResult = processPayPalPayment(
-      paymentInfo.email,
-      total
-    );
+    paymentResult = processPayPalPayment(paymentInfo.email, total);
   } else {
     throw new Error('Unsupported payment method');
   }
@@ -354,7 +353,7 @@ function processPayment(user, cart, paymentInfo) {
     paymentMethod: paymentInfo.method,
     paymentId: paymentResult.id,
     status: paymentResult.success ? 'confirmed' : 'failed',
-    createdAt: new Date()
+    createdAt: new Date(),
   };
 
   // Save order to database
@@ -372,7 +371,7 @@ function processPayment(user, cart, paymentInfo) {
   return {
     success: paymentResult.success,
     orderId: order.id,
-    total
+    total,
   };
 }
 ```
@@ -392,7 +391,7 @@ function processPayment(user, cart, paymentInfo) {
   return {
     success: paymentResult.success,
     orderId: order.id,
-    total: pricingDetails.total
+    total: pricingDetails.total,
   };
 }
 
@@ -413,7 +412,7 @@ function calculatePricing(user, cart) {
 }
 
 function calculateSubtotal(items) {
-  return items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 }
 
 function calculateDiscount(user, cart, subtotal) {

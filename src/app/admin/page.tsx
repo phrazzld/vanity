@@ -9,6 +9,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { logger, createLogContext } from '@/lib/logger';
 
 type User = {
   name: string;
@@ -97,7 +98,14 @@ export default function AdminDashboardPage() {
           quotes: Array.isArray(quotesData) ? quotesData.length : 0,
         });
       } catch (error) {
-        console.error('Error fetching data:', error);
+        logger.error(
+          'Failed to fetch dashboard data',
+          createLogContext('admin/dashboard', 'fetchData', {
+            error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+            has_user: !!user,
+          }),
+          error instanceof Error ? error : new Error(String(error))
+        );
       } finally {
         setIsLoading(false);
       }

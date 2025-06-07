@@ -34,6 +34,7 @@ Continuous refactoring must establish these improvement principles:
 - **Risk-Managed Approach**: Assess and manage the risks of refactoring activities, prioritizing low-risk, high-value improvements while carefully planning more significant restructuring.
 
 **Refactoring Categories:**
+
 - Code quality improvements (simplification, clarity, duplication removal)
 - Design pattern application (improving structure and maintainability)
 - Performance optimizations (addressing bottlenecks and inefficiencies)
@@ -42,6 +43,7 @@ Continuous refactoring must establish these improvement principles:
 - Architecture evolution (gradual migration to better patterns)
 
 **Integration Strategies:**
+
 - Boy Scout Rule: Leave code better than you found it
 - Scheduled refactoring time in each sprint
 - Refactoring as part of feature development
@@ -143,7 +145,7 @@ class OrderValidator {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -170,7 +172,7 @@ class OrderValidator {
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 }
@@ -266,7 +268,7 @@ class RefactoredOrderProcessor {
     this.processors = new Map([
       ['standard', new StandardOrderProcessor()],
       ['express', new ExpressOrderProcessor()],
-      ['premium', new PremiumOrderProcessor()]
+      ['premium', new PremiumOrderProcessor()],
     ]);
   }
 
@@ -301,15 +303,13 @@ describe('RefactoredOrderProcessor', () => {
     it('should reject orders without payment method', async () => {
       mockOrder.paymentMethod = null;
 
-      await expect(processor.processOrder(mockOrder))
-        .rejects.toThrow('Payment method is required');
+      await expect(processor.processOrder(mockOrder)).rejects.toThrow('Payment method is required');
     });
 
     it('should reject orders with expired payment method', async () => {
       mockOrder.paymentMethod.expired = true;
 
-      await expect(processor.processOrder(mockOrder))
-        .rejects.toThrow('Payment method has expired');
+      await expect(processor.processOrder(mockOrder)).rejects.toThrow('Payment method has expired');
     });
   });
 
@@ -317,16 +317,14 @@ describe('RefactoredOrderProcessor', () => {
     it('should process standard orders correctly', async () => {
       mockOrder.type = 'standard';
 
-      await expect(processor.processOrder(mockOrder))
-        .resolves.not.toThrow();
+      await expect(processor.processOrder(mockOrder)).resolves.not.toThrow();
     });
 
     it('should process express orders correctly', async () => {
       mockOrder.type = 'express';
       mockOrder.deliveryAddress = createMockAddress();
 
-      await expect(processor.processOrder(mockOrder))
-        .resolves.not.toThrow();
+      await expect(processor.processOrder(mockOrder)).resolves.not.toThrow();
     });
   });
 
@@ -348,9 +346,15 @@ class RefactoringTracker {
   recordRefactoring(refactoring: RefactoringMetrics): void {
     this.metrics.push(refactoring);
     console.log(`✅ Refactoring completed: ${refactoring.description}`);
-    console.log(`  📈 Complexity: ${refactoring.before.complexity} → ${refactoring.after.complexity}`);
-    console.log(`  📊 Duplication: ${refactoring.before.duplication}% → ${refactoring.after.duplication}%`);
-    console.log(`  🧪 Test coverage: ${refactoring.before.testCoverage}% → ${refactoring.after.testCoverage}%`);
+    console.log(
+      `  📈 Complexity: ${refactoring.before.complexity} → ${refactoring.after.complexity}`
+    );
+    console.log(
+      `  📊 Duplication: ${refactoring.before.duplication}% → ${refactoring.after.duplication}%`
+    );
+    console.log(
+      `  🧪 Test coverage: ${refactoring.before.testCoverage}% → ${refactoring.after.testCoverage}%`
+    );
   }
 
   generateRefactoringReport(): RefactoringReport {
@@ -365,7 +369,7 @@ class RefactoringTracker {
       duplicationReduction,
       coverageImprovement,
       lastMonthRefactorings: this.getLastMonthCount(),
-      trend: this.calculateTrend()
+      trend: this.calculateTrend(),
     };
   }
 
@@ -442,16 +446,16 @@ refactoringTracker.recordRefactoring({
     complexity: 15, // High cyclomatic complexity in single method
     duplication: 35, // 35% code duplication across methods
     testCoverage: 45, // Poor test coverage
-    linesOfCode: 200
+    linesOfCode: 200,
   },
   after: {
     complexity: 4, // Much lower complexity with focused methods
     duplication: 5, // Eliminated duplication through extraction
     testCoverage: 95, // Comprehensive test coverage
-    linesOfCode: 300 // More lines but much better organized
+    linesOfCode: 300, // More lines but much better organized
   },
   timeInvested: 6, // 6 hours of refactoring
-  businessValue: 'Reduced maintenance overhead, improved testability, easier feature development'
+  businessValue: 'Reduced maintenance overhead, improved testability, easier feature development',
 });
 ```
 

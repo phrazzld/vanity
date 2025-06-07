@@ -5,6 +5,10 @@
  *
  * A demonstration component showing how to use the useReadingsList hook
  * This is for demonstration purposes only.
+ *
+ * LOGGING EXEMPTION: Console usage in demo components is acceptable for
+ * educational/demonstration purposes. These are not operational components.
+ * See: edge-cases-decisions.md
  */
 
 import { useReadingsList } from '../hooks/useReadingsList';

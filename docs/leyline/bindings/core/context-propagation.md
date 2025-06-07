@@ -4,6 +4,7 @@ enforced_by: code review & integration tests
 id: context-propagation
 last_modified: '2025-05-14'
 ---
+
 # Binding: Propagate Request Context Across Service Boundaries
 
 All services must propagate context information across process boundaries to maintain
@@ -135,7 +136,8 @@ Here are concrete strategies for implementing context propagation effectively:
    export function contextMiddleware(serviceName: string) {
      return (req: Request, res: Response, next: NextFunction) => {
        // Extract or generate correlation ID
-       const correlationId = req.headers[HEADER_CORRELATION_ID.toLowerCase()] as string || uuidv4();
+       const correlationId =
+         (req.headers[HEADER_CORRELATION_ID.toLowerCase()] as string) || uuidv4();
 
        // Always generate a new request ID for this specific request
        const requestId = uuidv4();
@@ -144,8 +146,9 @@ Here are concrete strategies for implementing context propagation effectively:
        const tenantId = req.headers[HEADER_TENANT_ID.toLowerCase()] as string;
        const userId = req.headers[HEADER_USER_ID.toLowerCase()] as string;
        const sessionId = req.headers[HEADER_SESSION_ID.toLowerCase()] as string;
-       const originService = req.headers[HEADER_ORIGIN.toLowerCase()] as string || 'unknown';
-       const timestamp = req.headers[HEADER_TIMESTAMP.toLowerCase()] as string || new Date().toISOString();
+       const originService = (req.headers[HEADER_ORIGIN.toLowerCase()] as string) || 'unknown';
+       const timestamp =
+         (req.headers[HEADER_TIMESTAMP.toLowerCase()] as string) || new Date().toISOString();
 
        // Create context object
        const context: RequestContext = {
@@ -155,7 +158,7 @@ Here are concrete strategies for implementing context propagation effectively:
          userId,
          sessionId,
          originService,
-         requestTimestamp: timestamp
+         requestTimestamp: timestamp,
        };
 
        // Attach to request object
@@ -242,18 +245,18 @@ Here are concrete strategies for implementing context propagation effectively:
            messageId: uuidv4(),
            causality: {
              parentId: context?.requestId,
-             rootId: context?.correlationId || uuidv4()
+             rootId: context?.correlationId || uuidv4(),
            },
            origin: {
              service: this.serviceName,
-             timestamp: new Date().toISOString()
+             timestamp: new Date().toISOString(),
            },
            context: {
              tenantId: context?.tenantId,
              userId: context?.userId,
-             sessionId: context?.sessionId
-           }
-         }
+             sessionId: context?.sessionId,
+           },
+         },
        };
 
        await this.client.send(topic, message);
@@ -268,7 +271,10 @@ Here are concrete strategies for implementing context propagation effectively:
        this.serviceName = serviceName;
      }
 
-     async processMessage<T>(message: Message<T>, handler: (payload: T) => Promise<void>): Promise<void> {
+     async processMessage<T>(
+       message: Message<T>,
+       handler: (payload: T) => Promise<void>
+     ): Promise<void> {
        // Extract context from message
        const metadata = message.metadata;
 
@@ -280,7 +286,7 @@ Here are concrete strategies for implementing context propagation effectively:
          userId: metadata.context.userId,
          sessionId: metadata.context.sessionId,
          originService: metadata.origin.service,
-         requestTimestamp: metadata.origin.timestamp
+         requestTimestamp: metadata.origin.timestamp,
        };
 
        // Set active context for this async operation
@@ -488,8 +494,8 @@ Here are concrete strategies for implementing context propagation effectively:
          tenant_id: context?.tenantId,
          user_id: context?.userId,
          origin_service: context?.originService || 'unknown',
-         created_timestamp: new Date().toISOString()
-       }
+         created_timestamp: new Date().toISOString(),
+       },
      };
 
      await db.collection('jobs').insertOne(job);
@@ -511,7 +517,7 @@ Here are concrete strategies for implementing context propagation effectively:
        tenantId: job.context.tenant_id,
        userId: job.context.user_id,
        originService: job.context.origin_service,
-       requestTimestamp: job.context.created_timestamp
+       requestTimestamp: job.context.created_timestamp,
      };
 
      // Run job processing with the restored context
@@ -519,17 +525,28 @@ Here are concrete strategies for implementing context propagation effectively:
        try {
          // Process the job...
          job.status = 'completed';
-         job.result = { /* job result */ };
+         job.result = {
+           /* job result */
+         };
        } catch (error) {
          job.status = 'failed';
          job.error = error.message;
          throw error;
        } finally {
          job.updated_at = new Date();
-         await db.collection('jobs').updateOne(
-           { id: job.id },
-           { $set: { status: job.status, result: job.result, error: job.error, updated_at: job.updated_at } }
-         );
+         await db
+           .collection('jobs')
+           .updateOne(
+             { id: job.id },
+             {
+               $set: {
+                 status: job.status,
+                 result: job.result,
+                 error: job.error,
+                 updated_at: job.updated_at,
+               },
+             }
+           );
        }
      });
    }
@@ -545,7 +562,7 @@ app.post('/orders', async (req, res) => {
 
   // Make call to inventory service without context
   await axios.post('http://inventory-service/reserve', {
-    items: order.items
+    items: order.items,
   });
 
   // Log without context
@@ -574,19 +591,22 @@ app.post('/orders', contextMiddleware('order-service'), async (req, res) => {
   const order = await createOrder(req.body);
 
   // Log with context
-  logger.info({
-    event: 'order_created',
-    order_id: order.id,
-    correlation_id: context.correlationId,
-    request_id: context.requestId,
-    tenant_id: context.tenantId
-  }, 'Order created successfully');
+  logger.info(
+    {
+      event: 'order_created',
+      order_id: order.id,
+      correlation_id: context.correlationId,
+      request_id: context.requestId,
+      tenant_id: context.tenantId,
+    },
+    'Order created successfully'
+  );
 
   // Make call to inventory service with context
   const httpClient = createHttpClient('http://inventory-service', 'order-service');
   await httpClient.post('/reserve', {
     items: order.items,
-    order_id: order.id
+    order_id: order.id,
   });
 
   res.json(order);
@@ -597,14 +617,17 @@ app.post('/reserve', contextMiddleware('inventory-service'), (req, res) => {
   const context = req.context;
 
   // Log with propagated context
-  logger.info({
-    event: 'inventory_reservation_started',
-    order_id: req.body.order_id,
-    item_count: req.body.items.length,
-    correlation_id: context.correlationId,
-    request_id: context.requestId,
-    tenant_id: context.tenantId
-  }, 'Starting inventory reservation');
+  logger.info(
+    {
+      event: 'inventory_reservation_started',
+      order_id: req.body.order_id,
+      item_count: req.body.items.length,
+      correlation_id: context.correlationId,
+      request_id: context.requestId,
+      tenant_id: context.tenantId,
+    },
+    'Starting inventory reservation'
+  );
 
   const result = reserveInventory(req.body.items);
 
@@ -672,7 +695,7 @@ async function publishOrderEvent(event: string, data: any) {
   await eventBus.publish('orders', {
     event,
     timestamp: new Date().toISOString(),
-    data
+    data,
   });
 }
 ```
@@ -691,11 +714,11 @@ async function publishOrderEvent(event: string, data: any) {
       event_id: uuidv4(),
       origin: {
         service: 'order-service',
-        request_id: context?.requestId
+        request_id: context?.requestId,
       },
       tenant_id: context?.tenantId,
-      user_id: context?.userId
-    }
+      user_id: context?.userId,
+    },
   });
 }
 ```

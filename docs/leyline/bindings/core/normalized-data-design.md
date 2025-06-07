@@ -32,12 +32,14 @@ Normalized data design must follow these structural principles:
 - **Maintain Referential Integrity**: Implement constraints and validation that ensure references between data entities remain valid and consistent.
 
 **Normalization Levels:**
+
 - **First Normal Form (1NF)**: Eliminate repeating groups and ensure atomic values
 - **Second Normal Form (2NF)**: Eliminate partial dependencies on composite keys
 - **Third Normal Form (3NF)**: Eliminate transitive dependencies between non-key attributes
 - **Higher Normal Forms**: Apply Boyce-Codd Normal Form (BCNF) and beyond for complex scenarios
 
 **Controlled Denormalization:**
+
 - Performance optimization based on measured bottlenecks
 - Read-heavy scenarios where query performance is critical
 - Derived values that are expensive to calculate
@@ -181,43 +183,43 @@ CREATE TABLE order_items (
 const blogPosts = [
   {
     id: 1,
-    title: "Introduction to JavaScript",
-    content: "JavaScript is a programming language...",
+    title: 'Introduction to JavaScript',
+    content: 'JavaScript is a programming language...',
     author: {
       id: 101,
-      name: "John Doe",
-      email: "john@example.com",
-      bio: "John is a senior developer with 10 years experience...",
-      avatar: "https://example.com/avatars/john.jpg"
+      name: 'John Doe',
+      email: 'john@example.com',
+      bio: 'John is a senior developer with 10 years experience...',
+      avatar: 'https://example.com/avatars/john.jpg',
     },
-    publishedAt: "2023-01-15T10:00:00Z"
+    publishedAt: '2023-01-15T10:00:00Z',
   },
   {
     id: 2,
-    title: "Advanced JavaScript Patterns",
+    title: 'Advanced JavaScript Patterns',
     content: "In this post we'll explore advanced patterns...",
     author: {
       id: 101,
-      name: "John Doe",           // Duplicated
-      email: "john@example.com",  // Duplicated
-      bio: "John is a senior developer with 10 years experience...", // Duplicated
-      avatar: "https://example.com/avatars/john.jpg" // Duplicated
+      name: 'John Doe', // Duplicated
+      email: 'john@example.com', // Duplicated
+      bio: 'John is a senior developer with 10 years experience...', // Duplicated
+      avatar: 'https://example.com/avatars/john.jpg', // Duplicated
     },
-    publishedAt: "2023-01-20T14:30:00Z"
+    publishedAt: '2023-01-20T14:30:00Z',
   },
   {
     id: 3,
-    title: "React Best Practices",
-    content: "React development requires following best practices...",
+    title: 'React Best Practices',
+    content: 'React development requires following best practices...',
     author: {
       id: 102,
-      name: "Jane Smith",
-      email: "jane@example.com",
-      bio: "Jane specializes in React and frontend development...",
-      avatar: "https://example.com/avatars/jane.jpg"
+      name: 'Jane Smith',
+      email: 'jane@example.com',
+      bio: 'Jane specializes in React and frontend development...',
+      avatar: 'https://example.com/avatars/jane.jpg',
     },
-    publishedAt: "2023-01-25T09:15:00Z"
-  }
+    publishedAt: '2023-01-25T09:15:00Z',
+  },
 ];
 
 // Problems:
@@ -229,62 +231,68 @@ const blogPosts = [
 // ✅ GOOD: Normalized data structure with references
 // Single source of truth for authors
 const authors = new Map([
-  [101, {
-    id: 101,
-    name: "John Doe",
-    email: "john@example.com",
-    bio: "John is a senior developer with 10 years experience in JavaScript, Node.js, and React. He enjoys mentoring junior developers and contributing to open source projects.",
-    avatar: "https://example.com/avatars/john.jpg",
-    socialLinks: {
-      twitter: "@johndoe",
-      github: "johndoe",
-      linkedin: "john-doe-dev"
+  [
+    101,
+    {
+      id: 101,
+      name: 'John Doe',
+      email: 'john@example.com',
+      bio: 'John is a senior developer with 10 years experience in JavaScript, Node.js, and React. He enjoys mentoring junior developers and contributing to open source projects.',
+      avatar: 'https://example.com/avatars/john.jpg',
+      socialLinks: {
+        twitter: '@johndoe',
+        github: 'johndoe',
+        linkedin: 'john-doe-dev',
+      },
+      joinedAt: '2022-01-01T00:00:00Z',
     },
-    joinedAt: "2022-01-01T00:00:00Z"
-  }],
-  [102, {
-    id: 102,
-    name: "Jane Smith",
-    email: "jane@example.com",
-    bio: "Jane specializes in React and frontend development with a focus on user experience and performance optimization.",
-    avatar: "https://example.com/avatars/jane.jpg",
-    socialLinks: {
-      twitter: "@janesmith",
-      github: "janesmith"
+  ],
+  [
+    102,
+    {
+      id: 102,
+      name: 'Jane Smith',
+      email: 'jane@example.com',
+      bio: 'Jane specializes in React and frontend development with a focus on user experience and performance optimization.',
+      avatar: 'https://example.com/avatars/jane.jpg',
+      socialLinks: {
+        twitter: '@janesmith',
+        github: 'janesmith',
+      },
+      joinedAt: '2022-03-15T00:00:00Z',
     },
-    joinedAt: "2022-03-15T00:00:00Z"
-  }]
+  ],
 ]);
 
 // Posts reference authors by ID only
 const blogPosts = [
   {
     id: 1,
-    title: "Introduction to JavaScript",
-    content: "JavaScript is a programming language...",
+    title: 'Introduction to JavaScript',
+    content: 'JavaScript is a programming language...',
     authorId: 101, // Reference only
-    publishedAt: "2023-01-15T10:00:00Z",
-    tags: ["javascript", "tutorial", "beginner"],
-    readTime: 5
+    publishedAt: '2023-01-15T10:00:00Z',
+    tags: ['javascript', 'tutorial', 'beginner'],
+    readTime: 5,
   },
   {
     id: 2,
-    title: "Advanced JavaScript Patterns",
+    title: 'Advanced JavaScript Patterns',
     content: "In this post we'll explore advanced patterns...",
     authorId: 101, // Same author, no duplication
-    publishedAt: "2023-01-20T14:30:00Z",
-    tags: ["javascript", "advanced", "patterns"],
-    readTime: 12
+    publishedAt: '2023-01-20T14:30:00Z',
+    tags: ['javascript', 'advanced', 'patterns'],
+    readTime: 12,
   },
   {
     id: 3,
-    title: "React Best Practices",
-    content: "React development requires following best practices...",
+    title: 'React Best Practices',
+    content: 'React development requires following best practices...',
     authorId: 102, // Different author
-    publishedAt: "2023-01-25T09:15:00Z",
-    tags: ["react", "best-practices", "frontend"],
-    readTime: 8
-  }
+    publishedAt: '2023-01-25T09:15:00Z',
+    tags: ['react', 'best-practices', 'frontend'],
+    readTime: 8,
+  },
 ];
 
 // Utility functions to work with normalized data
@@ -302,7 +310,7 @@ class BlogDataManager {
     const author = this.authors.get(post.authorId);
     return {
       ...post,
-      author // Author info retrieved from single source
+      author, // Author info retrieved from single source
     };
   }
 
@@ -314,7 +322,7 @@ class BlogDataManager {
     const authorPosts = this.posts.filter(p => p.authorId === authorId);
     return {
       author,
-      posts: authorPosts
+      posts: authorPosts,
     };
   }
 
@@ -333,10 +341,13 @@ class BlogDataManager {
     return {
       totalPosts: authorPosts.length,
       totalReadTime: authorPosts.reduce((sum, post) => sum + post.readTime, 0),
-      avgReadTime: authorPosts.length ?
-        authorPosts.reduce((sum, post) => sum + post.readTime, 0) / authorPosts.length : 0,
-      mostRecentPost: authorPosts.reduce((latest, post) =>
-        !latest || post.publishedAt > latest.publishedAt ? post : latest, null)
+      avgReadTime: authorPosts.length
+        ? authorPosts.reduce((sum, post) => sum + post.readTime, 0) / authorPosts.length
+        : 0,
+      mostRecentPost: authorPosts.reduce(
+        (latest, post) => (!latest || post.publishedAt > latest.publishedAt ? post : latest),
+        null
+      ),
     };
   }
 }
@@ -350,8 +361,8 @@ console.log(postWithAuthor.author.name); // "John Doe"
 
 // Update author once, affects all their posts
 blogManager.updateAuthor(101, {
-  bio: "John is a senior developer and technical writer...",
-  email: "john.doe@newcompany.com"
+  bio: 'John is a senior developer and technical writer...',
+  email: 'john.doe@newcompany.com',
 });
 
 // All posts by John now reflect the updated information
@@ -378,15 +389,15 @@ interface OrderWithDuplicatedData {
   };
   items: Array<{
     productId: string;
-    productName: string;      // Duplicated from products
+    productName: string; // Duplicated from products
     productDescription: string; // Duplicated from products
-    category: string;         // Duplicated from products
+    category: string; // Duplicated from products
     unitPrice: number;
     quantity: number;
     totalPrice: number;
   }>;
   shippingAddress: {
-    street: string;           // Potentially duplicated customer address
+    street: string; // Potentially duplicated customer address
     city: string;
     state: string;
     zipCode: string;
@@ -435,8 +446,8 @@ interface Category {
 
 interface Order {
   id: string;
-  customerId: string;        // Reference to customer
-  billingAddressId: string;  // Reference to address
+  customerId: string; // Reference to customer
+  billingAddressId: string; // Reference to address
   shippingAddressId: string; // Reference to address
   orderDate: Date;
   status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
@@ -445,8 +456,8 @@ interface Order {
 
 interface OrderItem {
   id: string;
-  orderId: string;      // Reference to order
-  productId: string;    // Reference to product
+  orderId: string; // Reference to order
+  productId: string; // Reference to product
   quantity: number;
   unitPriceAtOrder: number; // Price at time of order (may differ from current price)
   lineTotal: number;
@@ -480,7 +491,7 @@ class NormalizedDataManager {
       return {
         ...item,
         product: product || null,
-        category: category || null
+        category: category || null,
       };
     });
 
@@ -489,7 +500,7 @@ class NormalizedDataManager {
       customer: customer || null,
       billingAddress: billingAddress || null,
       shippingAddress: shippingAddress || null,
-      items: itemsWithDetails
+      items: itemsWithDetails,
     };
   }
 
@@ -501,7 +512,7 @@ class NormalizedDataManager {
     this.customers.set(customerId, {
       ...customer,
       ...updates,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     });
     // All orders automatically reference updated customer info
   }
@@ -514,7 +525,7 @@ class NormalizedDataManager {
     this.products.set(productId, {
       ...product,
       ...updates,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     });
     // All order items automatically reference updated product info
   }
@@ -525,10 +536,12 @@ interface OrderDetails {
   customer: Customer | null;
   billingAddress: Address | null;
   shippingAddress: Address | null;
-  items: Array<OrderItem & {
-    product: Product | null;
-    category: Category | null;
-  }>;
+  items: Array<
+    OrderItem & {
+      product: Product | null;
+      category: Category | null;
+    }
+  >;
 }
 ```
 

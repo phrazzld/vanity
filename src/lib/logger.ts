@@ -15,6 +15,18 @@ interface LogMetadata {
   duration?: number;
 }
 
+// Required context fields for standardized logging
+interface RequiredLogContext {
+  module_name: string;
+  function_name: string;
+  [key: string]: unknown;
+}
+
+// Complete log context with required fields + optional metadata
+interface LogContext extends RequiredLogContext {
+  [key: string]: unknown;
+}
+
 // Enhanced logger interface
 interface LoggerInterface {
   error(_message: string, _metadata?: LogMetadata, _error?: Error): void;
@@ -72,6 +84,33 @@ class CorrelationContext {
     this._current = null;
   }
 }
+
+/**
+ * Creates standardized log context with required fields
+ * Enforces module_name and function_name for consistent logging patterns
+ *
+ * @param moduleName - The module/file where logging occurs (e.g., 'db/quotes', 'api/readings', 'hooks/useListState')
+ * @param functionName - The function where logging occurs (e.g., 'getQuotes', 'POST', 'fetchData')
+ * @param extra - Optional additional metadata specific to the context
+ * @returns LogContext with required fields and any additional metadata
+ *
+ * @example
+ * const context = createLogContext('db/quotes', 'getQuotes', { queryType: 'filtered' });
+ * logger.info('Fetching quotes from database', context);
+ */
+export const createLogContext = (
+  moduleName: string,
+  functionName: string,
+  extra?: Record<string, unknown>
+): LogContext => {
+  const baseContext: RequiredLogContext = {
+    module_name: moduleName,
+    function_name: functionName,
+  };
+
+  // Merge with additional metadata if provided
+  return extra ? { ...baseContext, ...extra } : baseContext;
+};
 
 // Create the enhanced logger
 const createLogger = (): LoggerInterface => {
@@ -165,3 +204,6 @@ const createLogger = (): LoggerInterface => {
 // Create and export the logger
 export const logger = createLogger();
 export { CorrelationContext };
+
+// Export types for external use
+export type { LogMetadata, LogContext, RequiredLogContext };

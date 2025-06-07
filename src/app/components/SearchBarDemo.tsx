@@ -5,6 +5,10 @@
  *
  * A demo component that shows how to use the SearchBar with filters.
  * This is for demonstration and testing purposes.
+ *
+ * LOGGING EXEMPTION: Console usage in demo components is acceptable for
+ * educational/demonstration purposes. These are not operational components.
+ * See: edge-cases-decisions.md
  */
 
 import { useState } from 'react';

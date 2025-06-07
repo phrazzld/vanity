@@ -1,0 +1,820 @@
+src/auth.ts-23-    // Log auth attempt (without printing actual passwords)
+src/auth.ts:24:    console.log(`Auth attempt for user: ${username}`);
+src/auth.ts:25:    console.log(`Expected admin username: ${adminUsername}`);
+src/auth.ts:26:    console.log(
+src/auth.ts-27-      `Environment variables present: ${!!(typeof process !== 'undefined' && process.env.ADMIN_USERNAME)}, ${!!(typeof process !== 'undefined' && process.env.ADMIN_PASSWORD)}`
+src/auth.ts-28-    );
+--
+src/auth.ts-35-    ) {
+src/auth.ts:36:      console.log('Authentication failed: someone tried using the demo credentials');
+src/auth.ts-37-      return {
+src/auth.ts-38-        success: false,
+--
+src/auth.ts-45-    if (username === adminUsername && password === adminPassword) {
+src/auth.ts:46:      console.log('Authentication successful');
+src/auth.ts-47-      return {
+src/auth.ts-48-        success: true,
+--
+src/auth.ts-58-    // Invalid credentials
+src/auth.ts:59:    console.log('Authentication failed: invalid credentials');
+src/auth.ts-60-    return {
+src/auth.ts-61-      success: false,
+--
+src/lib/query.ts-16-        logger: {
+src/lib/query.ts:17:          log: console.log,
+src/lib/query.ts:18:          warn: console.warn,
+src/lib/query.ts:19:          error: console.error,
+src/lib/query.ts-20-        },
+src/lib/query.ts-21-      }
+--
+src/lib/db/readings.ts-17-  try {
+src/lib/db/readings.ts:18:    console.log(`Fetching reading with slug: ${slug}`);
+src/lib/db/readings.ts-19-
+src/lib/db/readings.ts-20-    // Use raw query for maximum compatibility
+--
+src/lib/db/readings.ts-31-
+src/lib/db/readings.ts:32:    console.log(reading ? `Found reading: ${reading.title}` : `No reading found for slug: ${slug}`);
+src/lib/db/readings.ts-33-    return reading;
+src/lib/db/readings.ts-34-  } catch (error) {
+src/lib/db/readings.ts:35:    console.error(`Error fetching reading with slug ${slug}:`, error);
+src/lib/db/readings.ts-36-    return null;
+src/lib/db/readings.ts-37-  }
+--
+src/lib/db/readings.ts-46-  try {
+src/lib/db/readings.ts:47:    console.log('Getting readings from database...');
+src/lib/db/readings.ts-48-
+src/lib/db/readings.ts-49-    // Use raw query for maximum compatibility
+--
+src/lib/db/readings.ts-66-
+src/lib/db/readings.ts:67:    console.log(`Found ${Array.isArray(readings) ? readings.length : 0} readings`);
+src/lib/db/readings.ts-68-
+src/lib/db/readings.ts-69-    if (!readings || (Array.isArray(readings) && readings.length === 0)) {
+src/lib/db/readings.ts:70:      console.warn('No readings found in database');
+src/lib/db/readings.ts-71-    }
+src/lib/db/readings.ts-72-
+--
+src/lib/db/readings.ts-75-  } catch (error) {
+src/lib/db/readings.ts:76:    console.error('Error fetching readings:', error);
+src/lib/db/readings.ts-77-    return [];
+src/lib/db/readings.ts-78-  }
+--
+src/lib/db/readings.ts-90-  try {
+src/lib/db/readings.ts:91:    console.log('Getting filtered readings from database...');
+src/lib/db/readings.ts-92-
+src/lib/db/readings.ts-93-    // Extract parameters with defaults
+--
+src/lib/db/readings.ts-180-        : 0;
+src/lib/db/readings.ts:181:    console.log(`Total matching readings: ${totalCount}`);
+src/lib/db/readings.ts-182-
+src/lib/db/readings.ts-183-    // Build the main query with parameters
+--
+src/lib/db/readings.ts-198-
+src/lib/db/readings.ts:199:    console.log(`Found ${Array.isArray(readings) ? readings.length : 0} readings for current page`);
+src/lib/db/readings.ts-200-
+src/lib/db/readings.ts-201-    // Calculate pagination metadata
+--
+src/lib/db/readings.ts-205-
+src/lib/db/readings.ts:206:    console.log(`Returning data for page ${currentPage} (offset: ${offset}, limit: ${limit})`);
+src/lib/db/readings.ts-207-
+src/lib/db/readings.ts-208-    return {
+--
+src/lib/db/readings.ts-215-  } catch (error) {
+src/lib/db/readings.ts:216:    console.error('Error fetching filtered readings:', error);
+src/lib/db/readings.ts-217-    return {
+src/lib/db/readings.ts-218-      data: [],
+--
+src/lib/db/readings.ts-234-  try {
+src/lib/db/readings.ts:235:    console.log(`Creating new reading: ${data.title} by ${data.author}`);
+src/lib/db/readings.ts-236-
+src/lib/db/readings.ts-237-    // Check if slug already exists
+--
+src/lib/db/readings.ts-242-    if (existingReading) {
+src/lib/db/readings.ts:243:      console.error(`Reading with slug ${data.slug} already exists`);
+src/lib/db/readings.ts-244-      return null;
+src/lib/db/readings.ts-245-    }
+--
+src/lib/db/readings.ts-259-
+src/lib/db/readings.ts:260:    console.log(`Successfully created reading with ID: ${reading.id}`);
+src/lib/db/readings.ts-261-    return reading;
+src/lib/db/readings.ts-262-  } catch (error) {
+src/lib/db/readings.ts:263:    console.error('Error creating reading:', error);
+src/lib/db/readings.ts-264-    return null;
+src/lib/db/readings.ts-265-  }
+--
+src/lib/db/readings.ts-279-  try {
+src/lib/db/readings.ts:280:    console.log(`Updating reading with slug: ${slug}`);
+src/lib/db/readings.ts-281-
+src/lib/db/readings.ts-282-    // Check if reading exists
+--
+src/lib/db/readings.ts-287-    if (!existingReading) {
+src/lib/db/readings.ts:288:      console.error(`Reading with slug ${slug} not found`);
+src/lib/db/readings.ts-289-      return null;
+src/lib/db/readings.ts-290-    }
+--
+src/lib/db/readings.ts-298-      if (slugExists) {
+src/lib/db/readings.ts:299:        console.error(`Cannot update: reading with slug ${data.slug} already exists`);
+src/lib/db/readings.ts-300-        return null;
+src/lib/db/readings.ts-301-      }
+--
+src/lib/db/readings.ts-318-
+src/lib/db/readings.ts:319:    console.log(`Successfully updated reading: ${updatedReading.title}`);
+src/lib/db/readings.ts-320-    return updatedReading;
+src/lib/db/readings.ts-321-  } catch (error) {
+src/lib/db/readings.ts:322:    console.error(`Error updating reading with slug ${slug}:`, error);
+src/lib/db/readings.ts-323-    return null;
+src/lib/db/readings.ts-324-  }
+--
+src/lib/db/readings.ts-334-  try {
+src/lib/db/readings.ts:335:    console.log(`Deleting reading with slug: ${slug}`);
+src/lib/db/readings.ts-336-
+src/lib/db/readings.ts-337-    // Check if reading exists
+--
+src/lib/db/readings.ts-342-    if (!existingReading) {
+src/lib/db/readings.ts:343:      console.error(`Reading with slug ${slug} not found`);
+src/lib/db/readings.ts-344-      return false;
+src/lib/db/readings.ts-345-    }
+--
+src/lib/db/readings.ts-351-
+src/lib/db/readings.ts:352:    console.log(`Successfully deleted reading with slug: ${slug}`);
+src/lib/db/readings.ts-353-    return true;
+src/lib/db/readings.ts-354-  } catch (error) {
+src/lib/db/readings.ts:355:    console.error(`Error deleting reading with slug ${slug}:`, error);
+src/lib/db/readings.ts-356-    return false;
+src/lib/db/readings.ts-357-  }
+--
+src/lib/db/quotes.ts-16-  try {
+src/lib/db/quotes.ts:17:    console.log('Getting quotes from database...');
+src/lib/db/quotes.ts-18-
+src/lib/db/quotes.ts-19-    // Use raw query for maximum compatibility
+--
+src/lib/db/quotes.ts-21-
+src/lib/db/quotes.ts:22:    console.log(`Found ${Array.isArray(quotes) ? quotes.length : 0} quotes`);
+src/lib/db/quotes.ts-23-
+src/lib/db/quotes.ts-24-    if (!quotes || (Array.isArray(quotes) && quotes.length === 0)) {
+src/lib/db/quotes.ts:25:      console.warn('No quotes found in database');
+src/lib/db/quotes.ts-26-    }
+src/lib/db/quotes.ts-27-
+--
+src/lib/db/quotes.ts-30-  } catch (error) {
+src/lib/db/quotes.ts:31:    console.error('Error fetching quotes:', error);
+src/lib/db/quotes.ts-32-    return [];
+src/lib/db/quotes.ts-33-  }
+--
+src/lib/db/quotes.ts-45-  try {
+src/lib/db/quotes.ts:46:    console.log('Getting filtered quotes from database...');
+src/lib/db/quotes.ts-47-
+src/lib/db/quotes.ts-48-    // Extract parameters with defaults
+--
+src/lib/db/quotes.ts-97-    const totalCount = parseInt(countResult[0]?.total?.toString() || '0', 10);
+src/lib/db/quotes.ts:98:    console.log(`Total matching quotes: ${totalCount}`);
+src/lib/db/quotes.ts-99-
+src/lib/db/quotes.ts-100-    // Build the main query with parameters
+--
+src/lib/db/quotes.ts-115-
+src/lib/db/quotes.ts:116:    console.log(`Found ${Array.isArray(quotes) ? quotes.length : 0} quotes for current page`);
+src/lib/db/quotes.ts-117-
+src/lib/db/quotes.ts-118-    // Calculate pagination metadata
+--
+src/lib/db/quotes.ts-129-  } catch (error) {
+src/lib/db/quotes.ts:130:    console.error('Error fetching filtered quotes:', error);
+src/lib/db/quotes.ts-131-    return {
+src/lib/db/quotes.ts-132-      data: [],
+--
+src/lib/db/quotes.ts-148-  try {
+src/lib/db/quotes.ts:149:    console.log(`Fetching quote with ID: ${id}`);
+src/lib/db/quotes.ts-150-
+src/lib/db/quotes.ts-151-    // Use raw query for maximum compatibility
+--
+src/lib/db/quotes.ts-162-
+src/lib/db/quotes.ts:163:    console.log(quote ? `Found quote with ID ${id}` : `No quote found with ID ${id}`);
+src/lib/db/quotes.ts-164-    return quote;
+src/lib/db/quotes.ts-165-  } catch (error) {
+src/lib/db/quotes.ts:166:    console.error(`Error fetching quote with ID ${id}:`, error);
+src/lib/db/quotes.ts-167-    return null;
+src/lib/db/quotes.ts-168-  }
+--
+src/lib/db/quotes.ts-178-  try {
+src/lib/db/quotes.ts:179:    console.log(
+src/lib/db/quotes.ts-180-      `Creating new quote: "${data.text.substring(0, 30)}..." by ${data.author || 'Anonymous'}`
+src/lib/db/quotes.ts-181-    );
+--
+src/lib/db/quotes.ts-190-
+src/lib/db/quotes.ts:191:    console.log(`Successfully created quote with ID: ${quote.id}`);
+src/lib/db/quotes.ts-192-    return quote;
+src/lib/db/quotes.ts-193-  } catch (error) {
+src/lib/db/quotes.ts:194:    console.error('Error creating quote:', error);
+src/lib/db/quotes.ts-195-    return null;
+src/lib/db/quotes.ts-196-  }
+--
+src/lib/db/quotes.ts-207-  try {
+src/lib/db/quotes.ts:208:    console.log(`Updating quote with ID: ${id}`);
+src/lib/db/quotes.ts-209-
+src/lib/db/quotes.ts-210-    // Check if quote exists
+--
+src/lib/db/quotes.ts-215-    if (!existingQuote) {
+src/lib/db/quotes.ts:216:      console.error(`Quote with ID ${id} not found`);
+src/lib/db/quotes.ts-217-      return null;
+src/lib/db/quotes.ts-218-    }
+--
+src/lib/db/quotes.ts-228-
+src/lib/db/quotes.ts:229:    console.log(`Successfully updated quote with ID: ${updatedQuote.id}`);
+src/lib/db/quotes.ts-230-    return updatedQuote;
+src/lib/db/quotes.ts-231-  } catch (error) {
+src/lib/db/quotes.ts:232:    console.error(`Error updating quote with ID ${id}:`, error);
+src/lib/db/quotes.ts-233-    return null;
+src/lib/db/quotes.ts-234-  }
+--
+src/lib/db/quotes.ts-244-  try {
+src/lib/db/quotes.ts:245:    console.log(`Deleting quote with ID: ${id}`);
+src/lib/db/quotes.ts-246-
+src/lib/db/quotes.ts-247-    // Check if quote exists
+--
+src/lib/db/quotes.ts-252-    if (!existingQuote) {
+src/lib/db/quotes.ts:253:      console.error(`Quote with ID ${id} not found`);
+src/lib/db/quotes.ts-254-      return false;
+src/lib/db/quotes.ts-255-    }
+--
+src/lib/db/quotes.ts-261-
+src/lib/db/quotes.ts:262:    console.log(`Successfully deleted quote with ID: ${id}`);
+src/lib/db/quotes.ts-263-    return true;
+src/lib/db/quotes.ts-264-  } catch (error) {
+src/lib/db/quotes.ts:265:    console.error(`Error deleting quote with ID ${id}:`, error);
+src/lib/db/quotes.ts-266-    return false;
+src/lib/db/quotes.ts-267-  }
+--
+src/lib/audit-filter/__tests__/integration.test.ts-59-    if (!fs.existsSync(allowlistPath)) {
+src/lib/audit-filter/__tests__/integration.test.ts:60:      console.log(
+src/lib/audit-filter/__tests__/integration.test.ts-61-        'Allowlist file not found. All high/critical vulnerabilities will fail the audit.'
+src/lib/audit-filter/__tests__/integration.test.ts-62-      );
+--
+src/lib/audit-filter/__tests__/integration.test.ts-67-  } catch (error) {
+src/lib/audit-filter/__tests__/integration.test.ts:68:    console.error('Error loading allowlist:', (error as Error).message);
+src/lib/audit-filter/__tests__/integration.test.ts-69-    return null;
+src/lib/audit-filter/__tests__/integration.test.ts-70-  }
+--
+src/lib/audit-filter/__tests__/cli-integration.test.ts-39-  } catch (error) {
+src/lib/audit-filter/__tests__/cli-integration.test.ts:40:    console.error(`Error: ${(error as Error).message}`);
+src/lib/audit-filter/__tests__/cli-integration.test.ts-41-    return 1;
+src/lib/audit-filter/__tests__/cli-integration.test.ts-42-  }
+--
+src/lib/audit-filter/__tests__/logging.test.ts-16-
+src/lib/audit-filter/__tests__/logging.test.ts:17:// Mock console.log and console.error
+src/lib/audit-filter/__tests__/logging.test.ts-18-let consoleLogSpy: jest.SpyInstance;
+src/lib/audit-filter/__tests__/logging.test.ts-19-let consoleErrorSpy: jest.SpyInstance;
+--
+src/lib/audit-filter/__tests__/logging.test.ts-26-  beforeEach(() => {
+src/lib/audit-filter/__tests__/logging.test.ts:27:    // Mock console.log and console.error
+src/lib/audit-filter/__tests__/logging.test.ts-28-    consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+src/lib/audit-filter/__tests__/logging.test.ts-29-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+--
+src/lib/audit-filter/__tests__/logging.test.ts-50-
+src/lib/audit-filter/__tests__/logging.test.ts:51:      // Verify console.log was called with success message
+src/lib/audit-filter/__tests__/logging.test.ts-52-      expect(consoleLogSpy).toHaveBeenCalledWith('✅ Security scan passed!');
+src/lib/audit-filter/__tests__/logging.test.ts:53:      // Verify console.error was not called
+src/lib/audit-filter/__tests__/logging.test.ts-54-      expect(consoleErrorSpy).not.toHaveBeenCalled();
+src/lib/audit-filter/__tests__/logging.test.ts-55-    });
+--
+src/lib/audit-filter/__tests__/logging.test.ts-76-
+src/lib/audit-filter/__tests__/logging.test.ts:77:      // Verify console.error was called with failure message
+src/lib/audit-filter/__tests__/logging.test.ts-78-      expect(consoleErrorSpy).toHaveBeenCalledWith('❌ Security scan failed!');
+src/lib/audit-filter/__tests__/logging.test.ts:79:      // Verify console.log was not called
+src/lib/audit-filter/__tests__/logging.test.ts-80-      expect(consoleLogSpy).not.toHaveBeenCalled();
+src/lib/audit-filter/__tests__/logging.test.ts-81-    });
+--
+src/lib/audit-filter/__tests__/cli-utils.test.ts-24-// Mock console methods to test displayResults
+src/lib/audit-filter/__tests__/cli-utils.test.ts:25:const originalConsoleLog = console.log;
+src/lib/audit-filter/__tests__/cli-utils.test.ts:26:const originalConsoleError = console.error;
+src/lib/audit-filter/__tests__/cli-utils.test.ts-27-const mockConsoleLog = jest.fn();
+src/lib/audit-filter/__tests__/cli-utils.test.ts-28-const mockConsoleError = jest.fn();
+--
+src/lib/audit-filter/__tests__/cli-utils.test.ts-140-    jest.clearAllMocks();
+src/lib/audit-filter/__tests__/cli-utils.test.ts:141:    console.log = mockConsoleLog;
+src/lib/audit-filter/__tests__/cli-utils.test.ts:142:    console.error = mockConsoleError;
+src/lib/audit-filter/__tests__/cli-utils.test.ts-143-  });
+src/lib/audit-filter/__tests__/cli-utils.test.ts-144-
+--
+src/lib/audit-filter/__tests__/cli-utils.test.ts-146-  afterAll(() => {
+src/lib/audit-filter/__tests__/cli-utils.test.ts:147:    console.log = originalConsoleLog;
+src/lib/audit-filter/__tests__/cli-utils.test.ts:148:    console.error = originalConsoleError;
+src/lib/audit-filter/__tests__/cli-utils.test.ts-149-  });
+src/lib/audit-filter/__tests__/cli-utils.test.ts-150-
+--
+src/lib/__tests__/logger.test.ts-81-
+src/lib/__tests__/logger.test.ts:82:    expect(consoleMocks.log).toHaveBeenCalledTimes(2); // debug and http use console.log
+src/lib/__tests__/logger.test.ts-83-    expect(consoleMocks.info).toHaveBeenCalledTimes(1);
+src/lib/__tests__/logger.test.ts-84-    expect(consoleMocks.warn).toHaveBeenCalledTimes(1);
+--
+src/lib/audit-filter/cli-utils.ts-245-  if (results.isSuccessful) {
+src/lib/audit-filter/cli-utils.ts:246:    console.log('✅ Security scan passed!');
+src/lib/audit-filter/cli-utils.ts-247-
+src/lib/audit-filter/cli-utils.ts-248-    // Show allowed vulnerabilities
+src/lib/audit-filter/cli-utils.ts-249-    if (results.allowedVulnerabilities.length > 0) {
+src/lib/audit-filter/cli-utils.ts:250:      console.log(`\n${results.allowedVulnerabilities.length} allowlisted vulnerabilities found:`);
+src/lib/audit-filter/cli-utils.ts-251-      results.allowedVulnerabilities.forEach(vuln => {
+src/lib/audit-filter/cli-utils.ts:252:        console.log(`  - ${vuln.package}@${vuln.id} (${vuln.severity}): ${vuln.title}`);
+src/lib/audit-filter/cli-utils.ts:253:        console.log(`    Reason: ${vuln.reason}`);
+src/lib/audit-filter/cli-utils.ts-254-        if (vuln.expiresOn) {
+src/lib/audit-filter/cli-utils.ts:255:          console.log(`    Expires: ${vuln.expiresOn}`);
+src/lib/audit-filter/cli-utils.ts-256-        }
+src/lib/audit-filter/cli-utils.ts-257-      });
+--
+src/lib/audit-filter/cli-utils.ts-261-    if (results.expiringEntries.length > 0) {
+src/lib/audit-filter/cli-utils.ts:262:      console.log('\n⚠️  Warning: The following allowlist entries will expire within 30 days:');
+src/lib/audit-filter/cli-utils.ts-263-      results.expiringEntries.forEach(entry => {
+src/lib/audit-filter/cli-utils.ts:264:        console.log(`  - ${entry.package}@${entry.id} expires on ${entry.expiresOn}`);
+src/lib/audit-filter/cli-utils.ts-265-      });
+src/lib/audit-filter/cli-utils.ts-266-    }
+src/lib/audit-filter/cli-utils.ts-267-  } else {
+src/lib/audit-filter/cli-utils.ts:268:    console.error('❌ Security scan failed!');
+src/lib/audit-filter/cli-utils.ts-269-
+src/lib/audit-filter/cli-utils.ts-270-    // Show new vulnerabilities
+src/lib/audit-filter/cli-utils.ts-271-    if (results.vulnerabilities.length > 0) {
+src/lib/audit-filter/cli-utils.ts:272:      console.error(
+src/lib/audit-filter/cli-utils.ts-273-        `\nFound ${results.vulnerabilities.length} non-allowlisted high/critical vulnerabilities:`
+src/lib/audit-filter/cli-utils.ts-274-      );
+src/lib/audit-filter/cli-utils.ts-275-      results.vulnerabilities.forEach(vuln => {
+src/lib/audit-filter/cli-utils.ts:276:        console.error(`  - ${vuln.package}@${vuln.id} (${vuln.severity}): ${vuln.title}`);
+src/lib/audit-filter/cli-utils.ts:277:        console.error(`    URL: ${vuln.url}`);
+src/lib/audit-filter/cli-utils.ts-278-      });
+src/lib/audit-filter/cli-utils.ts-279-    }
+--
+src/lib/audit-filter/cli-utils.ts-282-    if (results.expiredAllowlistEntries.length > 0) {
+src/lib/audit-filter/cli-utils.ts:283:      console.error(`\n${results.expiredAllowlistEntries.length} allowlist entries have expired:`);
+src/lib/audit-filter/cli-utils.ts-284-      results.expiredAllowlistEntries.forEach(entry => {
+src/lib/audit-filter/cli-utils.ts:285:        console.error(`  - ${entry.package}@${entry.id} (${entry.severity}): ${entry.title}`);
+src/lib/audit-filter/cli-utils.ts:286:        console.error(`    Reason was: ${entry.reason}`);
+src/lib/audit-filter/cli-utils.ts:287:        console.error(`    Expired on: ${entry.expiresOn}`);
+src/lib/audit-filter/cli-utils.ts-288-      });
+src/lib/audit-filter/cli-utils.ts-289-    }
+src/lib/audit-filter/cli-utils.ts-290-
+src/lib/audit-filter/cli-utils.ts:291:    console.error('\nTo fix this issue:');
+src/lib/audit-filter/cli-utils.ts:292:    console.error('1. Update dependencies to resolve vulnerabilities');
+src/lib/audit-filter/cli-utils.ts:293:    console.error('2. Or add entries to .audit-allowlist.json with proper justification');
+src/lib/audit-filter/cli-utils.ts-294-  }
+src/lib/audit-filter/cli-utils.ts-295-}
+--
+src/lib/logger.ts-120-      const output = JSON.stringify(logEntry);
+src/lib/logger.ts:121:      // For tests simulating production, use console.log for easy capturing
+src/lib/logger.ts-122-      // In real production, use process.stdout to avoid console.* calls
+src/lib/logger.ts-123-      if (typeof jest !== 'undefined') {
+src/lib/logger.ts:124:        console.log(output);
+src/lib/logger.ts-125-      } else if (typeof process !== 'undefined' && process.stdout) {
+src/lib/logger.ts-126-        process.stdout.write(output + '\n');
+--
+src/lib/logger.ts-128-        // Fallback for edge runtime environments
+src/lib/logger.ts:129:        console.log(output);
+src/lib/logger.ts-130-      }
+src/lib/logger.ts-131-    } else {
+--
+src/lib/logger.ts-137-        case 'error':
+src/lib/logger.ts:138:          console.error(logString, hasMetadata ? metadata : undefined);
+src/lib/logger.ts-139-          break;
+src/lib/logger.ts-140-        case 'warn':
+src/lib/logger.ts:141:          console.warn(logString, hasMetadata ? metadata : undefined);
+src/lib/logger.ts-142-          break;
+src/lib/logger.ts-143-        case 'info':
+src/lib/logger.ts:144:          console.info(logString, hasMetadata ? metadata : undefined);
+src/lib/logger.ts-145-          break;
+src/lib/logger.ts-146-        case 'http':
+--
+src/lib/logger.ts-148-        default:
+src/lib/logger.ts:149:          console.log(logString, hasMetadata ? metadata : undefined);
+src/lib/logger.ts-150-          break;
+src/lib/logger.ts-151-      }
+--
+src/test-utils/a11y-helpers.tsx-40-  if (verbose && results.violations.length > 0) {
+src/test-utils/a11y-helpers.tsx:41:    console.log(results.violations);
+src/test-utils/a11y-helpers.tsx-42-  }
+src/test-utils/a11y-helpers.tsx-43-
+--
+src/test-utils/a11y-helpers.tsx-134-      if (options.verbose && results.violations.length > 0) {
+src/test-utils/a11y-helpers.tsx:135:        console.log(
+src/test-utils/a11y-helpers.tsx-136-          `Viewport ${size.name} (${size.width}x${size.height}) violations:`,
+src/test-utils/a11y-helpers.tsx-137-          results.violations
+--
+src/app/readings/page.tsx-55-      if (!result || !Array.isArray(result.data)) {
+src/app/readings/page.tsx:56:        console.error('Invalid API response format:', result);
+src/app/readings/page.tsx-57-        throw new Error('Invalid response format from API');
+src/app/readings/page.tsx-58-      }
+src/app/readings/page.tsx-59-
+src/app/readings/page.tsx:60:      console.log(
+src/app/readings/page.tsx-61-        `Fetched page ${pageNum} with offset ${offset}. Got ${result.data.length} items.`
+src/app/readings/page.tsx-62-      );
+--
+src/app/readings/page.tsx-68-    } catch (err) {
+src/app/readings/page.tsx:69:      console.error('Error fetching readings:', err);
+src/app/readings/page.tsx-70-      setError(err instanceof Error ? err.message : 'An error occurred');
+src/app/readings/page.tsx-71-      // Return empty data and false for hasMore to prevent further loading attempts
+--
+src/app/readings/page.tsx-91-      } catch (error) {
+src/app/readings/page.tsx:92:        console.error('Error loading initial data:', error);
+src/app/readings/page.tsx-93-        setError(error instanceof Error ? error.message : 'Failed to load initial data');
+src/app/readings/page.tsx-94-      } finally {
+--
+src/app/readings/page.tsx-131-    } catch (error) {
+src/app/readings/page.tsx:132:      console.error('Error loading more readings:', error);
+src/app/readings/page.tsx-133-      setError(error instanceof Error ? error.message : 'Failed to load more readings');
+src/app/readings/page.tsx-134-    } finally {
+--
+src/app/readings/page.tsx-179-          // This is important for mobile devices with touch scrolling
+src/app/readings/page.tsx:180:          console.log('Loading element visible, triggering loadMore');
+src/app/readings/page.tsx-181-          loadMore();
+src/app/readings/page.tsx-182-        }
+--
+src/app/admin/login/page.tsx-61-    } catch (error) {
+src/app/admin/login/page.tsx:62:      console.error('Login error:', error);
+src/app/admin/login/page.tsx-63-      setErrorMessage('Login failed. Please check your credentials and try again.');
+src/app/admin/login/page.tsx-64-    } finally {
+--
+src/app/api/readings/route.ts-145-  try {
+src/app/api/readings/route.ts:146:    console.log('API Route: Fetching readings from database...');
+src/app/api/readings/route.ts-147-
+src/app/api/readings/route.ts-148-    // Parse the URL to check for query parameters
+--
+src/app/api/readings/route.ts-153-    if (slug) {
+src/app/api/readings/route.ts:154:      console.log(`API Route: Fetching reading with slug: ${slug}`);
+src/app/api/readings/route.ts-155-      const data = await getReading(slug);
+src/app/api/readings/route.ts-156-
+--
+src/app/api/readings/route.ts-161-
+src/app/api/readings/route.ts:162:      console.log(`API Route: Successfully fetched reading: ${data.title}`);
+src/app/api/readings/route.ts-163-      return setCacheHeaders(NextResponse.json(data));
+src/app/api/readings/route.ts-164-    }
+--
+src/app/api/readings/route.ts-189-
+src/app/api/readings/route.ts:190:      console.log('API Route: Using advanced query with filters:', queryParams);
+src/app/api/readings/route.ts-191-
+src/app/api/readings/route.ts-192-      // Fetch filtered, sorted, and paginated readings
+--
+src/app/api/readings/route.ts-194-
+src/app/api/readings/route.ts:195:      console.log(
+src/app/api/readings/route.ts-196-        `API Route: Successfully fetched ${paginatedResult.data.length} readings (page ${paginatedResult.currentPage} of ${paginatedResult.totalPages})`
+src/app/api/readings/route.ts-197-      );
+--
+src/app/api/readings/route.ts-201-      // Legacy mode: fetch all readings with default ordering
+src/app/api/readings/route.ts:202:      console.log('API Route: Fetching all readings (legacy mode)');
+src/app/api/readings/route.ts-203-      const readings = await getReadings();
+src/app/api/readings/route.ts-204-
+src/app/api/readings/route.ts:205:      console.log(`API Route: Successfully fetched ${readings.length} readings`);
+src/app/api/readings/route.ts-206-      return setCacheHeaders(NextResponse.json(readings));
+src/app/api/readings/route.ts-207-    }
+--
+src/app/api/readings/route.ts-209-    // Handle and log any errors that occur
+src/app/api/readings/route.ts:210:    console.error('API Route: Error fetching readings:', error);
+src/app/api/readings/route.ts-211-    return setCacheHeaders(
+src/app/api/readings/route.ts-212-      NextResponse.json(
+--
+src/app/api/readings/route.ts-246-  try {
+src/app/api/readings/route.ts:247:    console.log('API Route: Creating new reading');
+src/app/api/readings/route.ts-248-
+src/app/api/readings/route.ts-249-    // Verify authentication via Authorization header
+--
+src/app/api/readings/route.ts-262-    } catch (error) {
+src/app/api/readings/route.ts:263:      console.error('API Route: Error parsing JSON:', error);
+src/app/api/readings/route.ts-264-      return setCacheHeaders(
+src/app/api/readings/route.ts-265-        NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 })
+--
+src/app/api/readings/route.ts-285-
+src/app/api/readings/route.ts:286:    console.log(`API Route: Successfully created reading: ${reading.title}`);
+src/app/api/readings/route.ts-287-    return setCacheHeaders(NextResponse.json(reading, { status: 201 }));
+src/app/api/readings/route.ts-288-  } catch (error) {
+src/app/api/readings/route.ts:289:    console.error('API Route: Error creating reading:', error);
+src/app/api/readings/route.ts-290-    return setCacheHeaders(
+src/app/api/readings/route.ts-291-      NextResponse.json(
+--
+src/app/api/readings/route.ts-323-  try {
+src/app/api/readings/route.ts:324:    console.log('API Route: Updating reading');
+src/app/api/readings/route.ts-325-
+src/app/api/readings/route.ts-326-    // Check if user is authenticated
+--
+src/app/api/readings/route.ts-347-    } catch (error) {
+src/app/api/readings/route.ts:348:      console.error('API Route: Error parsing JSON:', error);
+src/app/api/readings/route.ts-349-      return setCacheHeaders(
+src/app/api/readings/route.ts-350-        NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 })
+--
+src/app/api/readings/route.ts-367-
+src/app/api/readings/route.ts:368:    console.log(`API Route: Successfully updated reading: ${reading.title}`);
+src/app/api/readings/route.ts-369-    return setCacheHeaders(NextResponse.json(reading));
+src/app/api/readings/route.ts-370-  } catch (error) {
+src/app/api/readings/route.ts:371:    console.error('API Route: Error updating reading:', error);
+src/app/api/readings/route.ts-372-    return setCacheHeaders(
+src/app/api/readings/route.ts-373-      NextResponse.json(
+--
+src/app/api/readings/route.ts-400-  try {
+src/app/api/readings/route.ts:401:    console.log('API Route: Deleting reading');
+src/app/api/readings/route.ts-402-
+src/app/api/readings/route.ts-403-    // Check if user is authenticated
+--
+src/app/api/readings/route.ts-425-
+src/app/api/readings/route.ts:426:    console.log(`API Route: Successfully deleted reading with slug: ${slug}`);
+src/app/api/readings/route.ts-427-    return setCacheHeaders(
+src/app/api/readings/route.ts-428-      NextResponse.json({
+--
+src/app/api/readings/route.ts-433-  } catch (error) {
+src/app/api/readings/route.ts:434:    console.error('API Route: Error deleting reading:', error);
+src/app/api/readings/route.ts-435-    return setCacheHeaders(
+src/app/api/readings/route.ts-436-      NextResponse.json(
+--
+src/app/admin/quotes/page.tsx-155-    } catch (err) {
+src/app/admin/quotes/page.tsx:156:      console.error('Error saving quote:', err);
+src/app/admin/quotes/page.tsx-157-      setFormError(`Failed to save: ${err instanceof Error ? err.message : String(err)}`);
+src/app/admin/quotes/page.tsx-158-    } finally {
+--
+src/app/admin/quotes/page.tsx-197-    } catch (err) {
+src/app/admin/quotes/page.tsx:198:      console.error('Error deleting quote:', err);
+src/app/admin/quotes/page.tsx-199-      setFormError(`Failed to delete: ${err instanceof Error ? err.message : String(err)}`);
+src/app/admin/quotes/page.tsx-200-    } finally {
+--
+src/app/admin/page.tsx-99-      } catch (error) {
+src/app/admin/page.tsx:100:        console.error('Error fetching data:', error);
+src/app/admin/page.tsx-101-      } finally {
+src/app/admin/page.tsx-102-        setIsLoading(false);
+--
+src/hooks/keyboard/useShortcuts.ts-48-      } catch (error) {
+src/hooks/keyboard/useShortcuts.ts:49:        console.error(`Failed to register shortcut "${shortcut.id}":`, error);
+src/hooks/keyboard/useShortcuts.ts-50-      }
+src/hooks/keyboard/useShortcuts.ts-51-    }
+--
+src/app/admin/readings/page.tsx-210-    } catch (err) {
+src/app/admin/readings/page.tsx:211:      console.error('Error saving reading:', err);
+src/app/admin/readings/page.tsx-212-      setFormError(`Failed to save: ${err instanceof Error ? err.message : String(err)}`);
+src/app/admin/readings/page.tsx-213-    } finally {
+--
+src/app/admin/readings/page.tsx-252-    } catch (err) {
+src/app/admin/readings/page.tsx:253:      console.error('Error deleting reading:', err);
+src/app/admin/readings/page.tsx-254-      setFormError(`Failed to delete: ${err instanceof Error ? err.message : String(err)}`);
+src/app/admin/readings/page.tsx-255-    } finally {
+--
+src/app/hooks/__tests__/useReadingsQuotesList.test.tsx-94-    // Suppress console errors for clean test output
+src/app/hooks/__tests__/useReadingsQuotesList.test.tsx:95:    const originalConsoleError = console.error;
+src/app/hooks/__tests__/useReadingsQuotesList.test.tsx:96:    console.error = jest.fn();
+src/app/hooks/__tests__/useReadingsQuotesList.test.tsx-97-
+src/app/hooks/__tests__/useReadingsQuotesList.test.tsx-98-    // Using async API for modern React Testing Library
+--
+src/app/hooks/__tests__/useReadingsQuotesList.test.tsx-112-
+src/app/hooks/__tests__/useReadingsQuotesList.test.tsx:113:    // Restore console.error
+src/app/hooks/__tests__/useReadingsQuotesList.test.tsx:114:    console.error = originalConsoleError;
+src/app/hooks/__tests__/useReadingsQuotesList.test.tsx-115-  });
+src/app/hooks/__tests__/useReadingsQuotesList.test.tsx-116-});
+--
+src/app/components/DarkModeToggle.stories.ts-35-// With custom click handler
+src/app/components/DarkModeToggle.stories.ts:36:<DarkModeToggle onClick={() => console.log('Custom handler')} />
+src/app/components/DarkModeToggle.stories.ts-37-\`\`\`
+src/app/components/DarkModeToggle.stories.ts-38-
+--
+src/app/components/DarkModeToggle.stories.ts-155-    onClick: () => {
+src/app/components/DarkModeToggle.stories.ts:156:      console.log('Toggle clicked');
+src/app/components/DarkModeToggle.stories.ts-157-    },
+src/app/components/DarkModeToggle.stories.ts-158-  },
+--
+src/app/components/SearchBar.stories.ts-343-        buttonVariant: 'primary',
+src/app/components/SearchBar.stories.ts:344:        onSearch: () => console.log('Primary search clicked'),
+src/app/components/SearchBar.stories.ts-345-      }),
+src/app/components/SearchBar.stories.ts-346-      React.createElement(SearchBar, {
+--
+src/app/components/SearchBar.stories.ts-349-        buttonVariant: 'secondary',
+src/app/components/SearchBar.stories.ts:350:        onSearch: () => console.log('Secondary search clicked'),
+src/app/components/SearchBar.stories.ts-351-      }),
+src/app/components/SearchBar.stories.ts-352-      React.createElement(SearchBar, {
+--
+src/app/components/SearchBar.stories.ts-355-        buttonVariant: 'minimal',
+src/app/components/SearchBar.stories.ts:356:        onSearch: () => console.log('Minimal search clicked'),
+src/app/components/SearchBar.stories.ts-357-      })
+src/app/components/SearchBar.stories.ts-358-    );
+--
+src/app/components/SearchBar.stories.ts-371-        buttonVariant: 'primary',
+src/app/components/SearchBar.stories.ts:372:        onSearch: () => console.log('Primary search clicked'),
+src/app/components/SearchBar.stories.ts-373-      }),
+src/app/components/SearchBar.stories.ts-374-      React.createElement(SearchBar, {
+--
+src/app/components/SearchBar.stories.ts-377-        buttonVariant: 'secondary',
+src/app/components/SearchBar.stories.ts:378:        onSearch: () => console.log('Secondary search clicked'),
+src/app/components/SearchBar.stories.ts-379-      }),
+src/app/components/SearchBar.stories.ts-380-      React.createElement(SearchBar, {
+--
+src/app/components/SearchBar.stories.ts-383-        buttonVariant: 'minimal',
+src/app/components/SearchBar.stories.ts:384:        onSearch: () => console.log('Minimal search clicked'),
+src/app/components/SearchBar.stories.ts-385-      })
+src/app/components/SearchBar.stories.ts-386-    );
+--
+src/app/components/SearchBar.stories.ts-436-        ],
+src/app/components/SearchBar.stories.ts:437:        onSearch: () => console.log('Accessible search clicked'),
+src/app/components/SearchBar.stories.ts-438-      })
+src/app/components/SearchBar.stories.ts-439-    );
+--
+src/app/components/SearchBar.stories.ts-494-          ],
+src/app/components/SearchBar.stories.ts:495:          onSearch: () => console.log('Responsive search clicked'),
+src/app/components/SearchBar.stories.ts-496-        })
+src/app/components/SearchBar.stories.ts-497-      )
+--
+src/app/components/SearchBar.stories.ts-523-        searchAsYouType: false,
+src/app/components/SearchBar.stories.ts:524:        onSearch: () => console.log('Interactive search clicked'),
+src/app/components/SearchBar.stories.ts-525-      })
+src/app/components/SearchBar.stories.ts-526-    );
+--
+src/app/components/SearchBar.stories.ts-550-        ],
+src/app/components/SearchBar.stories.ts:551:        onSearch: () => console.log('Mobile search clicked'),
+src/app/components/SearchBar.stories.ts-552-      })
+src/app/components/SearchBar.stories.ts-553-    );
+--
+src/app/hooks/useListState.ts-265-
+src/app/hooks/useListState.ts:266:      console.log(`Fetching data for page ${state.pagination.currentPage} with params:`, params);
+src/app/hooks/useListState.ts-267-
+src/app/hooks/useListState.ts-268-      // Fetch data using the provided function
+--
+src/app/hooks/useListState.ts-283-    } catch (error) {
+src/app/hooks/useListState.ts:284:      console.error('Error fetching list data:', error);
+src/app/hooks/useListState.ts-285-      dispatch({
+src/app/hooks/useListState.ts-286-        type: 'SET_ERROR',
+--
+src/app/components/TypewriterQuotes.tsx-90-      try {
+src/app/components/TypewriterQuotes.tsx:91:        console.log('TypewriterQuotes: Fetching quotes from API...');
+src/app/components/TypewriterQuotes.tsx-92-        const response = await fetch('/api/quotes', {
+src/app/components/TypewriterQuotes.tsx-93-          method: 'GET',
+--
+src/app/components/TypewriterQuotes.tsx-103-
+src/app/components/TypewriterQuotes.tsx:104:        console.log('TypewriterQuotes: API response status:', response.status);
+src/app/components/TypewriterQuotes.tsx-105-
+src/app/components/TypewriterQuotes.tsx-106-        if (!response.ok) {
+--
+src/app/components/TypewriterQuotes.tsx-116-        }
+src/app/components/TypewriterQuotes.tsx:117:        console.log(`TypewriterQuotes: Received ${data.length} quotes from API`);
+src/app/components/TypewriterQuotes.tsx-118-
+src/app/components/TypewriterQuotes.tsx-119-        if (data.length === 0) {
+--
+src/app/components/TypewriterQuotes.tsx-129-      } catch (error) {
+src/app/components/TypewriterQuotes.tsx:130:        console.error('TypewriterQuotes: Error fetching quotes:', error);
+src/app/components/TypewriterQuotes.tsx-131-        // Fallback to a default quote if API fails
+src/app/components/TypewriterQuotes.tsx-132-        // Use a properly typed fallback quote
+--
+src/app/components/TypewriterQuotes.tsx-174-        // Silently fail in test environments where this might not be available
+src/app/components/TypewriterQuotes.tsx:175:        console.error('Failed to clear interval:', e);
+src/app/components/TypewriterQuotes.tsx-176-      }
+src/app/components/TypewriterQuotes.tsx-177-    };
+--
+src/app/components/TypewriterQuotes.tsx-278-          // Silently fail in test environments where this might not be available
+src/app/components/TypewriterQuotes.tsx:279:          console.error('Failed to clear timeout:', e);
+src/app/components/TypewriterQuotes.tsx-280-        }
+src/app/components/TypewriterQuotes.tsx-281-      }
+--
+src/app/components/quotes/QuotesList.tsx-97-    // If there's any error with the regex, just return the original text
+src/app/components/quotes/QuotesList.tsx:98:    console.error('Error highlighting search term:', error);
+src/app/components/quotes/QuotesList.tsx-99-    return text;
+src/app/components/quotes/QuotesList.tsx-100-  }
+--
+src/app/api/auth/[...nextauth]/route.ts-50-        } catch (e) {
+src/app/api/auth/[...nextauth]/route.ts:51:          console.error('Failed to parse user cookie:', e);
+src/app/api/auth/[...nextauth]/route.ts-52-        }
+src/app/api/auth/[...nextauth]/route.ts-53-      }
+--
+src/app/api/auth/[...nextauth]/route.ts-68-  try {
+src/app/api/auth/[...nextauth]/route.ts:69:    console.log('POST request to auth endpoint received');
+src/app/api/auth/[...nextauth]/route.ts-70-
+src/app/api/auth/[...nextauth]/route.ts-71-    const formData = await request.formData();
+--
+src/app/api/auth/[...nextauth]/route.ts-75-
+src/app/api/auth/[...nextauth]/route.ts:76:    console.log(`Login attempt: username=${username}, callbackUrl=${callbackUrl}`);
+src/app/api/auth/[...nextauth]/route.ts-77-    // Safely access environment variable
+src/app/api/auth/[...nextauth]/route.ts-78-
+src/app/api/auth/[...nextauth]/route.ts:79:    console.log(
+src/app/api/auth/[...nextauth]/route.ts-80-      `Current environment: ${typeof process !== 'undefined' && process.env ? process.env.NODE_ENV : 'unknown'}`
+src/app/api/auth/[...nextauth]/route.ts-81-    );
+--
+src/app/api/auth/[...nextauth]/route.ts-86-    if (result.success) {
+src/app/api/auth/[...nextauth]/route.ts:87:      console.log('Credentials validated successfully, setting cookies...');
+src/app/api/auth/[...nextauth]/route.ts-88-
+src/app/api/auth/[...nextauth]/route.ts-89-      // Build the callback URL
+src/app/api/auth/[...nextauth]/route.ts-90-      const redirectUrl = new URL(callbackUrl, request.url);
+src/app/api/auth/[...nextauth]/route.ts:91:      console.log(`Redirecting to: ${redirectUrl.toString()}`);
+src/app/api/auth/[...nextauth]/route.ts-92-
+src/app/api/auth/[...nextauth]/route.ts-93-      // Set authentication cookie and redirect to callback URL
+--
+src/app/api/auth/[...nextauth]/route.ts-113-      if (result.user) {
+src/app/api/auth/[...nextauth]/route.ts:114:        console.log('Setting user cookie...');
+src/app/api/auth/[...nextauth]/route.ts-115-        response.cookies.set({
+src/app/api/auth/[...nextauth]/route.ts-116-          name: 'admin_user',
+--
+src/app/api/auth/[...nextauth]/route.ts-134-
+src/app/api/auth/[...nextauth]/route.ts:135:      console.log('Returning redirect response...');
+src/app/api/auth/[...nextauth]/route.ts-136-      return response;
+src/app/api/auth/[...nextauth]/route.ts-137-    }
+src/app/api/auth/[...nextauth]/route.ts-138-
+src/app/api/auth/[...nextauth]/route.ts:139:    console.log('Authentication failed, redirecting to login page with error');
+src/app/api/auth/[...nextauth]/route.ts-140-    // Redirect to login with error on failure
+src/app/api/auth/[...nextauth]/route.ts-141-    const errorMessage = result.message || 'CredentialsSignin';
+--
+src/app/api/auth/[...nextauth]/route.ts-145-  } catch (error) {
+src/app/api/auth/[...nextauth]/route.ts:146:    console.error('Login error:', error);
+src/app/api/auth/[...nextauth]/route.ts-147-    // Provide more detailed error information for debugging
+src/app/api/auth/[...nextauth]/route.ts-148-    const errorMessage = error instanceof Error ? error.message : String(error);
+src/app/api/auth/[...nextauth]/route.ts:149:    console.error(`Error details: ${errorMessage}`);
+src/app/api/auth/[...nextauth]/route.ts-150-
+src/app/api/auth/[...nextauth]/route.ts-151-    return NextResponse.redirect(
+--
+src/app/components/readings/__tests__/ReadingsList.test.tsx-207-    // Debug the rendered output
+src/app/components/readings/__tests__/ReadingsList.test.tsx:208:    // console.log(container.innerHTML);
+src/app/components/readings/__tests__/ReadingsList.test.tsx-209-
+src/app/components/readings/__tests__/ReadingsList.test.tsx-210-    // Using a more flexible approach to find text elements
+--
+src/app/components/readings/ReadingsList.tsx-53-  } catch (error) {
+src/app/components/readings/ReadingsList.tsx:54:    console.error('Error formatting date:', error);
+src/app/components/readings/ReadingsList.tsx-55-    // Fallback to showing the raw date as a string
+src/app/components/readings/ReadingsList.tsx-56-    return String(dateInput);
+--
+src/app/components/readings/ReadingsList.tsx-139-    // If there's any error with the regex, just return the original text
+src/app/components/readings/ReadingsList.tsx:140:    console.error('Error highlighting search term:', error);
+src/app/components/readings/ReadingsList.tsx-141-    return text;
+src/app/components/readings/ReadingsList.tsx-142-  }
+--
+src/app/api/quotes/route.ts-71-  try {
+src/app/api/quotes/route.ts:72:    console.log('API Route: Fetching quotes from database...');
+src/app/api/quotes/route.ts-73-
+src/app/api/quotes/route.ts-74-    // Parse the URL to check for query parameters
+--
+src/app/api/quotes/route.ts-85-
+src/app/api/quotes/route.ts:86:      console.log(`API Route: Fetching quote with ID: ${quoteId}`);
+src/app/api/quotes/route.ts-87-      const data = await getQuote(quoteId);
+src/app/api/quotes/route.ts-88-
+--
+src/app/api/quotes/route.ts-92-
+src/app/api/quotes/route.ts:93:      console.log(`API Route: Successfully fetched quote with ID: ${quoteId}`);
+src/app/api/quotes/route.ts-94-      return setCacheHeaders(NextResponse.json(data));
+src/app/api/quotes/route.ts-95-    }
+--
+src/app/api/quotes/route.ts-118-
+src/app/api/quotes/route.ts:119:      console.log('API Route: Using advanced query with filters:', queryParams);
+src/app/api/quotes/route.ts-120-
+src/app/api/quotes/route.ts-121-      // Fetch filtered, sorted, and paginated quotes
+--
+src/app/api/quotes/route.ts-123-
+src/app/api/quotes/route.ts:124:      console.log(
+src/app/api/quotes/route.ts-125-        `API Route: Successfully fetched ${paginatedResult.data.length} quotes (page ${paginatedResult.currentPage} of ${paginatedResult.totalPages})`
+src/app/api/quotes/route.ts-126-      );
+--
+src/app/api/quotes/route.ts-130-      // Legacy mode: fetch all quotes without filtering
+src/app/api/quotes/route.ts:131:      console.log('API Route: Fetching all quotes (legacy mode)');
+src/app/api/quotes/route.ts-132-      const quotes = await getQuotes();
+src/app/api/quotes/route.ts-133-
+src/app/api/quotes/route.ts:134:      console.log(`API Route: Successfully fetched ${quotes.length} quotes`);
+src/app/api/quotes/route.ts-135-      return setCacheHeaders(NextResponse.json(quotes));
+src/app/api/quotes/route.ts-136-    }
+src/app/api/quotes/route.ts-137-  } catch (error) {
+src/app/api/quotes/route.ts:138:    console.error('API Route: Error fetching quotes:', error);
+src/app/api/quotes/route.ts-139-    return setCacheHeaders(
+src/app/api/quotes/route.ts-140-      NextResponse.json(
+--
+src/app/api/quotes/route.ts-152-  try {
+src/app/api/quotes/route.ts:153:    console.log('API Route: Creating new quote');
+src/app/api/quotes/route.ts-154-
+src/app/api/quotes/route.ts-155-    // Check if user is authenticated
+--
+src/app/api/quotes/route.ts-167-    } catch (error) {
+src/app/api/quotes/route.ts:168:      console.error('API Route: Error parsing JSON:', error);
+src/app/api/quotes/route.ts-169-      return setCacheHeaders(
+src/app/api/quotes/route.ts-170-        NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 })
+--
+src/app/api/quotes/route.ts-187-
+src/app/api/quotes/route.ts:188:    console.log(`API Route: Successfully created quote with ID: ${quote.id}`);
+src/app/api/quotes/route.ts-189-    return setCacheHeaders(NextResponse.json(quote, { status: 201 }));
+src/app/api/quotes/route.ts-190-  } catch (error) {
+src/app/api/quotes/route.ts:191:    console.error('API Route: Error creating quote:', error);
+src/app/api/quotes/route.ts-192-    return setCacheHeaders(
+src/app/api/quotes/route.ts-193-      NextResponse.json(
+--
+src/app/api/quotes/route.ts-205-  try {
+src/app/api/quotes/route.ts:206:    console.log('API Route: Updating quote');
+src/app/api/quotes/route.ts-207-
+src/app/api/quotes/route.ts-208-    // Check if user is authenticated
+--
+src/app/api/quotes/route.ts-235-    } catch (error) {
+src/app/api/quotes/route.ts:236:      console.error('API Route: Error parsing JSON:', error);
+src/app/api/quotes/route.ts-237-      return setCacheHeaders(
+src/app/api/quotes/route.ts-238-        NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 })
+--
+src/app/api/quotes/route.ts-253-
+src/app/api/quotes/route.ts:254:    console.log(`API Route: Successfully updated quote with ID: ${quote.id}`);
+src/app/api/quotes/route.ts-255-    return setCacheHeaders(NextResponse.json(quote));
+src/app/api/quotes/route.ts-256-  } catch (error) {
+src/app/api/quotes/route.ts:257:    console.error('API Route: Error updating quote:', error);
+src/app/api/quotes/route.ts-258-    return setCacheHeaders(
+src/app/api/quotes/route.ts-259-      NextResponse.json(
+--
+src/app/api/quotes/route.ts-271-  try {
+src/app/api/quotes/route.ts:272:    console.log('API Route: Deleting quote');
+src/app/api/quotes/route.ts-273-
+src/app/api/quotes/route.ts-274-    // Check if user is authenticated
+--
+src/app/api/quotes/route.ts-302-
+src/app/api/quotes/route.ts:303:    console.log(`API Route: Successfully deleted quote with ID: ${quoteId}`);
+src/app/api/quotes/route.ts-304-    return setCacheHeaders(
+src/app/api/quotes/route.ts-305-      NextResponse.json({ success: true, message: `Quote with ID ${quoteId} deleted successfully` })
+--
+src/app/api/quotes/route.ts-307-  } catch (error) {
+src/app/api/quotes/route.ts:308:    console.error('API Route: Error deleting quote:', error);
+src/app/api/quotes/route.ts-309-    return setCacheHeaders(
+src/app/api/quotes/route.ts-310-      NextResponse.json(
+--
+src/app/admin/layout.tsx-44-      } catch (error) {
+src/app/admin/layout.tsx:45:        console.error('Error checking auth status:', error);
+src/app/admin/layout.tsx-46-        setIsAuthenticated(false);
+src/app/admin/layout.tsx-47-      }

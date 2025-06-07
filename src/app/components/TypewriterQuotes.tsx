@@ -7,6 +7,7 @@
 
 import { useEffect, useState } from 'react';
 import type { Quote } from '@/types';
+import { logger, createLogContext } from '@/lib/logger';
 
 /**
  * Represents the current animation phase of the typewriter effect
@@ -88,7 +89,10 @@ export default function TypewriterQuotes() {
      */
     const fetchQuotes = async () => {
       try {
-        console.log('TypewriterQuotes: Fetching quotes from API...');
+        logger.info(
+          'Fetching quotes for typewriter animation',
+          createLogContext('components/TypewriterQuotes', 'fetchQuotes')
+        );
         const response = await fetch('/api/quotes', {
           method: 'GET',
           headers: {
@@ -101,7 +105,12 @@ export default function TypewriterQuotes() {
           cache: 'no-store',
         });
 
-        console.log('TypewriterQuotes: API response status:', response.status);
+        logger.debug(
+          'Quotes API response received',
+          createLogContext('components/TypewriterQuotes', 'fetchQuotes', {
+            response_status: response.status,
+          })
+        );
 
         if (!response.ok) {
           throw new Error(`Failed to fetch quotes: ${response.status} ${response.statusText}`);
@@ -114,7 +123,12 @@ export default function TypewriterQuotes() {
         if (!Array.isArray(data)) {
           throw new Error('Invalid response format: expected an array of quotes');
         }
-        console.log(`TypewriterQuotes: Received ${data.length} quotes from API`);
+        logger.info(
+          'Successfully fetched quotes for typewriter',
+          createLogContext('components/TypewriterQuotes', 'fetchQuotes', {
+            quotes_count: data.length,
+          })
+        );
 
         if (data.length === 0) {
           throw new Error('No quotes received from API');
@@ -127,7 +141,13 @@ export default function TypewriterQuotes() {
         setQuoteIndex(randomIndex);
         setPhase('typingQuote');
       } catch (error) {
-        console.error('TypewriterQuotes: Error fetching quotes:', error);
+        logger.error(
+          'Error fetching quotes for typewriter animation',
+          createLogContext('components/TypewriterQuotes', 'fetchQuotes', {
+            error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+          }),
+          error instanceof Error ? error : new Error(String(error))
+        );
         // Fallback to a default quote if API fails
         // Use a properly typed fallback quote
         const fallbackQuote: Quote = {
@@ -172,7 +192,12 @@ export default function TypewriterQuotes() {
         globalThis.clearInterval(blink);
       } catch (e) {
         // Silently fail in test environments where this might not be available
-        console.error('Failed to clear interval:', e);
+        logger.warn(
+          'Failed to clear animation interval',
+          createLogContext('components/TypewriterQuotes', 'cleanupBlink', {
+            error_type: e instanceof Error ? e.constructor.name : 'Unknown',
+          })
+        );
       }
     };
   }, []);
@@ -276,7 +301,12 @@ export default function TypewriterQuotes() {
           globalThis.clearTimeout(timer);
         } catch (e) {
           // Silently fail in test environments where this might not be available
-          console.error('Failed to clear timeout:', e);
+          logger.warn(
+            'Failed to clear animation timeout',
+            createLogContext('components/TypewriterQuotes', 'cleanupTimer', {
+              error_type: e instanceof Error ? e.constructor.name : 'Unknown',
+            })
+          );
         }
       }
     };

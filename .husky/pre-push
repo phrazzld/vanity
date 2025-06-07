@@ -23,6 +23,7 @@ REFACTOR_PATTERN="^refactor/[a-z0-9]+([-/][a-z0-9]+)*$"
 RELEASE_PATTERN="^release/v[0-9]+\.[0-9]+\.[0-9]+$"
 DEV_PATTERN="^dev(elop)?$"
 PLAN_PATTERN="^plan/[a-z0-9]+([-/][a-z0-9]+)*$"  # Support existing plan branches
+ISSUE_PATTERN="^[0-9]+[-][a-z0-9]+([-][a-z0-9]+)*$"  # Support GitHub issue-based branches like "25-refactor-description"
 
 # Check if branch name follows the conventions
 case "$BRANCH_NAME" in
@@ -34,6 +35,7 @@ case "$BRANCH_NAME" in
   release/v*) echo "✅ Branch naming convention check passed" ;;
   dev|develop) echo "✅ Branch naming convention check passed" ;;
   plan/*) echo "✅ Branch naming convention check passed" ;;
+  [0-9]*-*) echo "✅ Branch naming convention check passed (GitHub issue branch)" ;;
   *)
     echo "❌ ERROR: Branch naming convention check failed"
     echo "Branch names must follow one of these patterns:"
@@ -45,6 +47,7 @@ case "$BRANCH_NAME" in
     echo "  • release/vX.Y.Z (for release branches)"
     echo "  • dev, develop (for development branches)"
     echo "  • plan/plan-description (for planning branches)"
+    echo "  • 123-description (for GitHub issue-based branches)"
     echo ""
     echo "Please rename your branch and try again."
     exit 1

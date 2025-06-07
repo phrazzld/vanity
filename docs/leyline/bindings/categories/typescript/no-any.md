@@ -4,6 +4,7 @@ enforced_by: eslint("@typescript-eslint/no-explicit-any") & tsconfig("noImplicit
 id: no-any
 last_modified: '2025-05-14'
 ---
+
 # Binding: Make Types Explicit, Never Use `any`
 
 Never use the `any` type in TypeScript code. Instead, always create proper type
@@ -85,7 +86,9 @@ Instead, you must use precise types like:
 
    ```typescript
    // Instead of:
-   function process(data: any): void { /* ... */ }
+   function process(data: any): void {
+     /* ... */
+   }
 
    // Use:
    function process(data: unknown): void {
@@ -102,7 +105,9 @@ Instead, you must use precise types like:
 
    ```typescript
    // Instead of:
-   function processUser(user: any): void { /* ... */ }
+   function processUser(user: any): void {
+     /* ... */
+   }
 
    // Use:
    interface User {
@@ -111,14 +116,18 @@ Instead, you must use precise types like:
      email?: string;
    }
 
-   function processUser(user: User): void { /* ... */ }
+   function processUser(user: User): void {
+     /* ... */
+   }
    ```
 
 1. **Use union types for values that could be one of several types**:
 
    ```typescript
    // Instead of:
-   function getLength(value: any): number { /* ... */ }
+   function getLength(value: any): number {
+     /* ... */
+   }
 
    // Use:
    function getLength(value: string | Array<unknown>): number {
@@ -130,7 +139,9 @@ Instead, you must use precise types like:
 
    ```typescript
    // Instead of:
-   function getProperty(obj: any, key: string): any { /* ... */ }
+   function getProperty(obj: any, key: string): any {
+     /* ... */
+   }
 
    // Use:
    function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
@@ -153,7 +164,10 @@ Instead, you must use precise types like:
 
    // Or use type assertions scoped to the minimum needed interface:
    import * as untyped from 'untyped-library';
-   interface SomeReturnType { id: string; value: number; }
+   interface SomeReturnType {
+     id: string;
+     value: number;
+   }
    const result = untyped.someFunction() as SomeReturnType;
    ```
 
@@ -174,7 +188,7 @@ function processData(data: any): any {
   return data.value * 2; // No type checking! This could crash at runtime
 }
 
-const result = processData("not an object"); // Runtime error: Cannot read property 'value' of undefined
+const result = processData('not an object'); // Runtime error: Cannot read property 'value' of undefined
 const total: number = result + 10; // TypeScript won't catch that 'result' might not be a number
 ```
 
@@ -271,7 +285,7 @@ function processUserInput(input: any) {
 }
 
 // Someone calls the function with a typo:
-processUserInput({ isvalid: true, userData: { name: "User" } }); // Note lowercase 'v' in 'isvalid'
+processUserInput({ isvalid: true, userData: { name: 'User' } }); // Note lowercase 'v' in 'isvalid'
 
 // Result: Nothing gets saved, but no errors are thrown - silent failure!
 ```
@@ -291,7 +305,7 @@ function processUserInput(input: UserInput) {
 }
 
 // TypeScript error: Property 'isValid' is missing in type '{ isvalid: boolean; userData: { name: string; }; }'
-processUserInput({ isvalid: true, userData: { name: "User" } });
+processUserInput({ isvalid: true, userData: { name: 'User' } });
 ```
 
 ## Related Bindings
