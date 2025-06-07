@@ -62,9 +62,9 @@ for FILE in $FILES_TO_CHECK; do
     continue
   fi
   
-  # Skip test files, documentation, and audit files (they legitimately contain examples)
+  # Skip test files, documentation, audit files, and GitHub workflows (they legitimately contain examples and token references)
   case "$FILE" in
-    */__tests__/* | *.test.* | *.spec.* | **/fixtures/* | **/mocks/* | docs/*.md | *.md | *-audit.txt | *-usage-audit.txt | console-*.txt | detailed-usage.txt)
+    */__tests__/* | *.test.* | *.spec.* | **/fixtures/* | **/mocks/* | docs/*.md | *.md | *-audit.txt | *-usage-audit.txt | console-*.txt | detailed-usage.txt | .github/workflows/*.yml | .github/workflows/*.yaml)
       continue
       ;;
   esac
