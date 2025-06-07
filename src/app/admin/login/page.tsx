@@ -9,6 +9,7 @@
 
 import { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { logger, createLogContext } from '@/lib/logger';
 
 // Component for the login form with search params
 function LoginForm() {
@@ -59,7 +60,15 @@ function LoginForm() {
         setErrorMessage('Authentication failed. Please try again.');
       }
     } catch (error) {
-      console.error('Login error:', error);
+      logger.error(
+        'Login form submission failed',
+        createLogContext('admin/login', 'handleSubmit', {
+          has_username: !!username,
+          callback_url: callbackUrl,
+          error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+        }),
+        error instanceof Error ? error : new Error(String(error))
+      );
       setErrorMessage('Login failed. Please check your credentials and try again.');
     } finally {
       setIsLoading(false);

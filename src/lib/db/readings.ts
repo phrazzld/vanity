@@ -6,6 +6,7 @@
 
 import prisma from '../prisma';
 import type { Reading, ReadingInput, ReadingsQueryParams, PaginationResult } from '@/types';
+import { logger, createLogContext } from '@/lib/logger';
 
 /**
  * Fetches a single reading by slug
@@ -15,7 +16,10 @@ import type { Reading, ReadingInput, ReadingsQueryParams, PaginationResult } fro
  */
 export async function getReading(slug: string): Promise<Reading | null> {
   try {
-    console.log(`Fetching reading with slug: ${slug}`);
+    logger.info(
+      'Fetching reading by slug',
+      createLogContext('db/readings', 'getReading', { reading_slug: slug })
+    );
 
     // Use raw query for maximum compatibility
     const readings = await prisma.$queryRaw`
@@ -29,10 +33,36 @@ export async function getReading(slug: string): Promise<Reading | null> {
     const reading: Reading | null =
       Array.isArray(readings) && readings.length > 0 ? (readings[0] as Reading) : null;
 
-    console.log(reading ? `Found reading: ${reading.title}` : `No reading found for slug: ${slug}`);
+    if (reading) {
+      logger.info(
+        'Successfully found reading by slug',
+        createLogContext('db/readings', 'getReading', {
+          reading_slug: slug,
+          reading_title: reading.title,
+          reading_author: reading.author,
+          found: true,
+        })
+      );
+    } else {
+      logger.warn(
+        'Reading not found by slug',
+        createLogContext('db/readings', 'getReading', {
+          reading_slug: slug,
+          found: false,
+        })
+      );
+    }
+
     return reading;
   } catch (error) {
-    console.error(`Error fetching reading with slug ${slug}:`, error);
+    logger.error(
+      'Error fetching reading by slug',
+      createLogContext('db/readings', 'getReading', {
+        reading_slug: slug,
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+      }),
+      error instanceof Error ? error : new Error(String(error))
+    );
     return null;
   }
 }
@@ -44,7 +74,10 @@ export async function getReading(slug: string): Promise<Reading | null> {
  */
 export async function getReadings(): Promise<Reading[]> {
   try {
-    console.log('Getting readings from database...');
+    logger.info(
+      'Fetching all readings from database',
+      createLogContext('db/readings', 'getReadings')
+    );
 
     // Use raw query for maximum compatibility
     const readings = await prisma.$queryRaw`
@@ -64,16 +97,32 @@ export async function getReadings(): Promise<Reading[]> {
         id DESC;
     `;
 
-    console.log(`Found ${Array.isArray(readings) ? readings.length : 0} readings`);
+    logger.info(
+      'Successfully fetched readings',
+      createLogContext('db/readings', 'getReadings', {
+        readings_count: Array.isArray(readings) ? readings.length : 0,
+        query_type: 'all_readings',
+      })
+    );
 
     if (!readings || (Array.isArray(readings) && readings.length === 0)) {
-      console.warn('No readings found in database');
+      logger.warn(
+        'No readings found in database',
+        createLogContext('db/readings', 'getReadings', { query_type: 'all_readings' })
+      );
     }
 
     // Cast the raw query result to Reading[] to ensure correct type
     return readings as Reading[];
   } catch (error) {
-    console.error('Error fetching readings:', error);
+    logger.error(
+      'Error fetching readings from database',
+      createLogContext('db/readings', 'getReadings', {
+        query_type: 'all_readings',
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+      }),
+      error instanceof Error ? error : new Error(String(error))
+    );
     return [];
   }
 }
@@ -88,8 +137,6 @@ export async function getReadingsWithFilters(
   params: ReadingsQueryParams
 ): Promise<PaginationResult<Reading>> {
   try {
-    console.log('Getting filtered readings from database...');
-
     // Extract parameters with defaults
     const {
       search = '',
@@ -99,6 +146,18 @@ export async function getReadingsWithFilters(
       limit = 10,
       offset = 0,
     } = params;
+
+    logger.info(
+      'Fetching filtered readings from database',
+      createLogContext('db/readings', 'getReadingsWithFilters', {
+        search_query: search,
+        status_filter: status,
+        sort_by: sortBy,
+        sort_order: sortOrder,
+        limit,
+        offset,
+      })
+    );
 
     // Build WHERE conditions
     const whereConditions: string[] = [];
@@ -178,7 +237,16 @@ export async function getReadingsWithFilters(
       'total' in countResult[0]
         ? parseInt(String(countResult[0].total), 10)
         : 0;
-    console.log(`Total matching readings: ${totalCount}`);
+
+    logger.debug(
+      'Total readings count calculated',
+      createLogContext('db/readings', 'getReadingsWithFilters', {
+        total_count: totalCount,
+        search_query: search,
+        status_filter: status,
+        has_filters: whereConditions.length > 0,
+      })
+    );
 
     // Build the main query with parameters
     let mainQuery = `
@@ -196,14 +264,22 @@ export async function getReadingsWithFilters(
     // Execute main query with parameters
     const readings = await prisma.$queryRawUnsafe(mainQuery, ...queryParams);
 
-    console.log(`Found ${Array.isArray(readings) ? readings.length : 0} readings for current page`);
-
     // Calculate pagination metadata
     const totalPages = Math.ceil(totalCount / limit);
     // Calculate current page correctly based on the provided offset
     const currentPage = Math.floor(offset / limit) + 1;
 
-    console.log(`Returning data for page ${currentPage} (offset: ${offset}, limit: ${limit})`);
+    logger.info(
+      'Successfully fetched filtered readings',
+      createLogContext('db/readings', 'getReadingsWithFilters', {
+        readings_count: Array.isArray(readings) ? readings.length : 0,
+        total_count: totalCount,
+        current_page: currentPage,
+        total_pages: totalPages,
+        search_query: search,
+        status_filter: status,
+      })
+    );
 
     return {
       data: readings as Reading[],
@@ -213,7 +289,16 @@ export async function getReadingsWithFilters(
       pageSize: limit,
     };
   } catch (error) {
-    console.error('Error fetching filtered readings:', error);
+    logger.error(
+      'Error fetching filtered readings from database',
+      createLogContext('db/readings', 'getReadingsWithFilters', {
+        search_query: params.search || '',
+        status_filter: params.status,
+        sort_by: params.sortBy || 'date',
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+      }),
+      error instanceof Error ? error : new Error(String(error))
+    );
     return {
       data: [],
       totalCount: 0,
@@ -232,7 +317,16 @@ export async function getReadingsWithFilters(
  */
 export async function createReading(data: ReadingInput): Promise<Reading | null> {
   try {
-    console.log(`Creating new reading: ${data.title} by ${data.author}`);
+    logger.info(
+      'Creating new reading',
+      createLogContext('db/readings', 'createReading', {
+        reading_title: data.title,
+        reading_author: data.author,
+        reading_slug: data.slug,
+        has_finished_date: !!data.finishedDate,
+        is_dropped: data.dropped || false,
+      })
+    );
 
     // Check if slug already exists
     const existingReading = await prisma.reading.findUnique({
@@ -240,7 +334,14 @@ export async function createReading(data: ReadingInput): Promise<Reading | null>
     });
 
     if (existingReading) {
-      console.error(`Reading with slug ${data.slug} already exists`);
+      logger.warn(
+        'Reading with slug already exists',
+        createLogContext('db/readings', 'createReading', {
+          reading_slug: data.slug,
+          reading_title: data.title,
+          conflict: true,
+        })
+      );
       return null;
     }
 
@@ -257,10 +358,27 @@ export async function createReading(data: ReadingInput): Promise<Reading | null>
       },
     });
 
-    console.log(`Successfully created reading with ID: ${reading.id}`);
+    logger.info(
+      'Successfully created reading',
+      createLogContext('db/readings', 'createReading', {
+        reading_id: reading.id,
+        reading_title: reading.title,
+        reading_author: reading.author,
+        reading_slug: reading.slug,
+      })
+    );
     return reading;
   } catch (error) {
-    console.error('Error creating reading:', error);
+    logger.error(
+      'Error creating reading',
+      createLogContext('db/readings', 'createReading', {
+        reading_title: data.title,
+        reading_author: data.author,
+        reading_slug: data.slug,
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+      }),
+      error instanceof Error ? error : new Error(String(error))
+    );
     return null;
   }
 }
@@ -277,7 +395,15 @@ export async function updateReading(
   data: Partial<ReadingInput>
 ): Promise<Reading | null> {
   try {
-    console.log(`Updating reading with slug: ${slug}`);
+    logger.info(
+      'Updating reading',
+      createLogContext('db/readings', 'updateReading', {
+        reading_slug: slug,
+        has_title_update: data.title !== undefined,
+        has_author_update: data.author !== undefined,
+        has_slug_update: data.slug !== undefined,
+      })
+    );
 
     // Check if reading exists
     const existingReading = await prisma.reading.findUnique({
@@ -285,7 +411,13 @@ export async function updateReading(
     });
 
     if (!existingReading) {
-      console.error(`Reading with slug ${slug} not found`);
+      logger.warn(
+        'Reading not found for update',
+        createLogContext('db/readings', 'updateReading', {
+          reading_slug: slug,
+          found: false,
+        })
+      );
       return null;
     }
 
@@ -296,7 +428,14 @@ export async function updateReading(
       });
 
       if (slugExists) {
-        console.error(`Cannot update: reading with slug ${data.slug} already exists`);
+        logger.warn(
+          'Cannot update reading - new slug already exists',
+          createLogContext('db/readings', 'updateReading', {
+            original_slug: slug,
+            new_slug: data.slug,
+            conflict: true,
+          })
+        );
         return null;
       }
     }
@@ -316,10 +455,25 @@ export async function updateReading(
       },
     });
 
-    console.log(`Successfully updated reading: ${updatedReading.title}`);
+    logger.info(
+      'Successfully updated reading',
+      createLogContext('db/readings', 'updateReading', {
+        reading_id: updatedReading.id,
+        reading_title: updatedReading.title,
+        reading_author: updatedReading.author,
+        reading_slug: updatedReading.slug,
+      })
+    );
     return updatedReading;
   } catch (error) {
-    console.error(`Error updating reading with slug ${slug}:`, error);
+    logger.error(
+      'Error updating reading',
+      createLogContext('db/readings', 'updateReading', {
+        reading_slug: slug,
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+      }),
+      error instanceof Error ? error : new Error(String(error))
+    );
     return null;
   }
 }
@@ -332,7 +486,10 @@ export async function updateReading(
  */
 export async function deleteReading(slug: string): Promise<boolean> {
   try {
-    console.log(`Deleting reading with slug: ${slug}`);
+    logger.info(
+      'Deleting reading',
+      createLogContext('db/readings', 'deleteReading', { reading_slug: slug })
+    );
 
     // Check if reading exists
     const existingReading = await prisma.reading.findUnique({
@@ -340,7 +497,13 @@ export async function deleteReading(slug: string): Promise<boolean> {
     });
 
     if (!existingReading) {
-      console.error(`Reading with slug ${slug} not found`);
+      logger.warn(
+        'Reading not found for deletion',
+        createLogContext('db/readings', 'deleteReading', {
+          reading_slug: slug,
+          found: false,
+        })
+      );
       return false;
     }
 
@@ -349,10 +512,24 @@ export async function deleteReading(slug: string): Promise<boolean> {
       where: { slug },
     });
 
-    console.log(`Successfully deleted reading with slug: ${slug}`);
+    logger.info(
+      'Successfully deleted reading',
+      createLogContext('db/readings', 'deleteReading', {
+        reading_slug: slug,
+        reading_title: existingReading.title,
+        reading_author: existingReading.author,
+      })
+    );
     return true;
   } catch (error) {
-    console.error(`Error deleting reading with slug ${slug}:`, error);
+    logger.error(
+      'Error deleting reading',
+      createLogContext('db/readings', 'deleteReading', {
+        reading_slug: slug,
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+      }),
+      error instanceof Error ? error : new Error(String(error))
+    );
     return false;
   }
 }

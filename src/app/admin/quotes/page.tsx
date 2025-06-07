@@ -10,6 +10,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import Link from 'next/link';
 import type { Quote, QuoteInput } from '@/types';
+import { logger, createLogContext } from '@/lib/logger';
 import { useQuotesList } from '@/app/hooks';
 import {
   SearchBar,
@@ -153,7 +154,15 @@ export default function QuotesManagementPage() {
         setSelectedQuote(savedQuote);
       }
     } catch (err) {
-      console.error('Error saving quote:', err);
+      logger.error(
+        'Failed to save quote in admin form',
+        createLogContext('admin/quotes', 'handleSubmit', {
+          is_creating: isCreating,
+          quote_id: selectedQuote?.id,
+          error_type: err instanceof Error ? err.constructor.name : 'Unknown',
+        }),
+        err instanceof Error ? err : new Error(String(err))
+      );
       setFormError(`Failed to save: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setIsSaving(false);
@@ -195,7 +204,15 @@ export default function QuotesManagementPage() {
 
       setSuccessMessage(`Quote deleted successfully!`);
     } catch (err) {
-      console.error('Error deleting quote:', err);
+      logger.error(
+        'Failed to delete quote in admin form',
+        createLogContext('admin/quotes', 'handleDelete', {
+          quote_id: quoteToDelete?.id,
+          quote_author: quoteToDelete?.author,
+          error_type: err instanceof Error ? err.constructor.name : 'Unknown',
+        }),
+        err instanceof Error ? err : new Error(String(err))
+      );
       setFormError(`Failed to delete: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setIsSaving(false);

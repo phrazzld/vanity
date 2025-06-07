@@ -11,6 +11,7 @@ import type { FormEvent } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Reading, ReadingInput } from '@/types';
+import { logger, createLogContext } from '@/lib/logger';
 import { useReadingsList } from '@/app/hooks';
 import {
   SearchBar,
@@ -208,7 +209,16 @@ export default function ReadingsManagementPage() {
         setSelectedReading(savedReading);
       }
     } catch (err) {
-      console.error('Error saving reading:', err);
+      logger.error(
+        'Failed to save reading in admin form',
+        createLogContext('admin/readings', 'handleSubmit', {
+          is_creating: isCreating,
+          reading_slug: selectedReading?.slug,
+          reading_title: formData.title,
+          error_type: err instanceof Error ? err.constructor.name : 'Unknown',
+        }),
+        err instanceof Error ? err : new Error(String(err))
+      );
       setFormError(`Failed to save: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setIsSaving(false);
@@ -250,7 +260,16 @@ export default function ReadingsManagementPage() {
 
       setSuccessMessage(`"${readingToDelete.title}" deleted successfully!`);
     } catch (err) {
-      console.error('Error deleting reading:', err);
+      logger.error(
+        'Failed to delete reading in admin form',
+        createLogContext('admin/readings', 'handleDelete', {
+          reading_slug: readingToDelete?.slug,
+          reading_title: readingToDelete?.title,
+          reading_author: readingToDelete?.author,
+          error_type: err instanceof Error ? err.constructor.name : 'Unknown',
+        }),
+        err instanceof Error ? err : new Error(String(err))
+      );
       setFormError(`Failed to delete: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setIsSaving(false);

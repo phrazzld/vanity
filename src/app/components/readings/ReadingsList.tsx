@@ -15,6 +15,7 @@ import { useCallback } from 'react';
 import Image from 'next/image';
 import type { Reading } from '@/types';
 import type { ListSortOption } from '@/app/hooks';
+import { logger, createLogContext } from '@/lib/logger';
 
 /**
  * Format a date without timezone issues
@@ -51,7 +52,14 @@ function formatDateWithoutTimezoneIssue(dateInput: string | Date): string {
     // Format the date as MM/DD/YYYY
     return `${month}/${day}/${year}`;
   } catch (error) {
-    console.error('Error formatting date:', error);
+    logger.warn(
+      'Error formatting date in readings list',
+      createLogContext('components/readings/ReadingsList', 'formatDateWithoutTimezoneIssue', {
+        date_input_type: typeof dateInput,
+        date_input_length: String(dateInput).length,
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+      })
+    );
     // Fallback to showing the raw date as a string
     return String(dateInput);
   }
@@ -137,7 +145,14 @@ const highlightSearchTerm = (text: string, searchTerm: string) => {
     });
   } catch (error) {
     // If there's any error with the regex, just return the original text
-    console.error('Error highlighting search term:', error);
+    logger.warn(
+      'Error highlighting search term in readings list',
+      createLogContext('components/readings/ReadingsList', 'highlightSearchTerm', {
+        text_length: text.length,
+        search_term_length: searchTerm.length,
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+      })
+    );
     return text;
   }
 };

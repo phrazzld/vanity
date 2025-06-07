@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import YearSection from '../components/readings/YearSection';
 import type { Reading } from '@/types';
+import { logger, createLogContext } from '@/lib/logger';
 
 // Type for API responses
 interface ReadingsApiResponse {
@@ -32,11 +33,11 @@ export default function ReadingsPage() {
 
   // Fetch readings data with pagination
   const fetchReadings = useCallback(async (pageNum: number) => {
+    const offset = (pageNum - 1) * ITEMS_PER_PAGE;
+
     try {
       // Don't set loading states here - they should be managed by the calling functions
       setError(null);
-
-      const offset = (pageNum - 1) * ITEMS_PER_PAGE;
 
       // Add a cache-busting parameter to prevent browser caching issues
       const cacheBuster = new Date().getTime();
@@ -53,12 +54,25 @@ export default function ReadingsPage() {
 
       // Validate the result structure to ensure it has the expected properties
       if (!result || !Array.isArray(result.data)) {
-        console.error('Invalid API response format:', result);
+        logger.error(
+          'Invalid API response format received',
+          createLogContext('pages/readings', 'fetchReadings', {
+            page_num: pageNum,
+            response_type: typeof result,
+            has_data: result ? 'data' in result : false,
+          })
+        );
         throw new Error('Invalid response format from API');
       }
 
-      console.log(
-        `Fetched page ${pageNum} with offset ${offset}. Got ${result.data.length} items.`
+      logger.debug(
+        'Successfully fetched readings page',
+        createLogContext('pages/readings', 'fetchReadings', {
+          page_num: pageNum,
+          offset,
+          items_received: result.data.length,
+          total_count: result.totalCount,
+        })
       );
 
       return {
@@ -66,7 +80,15 @@ export default function ReadingsPage() {
         hasMore: offset + ITEMS_PER_PAGE < result.totalCount,
       };
     } catch (err) {
-      console.error('Error fetching readings:', err);
+      logger.error(
+        'Error fetching readings from API',
+        createLogContext('pages/readings', 'fetchReadings', {
+          page_num: pageNum,
+          offset,
+          error_type: err instanceof Error ? err.constructor.name : 'Unknown',
+        }),
+        err instanceof Error ? err : new Error(String(err))
+      );
       setError(err instanceof Error ? err.message : 'An error occurred');
       // Return empty data and false for hasMore to prevent further loading attempts
       return { data: [], hasMore: false };
@@ -89,7 +111,14 @@ export default function ReadingsPage() {
         setReadings(fetchedData);
         setHasMore(moreAvailable);
       } catch (error) {
-        console.error('Error loading initial data:', error);
+        logger.error(
+          'Error loading initial readings data',
+          createLogContext('pages/readings', 'loadInitialData', {
+            error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+            page: 1,
+          }),
+          error instanceof Error ? error : new Error(String(error))
+        );
         setError(error instanceof Error ? error.message : 'Failed to load initial data');
       } finally {
         // Ensure loading state is always set to false, even on error
@@ -129,7 +158,15 @@ export default function ReadingsPage() {
       setPage(nextPage);
       setHasMore(moreAvailable);
     } catch (error) {
-      console.error('Error loading more readings:', error);
+      logger.error(
+        'Error loading more readings via pagination',
+        createLogContext('pages/readings', 'loadMore', {
+          current_page: page,
+          next_page: page + 1,
+          error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+        }),
+        error instanceof Error ? error : new Error(String(error))
+      );
       setError(error instanceof Error ? error.message : 'Failed to load more readings');
     } finally {
       // CRITICAL FIX: Ensure pagination loading state is reset even if there's an error
@@ -177,7 +214,14 @@ export default function ReadingsPage() {
         ) {
           // Add a short debounce to prevent multiple triggers
           // This is important for mobile devices with touch scrolling
-          console.log('Loading element visible, triggering loadMore');
+          logger.debug(
+            'Infinite scroll triggered',
+            createLogContext('pages/readings', 'intersectionObserver', {
+              current_page: page,
+              has_more: hasMore,
+              current_items: readings.length,
+            })
+          );
           loadMore();
         }
       },

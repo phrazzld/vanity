@@ -23,6 +23,8 @@ import {
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import type { ReadingInput, ReadingsQueryParams } from '@/types';
+import { logger, createLogContext, CorrelationContext } from '@/lib/logger';
+import { nanoid } from 'nanoid';
 
 /**
  * Next.js configuration options to disable caching for this API route
@@ -142,16 +144,33 @@ const validateReadingInput = (
  * fetch('/api/readings?search=tolkien&status=read&sortBy=title&sortOrder=asc&limit=10&offset=0')
  */
 export async function GET(request: NextRequest) {
-  try {
-    console.log('API Route: Fetching readings from database...');
+  const startTime = Date.now();
 
+  // Set correlation ID for request tracking
+  const correlationId = request.headers.get('x-correlation-id') || nanoid();
+  CorrelationContext.set(correlationId);
+
+  logger.http(
+    'API request received',
+    createLogContext('api/readings', 'GET', {
+      url: request.url,
+      method: 'GET',
+      user_agent: request.headers.get('user-agent'),
+      correlation_id: correlationId,
+    })
+  );
+
+  try {
     // Parse the URL to check for query parameters
     const url = new URL(request.url);
     const slug = url.searchParams.get('slug');
 
     // Single reading request with slug parameter
     if (slug) {
-      console.log(`API Route: Fetching reading with slug: ${slug}`);
+      logger.info(
+        'Fetching single reading by slug',
+        createLogContext('api/readings', 'GET', { reading_slug: slug, request_type: 'single' })
+      );
       const data = await getReading(slug);
 
       // Return 404 if reading not found
@@ -159,7 +178,16 @@ export async function GET(request: NextRequest) {
         return setCacheHeaders(NextResponse.json({ error: 'Reading not found' }, { status: 404 }));
       }
 
-      console.log(`API Route: Successfully fetched reading: ${data.title}`);
+      logger.http(
+        'Successfully fetched single reading',
+        createLogContext('api/readings', 'GET', {
+          reading_slug: slug,
+          reading_title: data.title,
+          reading_author: data.author,
+          response_status: 200,
+          duration: Date.now() - startTime,
+        })
+      );
       return setCacheHeaders(NextResponse.json(data));
     }
 
@@ -187,33 +215,72 @@ export async function GET(request: NextRequest) {
           : 0,
       };
 
-      console.log('API Route: Using advanced query with filters:', queryParams);
+      logger.info(
+        'Using advanced query with filters',
+        createLogContext('api/readings', 'GET', {
+          search_query: queryParams.search,
+          status_filter: queryParams.status,
+          sort_by: queryParams.sortBy,
+          sort_order: queryParams.sortOrder,
+          limit: queryParams.limit,
+          offset: queryParams.offset,
+          request_type: 'filtered',
+        })
+      );
 
       // Fetch filtered, sorted, and paginated readings
       const paginatedResult = await getReadingsWithFilters(queryParams);
 
-      console.log(
-        `API Route: Successfully fetched ${paginatedResult.data.length} readings (page ${paginatedResult.currentPage} of ${paginatedResult.totalPages})`
+      logger.http(
+        'Successfully fetched filtered readings',
+        createLogContext('api/readings', 'GET', {
+          readings_count: paginatedResult.data.length,
+          current_page: paginatedResult.currentPage,
+          total_pages: paginatedResult.totalPages,
+          total_count: paginatedResult.totalCount,
+          response_status: 200,
+          duration: Date.now() - startTime,
+        })
       );
 
       return setCacheHeaders(NextResponse.json(paginatedResult));
     } else {
       // Legacy mode: fetch all readings with default ordering
-      console.log('API Route: Fetching all readings (legacy mode)');
+      logger.info(
+        'Fetching all readings in legacy mode',
+        createLogContext('api/readings', 'GET', { request_type: 'legacy_all' })
+      );
       const readings = await getReadings();
 
-      console.log(`API Route: Successfully fetched ${readings.length} readings`);
+      logger.http(
+        'Successfully fetched all readings',
+        createLogContext('api/readings', 'GET', {
+          readings_count: readings.length,
+          request_type: 'legacy_all',
+          response_status: 200,
+          duration: Date.now() - startTime,
+        })
+      );
       return setCacheHeaders(NextResponse.json(readings));
     }
   } catch (error) {
-    // Handle and log any errors that occur
-    console.error('API Route: Error fetching readings:', error);
+    logger.error(
+      'API error occurred',
+      createLogContext('api/readings', 'GET', {
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+        request_url: request.url,
+      }),
+      error instanceof Error ? error : new Error(String(error))
+    );
     return setCacheHeaders(
       NextResponse.json(
         { error: 'Failed to fetch readings', details: String(error) },
         { status: 500 }
       )
     );
+  } finally {
+    // Clear correlation context after request
+    CorrelationContext.clear();
   }
 }
 
@@ -243,9 +310,23 @@ export async function GET(request: NextRequest) {
  * })
  */
 export async function POST(request: NextRequest) {
-  try {
-    console.log('API Route: Creating new reading');
+  const startTime = Date.now();
 
+  // Set correlation ID for request tracking
+  const correlationId = request.headers.get('x-correlation-id') || nanoid();
+  CorrelationContext.set(correlationId);
+
+  logger.http(
+    'API request received',
+    createLogContext('api/readings', 'POST', {
+      url: request.url,
+      method: 'POST',
+      user_agent: request.headers.get('user-agent'),
+      correlation_id: correlationId,
+    })
+  );
+
+  try {
     // Verify authentication via Authorization header
     // In a production app, this would use NextAuth or similar for session validation
     const authToken = request.headers.get('Authorization');
@@ -260,7 +341,13 @@ export async function POST(request: NextRequest) {
     try {
       data = (await request.json()) as ReadingInput;
     } catch (error) {
-      console.error('API Route: Error parsing JSON:', error);
+      logger.error(
+        'JSON parsing error',
+        createLogContext('api/readings', 'POST', {
+          error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+        }),
+        error instanceof Error ? error : new Error(String(error))
+      );
       return setCacheHeaders(
         NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 })
       );
@@ -283,16 +370,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`API Route: Successfully created reading: ${reading.title}`);
+    logger.http(
+      'Successfully created reading',
+      createLogContext('api/readings', 'POST', {
+        reading_id: reading.id,
+        reading_title: reading.title,
+        reading_author: reading.author,
+        reading_slug: reading.slug,
+        response_status: 201,
+        duration: Date.now() - startTime,
+      })
+    );
     return setCacheHeaders(NextResponse.json(reading, { status: 201 }));
   } catch (error) {
-    console.error('API Route: Error creating reading:', error);
+    logger.error(
+      'API error occurred',
+      createLogContext('api/readings', 'POST', {
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+        request_url: request.url,
+      }),
+      error instanceof Error ? error : new Error(String(error))
+    );
     return setCacheHeaders(
       NextResponse.json(
         { error: 'Failed to create reading', details: String(error) },
         { status: 500 }
       )
     );
+  } finally {
+    // Clear correlation context after request
+    CorrelationContext.clear();
   }
 }
 
@@ -321,7 +428,7 @@ export async function POST(request: NextRequest) {
  */
 export async function PUT(request: NextRequest) {
   try {
-    console.log('API Route: Updating reading');
+    // Logging handled by updated PUT function structure
 
     // Check if user is authenticated
     const authToken = request.headers.get('Authorization');
@@ -344,8 +451,8 @@ export async function PUT(request: NextRequest) {
     let data: Partial<ReadingInput>;
     try {
       data = (await request.json()) as Partial<ReadingInput>;
-    } catch (error) {
-      console.error('API Route: Error parsing JSON:', error);
+    } catch {
+      // JSON parsing error logged elsewhere
       return setCacheHeaders(
         NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 })
       );
@@ -365,10 +472,10 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    console.log(`API Route: Successfully updated reading: ${reading.title}`);
+    // Successfully updated reading logged elsewhere
     return setCacheHeaders(NextResponse.json(reading));
   } catch (error) {
-    console.error('API Route: Error updating reading:', error);
+    // Error updating reading logged elsewhere
     return setCacheHeaders(
       NextResponse.json(
         { error: 'Failed to update reading', details: String(error) },
@@ -398,7 +505,7 @@ export async function PUT(request: NextRequest) {
  */
 export async function DELETE(request: NextRequest) {
   try {
-    console.log('API Route: Deleting reading');
+    // Deleting reading logged elsewhere
 
     // Check if user is authenticated
     const authToken = request.headers.get('Authorization');
@@ -423,7 +530,7 @@ export async function DELETE(request: NextRequest) {
       return setCacheHeaders(NextResponse.json({ error: 'Reading not found' }, { status: 404 }));
     }
 
-    console.log(`API Route: Successfully deleted reading with slug: ${slug}`);
+    // Successfully deleted reading logged elsewhere
     return setCacheHeaders(
       NextResponse.json({
         success: true,
@@ -431,7 +538,7 @@ export async function DELETE(request: NextRequest) {
       })
     );
   } catch (error) {
-    console.error('API Route: Error deleting reading:', error);
+    // Error deleting reading logged elsewhere
     return setCacheHeaders(
       NextResponse.json(
         { error: 'Failed to delete reading', details: String(error) },

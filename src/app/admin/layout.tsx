@@ -15,6 +15,7 @@ import type { ReactNode } from 'react';
 import { useState, useEffect } from 'react';
 import './admin.css';
 import { useTheme } from '../context/ThemeContext';
+import { logger, createLogContext } from '@/lib/logger';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -42,7 +43,14 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         const data = (await response.json()) as SessionResponse;
         setIsAuthenticated(data.isAuthenticated || false);
       } catch (error) {
-        console.error('Error checking auth status:', error);
+        logger.error(
+          'Failed to check authentication status',
+          createLogContext('admin/layout', 'checkAuth', {
+            pathname,
+            error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+          }),
+          error instanceof Error ? error : new Error(String(error))
+        );
         setIsAuthenticated(false);
       }
     }

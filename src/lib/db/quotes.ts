@@ -6,6 +6,7 @@
 
 import prisma from '../prisma';
 import type { Quote, QuoteInput, QuotesQueryParams, PaginationResult } from '@/types';
+import { logger, createLogContext } from '@/lib/logger';
 
 /**
  * Fetches all quotes from the database
@@ -14,21 +15,37 @@ import type { Quote, QuoteInput, QuotesQueryParams, PaginationResult } from '@/t
  */
 export async function getQuotes(): Promise<Quote[]> {
   try {
-    console.log('Getting quotes from database...');
+    logger.info('Fetching all quotes from database', createLogContext('db/quotes', 'getQuotes'));
 
     // Use raw query for maximum compatibility
     const quotes = await prisma.$queryRaw`SELECT id, text, author FROM "Quote";`;
 
-    console.log(`Found ${Array.isArray(quotes) ? quotes.length : 0} quotes`);
+    logger.info(
+      'Successfully fetched quotes',
+      createLogContext('db/quotes', 'getQuotes', {
+        quotes_count: Array.isArray(quotes) ? quotes.length : 0,
+        query_type: 'all_quotes',
+      })
+    );
 
     if (!quotes || (Array.isArray(quotes) && quotes.length === 0)) {
-      console.warn('No quotes found in database');
+      logger.warn(
+        'No quotes found in database',
+        createLogContext('db/quotes', 'getQuotes', { query_type: 'all_quotes' })
+      );
     }
 
     // Cast the raw query result to Quote[] to ensure correct type
     return quotes as Quote[];
   } catch (error) {
-    console.error('Error fetching quotes:', error);
+    logger.error(
+      'Error fetching quotes from database',
+      createLogContext('db/quotes', 'getQuotes', {
+        query_type: 'all_quotes',
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+      }),
+      error instanceof Error ? error : new Error(String(error))
+    );
     return [];
   }
 }
@@ -43,7 +60,16 @@ export async function getQuotesWithFilters(
   params: QuotesQueryParams
 ): Promise<PaginationResult<Quote>> {
   try {
-    console.log('Getting filtered quotes from database...');
+    logger.info(
+      'Fetching filtered quotes from database',
+      createLogContext('db/quotes', 'getQuotesWithFilters', {
+        search_query: params.search || '',
+        sort_by: params.sortBy || 'id',
+        sort_order: params.sortOrder || 'desc',
+        limit: params.limit || 10,
+        offset: params.offset || 0,
+      })
+    );
 
     // Extract parameters with defaults
     const { search = '', sortBy = 'id', sortOrder = 'desc', limit = 10, offset = 0 } = params;
@@ -95,7 +121,15 @@ export async function getQuotesWithFilters(
     }[];
 
     const totalCount = parseInt(countResult[0]?.total?.toString() || '0', 10);
-    console.log(`Total matching quotes: ${totalCount}`);
+
+    logger.debug(
+      'Total quotes count calculated',
+      createLogContext('db/quotes', 'getQuotesWithFilters', {
+        total_count: totalCount,
+        search_query: search,
+        has_filters: whereConditions.length > 0,
+      })
+    );
 
     // Build the main query with parameters
     let mainQuery = `
@@ -113,11 +147,20 @@ export async function getQuotesWithFilters(
     // Execute main query with parameters
     const quotes = await prisma.$queryRawUnsafe(mainQuery, ...queryParams);
 
-    console.log(`Found ${Array.isArray(quotes) ? quotes.length : 0} quotes for current page`);
-
     // Calculate pagination metadata
     const totalPages = Math.ceil(totalCount / limit);
     const currentPage = Math.floor(offset / limit) + 1;
+
+    logger.info(
+      'Successfully fetched filtered quotes',
+      createLogContext('db/quotes', 'getQuotesWithFilters', {
+        quotes_count: Array.isArray(quotes) ? quotes.length : 0,
+        total_count: totalCount,
+        current_page: currentPage,
+        total_pages: totalPages,
+        search_query: search,
+      })
+    );
 
     return {
       data: quotes as Quote[],
@@ -127,7 +170,15 @@ export async function getQuotesWithFilters(
       pageSize: limit,
     };
   } catch (error) {
-    console.error('Error fetching filtered quotes:', error);
+    logger.error(
+      'Error fetching filtered quotes from database',
+      createLogContext('db/quotes', 'getQuotesWithFilters', {
+        search_query: params.search || '',
+        sort_by: params.sortBy || 'id',
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+      }),
+      error instanceof Error ? error : new Error(String(error))
+    );
     return {
       data: [],
       totalCount: 0,
@@ -146,7 +197,10 @@ export async function getQuotesWithFilters(
  */
 export async function getQuote(id: number): Promise<Quote | null> {
   try {
-    console.log(`Fetching quote with ID: ${id}`);
+    logger.info(
+      'Fetching quote by ID',
+      createLogContext('db/quotes', 'getQuote', { quote_id: id })
+    );
 
     // Use raw query for maximum compatibility
     const quotes = await prisma.$queryRaw`
@@ -160,10 +214,35 @@ export async function getQuote(id: number): Promise<Quote | null> {
     const quote: Quote | null =
       Array.isArray(quotes) && quotes.length > 0 ? (quotes[0] as Quote) : null;
 
-    console.log(quote ? `Found quote with ID ${id}` : `No quote found with ID ${id}`);
+    if (quote) {
+      logger.info(
+        'Successfully found quote by ID',
+        createLogContext('db/quotes', 'getQuote', {
+          quote_id: id,
+          found: true,
+          author: quote.author,
+        })
+      );
+    } else {
+      logger.warn(
+        'Quote not found by ID',
+        createLogContext('db/quotes', 'getQuote', {
+          quote_id: id,
+          found: false,
+        })
+      );
+    }
+
     return quote;
   } catch (error) {
-    console.error(`Error fetching quote with ID ${id}:`, error);
+    logger.error(
+      'Error fetching quote by ID',
+      createLogContext('db/quotes', 'getQuote', {
+        quote_id: id,
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+      }),
+      error instanceof Error ? error : new Error(String(error))
+    );
     return null;
   }
 }
@@ -176,8 +255,13 @@ export async function getQuote(id: number): Promise<Quote | null> {
  */
 export async function createQuote(data: QuoteInput): Promise<Quote | null> {
   try {
-    console.log(
-      `Creating new quote: "${data.text.substring(0, 30)}..." by ${data.author || 'Anonymous'}`
+    logger.info(
+      'Creating new quote',
+      createLogContext('db/quotes', 'createQuote', {
+        text_preview: data.text.substring(0, 30) + '...',
+        author: data.author || 'Anonymous',
+        text_length: data.text.length,
+      })
     );
 
     // Create the quote using Prisma client
@@ -188,10 +272,25 @@ export async function createQuote(data: QuoteInput): Promise<Quote | null> {
       },
     });
 
-    console.log(`Successfully created quote with ID: ${quote.id}`);
+    logger.info(
+      'Successfully created quote',
+      createLogContext('db/quotes', 'createQuote', {
+        quote_id: quote.id,
+        author: quote.author,
+        text_length: quote.text.length,
+      })
+    );
     return quote;
   } catch (error) {
-    console.error('Error creating quote:', error);
+    logger.error(
+      'Error creating quote',
+      createLogContext('db/quotes', 'createQuote', {
+        author: data.author || 'Anonymous',
+        text_length: data.text.length,
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+      }),
+      error instanceof Error ? error : new Error(String(error))
+    );
     return null;
   }
 }
@@ -205,7 +304,14 @@ export async function createQuote(data: QuoteInput): Promise<Quote | null> {
  */
 export async function updateQuote(id: number, data: Partial<QuoteInput>): Promise<Quote | null> {
   try {
-    console.log(`Updating quote with ID: ${id}`);
+    logger.info(
+      'Updating quote',
+      createLogContext('db/quotes', 'updateQuote', {
+        quote_id: id,
+        has_text_update: data.text !== undefined,
+        has_author_update: data.author !== undefined,
+      })
+    );
 
     // Check if quote exists
     const existingQuote = await prisma.quote.findUnique({
@@ -213,7 +319,13 @@ export async function updateQuote(id: number, data: Partial<QuoteInput>): Promis
     });
 
     if (!existingQuote) {
-      console.error(`Quote with ID ${id} not found`);
+      logger.warn(
+        'Quote not found for update',
+        createLogContext('db/quotes', 'updateQuote', {
+          quote_id: id,
+          found: false,
+        })
+      );
       return null;
     }
 
@@ -226,10 +338,24 @@ export async function updateQuote(id: number, data: Partial<QuoteInput>): Promis
       },
     });
 
-    console.log(`Successfully updated quote with ID: ${updatedQuote.id}`);
+    logger.info(
+      'Successfully updated quote',
+      createLogContext('db/quotes', 'updateQuote', {
+        quote_id: updatedQuote.id,
+        author: updatedQuote.author,
+        text_length: updatedQuote.text.length,
+      })
+    );
     return updatedQuote;
   } catch (error) {
-    console.error(`Error updating quote with ID ${id}:`, error);
+    logger.error(
+      'Error updating quote',
+      createLogContext('db/quotes', 'updateQuote', {
+        quote_id: id,
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+      }),
+      error instanceof Error ? error : new Error(String(error))
+    );
     return null;
   }
 }
@@ -242,7 +368,7 @@ export async function updateQuote(id: number, data: Partial<QuoteInput>): Promis
  */
 export async function deleteQuote(id: number): Promise<boolean> {
   try {
-    console.log(`Deleting quote with ID: ${id}`);
+    logger.info('Deleting quote', createLogContext('db/quotes', 'deleteQuote', { quote_id: id }));
 
     // Check if quote exists
     const existingQuote = await prisma.quote.findUnique({
@@ -250,7 +376,13 @@ export async function deleteQuote(id: number): Promise<boolean> {
     });
 
     if (!existingQuote) {
-      console.error(`Quote with ID ${id} not found`);
+      logger.warn(
+        'Quote not found for deletion',
+        createLogContext('db/quotes', 'deleteQuote', {
+          quote_id: id,
+          found: false,
+        })
+      );
       return false;
     }
 
@@ -259,10 +391,23 @@ export async function deleteQuote(id: number): Promise<boolean> {
       where: { id },
     });
 
-    console.log(`Successfully deleted quote with ID: ${id}`);
+    logger.info(
+      'Successfully deleted quote',
+      createLogContext('db/quotes', 'deleteQuote', {
+        quote_id: id,
+        author: existingQuote.author,
+      })
+    );
     return true;
   } catch (error) {
-    console.error(`Error deleting quote with ID ${id}:`, error);
+    logger.error(
+      'Error deleting quote',
+      createLogContext('db/quotes', 'deleteQuote', {
+        quote_id: id,
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+      }),
+      error instanceof Error ? error : new Error(String(error))
+    );
     return false;
   }
 }

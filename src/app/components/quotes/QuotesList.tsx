@@ -14,6 +14,7 @@ import { useCallback } from 'react';
 import type { Quote } from '@/types';
 import type { ListSortOption } from '@/app/hooks';
 import { useTheme } from '@/app/context/ThemeContext';
+import { logger, createLogContext } from '@/lib/logger';
 
 // Icons for sort indicators
 const SortAscIcon = () => (
@@ -95,7 +96,14 @@ const highlightSearchTerm = (text: string, searchTerm: string) => {
     });
   } catch (error) {
     // If there's any error with the regex, just return the original text
-    console.error('Error highlighting search term:', error);
+    logger.warn(
+      'Error highlighting search term in quote',
+      createLogContext('components/quotes/QuotesList', 'highlightText', {
+        text_length: text.length,
+        search_term_length: searchTerm.length,
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+      })
+    );
     return text;
   }
 };

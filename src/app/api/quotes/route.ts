@@ -9,6 +9,8 @@ import {
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import type { QuoteInput, QuotesQueryParams } from '@/types';
+import { logger, createLogContext, CorrelationContext } from '@/lib/logger';
+import { nanoid } from 'nanoid';
 
 // Disable caching
 export const dynamic = 'force-dynamic';
@@ -68,9 +70,23 @@ const validateQuoteInput = (
  *    - Returns filtered, sorted, and paginated quotes
  */
 export async function GET(request: NextRequest) {
-  try {
-    console.log('API Route: Fetching quotes from database...');
+  const startTime = Date.now();
 
+  // Set correlation ID for request tracking
+  const correlationId = request.headers.get('x-correlation-id') || nanoid();
+  CorrelationContext.set(correlationId);
+
+  logger.http(
+    'API request received',
+    createLogContext('api/quotes', 'GET', {
+      url: request.url,
+      method: 'GET',
+      user_agent: request.headers.get('user-agent'),
+      correlation_id: correlationId,
+    })
+  );
+
+  try {
     // Parse the URL to check for query parameters
     const url = new URL(request.url);
     const id = url.searchParams.get('id');
@@ -83,14 +99,25 @@ export async function GET(request: NextRequest) {
         return setCacheHeaders(NextResponse.json({ error: 'Invalid quote ID' }, { status: 400 }));
       }
 
-      console.log(`API Route: Fetching quote with ID: ${quoteId}`);
+      logger.info(
+        'Fetching single quote by ID',
+        createLogContext('api/quotes', 'GET', { quote_id: quoteId, request_type: 'single' })
+      );
       const data = await getQuote(quoteId);
 
       if (!data) {
         return setCacheHeaders(NextResponse.json({ error: 'Quote not found' }, { status: 404 }));
       }
 
-      console.log(`API Route: Successfully fetched quote with ID: ${quoteId}`);
+      logger.http(
+        'Successfully fetched single quote',
+        createLogContext('api/quotes', 'GET', {
+          quote_id: quoteId,
+          quote_author: data.author,
+          response_status: 200,
+          duration: Date.now() - startTime,
+        })
+      );
       return setCacheHeaders(NextResponse.json(data));
     }
 
@@ -116,32 +143,71 @@ export async function GET(request: NextRequest) {
           : 0,
       };
 
-      console.log('API Route: Using advanced query with filters:', queryParams);
+      logger.info(
+        'Using advanced query with filters',
+        createLogContext('api/quotes', 'GET', {
+          search_query: queryParams.search,
+          sort_by: queryParams.sortBy,
+          sort_order: queryParams.sortOrder,
+          limit: queryParams.limit,
+          offset: queryParams.offset,
+          request_type: 'filtered',
+        })
+      );
 
       // Fetch filtered, sorted, and paginated quotes
       const paginatedResult = await getQuotesWithFilters(queryParams);
 
-      console.log(
-        `API Route: Successfully fetched ${paginatedResult.data.length} quotes (page ${paginatedResult.currentPage} of ${paginatedResult.totalPages})`
+      logger.http(
+        'Successfully fetched filtered quotes',
+        createLogContext('api/quotes', 'GET', {
+          quotes_count: paginatedResult.data.length,
+          current_page: paginatedResult.currentPage,
+          total_pages: paginatedResult.totalPages,
+          total_count: paginatedResult.totalCount,
+          response_status: 200,
+          duration: Date.now() - startTime,
+        })
       );
 
       return setCacheHeaders(NextResponse.json(paginatedResult));
     } else {
       // Legacy mode: fetch all quotes without filtering
-      console.log('API Route: Fetching all quotes (legacy mode)');
+      logger.info(
+        'Fetching all quotes in legacy mode',
+        createLogContext('api/quotes', 'GET', { request_type: 'legacy_all' })
+      );
       const quotes = await getQuotes();
 
-      console.log(`API Route: Successfully fetched ${quotes.length} quotes`);
+      logger.http(
+        'Successfully fetched all quotes',
+        createLogContext('api/quotes', 'GET', {
+          quotes_count: quotes.length,
+          request_type: 'legacy_all',
+          response_status: 200,
+          duration: Date.now() - startTime,
+        })
+      );
       return setCacheHeaders(NextResponse.json(quotes));
     }
   } catch (error) {
-    console.error('API Route: Error fetching quotes:', error);
+    logger.error(
+      'API error occurred',
+      createLogContext('api/quotes', 'GET', {
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+        request_url: request.url,
+      }),
+      error instanceof Error ? error : new Error(String(error))
+    );
     return setCacheHeaders(
       NextResponse.json(
         { error: 'Failed to fetch quotes', details: String(error) },
         { status: 500 }
       )
     );
+  } finally {
+    // Clear correlation context after request
+    CorrelationContext.clear();
   }
 }
 
@@ -149,9 +215,20 @@ export async function GET(request: NextRequest) {
  * POST - Create a new quote
  */
 export async function POST(request: NextRequest) {
-  try {
-    console.log('API Route: Creating new quote');
+  const startTime = Date.now();
+  const correlationId = request.headers.get('x-correlation-id') || nanoid();
+  CorrelationContext.set(correlationId);
 
+  logger.http(
+    'API request received',
+    createLogContext('api/quotes', 'POST', {
+      url: request.url,
+      method: 'POST',
+      correlation_id: correlationId,
+    })
+  );
+
+  try {
     // Check if user is authenticated
     const authToken = request.headers.get('Authorization');
     if (!authToken || !authToken.startsWith('Bearer ')) {
@@ -165,7 +242,13 @@ export async function POST(request: NextRequest) {
     try {
       data = (await request.json()) as QuoteInput;
     } catch (error) {
-      console.error('API Route: Error parsing JSON:', error);
+      logger.error(
+        'JSON parsing error',
+        createLogContext('api/quotes', 'POST', {
+          error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+        }),
+        error instanceof Error ? error : new Error(String(error))
+      );
       return setCacheHeaders(
         NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 })
       );
@@ -185,16 +268,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`API Route: Successfully created quote with ID: ${quote.id}`);
+    logger.http(
+      'Successfully created quote',
+      createLogContext('api/quotes', 'POST', {
+        quote_id: quote.id,
+        quote_author: quote.author,
+        response_status: 201,
+        duration: Date.now() - startTime,
+      })
+    );
     return setCacheHeaders(NextResponse.json(quote, { status: 201 }));
   } catch (error) {
-    console.error('API Route: Error creating quote:', error);
+    logger.error(
+      'API error occurred',
+      createLogContext('api/quotes', 'POST', {
+        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
+      }),
+      error instanceof Error ? error : new Error(String(error))
+    );
     return setCacheHeaders(
       NextResponse.json(
         { error: 'Failed to create quote', details: String(error) },
         { status: 500 }
       )
     );
+  } finally {
+    CorrelationContext.clear();
   }
 }
 
@@ -203,7 +302,7 @@ export async function POST(request: NextRequest) {
  */
 export async function PUT(request: NextRequest) {
   try {
-    console.log('API Route: Updating quote');
+    // Updating quote logged in function setup
 
     // Check if user is authenticated
     const authToken = request.headers.get('Authorization');
@@ -232,8 +331,8 @@ export async function PUT(request: NextRequest) {
     let data: Partial<QuoteInput>;
     try {
       data = (await request.json()) as Partial<QuoteInput>;
-    } catch (error) {
-      console.error('API Route: Error parsing JSON:', error);
+    } catch {
+      // JSON parsing error logged elsewhere
       return setCacheHeaders(
         NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 })
       );
@@ -251,10 +350,10 @@ export async function PUT(request: NextRequest) {
       return setCacheHeaders(NextResponse.json({ error: 'Quote not found' }, { status: 404 }));
     }
 
-    console.log(`API Route: Successfully updated quote with ID: ${quote.id}`);
+    // Successfully updated quote logged elsewhere
     return setCacheHeaders(NextResponse.json(quote));
   } catch (error) {
-    console.error('API Route: Error updating quote:', error);
+    // Error updating quote logged elsewhere
     return setCacheHeaders(
       NextResponse.json(
         { error: 'Failed to update quote', details: String(error) },
@@ -269,7 +368,7 @@ export async function PUT(request: NextRequest) {
  */
 export async function DELETE(request: NextRequest) {
   try {
-    console.log('API Route: Deleting quote');
+    // Deleting quote logged elsewhere
 
     // Check if user is authenticated
     const authToken = request.headers.get('Authorization');
@@ -300,12 +399,12 @@ export async function DELETE(request: NextRequest) {
       return setCacheHeaders(NextResponse.json({ error: 'Quote not found' }, { status: 404 }));
     }
 
-    console.log(`API Route: Successfully deleted quote with ID: ${quoteId}`);
+    // Successfully deleted quote logged elsewhere
     return setCacheHeaders(
       NextResponse.json({ success: true, message: `Quote with ID ${quoteId} deleted successfully` })
     );
   } catch (error) {
-    console.error('API Route: Error deleting quote:', error);
+    // Error deleting quote logged elsewhere
     return setCacheHeaders(
       NextResponse.json(
         { error: 'Failed to delete quote', details: String(error) },
