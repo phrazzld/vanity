@@ -47,8 +47,8 @@ async function testLoggingFormats() {
       const parsed = JSON.parse(logLine);
       console.log('✅ Successfully parsed as JSON');
 
-      // Check mandatory fields
-      const requiredFields = ['timestamp', 'level', 'message', 'context'];
+      // Check mandatory fields (logger outputs flattened fields, not nested context)
+      const requiredFields = ['timestamp', 'level', 'message', 'module_name', 'function_name'];
       const missingFields = requiredFields.filter(field => !(field in parsed));
 
       if (missingFields.length === 0) {
@@ -57,11 +57,11 @@ async function testLoggingFormats() {
         console.log('❌ Missing mandatory fields:', missingFields.join(', '));
       }
 
-      // Check context structure
-      if (parsed.context && parsed.context.module_name && parsed.context.function_name) {
-        console.log('✅ Context structure valid');
+      // Check flattened context fields are present at root level
+      if (parsed.module_name && parsed.function_name) {
+        console.log('✅ Context fields valid (module_name, function_name at root level)');
       } else {
-        console.log('❌ Context structure invalid');
+        console.log('❌ Context fields invalid - missing module_name or function_name');
       }
     } catch (parseError) {
       console.error('❌ Failed to parse production output as JSON:', parseError.message);
