@@ -63,7 +63,8 @@ describe('Structured Logging Integration', () => {
       expect(consoleMocks.log).toHaveBeenCalledTimes(1);
 
       const logCall = consoleMocks.log.mock.calls[0];
-      const logOutput = logCall[0] as string;
+      expect(logCall).toBeDefined();
+      const logOutput = logCall![0] as string;
 
       // Parse JSON output
       const logEntry = JSON.parse(logOutput);
@@ -98,7 +99,9 @@ describe('Structured Logging Integration', () => {
 
       expect(consoleMocks.log).toHaveBeenCalledTimes(1);
 
-      const logOutput = consoleMocks.log.mock.calls[0][0] as string;
+      const logCall = consoleMocks.log.mock.calls[0];
+      expect(logCall).toBeDefined();
+      const logOutput = logCall![0] as string;
       const logEntry = JSON.parse(logOutput);
 
       // Should auto-generate correlation ID
@@ -119,7 +122,9 @@ describe('Structured Logging Integration', () => {
 
       expect(consoleMocks.log).toHaveBeenCalledTimes(1);
 
-      const logOutput = consoleMocks.log.mock.calls[0][0] as string;
+      const logCall = consoleMocks.log.mock.calls[0];
+      expect(logCall).toBeDefined();
+      const logOutput = logCall![0] as string;
       const logEntry = JSON.parse(logOutput);
 
       expect(logEntry.level).toBe('debug');
@@ -162,9 +167,15 @@ describe('Structured Logging Integration', () => {
       // Verify all log entries have the same correlation ID
       expect(consoleMocks.log).toHaveBeenCalledTimes(3); // http, debug, and info all use console.log in production
 
-      const httpLog = JSON.parse(consoleMocks.log.mock.calls[0][0] as string);
-      const debugLog = JSON.parse(consoleMocks.log.mock.calls[1][0] as string);
-      const infoLog = JSON.parse(consoleMocks.log.mock.calls[2][0] as string);
+      const httpCall = consoleMocks.log.mock.calls[0];
+      const debugCall = consoleMocks.log.mock.calls[1];
+      const infoCall = consoleMocks.log.mock.calls[2];
+      expect(httpCall).toBeDefined();
+      expect(debugCall).toBeDefined();
+      expect(infoCall).toBeDefined();
+      const httpLog = JSON.parse(httpCall![0] as string);
+      const debugLog = JSON.parse(debugCall![0] as string);
+      const infoLog = JSON.parse(infoCall![0] as string);
 
       expect(httpLog.correlation_id).toBe(correlationId);
       expect(debugLog.correlation_id).toBe(correlationId);
@@ -181,8 +192,12 @@ describe('Structured Logging Integration', () => {
       CorrelationContext.set('request-2');
       logger.info('Processing request 2', createLogContext('api/test', 'handler2'));
 
-      const firstLog = JSON.parse(consoleMocks.log.mock.calls[0][0] as string);
-      const secondLog = JSON.parse(consoleMocks.log.mock.calls[1][0] as string);
+      const firstCall = consoleMocks.log.mock.calls[0];
+      const secondCall = consoleMocks.log.mock.calls[1];
+      expect(firstCall).toBeDefined();
+      expect(secondCall).toBeDefined();
+      const firstLog = JSON.parse(firstCall![0] as string);
+      const secondLog = JSON.parse(secondCall![0] as string);
 
       expect(firstLog.correlation_id).toBe('request-1');
       expect(secondLog.correlation_id).toBe('request-2');
@@ -237,7 +252,9 @@ describe('Structured Logging Integration', () => {
         })
       );
 
-      const logOutput = consoleMocks.log.mock.calls[0][0] as string;
+      const logCall = consoleMocks.log.mock.calls[0];
+      expect(logCall).toBeDefined();
+      const logOutput = logCall![0] as string;
       const logEntry = JSON.parse(logOutput);
 
       // Verify no sensitive data is present
