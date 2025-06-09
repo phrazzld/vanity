@@ -34,7 +34,6 @@ Feature flag management must establish these operational principles:
 - **Performance Optimization**: Ensure flag evaluation is fast and doesn't impact application performance, with proper caching and fallback mechanisms.
 
 **Flag Types:**
-
 - **Release flags**: Control rollout of new features
 - **Experiment flags**: Enable A/B testing and experimentation
 - **Operational flags**: Control system behavior and performance settings
@@ -42,7 +41,6 @@ Feature flag management must establish these operational principles:
 - **Kill switches**: Provide emergency shutoff capabilities
 
 **Targeting Strategies:**
-
 - Percentage-based rollouts for gradual adoption
 - User segment targeting for specific audiences
 - Environment-based flags for deployment stages
@@ -123,16 +121,8 @@ interface FeatureFlagResult<T = boolean> {
 // Feature flag client interface
 interface FeatureFlagClient {
   isEnabled(flagKey: string, context: FeatureFlagContext): Promise<FeatureFlagResult<boolean>>;
-  getVariant<T>(
-    flagKey: string,
-    defaultValue: T,
-    context: FeatureFlagContext
-  ): Promise<FeatureFlagResult<T>>;
-  track(
-    eventName: string,
-    context: FeatureFlagContext,
-    properties?: Record<string, any>
-  ): Promise<void>;
+  getVariant<T>(flagKey: string, defaultValue: T, context: FeatureFlagContext): Promise<FeatureFlagResult<T>>;
+  track(eventName: string, context: FeatureFlagContext, properties?: Record<string, any>): Promise<void>;
 }
 
 // Flag configuration with sophisticated targeting
@@ -181,10 +171,7 @@ class ProductionFeatureFlagClient implements FeatureFlagClient {
     private logger: Logger
   ) {}
 
-  async isEnabled(
-    flagKey: string,
-    context: FeatureFlagContext
-  ): Promise<FeatureFlagResult<boolean>> {
+  async isEnabled(flagKey: string, context: FeatureFlagContext): Promise<FeatureFlagResult<boolean>> {
     return this.getVariant(flagKey, false, context);
   }
 
@@ -217,14 +204,14 @@ class ProductionFeatureFlagClient implements FeatureFlagClient {
         flagKey,
         value: result.value,
         variant: result.variant,
-        reason: result.reason,
+        reason: result.reason
       });
 
       this.logger.debug('Feature flag evaluated', {
         flagKey,
         userId: context.userId,
         value: result.value,
-        reason: result.reason,
+        reason: result.reason
       });
 
       return result;
@@ -232,7 +219,7 @@ class ProductionFeatureFlagClient implements FeatureFlagClient {
       this.logger.error('Feature flag evaluation failed', {
         flagKey,
         error: error.message,
-        context,
+        context
       });
 
       // Return safe default on error
@@ -311,7 +298,7 @@ class ProductionFeatureFlagClient implements FeatureFlagClient {
     let hash = 0;
     for (let i = 0; i < input.length; i++) {
       const char = input.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
+      hash = ((hash << 5) - hash) + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash) % 100;
@@ -321,18 +308,14 @@ class ProductionFeatureFlagClient implements FeatureFlagClient {
     return { value, reason, variant };
   }
 
-  async track(
-    eventName: string,
-    context: FeatureFlagContext,
-    properties?: Record<string, any>
-  ): Promise<void> {
+  async track(eventName: string, context: FeatureFlagContext, properties?: Record<string, any>): Promise<void> {
     await this.analytics.track(eventName, {
       userId: context.userId,
       timestamp: context.timestamp || new Date(),
       properties: {
         environment: context.environment,
-        ...properties,
-      },
+        ...properties
+      }
     });
   }
 }
@@ -354,8 +337,8 @@ class FlexibleUserRegistrationService {
       userAttributes: {
         country: userData.country,
         referralSource: userData.referralSource,
-        accountAge: userData.accountAge,
-      },
+        accountAge: userData.accountAge
+      }
     };
 
     // Feature flag: New validation logic rollout
@@ -397,7 +380,7 @@ class FlexibleUserRegistrationService {
     const user = await this.userRepository.create({
       ...userData,
       emailVerified: !requireEmailVerification.value,
-      premiumFeaturesEnabled: premiumFeaturesEnabled.value,
+      premiumFeaturesEnabled: premiumFeaturesEnabled.value
     });
 
     // Conditional email verification
@@ -406,7 +389,7 @@ class FlexibleUserRegistrationService {
 
       // Track feature usage
       await this.featureFlags.track('email_verification_sent', context, {
-        userId: user.id,
+        userId: user.id
       });
     }
 
@@ -424,9 +407,9 @@ class FlexibleUserRegistrationService {
 
   private async sendWelcomeEmail(user: User, variant: string): Promise<void> {
     const templates = {
-      standard: 'welcome_standard',
-      premium: 'welcome_premium',
-      minimal: 'welcome_minimal',
+      'standard': 'welcome_standard',
+      'premium': 'welcome_premium',
+      'minimal': 'welcome_minimal'
     };
 
     const template = templates[variant] || templates['standard'];
@@ -452,15 +435,12 @@ class FeatureFlagManager {
       environments: {
         production: { enabled: false, rules: [], fallbackValue: false },
         staging: { enabled: false, rules: [], fallbackValue: false },
-        development: { enabled: false, rules: [], fallbackValue: false },
-      },
+        development: { enabled: false, rules: [], fallbackValue: false }
+      }
     });
 
     // Schedule flag deletion after confirmation period
-    await this.flagService.scheduleForDeletion(
-      flagKey,
-      new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-    ); // 30 days
+    await this.flagService.scheduleForDeletion(flagKey, new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)); // 30 days
   }
 }
 ```

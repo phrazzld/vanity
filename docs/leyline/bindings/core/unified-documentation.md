@@ -32,7 +32,6 @@ Unified documentation must establish these organizational principles:
 - **Versioning and Change Management**: Track changes to documentation and maintain version history so that updates can be traced and reverted if necessary.
 
 **Documentation Types:**
-
 - API documentation (generated from code annotations)
 - System architecture and design decisions
 - Operational procedures and runbooks
@@ -41,7 +40,6 @@ Unified documentation must establish these organizational principles:
 - Configuration and deployment guides
 
 **Consolidation Strategies:**
-
 - Use documentation-as-code approaches where docs live with the code
 - Generate API docs from code annotations or schema definitions
 - Create centralized decision logs and architectural decision records
@@ -61,7 +59,7 @@ Unified documentation must establish these organizational principles:
 
 ## Examples
 
-````typescript
+```typescript
 // ❌ BAD: Documentation duplicated across multiple locations
 // README.md
 /**
@@ -251,7 +249,7 @@ export const openApiSpec = {
  *
  * For complete field requirements and validation rules, see the schema definition.
  */
-````
+```
 
 ```python
 # ❌ BAD: Configuration documentation scattered and duplicated

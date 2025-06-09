@@ -4,7 +4,6 @@ enforced_by: code review & project linting rules
 id: module-organization
 last_modified: '2025-05-14'
 ---
-
 # Binding: Organize TypeScript Code Into Feature-Focused Modules
 
 Structure TypeScript code into cohesive modules organized by features or domains rather
@@ -185,9 +184,9 @@ This binding establishes clear requirements for organizing TypeScript code into 
          "@features/*": ["features/*"],
          "@shared/*": ["shared/*"],
          "@utils/*": ["shared/utils/*"],
-         "@types/*": ["shared/types/*"],
-       },
-     },
+         "@types/*": ["shared/types/*"]
+       }
+     }
    }
    ```
 
@@ -234,7 +233,7 @@ This binding establishes clear requirements for organizing TypeScript code into 
      Processing = 'PROCESSING',
      Shipped = 'SHIPPED',
      Delivered = 'DELIVERED',
-     Cancelled = 'CANCELLED',
+     Cancelled = 'CANCELLED'
    }
 
    // Define interface for user operations needed by orders
@@ -262,10 +261,7 @@ This binding establishes clear requirements for organizing TypeScript code into 
        private productService: ProductService
      ) {}
 
-     async createOrder(
-       userId: string,
-       productItems: Array<{ productId: string; quantity: number }>
-     ): Promise<Order> {
+     async createOrder(userId: string, productItems: Array<{productId: string, quantity: number}>): Promise<Order> {
        // Check if user can place order
        const canPlace = await this.userService.canPlaceOrder(userId);
        if (!canPlace) {
@@ -312,13 +308,16 @@ This binding establishes clear requirements for organizing TypeScript code into 
        'import/no-cycle': 'error',
 
        // Ensure correct import order
-       'import/order': [
-         'error',
-         {
-           groups: ['builtin', 'external', 'internal', ['parent', 'sibling'], 'index'],
-           'newlines-between': 'always',
-         },
-       ],
+       'import/order': ['error', {
+         'groups': [
+           'builtin',
+           'external',
+           'internal',
+           ['parent', 'sibling'],
+           'index'
+         ],
+         'newlines-between': 'always'
+       }],
 
        // Set up module boundary rules
        'boundaries/element-types': [
@@ -330,17 +329,17 @@ This binding establishes clear requirements for organizing TypeScript code into 
              {
                from: 'features',
                disallow: ['app', 'main'],
-               message: 'Features cannot import from app entry points',
+               message: 'Features cannot import from app entry points'
              },
              {
                from: 'shared',
                disallow: ['features'],
-               message: 'Shared utilities cannot import from feature modules',
-             },
-           ],
-         },
-       ],
-     },
+               message: 'Shared utilities cannot import from feature modules'
+             }
+           ]
+         }
+       ]
+     }
    };
    ```
 
@@ -403,60 +402,32 @@ src/
 ```typescript
 // ❌ BAD: Giant "utils" module with mixed responsibilities
 // shared/utils.ts
-export function formatDate(date: Date): string {
-  /* ... */
-}
-export function validateEmail(email: string): boolean {
-  /* ... */
-}
-export function calculateTax(amount: number, rate: number): number {
-  /* ... */
-}
-export function capitalizeString(str: string): string {
-  /* ... */
-}
-export function fetchData(url: string): Promise<any> {
-  /* ... */
-}
-export function generateId(): string {
-  /* ... */
-}
-export function parseCSV(data: string): Array<any> {
-  /* ... */
-}
+export function formatDate(date: Date): string { /* ... */ }
+export function validateEmail(email: string): boolean { /* ... */ }
+export function calculateTax(amount: number, rate: number): number { /* ... */ }
+export function capitalizeString(str: string): string { /* ... */ }
+export function fetchData(url: string): Promise<any> { /* ... */ }
+export function generateId(): string { /* ... */ }
+export function parseCSV(data: string): Array<any> { /* ... */ }
 // ...50 more unrelated functions
 ```
 
 ```typescript
 // ✅ GOOD: Purpose-specific utility modules
 // shared/date/format.ts
-export function formatDate(date: Date, format?: string): string {
-  /* ... */
-}
-export function parseDate(dateString: string): Date {
-  /* ... */
-}
+export function formatDate(date: Date, format?: string): string { /* ... */ }
+export function parseDate(dateString: string): Date { /* ... */ }
 
 // shared/validation/email.ts
-export function validateEmail(email: string): boolean {
-  /* ... */
-}
-export function normalizeEmail(email: string): string {
-  /* ... */
-}
+export function validateEmail(email: string): boolean { /* ... */ }
+export function normalizeEmail(email: string): string { /* ... */ }
 
 // shared/formatting/string.ts
-export function capitalize(str: string): string {
-  /* ... */
-}
-export function truncate(str: string, maxLength: number): string {
-  /* ... */
-}
+export function capitalize(str: string): string { /* ... */ }
+export function truncate(str: string, maxLength: number): string { /* ... */ }
 
 // features/tax/tax.service.ts (domain-specific logic belongs with its feature)
-export function calculateTax(amount: number, rate: number): number {
-  /* ... */
-}
+export function calculateTax(amount: number, rate: number): number { /* ... */ }
 ```
 
 ```typescript
@@ -501,7 +472,7 @@ export interface User {
 
 // Interfaces for order operations needed by user module
 export interface OrderOperations {
-  getOrdersByUserId(userId: string): Promise<Array<{ id: string; total: number }>>;
+  getOrdersByUserId(userId: string): Promise<Array<{id: string, total: number}>>;
 }
 
 // features/user/user.service.ts

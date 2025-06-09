@@ -34,7 +34,6 @@ Component isolation requires adherence to these core principles:
 - **Stateless When Possible**: Prefer stateless components that transform inputs to outputs without maintaining internal state. When state is necessary, manage it explicitly and locally.
 
 Exceptions to these rules may be appropriate when:
-
 - Performance profiling demonstrates a genuine need for direct communication
 - Legacy integration requires temporary coupling during migration
 - Framework constraints make perfect isolation impractical

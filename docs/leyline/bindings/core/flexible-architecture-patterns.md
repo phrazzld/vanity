@@ -34,7 +34,6 @@ Flexible architecture must implement these design principles:
 - **Configuration-Driven Behavior**: Externalize as much behavior as possible to configuration, allowing changes without code deployment.
 
 **Architectural Patterns:**
-
 - Plugin/Extension architectures for adding new functionality
 - Adapter patterns for integrating with external systems
 - Chain of responsibility for configurable processing pipelines
@@ -42,7 +41,6 @@ Flexible architecture must implement these design principles:
 - Factory patterns for flexible object creation
 
 **Design Considerations:**
-
 - Minimize assumptions about future requirements
 - Prefer composition over inheritance for flexibility
 - Design APIs that can be extended without breaking existing clients
@@ -143,7 +141,7 @@ class EmailNotificationPlugin extends NotificationPlugin {
     await this.emailService.send({
       to: notification.recipient,
       subject: notification.subject,
-      body: notification.content,
+      body: notification.content
     });
   }
 }
@@ -160,7 +158,7 @@ class SMSNotificationPlugin extends NotificationPlugin {
   async sendNotification(notification: OrderNotification): Promise<void> {
     await this.smsService.send({
       to: notification.recipient,
-      message: notification.content,
+      message: notification.content
     });
   }
 }
@@ -220,7 +218,7 @@ class FlexibleOrderProcessor {
         await this.analyticsService.trackEvent({
           type: 'order_completed',
           orderId: order.id,
-          amount: order.amount,
+          amount: order.amount
         });
       }
 
@@ -235,7 +233,7 @@ class FlexibleOrderProcessor {
     return {
       recipient: order.customerEmail,
       subject: 'Order Confirmation',
-      content: `Your order ${order.id} has been confirmed.`,
+      content: `Your order ${order.id} has been confirmed.`
     };
   }
 }
