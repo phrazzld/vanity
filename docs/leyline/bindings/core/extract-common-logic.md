@@ -32,7 +32,6 @@ Common logic extraction must follow these identification and implementation prin
 - **Handle Variations Explicitly**: When logic has slight variations across use cases, design the extraction to handle these variations through parameters or strategy patterns rather than duplicating the core logic.
 
 **Extraction Candidates:**
-
 - Business rules and validation logic
 - Data transformation and formatting algorithms
 - Mathematical calculations and formulas
@@ -41,7 +40,6 @@ Common logic extraction must follow these identification and implementation prin
 - Error handling and recovery logic
 
 **When NOT to Extract:**
-
 - Code that coincidentally looks similar but serves different business purposes
 - Logic that is likely to diverge in the future due to different evolution paths
 - Simple operations where the extraction would be more complex than the duplication
@@ -70,12 +68,10 @@ class UserRegistrationForm {
   }
 
   validatePassword(password: string): boolean {
-    return (
-      password.length >= 8 &&
-      /[A-Z]/.test(password) &&
-      /[a-z]/.test(password) &&
-      /[0-9]/.test(password)
-    );
+    return password.length >= 8 &&
+           /[A-Z]/.test(password) &&
+           /[a-z]/.test(password) &&
+           /[0-9]/.test(password);
   }
 }
 
@@ -88,12 +84,10 @@ class UserProfileForm {
 
   validatePassword(password: string): boolean {
     // Same logic duplicated
-    return (
-      password.length >= 8 &&
-      /[A-Z]/.test(password) &&
-      /[a-z]/.test(password) &&
-      /[0-9]/.test(password)
-    );
+    return password.length >= 8 &&
+           /[A-Z]/.test(password) &&
+           /[a-z]/.test(password) &&
+           /[0-9]/.test(password);
   }
 }
 
@@ -114,10 +108,7 @@ export interface ValidationResult {
 }
 
 export class ValidationError extends Error {
-  constructor(
-    public field: string,
-    public violations: string[]
-  ) {
+  constructor(public field: string, public violations: string[]) {
     super(`Validation failed for ${field}: ${violations.join(', ')}`);
   }
 }
@@ -145,7 +136,7 @@ export class EmailValidator {
 
     return {
       isValid: errors.length === 0,
-      errors,
+      errors
     };
   }
 
@@ -172,7 +163,7 @@ export class PasswordValidator {
     requireUppercase: true,
     requireLowercase: true,
     requireNumbers: true,
-    requireSpecialChars: false,
+    requireSpecialChars: false
   };
 
   static validate(
@@ -208,7 +199,7 @@ export class PasswordValidator {
 
     return {
       isValid: errors.length === 0,
-      errors,
+      errors
     };
   }
 }
@@ -221,7 +212,7 @@ class UserRegistrationForm {
 
     return {
       isValid: emailResult.isValid && passwordResult.isValid,
-      errors: [...emailResult.errors, ...passwordResult.errors],
+      errors: [...emailResult.errors, ...passwordResult.errors]
     };
   }
 }
@@ -237,7 +228,7 @@ class UserProfileForm {
 
     return {
       isValid: emailResult.isValid && passwordResult.isValid,
-      errors: [...emailResult.errors, ...passwordResult.errors],
+      errors: [...emailResult.errors, ...passwordResult.errors]
     };
   }
 }

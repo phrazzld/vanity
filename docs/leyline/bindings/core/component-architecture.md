@@ -4,7 +4,6 @@ enforced_by: Code review, Storybook organization
 id: component-architecture
 last_modified: '2025-05-14'
 ---
-
 # Binding: Component Architecture
 
 Structure UI components using Atomic Design principles, organizing elements into a
@@ -196,12 +195,8 @@ function UserActions({ onEdit, onDelete, expanded, onToggleExpand }) {
   return (
     <div className="actions">
       <Button onClick={onToggleExpand}>{expanded ? 'Show Less' : 'Show More'}</Button>
-      <Button variant="secondary" onClick={onEdit}>
-        Edit
-      </Button>
-      <Button variant="danger" onClick={onDelete}>
-        Delete
-      </Button>
+      <Button variant="secondary" onClick={onEdit}>Edit</Button>
+      <Button variant="danger" onClick={onDelete}>Delete</Button>
     </div>
   );
 }
@@ -279,7 +274,12 @@ function Button({
 // Base Button atom
 function Button({ children, disabled, onClick, className, ...props }) {
   return (
-    <button className={`btn ${className || ''}`} disabled={disabled} onClick={onClick} {...props}>
+    <button
+      className={`btn ${className || ''}`}
+      disabled={disabled}
+      onClick={onClick}
+      {...props}
+    >
       {children}
     </button>
   );
@@ -357,7 +357,7 @@ function ContactForm() {
         <input
           id="name"
           value={name}
-          onChange={e => setName(e.target.value)}
+          onChange={(e) => setName(e.target.value)}
           className={errors.name ? 'error' : ''}
         />
         {errors.name && <span className="error-message">{errors.name}</span>}
@@ -369,7 +369,7 @@ function ContactForm() {
           id="email"
           type="email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           className={errors.email ? 'error' : ''}
         />
         {errors.email && <span className="error-message">{errors.email}</span>}
@@ -380,7 +380,7 @@ function ContactForm() {
         <textarea
           id="message"
           value={message}
-          onChange={e => setMessage(e.target.value)}
+          onChange={(e) => setMessage(e.target.value)}
           className={errors.message ? 'error' : ''}
         />
         {errors.message && <span className="error-message">{errors.message}</span>}
@@ -399,7 +399,11 @@ function Input({ id, label, error, ...props }) {
   return (
     <div className="form-field">
       <label htmlFor={id}>{label}</label>
-      <input id={id} className={error ? 'input-error' : 'input'} {...props} />
+      <input
+        id={id}
+        className={error ? 'input-error' : 'input'}
+        {...props}
+      />
       {error && <span className="error-text">{error}</span>}
     </div>
   );
@@ -410,7 +414,11 @@ function TextArea({ id, label, error, ...props }) {
   return (
     <div className="form-field">
       <label htmlFor={id}>{label}</label>
-      <textarea id={id} className={error ? 'textarea-error' : 'textarea'} {...props} />
+      <textarea
+        id={id}
+        className={error ? 'textarea-error' : 'textarea'}
+        {...props}
+      />
       {error && <span className="error-text">{error}</span>}
     </div>
   );
@@ -418,14 +426,9 @@ function TextArea({ id, label, error, ...props }) {
 
 // Organism (with React Hook Form for logic)
 function ContactForm() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm();
+  const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm();
 
-  const onSubmit = async data => {
+  const onSubmit = async (data) => {
     try {
       await submitContactForm(data);
       toast.success('Form submitted successfully!');
@@ -453,8 +456,8 @@ function ContactForm() {
           required: 'Email is required',
           pattern: {
             value: /^\S+@\S+\.\S+$/,
-            message: 'Email is invalid',
-          },
+            message: 'Email is invalid'
+          }
         })}
       />
 

@@ -22,28 +22,24 @@ The principle "dead programs tell no lies" is fundamental here—a program that 
 This binding establishes comprehensive guidelines for input validation and precondition checking:
 
 - **Mandatory Validation Points**: All functions must validate their inputs at entry:
-
   - **Parameter Validation**: Check type, range, format, and business rule compliance
   - **State Validation**: Verify object state preconditions before proceeding
   - **Resource Validation**: Confirm required resources exist and are accessible
   - **Contract Validation**: Ensure calling context meets function's assumptions
 
 - **Validation Requirements**: Each validation must be:
-
   - **Immediate**: Performed before any other logic or side effects
   - **Complete**: Cover all assumptions the function makes about its inputs
   - **Explicit**: State exactly what constraint was violated
   - **Actionable**: Provide information needed to fix the problem
 
 - **Error Handling Standards**:
-
   - **Clear Messages**: Describe what was expected vs. what was received
   - **Context Information**: Include relevant parameter values and constraints
   - **Consistent Format**: Use standardized error structures across the codebase
   - **Appropriate Exceptions**: Choose exception types that reflect the violation category
 
 - **Validation Scope**: Apply validation to:
-
   - Public API entry points (always)
   - Internal function boundaries (when assumptions change)
   - Data transformation points (before and after critical operations)
@@ -78,23 +74,18 @@ Here are concrete strategies for implementing comprehensive fail-fast validation
 function calculateMonthlyPayment(principal, interestRate, termMonths) {
   // No validation - invalid inputs cause mysterious results
   const monthlyRate = interestRate / 12;
-  const payment =
-    (principal * (monthlyRate * Math.pow(1 + monthlyRate, termMonths))) /
-    (Math.pow(1 + monthlyRate, termMonths) - 1);
+  const payment = principal * (monthlyRate * Math.pow(1 + monthlyRate, termMonths)) /
+                  (Math.pow(1 + monthlyRate, termMonths) - 1);
   return payment;
 }
 
 // Results in mysterious behavior:
-calculateMonthlyPayment(-1000, 0.05, 360); // Negative payment
-calculateMonthlyPayment(100000, -0.02, 360); // NaN result
-calculateMonthlyPayment(100000, 0.05, 0); // Division by zero
+calculateMonthlyPayment(-1000, 0.05, 360);     // Negative payment
+calculateMonthlyPayment(100000, -0.02, 360);   // NaN result
+calculateMonthlyPayment(100000, 0.05, 0);      // Division by zero
 
 // ✅ GOOD: Comprehensive input validation with clear error messages
-function calculateMonthlyPayment(
-  principal: number,
-  interestRate: number,
-  termMonths: number
-): number {
+function calculateMonthlyPayment(principal: number, interestRate: number, termMonths: number): number {
   // Validate principal amount
   if (typeof principal !== 'number' || !isFinite(principal)) {
     throw new Error(`Principal must be a finite number, received: ${principal}`);
@@ -114,9 +105,7 @@ function calculateMonthlyPayment(
     throw new Error(`Interest rate cannot be negative, received: ${interestRate}`);
   }
   if (interestRate > 1) {
-    throw new Error(
-      `Interest rate appears to be a percentage (>100%), expected decimal (e.g., 0.05 for 5%), received: ${interestRate}`
-    );
+    throw new Error(`Interest rate appears to be a percentage (>100%), expected decimal (e.g., 0.05 for 5%), received: ${interestRate}`);
   }
 
   // Validate term
@@ -126,8 +115,7 @@ function calculateMonthlyPayment(
   if (termMonths <= 0) {
     throw new Error(`Term must be positive, received: ${termMonths}`);
   }
-  if (termMonths > 480) {
-    // 40 years
+  if (termMonths > 480) { // 40 years
     throw new Error(`Term exceeds maximum allowed (480 months), received: ${termMonths}`);
   }
 
@@ -137,9 +125,8 @@ function calculateMonthlyPayment(
   }
 
   const monthlyRate = interestRate / 12;
-  const payment =
-    (principal * (monthlyRate * Math.pow(1 + monthlyRate, termMonths))) /
-    (Math.pow(1 + monthlyRate, termMonths) - 1);
+  const payment = principal * (monthlyRate * Math.pow(1 + monthlyRate, termMonths)) /
+                  (Math.pow(1 + monthlyRate, termMonths) - 1);
 
   return Math.round(payment * 100) / 100; // Round to cents
 }
