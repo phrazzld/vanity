@@ -1,10 +1,10 @@
 ---
 id: automated-quality-gates
 last_modified: '2025-06-02'
+version: '0.1.0'
 derived_from: fix-broken-windows
 enforced_by: 'CI/CD pipelines, pre-commit hooks, automated testing, code analysis tools'
 ---
-
 # Binding: Establish Comprehensive Automated Quality Gates
 
 Implement automated validation checkpoints that prevent low-quality code from progressing through the development pipeline. Create systematic barriers that catch quality issues early, before they can compound into larger system problems.
@@ -34,7 +34,6 @@ Automated quality gates must establish these validation principles:
 - **Actionable Results**: Provide specific, actionable feedback when quality gates fail, including clear guidance on how to resolve the issues and prevent similar problems in the future.
 
 **Quality Gate Categories:**
-
 - Code quality gates (syntax, complexity, duplication, style)
 - Security gates (vulnerability scanning, dependency analysis)
 - Testing gates (coverage, test execution, regression detection)
@@ -43,7 +42,6 @@ Automated quality gates must establish these validation principles:
 - Compliance gates (regulatory requirements, organizational policies)
 
 **Pipeline Integration Points:**
-
 - Pre-commit hooks for immediate feedback
 - Pull request validation for team review
 - Continuous integration for comprehensive testing
@@ -77,13 +75,13 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
       - run: npm install
-      - run: npm test # Only basic tests, no quality gates
+      - run: npm test  # Only basic tests, no quality gates
 
   deploy:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Deploying to production" # No validation!
+      - run: echo "Deploying to production"  # No validation!
 
 # Problems:
 # 1. No code quality validation
@@ -113,7 +111,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0 # Full history for better analysis
+          fetch-depth: 0  # Full history for better analysis
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -452,7 +450,7 @@ class PullRequestReview {
 
     return {
       approved: hasTests && codeQuality === 'good',
-      comments: ['Looks good to me'], // Generic feedback
+      comments: ['Looks good to me'] // Generic feedback
     };
   }
 }
@@ -507,7 +505,7 @@ class CodeQualityGate implements QualityGate {
         category: 'style',
         description: violation.message,
         location: `${violation.file}:${violation.line}`,
-        suggestion: violation.fix || 'See linting rule documentation',
+        suggestion: violation.fix || 'See linting rule documentation'
       });
     }
 
@@ -520,7 +518,7 @@ class CodeQualityGate implements QualityGate {
           category: 'complexity',
           description: `High cyclomatic complexity: ${file.cyclomaticComplexity}`,
           location: file.path,
-          suggestion: 'Consider breaking down complex functions into smaller, focused units',
+          suggestion: 'Consider breaking down complex functions into smaller, focused units'
         });
       }
     }
@@ -533,7 +531,7 @@ class CodeQualityGate implements QualityGate {
         category: 'duplication',
         description: `Code duplication detected (${duplicate.similarity}% similar)`,
         location: duplicate.locations.join(', '),
-        suggestion: 'Extract common functionality into shared utilities',
+        suggestion: 'Extract common functionality into shared utilities'
       });
     }
 
@@ -542,7 +540,7 @@ class CodeQualityGate implements QualityGate {
     const highIssues = issues.filter(i => i.severity === 'high').length;
     const mediumIssues = issues.filter(i => i.severity === 'medium').length;
 
-    const score = Math.max(0, 100 - criticalIssues * 25 - highIssues * 10 - mediumIssues * 5);
+    const score = Math.max(0, 100 - (criticalIssues * 25) - (highIssues * 10) - (mediumIssues * 5));
     const passed = criticalIssues === 0 && highIssues === 0 && score >= 80;
 
     return {
@@ -550,27 +548,15 @@ class CodeQualityGate implements QualityGate {
       score,
       issues,
       recommendations: this.generateRecommendations(issues),
-      executionTime: Date.now() - startTime,
+      executionTime: Date.now() - startTime
     };
   }
 
   getRequirements(): QualityRequirement[] {
     return [
-      {
-        name: 'No critical issues',
-        threshold: 0,
-        description: 'Code must not contain critical quality violations',
-      },
-      {
-        name: 'No high-severity issues',
-        threshold: 0,
-        description: 'Code must not contain high-severity issues',
-      },
-      {
-        name: 'Quality score',
-        threshold: 80,
-        description: 'Overall quality score must be 80 or higher',
-      },
+      { name: 'No critical issues', threshold: 0, description: 'Code must not contain critical quality violations' },
+      { name: 'No high-severity issues', threshold: 0, description: 'Code must not contain high-severity issues' },
+      { name: 'Quality score', threshold: 80, description: 'Overall quality score must be 80 or higher' }
     ];
   }
 
@@ -579,16 +565,12 @@ class CodeQualityGate implements QualityGate {
 
     const complexityIssues = issues.filter(i => i.category === 'complexity');
     if (complexityIssues.length > 0) {
-      recommendations.push(
-        'Consider refactoring complex functions using the Extract Method pattern'
-      );
+      recommendations.push('Consider refactoring complex functions using the Extract Method pattern');
     }
 
     const duplicationIssues = issues.filter(i => i.category === 'duplication');
     if (duplicationIssues.length > 0) {
-      recommendations.push(
-        'Eliminate code duplication by extracting common logic into shared utilities'
-      );
+      recommendations.push('Eliminate code duplication by extracting common logic into shared utilities');
     }
 
     const styleIssues = issues.filter(i => i.category === 'style');
@@ -621,7 +603,7 @@ class SecurityGate implements QualityGate {
         category: 'security',
         description: `Security vulnerability: ${vuln.name}`,
         location: vuln.location,
-        suggestion: vuln.remediation,
+        suggestion: vuln.remediation
       });
     }
 
@@ -633,7 +615,7 @@ class SecurityGate implements QualityGate {
         category: 'dependency',
         description: `Vulnerable dependency: ${dep.name} (${dep.vulnerabilityCount} issues)`,
         location: dep.manifestFile,
-        suggestion: `Update to version ${dep.fixedVersion} or later`,
+        suggestion: `Update to version ${dep.fixedVersion} or later`
       });
     }
 
@@ -645,7 +627,7 @@ class SecurityGate implements QualityGate {
         category: 'secrets',
         description: `Potential secret detected: ${secret.type}`,
         location: secret.location,
-        suggestion: 'Remove hardcoded secrets and use environment variables or secret management',
+        suggestion: 'Remove hardcoded secrets and use environment variables or secret management'
       });
     }
 
@@ -654,34 +636,22 @@ class SecurityGate implements QualityGate {
 
     return {
       passed: criticalIssues === 0 && highIssues === 0,
-      score: Math.max(0, 100 - criticalIssues * 50 - highIssues * 20),
+      score: Math.max(0, 100 - (criticalIssues * 50) - (highIssues * 20)),
       issues,
       recommendations: [
         'Implement security scanning in CI/CD pipeline',
         'Regular dependency updates and security patches',
-        'Use secrets management for sensitive configuration',
+        'Use secrets management for sensitive configuration'
       ],
-      executionTime: Date.now() - startTime,
+      executionTime: Date.now() - startTime
     };
   }
 
   getRequirements(): QualityRequirement[] {
     return [
-      {
-        name: 'No critical vulnerabilities',
-        threshold: 0,
-        description: 'Code must not contain critical security issues',
-      },
-      {
-        name: 'No high-severity vulnerabilities',
-        threshold: 0,
-        description: 'Code must not contain high-severity security issues',
-      },
-      {
-        name: 'No hardcoded secrets',
-        threshold: 0,
-        description: 'Code must not contain hardcoded secrets or credentials',
-      },
+      { name: 'No critical vulnerabilities', threshold: 0, description: 'Code must not contain critical security issues' },
+      { name: 'No high-severity vulnerabilities', threshold: 0, description: 'Code must not contain high-severity security issues' },
+      { name: 'No hardcoded secrets', threshold: 0, description: 'Code must not contain hardcoded secrets or credentials' }
     ];
   }
 }
@@ -724,17 +694,15 @@ class QualityGateOrchestrator {
         results.push({
           passed: false,
           score: 0,
-          issues: [
-            {
-              severity: 'critical',
-              category: 'gate-failure',
-              description: `Gate execution failed: ${error.message}`,
-              location: 'gate-orchestrator',
-              suggestion: 'Check gate configuration and dependencies',
-            },
-          ],
+          issues: [{
+            severity: 'critical',
+            category: 'gate-failure',
+            description: `Gate execution failed: ${error.message}`,
+            location: 'gate-orchestrator',
+            suggestion: 'Check gate configuration and dependencies'
+          }],
           recommendations: ['Fix gate execution issues before proceeding'],
-          executionTime: 0,
+          executionTime: 0
         });
       }
     }
@@ -766,10 +734,10 @@ class QualityGateOrchestrator {
         passedGates: results.filter(r => r.passed).length,
         totalIssues: allIssues.length,
         criticalIssues: criticalIssues.length,
-        highIssues: highIssues.length,
+        highIssues: highIssues.length
       },
       executionTime: totalTime,
-      recommendations: this.generateOverallRecommendations(results),
+      recommendations: this.generateOverallRecommendations(results)
     };
   }
 
@@ -787,9 +755,7 @@ class QualityGateOrchestrator {
       recommendations.push(`Immediately fix ${criticalCount} critical issues`);
     }
 
-    const securityIssues = allIssues.filter(
-      i => i.category === 'security' || i.category === 'dependency'
-    );
+    const securityIssues = allIssues.filter(i => i.category === 'security' || i.category === 'dependency');
     if (securityIssues.length > 0) {
       recommendations.push('Priority: Resolve security vulnerabilities');
     }
@@ -818,9 +784,7 @@ const qualityOrchestrator = new QualityGateOrchestrator(notificationService);
 
 // Configure quality gates
 qualityOrchestrator.addGate(new CodeQualityGate(linter, complexityAnalyzer, duplicationDetector));
-qualityOrchestrator.addGate(
-  new SecurityGate(vulnerabilityScanner, dependencyAnalyzer, secretScanner)
-);
+qualityOrchestrator.addGate(new SecurityGate(vulnerabilityScanner, dependencyAnalyzer, secretScanner));
 qualityOrchestrator.addGate(new TestingGate(testRunner, coverageAnalyzer));
 qualityOrchestrator.addGate(new PerformanceGate(benchmarkRunner, bundleAnalyzer));
 
@@ -844,3 +808,7 @@ if (!report.overallPassed) {
 - [no-lint-suppression.md](../../docs/bindings/core/no-lint-suppression.md): Quality gates should enforce lint rules without allowing suppressions. Both bindings prevent the accumulation of quality violations through systematic enforcement of coding standards.
 
 - [use-structured-logging.md](../../docs/bindings/core/use-structured-logging.md): Quality gates can validate that proper logging practices are followed throughout the codebase. Both bindings support systematic quality enforcement and operational excellence.
+
+- [git-hooks-automation.md](../../docs/bindings/core/git-hooks-automation.md): Git hooks provide the first layer of automated quality gates with immediate feedback at commit time. Both bindings create comprehensive quality automation that scales from local development to production deployment.
+
+- [ci-cd-pipeline-standards.md](../../docs/bindings/core/ci-cd-pipeline-standards.md): CI/CD pipelines implement comprehensive automated quality gates across the entire deployment pipeline. Both bindings establish systematic quality enforcement through automation at multiple validation layers.

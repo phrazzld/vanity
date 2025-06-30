@@ -3,8 +3,8 @@ derived_from: no-secret-suppression
 enforced_by: code review & custom linters
 id: no-lint-suppression
 last_modified: '2025-05-14'
+version: '0.1.0'
 ---
-
 # Binding: Document Why You're Silencing Warnings
 
 Never disable or suppress linter warnings, static analysis errors, or type checking
@@ -129,7 +129,7 @@ Here are concrete strategies for handling suppressions responsibly:
    ```yaml
    # ESLint rule configuration
    rules:
-     'eslint-comments/require-description': ['error', { 'ignore': [] }]
+     "eslint-comments/require-description": ["error", { "ignore": [] }]
    ```
 
    Many linting tools can be configured to require comments with suppressions. Custom
@@ -150,7 +150,6 @@ Here are concrete strategies for handling suppressions responsibly:
    // eslint-disable-next-line react-hooks/exhaustive-deps
    // Intentionally omitting 'user' as a dependency to prevent re-fetching
    // when only user metadata changes. Only want to refresh when userId changes.
-   ```
    ````
 
    This approach reduces the need for each developer to reinvent justifications and

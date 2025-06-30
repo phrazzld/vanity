@@ -2,9 +2,9 @@
 derived_from: no-secret-suppression
 id: external-configuration
 last_modified: '2025-05-14'
+version: '0.1.0'
 enforced_by: code review & style guides
 ---
-
 # Binding: Never Hardcode Configuration
 
 Never embed configuration values in your source code. Keep all environment-specific
@@ -185,9 +185,7 @@ To implement external configuration effectively in your systems:
    async function getSecrets() {
      // For AWS environments
      const secretsManager = new AWS.SecretsManager();
-     const result = await secretsManager
-       .getSecretValue({ SecretId: 'my-service/production' })
-       .promise();
+     const result = await secretsManager.getSecretValue({ SecretId: 'my-service/production' }).promise();
      return JSON.parse(result.SecretString);
 
      // For Kubernetes environments
@@ -271,20 +269,20 @@ public static void main(String[] args) {
 // ❌ BAD: Mixing configuration and business logic
 function sendAnalytics(eventData) {
   // Hardcoded endpoint, API key, and configuration
-  const endpoint = 'https://analytics.example.com/events';
-  const apiKey = '1a2b3c4d5e6f';
+  const endpoint = "https://analytics.example.com/events";
+  const apiKey = "1a2b3c4d5e6f";
   const batchSize = 10;
   const retryCount = 3;
 
   // What if we need different values for testing or different environments?
   // What if the API key needs to be rotated?
   fetch(endpoint, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      'X-API-Key': apiKey,
+      "Content-Type": "application/json",
+      "X-API-Key": apiKey
     },
-    body: JSON.stringify(eventData),
+    body: JSON.stringify(eventData)
   });
 }
 ```
@@ -305,22 +303,22 @@ class AnalyticsService {
 
     // Validate configuration
     if (!this.endpoint) {
-      throw new Error('Analytics endpoint is required');
+      throw new Error("Analytics endpoint is required");
     }
     if (!this.apiKey) {
-      throw new Error('Analytics API key is required');
+      throw new Error("Analytics API key is required");
     }
   }
 
   async sendEvent(eventData: any): Promise<void> {
     // Use the configuration values
     await fetch(this.endpoint, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'X-API-Key': this.apiKey,
+        "Content-Type": "application/json",
+        "X-API-Key": this.apiKey
       },
-      body: JSON.stringify(eventData),
+      body: JSON.stringify(eventData)
     });
   }
 }
@@ -329,8 +327,8 @@ class AnalyticsService {
 const analyticsService = new AnalyticsService({
   endpoint: process.env.ANALYTICS_ENDPOINT,
   apiKey: process.env.ANALYTICS_API_KEY,
-  batchSize: parseInt(process.env.ANALYTICS_BATCH_SIZE || '10'),
-  retryCount: parseInt(process.env.ANALYTICS_RETRY_COUNT || '3'),
+  batchSize: parseInt(process.env.ANALYTICS_BATCH_SIZE || "10"),
+  retryCount: parseInt(process.env.ANALYTICS_RETRY_COUNT || "3")
 });
 ```
 
@@ -392,3 +390,5 @@ def process_image(image_data, config):
   logic. Configuration becomes an infrastructure concern that's kept at the boundaries
   of your application, allowing your domain code to remain focused on the business
   problem rather than implementation details.
+
+- [secrets-management-practices](../../docs/bindings/categories/security/secrets-management-practices.md): Secrets management builds upon external configuration principles by ensuring that sensitive configuration is not only externalized but also properly secured, encrypted, and managed throughout its lifecycle. Both bindings work together to eliminate hardcoded values while adding security-specific protections for sensitive data.

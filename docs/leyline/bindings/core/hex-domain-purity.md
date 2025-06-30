@@ -2,9 +2,9 @@
 derived_from: simplicity
 id: hex-domain-purity
 last_modified: '2025-05-14'
+version: '0.1.0'
 enforced_by: code review & style guides
 ---
-
 # Binding: Keep Business Logic Pure and Infrastructure-Free
 
 Your core business logic (domain layer) must remain completely free from infrastructure
@@ -329,8 +329,8 @@ public class HttpPaymentGateway implements PaymentGateway {
 ```typescript
 // ❌ BAD: Domain entities coupled to infrastructure concerns
 // User.ts in domain layer
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { IsEmail, Length } from 'class-validator';
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { IsEmail, Length } from "class-validator";
 
 @Entity('users')
 export class User {
@@ -405,7 +405,7 @@ export class User {
 }
 
 // Infrastructure layer
-import { User, UserId, EmailAddress } from '../domain/user';
+import { User, UserId, EmailAddress } from "../domain/user";
 
 // TypeORM entity
 @Entity('users')

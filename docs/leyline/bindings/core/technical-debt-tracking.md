@@ -1,10 +1,10 @@
 ---
 id: technical-debt-tracking
 last_modified: '2025-06-02'
+version: '0.1.0'
 derived_from: fix-broken-windows
 enforced_by: 'Code review, architectural review, technical debt assessment processes'
 ---
-
 # Binding: Implement Systematic Technical Debt Management
 
 Establish comprehensive processes to identify, document, prioritize, and systematically address technical debt before it degrades system quality. Maintain explicit visibility into technical debt accumulation and create actionable plans for debt reduction.
@@ -34,7 +34,6 @@ Technical debt tracking must establish these management principles:
 - **Team Accountability**: Create clear ownership and accountability for technical debt management across development teams and product stakeholders.
 
 **Debt Categories:**
-
 - Code quality debt (duplication, complexity, poor structure)
 - Design debt (architectural compromises, pattern violations)
 - Documentation debt (missing or outdated documentation)
@@ -43,7 +42,6 @@ Technical debt tracking must establish these management principles:
 - Performance debt (scalability limitations, inefficient algorithms)
 
 **Management Processes:**
-
 - Regular debt assessment and cataloging
 - Impact analysis and business case development
 - Debt reduction planning and scheduling
@@ -105,13 +103,7 @@ interface TechnicalDebtItem {
   id: string;
   title: string;
   description: string;
-  category:
-    | 'code-quality'
-    | 'design'
-    | 'documentation'
-    | 'testing'
-    | 'infrastructure'
-    | 'performance';
+  category: 'code-quality' | 'design' | 'documentation' | 'testing' | 'infrastructure' | 'performance';
   severity: 'low' | 'medium' | 'high' | 'critical';
   impact: {
     maintenanceCost: number; // Hours per month
@@ -169,7 +161,7 @@ class TechnicalDebtTracker {
       prerequisites: debtData.prerequisites || [],
       remediationPlan: debtData.remediationPlan || { approach: '', risks: [], milestones: [] },
       businessJustification: debtData.businessJustification || '',
-      status: 'identified',
+      status: 'identified'
     };
 
     // Validate debt item
@@ -192,9 +184,8 @@ class TechnicalDebtTracker {
   }
 
   async prioritizeDebt(): Promise<TechnicalDebtItem[]> {
-    const allDebt = Array.from(this.debtItems.values()).filter(
-      item => item.status === 'identified' || item.status === 'planned'
-    );
+    const allDebt = Array.from(this.debtItems.values())
+      .filter(item => item.status === 'identified' || item.status === 'planned');
 
     // Use prioritization framework
     const prioritizedDebt = await this.prioritizer.prioritize(allDebt);
@@ -216,8 +207,8 @@ class TechnicalDebtTracker {
       expectedBenefits: {
         velocityImprovement: 0,
         riskReduction: 0,
-        maintenanceSavings: 0,
-      },
+        maintenanceSavings: 0
+      }
     };
 
     // Select debt items that fit within capacity
@@ -241,7 +232,7 @@ class TechnicalDebtTracker {
 
     this.recordDebtEvent('plan', 'created', {
       itemCount: plan.selectedItems.length,
-      totalEffort: plan.totalEffort,
+      totalEffort: plan.totalEffort
     });
 
     return plan;
@@ -260,7 +251,7 @@ class TechnicalDebtTracker {
     this.recordDebtEvent(debtId, 'resolved', {
       approach: resolutionDetails.approach,
       actualEffort: resolutionDetails.actualEffort,
-      measuredImpact: resolutionDetails.measuredImpact,
+      measuredImpact: resolutionDetails.measuredImpact
     });
 
     // Update storage
@@ -281,12 +272,12 @@ class TechnicalDebtTracker {
         totalItems: allDebt.length,
         byStatus: this.groupByStatus(allDebt),
         bySeverity: this.groupBySeverity(allDebt),
-        byCategory: this.groupByCategory(allDebt),
+        byCategory: this.groupByCategory(allDebt)
       },
       trends: this.calculateTrends(),
       topPriorities: this.getTopPriorities(5),
       recommendations: this.generateRecommendations(),
-      businessImpact: this.calculateBusinessImpact(allDebt),
+      businessImpact: this.calculateBusinessImpact(allDebt)
     };
 
     return report;
@@ -297,7 +288,7 @@ class TechnicalDebtTracker {
       maintenanceCost: 2, // 2 hours per month default
       velocityImpact: 5, // 5% velocity reduction default
       reliabilityRisk: 3, // Medium reliability risk default
-      businessConsequences: ['Increased maintenance overhead'],
+      businessConsequences: ['Increased maintenance overhead']
     };
   }
 
@@ -306,18 +297,14 @@ class TechnicalDebtTracker {
       investigationHours: 4,
       implementationHours: 16,
       testingHours: 8,
-      migrationHours: 4,
+      migrationHours: 4
     };
   }
 
   private calculateTotalEffort(debtItem: TechnicalDebtItem): number {
     const effort = debtItem.estimatedEffort;
-    return (
-      effort.investigationHours +
-      effort.implementationHours +
-      effort.testingHours +
-      effort.migrationHours
-    );
+    return effort.investigationHours + effort.implementationHours +
+           effort.testingHours + effort.migrationHours;
   }
 
   private calculateTrends(): DebtTrends {
@@ -332,7 +319,7 @@ class TechnicalDebtTracker {
       newDebtRate: identified / 30, // Per day
       resolutionRate: resolved / 30, // Per day
       netChange: identified - resolved,
-      trend: identified > resolved ? 'increasing' : 'decreasing',
+      trend: identified > resolved ? 'increasing' : 'decreasing'
     };
   }
 
@@ -341,7 +328,7 @@ class TechnicalDebtTracker {
       timestamp: new Date(),
       debtId,
       action,
-      metadata,
+      metadata
     });
   }
 }
@@ -359,21 +346,19 @@ class DebtPrioritizer {
   private calculatePriorityScore(debt: TechnicalDebtItem): number {
     // Weighted scoring algorithm
     const severityWeight = { low: 1, medium: 2, high: 4, critical: 8 }[debt.severity];
-    const impactScore =
-      debt.impact.maintenanceCost * 2 +
-      debt.impact.velocityImpact * 3 +
-      debt.impact.reliabilityRisk * 4;
+    const impactScore = (debt.impact.maintenanceCost * 2) +
+                       (debt.impact.velocityImpact * 3) +
+                       (debt.impact.reliabilityRisk * 4);
     const effortPenalty = this.calculateEffortPenalty(debt);
 
     return (severityWeight * impactScore) / effortPenalty;
   }
 
   private calculateEffortPenalty(debt: TechnicalDebtItem): number {
-    const totalEffort =
-      debt.estimatedEffort.investigationHours +
-      debt.estimatedEffort.implementationHours +
-      debt.estimatedEffort.testingHours +
-      debt.estimatedEffort.migrationHours;
+    const totalEffort = debt.estimatedEffort.investigationHours +
+                       debt.estimatedEffort.implementationHours +
+                       debt.estimatedEffort.testingHours +
+                       debt.estimatedEffort.migrationHours;
 
     // Logarithmic penalty for effort - prefer smaller tasks
     return Math.log(Math.max(1, totalEffort));
@@ -420,8 +405,7 @@ class OrderServiceWithDebtTracking {
   async identifyValidationDuplication(): Promise<void> {
     await this.debtTracker.identifyDebt({
       title: 'Duplicated Order Validation Logic',
-      description:
-        'Order validation logic is duplicated across OrderService, PremiumOrderService, and BulkOrderService',
+      description: 'Order validation logic is duplicated across OrderService, PremiumOrderService, and BulkOrderService',
       category: 'code-quality',
       severity: 'medium',
       impact: {
@@ -431,23 +415,23 @@ class OrderServiceWithDebtTracking {
         businessConsequences: [
           'Inconsistent validation between order types',
           'Increased bug fixing overhead',
-          'Slower feature development',
-        ],
+          'Slower feature development'
+        ]
       },
       location: {
         files: [
           'src/services/OrderService.ts',
           'src/services/PremiumOrderService.ts',
-          'src/services/BulkOrderService.ts',
+          'src/services/BulkOrderService.ts'
         ],
         components: ['OrderProcessing'],
-        systems: ['OrderManagement'],
+        systems: ['OrderManagement']
       },
       estimatedEffort: {
         investigationHours: 4,
         implementationHours: 12,
         testingHours: 8,
-        migrationHours: 2,
+        migrationHours: 2
       },
       remediationPlan: {
         approach: 'Extract common validation logic into shared OrderValidator service',
@@ -456,10 +440,10 @@ class OrderServiceWithDebtTracking {
           'Create OrderValidator interface',
           'Implement consolidated validation logic',
           'Migrate existing services',
-          'Remove duplicated code',
-        ],
+          'Remove duplicated code'
+        ]
       },
-      businessJustification: 'Reduces maintenance overhead and improves consistency',
+      businessJustification: 'Reduces maintenance overhead and improves consistency'
     });
   }
 }

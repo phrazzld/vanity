@@ -4,7 +4,6 @@ enforced_by: Code review, Architecture reviews
 id: state-management
 last_modified: '2025-05-14'
 ---
-
 # Binding: Frontend State Management
 
 Apply minimalist state management by using the right approach for each need: local
@@ -107,10 +106,12 @@ deviation.
    // Provider component with state
    function ThemeProvider({ children }) {
      const [theme, setTheme] = useState('light');
-     const toggleTheme = () => setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+     const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
 
      return (
-       <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>
+       <ThemeContext.Provider value={{ theme, toggleTheme }}>
+         {children}
+       </ThemeContext.Provider>
      );
    }
 
@@ -155,13 +156,9 @@ deviation.
 
    ```jsx
    function ContactForm() {
-     const {
-       register,
-       handleSubmit,
-       formState: { errors, isSubmitting },
-     } = useForm();
+     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm();
 
-     const onSubmit = async data => {
+     const onSubmit = async (data) => {
        try {
          await submitContactForm(data);
          toast.success('Form submitted successfully!');
@@ -173,7 +170,10 @@ deviation.
 
      return (
        <form onSubmit={handleSubmit(onSubmit)}>
-         <input {...register('name', { required: 'Name is required' })} placeholder="Name" />
+         <input
+           {...register('name', { required: 'Name is required' })}
+           placeholder="Name"
+         />
          {errors.name && <span>{errors.name.message}</span>}
 
          {/* Other form fields */}
@@ -195,11 +195,11 @@ deviation.
 
    ```jsx
    // Using Zustand for global state
-   const useStore = create(set => ({
+   const useStore = create((set) => ({
      user: null,
      isAuthenticated: false,
 
-     login: async credentials => {
+     login: async (credentials) => {
        const user = await authService.login(credentials);
        set({ user, isAuthenticated: true });
      },
@@ -241,7 +241,10 @@ const store = createStore({
 
 // Component.jsx
 function Component() {
-  const { isModalOpen, setModalOpen, users, usersLoading, fetchUsers } = useStore();
+  const {
+    isModalOpen, setModalOpen,
+    users, usersLoading, fetchUsers
+  } = useStore();
 
   useEffect(() => {
     fetchUsers();
@@ -265,11 +268,7 @@ function TabPanel() {
 
 // Server state with React Query
 function UserList() {
-  const {
-    data: users,
-    isLoading,
-    error,
-  } = useQuery({
+  const { data: users, isLoading, error } = useQuery({
     queryKey: ['users'],
     queryFn: fetchUsers,
   });
@@ -284,23 +283,23 @@ function UserList() {
 function ProfileForm() {
   const { register, handleSubmit, formState } = useForm();
 
-  const onSubmit = async data => {
+  const onSubmit = async (data) => {
     await updateProfile(data);
   };
 
-  return <form onSubmit={handleSubmit(onSubmit)}>{/* Form fields with register */}</form>;
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      {/* Form fields with register */}
+    </form>
+  );
 }
 
 // Global state (authentication) with Zustand
-const useAuthStore = create(set => ({
+const useAuthStore = create((set) => ({
   user: null,
   isAuthenticated: false,
-  login: async credentials => {
-    /* auth logic */
-  },
-  logout: () => {
-    /* logout logic */
-  },
+  login: async (credentials) => {/* auth logic */},
+  logout: () => {/* logout logic */},
 }));
 
 function AuthStatus() {
@@ -311,9 +310,7 @@ function AuthStatus() {
       Welcome, {user.name}
       <button onClick={logout}>Logout</button>
     </div>
-  ) : (
-    <LoginButton />
-  );
+  ) : <LoginButton />;
 }
 ```
 
@@ -343,7 +340,9 @@ function Sidebar() {
 
   return (
     <>
-      <button onClick={() => dispatch(toggleSidebar())}>Toggle Sidebar</button>
+      <button onClick={() => dispatch(toggleSidebar())}>
+        Toggle Sidebar
+      </button>
       {isSidebarOpen && <div className="sidebar">Sidebar content</div>}
     </>
   );
@@ -355,7 +354,9 @@ function Sidebar() {
 
   return (
     <>
-      <button onClick={() => setIsOpen(!isOpen)}>Toggle Sidebar</button>
+      <button onClick={() => setIsOpen(!isOpen)}>
+        Toggle Sidebar
+      </button>
       {isOpen && <div className="sidebar">Sidebar content</div>}
     </>
   );
@@ -403,7 +404,9 @@ function ProductPage({ productId }) {
     <div>
       <h1>{product.name}</h1>
       <button onClick={() => addToCart(product)}>Add to Cart</button>
-      <button onClick={() => setIsFilterOpen(!isFilterOpen)}>Toggle Filters</button>
+      <button onClick={() => setIsFilterOpen(!isFilterOpen)}>
+        Toggle Filters
+      </button>
       {isFilterOpen && <Filters />}
     </div>
   );
@@ -415,11 +418,7 @@ function ProductPage({ productId }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // Server state: React Query
-  const {
-    data: product,
-    isLoading,
-    error,
-  } = useQuery({
+  const { data: product, isLoading, error } = useQuery({
     queryKey: ['product', productId],
     queryFn: () => api.fetchProduct(productId),
   });
@@ -434,7 +433,9 @@ function ProductPage({ productId }) {
     <div>
       <h1>{product.name}</h1>
       <button onClick={() => addToCart(product)}>Add to Cart</button>
-      <button onClick={() => setIsFilterOpen(!isFilterOpen)}>Toggle Filters</button>
+      <button onClick={() => setIsFilterOpen(!isFilterOpen)}>
+        Toggle Filters
+      </button>
       {isFilterOpen && <Filters />}
     </div>
   );

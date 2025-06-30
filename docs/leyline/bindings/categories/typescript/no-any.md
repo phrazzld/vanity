@@ -3,8 +3,8 @@ derived_from: explicit-over-implicit
 enforced_by: eslint("@typescript-eslint/no-explicit-any") & tsconfig("noImplicitAny")
 id: no-any
 last_modified: '2025-05-14'
+version: '0.1.0'
 ---
-
 # Binding: Make Types Explicit, Never Use `any`
 
 Never use the `any` type in TypeScript code. Instead, always create proper type
@@ -86,9 +86,7 @@ Instead, you must use precise types like:
 
    ```typescript
    // Instead of:
-   function process(data: any): void {
-     /* ... */
-   }
+   function process(data: any): void { /* ... */ }
 
    // Use:
    function process(data: unknown): void {
@@ -105,9 +103,7 @@ Instead, you must use precise types like:
 
    ```typescript
    // Instead of:
-   function processUser(user: any): void {
-     /* ... */
-   }
+   function processUser(user: any): void { /* ... */ }
 
    // Use:
    interface User {
@@ -116,18 +112,14 @@ Instead, you must use precise types like:
      email?: string;
    }
 
-   function processUser(user: User): void {
-     /* ... */
-   }
+   function processUser(user: User): void { /* ... */ }
    ```
 
 1. **Use union types for values that could be one of several types**:
 
    ```typescript
    // Instead of:
-   function getLength(value: any): number {
-     /* ... */
-   }
+   function getLength(value: any): number { /* ... */ }
 
    // Use:
    function getLength(value: string | Array<unknown>): number {
@@ -139,9 +131,7 @@ Instead, you must use precise types like:
 
    ```typescript
    // Instead of:
-   function getProperty(obj: any, key: string): any {
-     /* ... */
-   }
+   function getProperty(obj: any, key: string): any { /* ... */ }
 
    // Use:
    function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
@@ -164,10 +154,7 @@ Instead, you must use precise types like:
 
    // Or use type assertions scoped to the minimum needed interface:
    import * as untyped from 'untyped-library';
-   interface SomeReturnType {
-     id: string;
-     value: number;
-   }
+   interface SomeReturnType { id: string; value: number; }
    const result = untyped.someFunction() as SomeReturnType;
    ```
 
@@ -188,7 +175,7 @@ function processData(data: any): any {
   return data.value * 2; // No type checking! This could crash at runtime
 }
 
-const result = processData('not an object'); // Runtime error: Cannot read property 'value' of undefined
+const result = processData("not an object"); // Runtime error: Cannot read property 'value' of undefined
 const total: number = result + 10; // TypeScript won't catch that 'result' might not be a number
 ```
 
@@ -285,7 +272,7 @@ function processUserInput(input: any) {
 }
 
 // Someone calls the function with a typo:
-processUserInput({ isvalid: true, userData: { name: 'User' } }); // Note lowercase 'v' in 'isvalid'
+processUserInput({ isvalid: true, userData: { name: "User" } }); // Note lowercase 'v' in 'isvalid'
 
 // Result: Nothing gets saved, but no errors are thrown - silent failure!
 ```
@@ -305,16 +292,19 @@ function processUserInput(input: UserInput) {
 }
 
 // TypeScript error: Property 'isValid' is missing in type '{ isvalid: boolean; userData: { name: string; }; }'
-processUserInput({ isvalid: true, userData: { name: 'User' } });
+processUserInput({ isvalid: true, userData: { name: "User" } });
 ```
 
 ## Related Bindings
 
-- [external-configuration](../../docs/bindings/core/external-configuration.md) - Type safety extends to
+- [external-configuration](../../core/external-configuration.md) - Type safety extends to
   configuration, preventing undefined configuration values from causing runtime failures
-- [immutable-by-default](../../docs/bindings/core/immutable-by-default.md) - Type safety works best with
+- [immutable-by-default](../../core/immutable-by-default.md) - Type safety works best with
   immutable data, creating a stronger guarantee of correctness
-- [no-lint-suppression](../../docs/bindings/core/no-lint-suppression.md) - Enforces that developers don't
+- [no-lint-suppression](../../core/no-lint-suppression.md) - Enforces that developers don't
   suppress TypeScript type errors or linter warnings without documented justification
-- [hex-domain-purity](../../docs/bindings/core/hex-domain-purity.md) - Well-typed domain code ensures business
+- [hex-domain-purity](../../core/hex-domain-purity.md) - Well-typed domain code ensures business
   logic operates on valid, properly structured data
+
+### Language-Specific Analogies
+- [type-hinting](../python/type-hinting.md) - Python equivalent: using explicit type hints instead of dynamic typing

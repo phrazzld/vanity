@@ -1,10 +1,10 @@
 ---
 id: incremental-delivery
 last_modified: '2025-06-02'
+version: '0.1.0'
 derived_from: adaptability-and-reversibility
 enforced_by: 'CI/CD pipelines, deployment strategies, release management'
 ---
-
 # Binding: Practice Incremental Delivery and Continuous Deployment
 
 Deliver software in small, frequent increments that can be safely deployed and easily reversed. This enables rapid feedback, reduces deployment risk, and maintains the ability to quickly adapt to changing requirements or rollback problematic changes.
@@ -34,7 +34,6 @@ Incremental delivery must establish these deployment principles:
 - **Feature Branch Integration**: Use short-lived feature branches that are integrated frequently to avoid merge conflicts and integration problems.
 
 **Deployment Strategies:**
-
 - Blue-green deployments for zero-downtime releases
 - Canary releases for gradual validation
 - Rolling updates for distributed systems
@@ -42,7 +41,6 @@ Incremental delivery must establish these deployment principles:
 - Database migration automation for schema changes
 
 **Quality Gates:**
-
 - Automated testing at multiple levels (unit, integration, e2e)
 - Performance benchmarking and regression detection
 - Security scanning and vulnerability assessment

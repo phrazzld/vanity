@@ -3,8 +3,8 @@ derived_from: simplicity
 enforced_by: dependency scanners & code review
 id: dependency-management
 last_modified: '2025-05-14'
+version: '0.1.0'
 ---
-
 # Binding: Minimize and Maintain Dependencies Deliberately
 
 Choose third-party dependencies deliberately, preferring minimal solutions that solve
@@ -130,23 +130,23 @@ maintainable alternatives.
    # Example GitHub Dependabot configuration (.github/dependabot.yml)
    version: 2
    updates:
-     - package-ecosystem: 'npm'
-       directory: '/'
+     - package-ecosystem: "npm"
+       directory: "/"
        schedule:
-         interval: 'weekly'
+         interval: "weekly"
        # Group minor and patch updates together
        groups:
          minor-and-patch:
            update-types:
-             - 'minor'
-             - 'patch'
+             - "minor"
+             - "patch"
        # Configure automatic merge for safe updates
        auto-merge: true
        auto-merge-conditions:
-         - 'all-checks-success'
+         - "all-checks-success"
        # Add reviewers to manual updates
        reviewers:
-         - 'security-team'
+         - "security-team"
        # Limit pull requests for stability
        open-pull-requests-limit: 5
    ```

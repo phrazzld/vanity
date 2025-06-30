@@ -1,10 +1,10 @@
 ---
 id: system-boundaries
 last_modified: '2025-06-02'
+version: '0.1.0'
 derived_from: orthogonality
 enforced_by: 'Architectural review, module organization, build systems'
 ---
-
 # Binding: Establish Clear System and Module Boundaries
 
 Define explicit boundaries that separate different concerns, domains, or levels of abstraction within your system. These boundaries should be enforced through code organization, build systems, and architectural patterns that prevent unintended dependencies and coupling across boundary lines.
@@ -32,14 +32,12 @@ System boundaries must establish these separation principles:
 - **Team Boundaries**: Align system boundaries with team ownership to enable autonomous development. Each team should own complete, well-bounded portions of the system.
 
 These boundaries should be:
-
 - **Enforceable**: Implemented through technical mechanisms like module systems, build rules, or linting
 - **Discoverable**: Clearly documented and reflected in code organization
 - **Stable**: Changes to boundaries should be rare and well-coordinated
 - **Meaningful**: Based on real functional or team distinctions, not arbitrary technical divisions
 
 Boundary violations may be acceptable when:
-
 - Rapid prototyping requires temporary shortcuts during exploration
 - Performance optimizations require cross-boundary access (with careful documentation)
 - Legacy system migration requires temporary bridging during transition periods
@@ -73,7 +71,7 @@ class UserRegistrationForm {
 
     // Direct database access from UI layer
     const existingUser = await database.users.findOne({
-      email: formData.email,
+      email: formData.email
     });
 
     if (existingUser) {
@@ -86,7 +84,7 @@ class UserRegistrationForm {
     const user = await database.users.create({
       email: formData.email,
       password: hashedPassword,
-      createdAt: new Date(),
+      createdAt: new Date()
     });
 
     // Infrastructure concerns mixed with UI
@@ -123,7 +121,7 @@ export class UserRegistrationService {
     const user = new User({
       email: request.email,
       password: hashedPassword,
-      registeredAt: new Date(),
+      registeredAt: new Date()
     });
 
     // Persist through repository interface
@@ -157,7 +155,7 @@ export class UserRegistrationController {
 
       return {
         status: 201,
-        body: { userId: user.id, message: 'Registration successful' },
+        body: { userId: user.id, message: 'Registration successful' }
       };
     } catch (error) {
       return this.handleError(error);
@@ -180,7 +178,7 @@ export class AnalyticsEventHandler {
   async handle(event: UserRegisteredEvent): Promise<void> {
     await this.analytics.track('user_registered', {
       userId: event.user.id,
-      timestamp: event.occurredAt,
+      timestamp: event.occurredAt
     });
   }
 }
