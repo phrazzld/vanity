@@ -9,7 +9,7 @@
  */
 
 /* eslint-env node */
-/* eslint-disable no-undef */
+ 
 const { execSync } = require('child_process');
 
 // Create a simple test API call to generate logs

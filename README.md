@@ -307,7 +307,7 @@ Guidelines:
 ### Git Hooks
 
 - **Pre-commit Hooks**: Lint, format, typecheck, and detect sensitive data
-- **Post-commit Hooks**: Generate documentation (glance)
+- **Post-commit Hooks**: Generate documentation
 - **Pre-push Hooks**: Run tests and enforce branch naming conventions
 
 ## Versioning
@@ -351,7 +351,7 @@ CI runs on each push to main and on pull requests. Check the [.github/workflows]
 
 ### Automatically Generated Documentation
 
-The project uses the `glance` tool to automatically generate technical overviews of code directories in `glance.md` files.
+The project automatically generates technical overviews of code directories.
 
 ## License
 

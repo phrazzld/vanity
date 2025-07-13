@@ -88,7 +88,7 @@ The project has the following Git hooks in place:
    - Prevent pushing if tests fail
 
 4. **Post-commit Hook**: Runs asynchronously after commit to:
-   - Update documentation with the Glance tool (non-blocking)
+   - Update documentation (non-blocking)
 
 #### Verifying Git Hooks Installation
 

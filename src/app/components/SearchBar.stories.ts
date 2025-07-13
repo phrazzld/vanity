@@ -2,7 +2,7 @@
  * LOGGING EXEMPTION: Console usage in this file is intentionally preserved.
  * Storybook stories use console.log for developer interaction and demonstration
  * purposes. This is part of the intended developer experience.
- * See: edge-cases-decisions.md
+ * See: docs/edge-cases-decisions.md
  */
 
 import type { Meta, StoryObj } from '@storybook/react';

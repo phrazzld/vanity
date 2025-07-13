@@ -8,7 +8,7 @@
  *
  * LOGGING EXEMPTION: Console usage in demo components is acceptable for
  * educational/demonstration purposes. These are not operational components.
- * See: edge-cases-decisions.md
+ * See: docs/edge-cases-decisions.md
  */
 
 import { useState } from 'react';
