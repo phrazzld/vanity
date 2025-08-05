@@ -1,1 +1,8 @@
-[]
+[
+  {
+    "id": "GHSA-fjxv-7rqg-78g4",
+    "package": "form-data",
+    "justification": "Dependency of storybook packages, waiting for upstream fix. This vulnerability affects boundary generation in multipart forms which is not used in our application.",
+    "expires": "2025-09-01T00:00:00Z"
+  }
+]
