@@ -22,6 +22,7 @@ import { useState, useEffect } from 'react';
 import type { ReadingListItem } from '@/types';
 import { getSeededPlaceholderStyles } from './placeholderUtils';
 import { useTheme } from '@/app/context/ThemeContext';
+import { getFullImageUrl } from '@/lib/utils/readingUtils';
 
 /**
  * Animation timing constants for consistent, reusable animations across the component
@@ -356,7 +357,7 @@ export default function ReadingCard({
         {coverImageSrc && (
           <Image
             // Use direct URL with the known base for book covers
-            src={`https://book-covers.nyc3.digitaloceanspaces.com${coverImageSrc}`}
+            src={getFullImageUrl(coverImageSrc)}
             alt={`${title} cover`}
             fill={true}
             sizes="(max-width: 480px) 33vw, (max-width: 768px) 25vw, (max-width: 1024px) 20vw, 200px"

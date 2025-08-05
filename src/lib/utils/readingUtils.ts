@@ -104,3 +104,12 @@ export function sortReadingsWithinCategory(readings: Reading[], category: string
     return dateB.getTime() - dateA.getTime();
   });
 }
+
+export function getFullImageUrl(src: string | null): string {
+  if (!src) return '/images/projects/book-02.webp';
+  if (src.startsWith('http://') || src.startsWith('https://')) return src;
+  const baseUrl =
+    // eslint-disable-next-line no-undef
+    typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_SPACES_BASE_URL || '' : '';
+  return `${baseUrl}${src}`;
+}

@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable max-lines */
 
 /**
  * Admin Readings Management Page
@@ -21,6 +22,7 @@ import {
   ReadingsList,
 } from '@/app/components';
 import type { FilterConfig } from '@/app/components/SearchBar';
+import { getFullImageUrl } from '@/lib/utils/readingUtils';
 
 export default function ReadingsManagementPage() {
   // Use the readings list hook for search, filter, and pagination
@@ -142,6 +144,10 @@ export default function ReadingsManagementPage() {
     }
   };
 
+  function isValidImageUrl(url: string): boolean {
+    return url.startsWith('http://') || url.startsWith('https://') || url.startsWith('/');
+  }
+
   const validateForm = (): boolean => {
     if (!formData.slug) {
       setFormError('Slug is required');
@@ -155,6 +161,11 @@ export default function ReadingsManagementPage() {
 
     if (!formData.author) {
       setFormError('Author is required');
+      return false;
+    }
+
+    if (formData.coverImageSrc && !isValidImageUrl(formData.coverImageSrc)) {
+      setFormError('Invalid image URL. Must start with http://, https://, or /');
       return false;
     }
 
@@ -972,10 +983,7 @@ export default function ReadingsManagementPage() {
                             /* eslint-disable-next-line no-undef */
                             process.env.NEXT_PUBLIC_SPACES_BASE_URL ? (
                               <Image
-                                src={
-                                  /* eslint-disable-next-line no-undef */
-                                  `${typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_SPACES_BASE_URL : ''}${readingToDelete.coverImageSrc}`
-                                }
+                                src={getFullImageUrl(readingToDelete.coverImageSrc)}
                                 alt={`Cover for ${readingToDelete.title}`}
                                 width={40}
                                 height={56}
@@ -986,7 +994,7 @@ export default function ReadingsManagementPage() {
                               />
                             ) : (
                               <Image
-                                src="/images/projects/book-02.webp"
+                                src={getFullImageUrl(null)}
                                 alt={`Cover for ${readingToDelete.title}`}
                                 width={40}
                                 height={56}
@@ -1022,6 +1030,20 @@ export default function ReadingsManagementPage() {
                       </div>
                     </div>
                   </div>
+                  {formData.coverImageSrc && (
+                    <div className="mt-2">
+                      <Image
+                        src={getFullImageUrl(formData.coverImageSrc)}
+                        alt="Cover preview"
+                        width={100}
+                        height={150}
+                        className="rounded"
+                        onError={e => {
+                          e.currentTarget.src = '/images/projects/book-02.webp';
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="modal-footer">

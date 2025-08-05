@@ -12,8 +12,8 @@ import {
   expectedCanonicalFormats,
   edgeCases,
 } from '../fixtures/test-data/auditOutputs';
+import { jest } from '@jest/globals';
 import { parseNpmAuditJsonCanonical } from '../core';
-import type { CanonicalNpmAuditReport } from '../types';
 
 // Mock nanoid for consistent correlation IDs
 jest.mock('nanoid', () => ({

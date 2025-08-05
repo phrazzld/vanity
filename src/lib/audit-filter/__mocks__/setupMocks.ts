@@ -5,8 +5,6 @@
  * using the mock implementations of fs and child_process.
  */
 
-/* global jest */
-
 import childProcessMock from './child_process';
 import fsMock from './fs';
 import { createMockAllowlist, resetAllMocks } from './mockHelpers';

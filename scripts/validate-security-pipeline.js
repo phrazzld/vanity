@@ -55,7 +55,7 @@ function backupOriginalAllowlist() {
     const originalContent = fs.readFileSync(ORIGINAL_ALLOWLIST, 'utf8');
     fs.writeFileSync(BACKUP_ALLOWLIST, originalContent);
     console.log('✅ Original allowlist backed up');
-  } catch (_error) {
+  } catch {
     console.log('ℹ️  No existing allowlist found, creating empty backup');
     fs.writeFileSync(BACKUP_ALLOWLIST, '[]');
   }

@@ -38,27 +38,29 @@ export const mockState = {
  * @param options - Options for executing the command
  * @returns The simulated command output
  */
-export const execSync = jest.fn((command: string, _options: any = {}): string => {
-  mockState.lastCommand = command;
+export const execSync = jest.fn(
+  (command: string, _options: Record<string, unknown> = {}): string => {
+    mockState.lastCommand = command;
 
-  // Check if we're configured to throw an error
-  if (mockState.shouldThrow) {
-    throw mockState.defaultError;
+    // Check if we're configured to throw an error
+    if (mockState.shouldThrow) {
+      throw mockState.defaultError;
+    }
+
+    // Look for a predefined output for this exact command
+    if (mockState.commandOutputs.has(command)) {
+      return mockState.commandOutputs.get(command) as string;
+    }
+
+    // Handle specific commands
+    if (command === 'npm audit --json') {
+      return mockState.defaultNpmAuditOutput;
+    }
+
+    // Default: return an empty string for unknown commands
+    return '';
   }
-
-  // Look for a predefined output for this exact command
-  if (mockState.commandOutputs.has(command)) {
-    return mockState.commandOutputs.get(command) as string;
-  }
-
-  // Handle specific commands
-  if (command === 'npm audit --json') {
-    return mockState.defaultNpmAuditOutput;
-  }
-
-  // Default: return an empty string for unknown commands
-  return '';
-});
+);
 
 /**
  * Configure the mock to return a specific npm audit result
