@@ -1,0 +1,77 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "form-data": {
+      "name": "form-data",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1106507,
+          "name": "form-data",
+          "dependency": "form-data",
+          "title": "form-data uses unsafe random function for boundary generation",
+          "url": "https://github.com/advisories/GHSA-fjxv-7rqg-78g4",
+          "severity": "critical",
+          "cwe": ["CWE-330"],
+          "cvss": {
+            "score": 9.1,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N"
+          },
+          "range": ">=4.0.0 <4.0.4"
+        }
+      ],
+      "effects": [],
+      "range": "4.0.0 - 4.0.3",
+      "nodes": ["node_modules/form-data"],
+      "fixAvailable": {
+        "name": "form-data",
+        "version": "4.0.4",
+        "isSemVerMajor": false
+      }
+    },
+    "package-with-indirect": {
+      "name": "package-with-indirect",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "vulnerable-dependency",
+        {
+          "source": 2000001,
+          "name": "secondary-issue",
+          "dependency": "package-with-indirect",
+          "title": "Secondary vulnerability",
+          "url": "https://github.com/advisories/GHSA-yyyy",
+          "severity": "moderate",
+          "cvss": {
+            "score": 5.3,
+            "vectorString": null
+          },
+          "range": "*"
+        }
+      ],
+      "effects": ["parent-package"],
+      "range": "*",
+      "nodes": ["node_modules/package-with-indirect"],
+      "fixAvailable": false
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 1,
+      "high": 0,
+      "critical": 1,
+      "total": 2
+    },
+    "dependencies": {
+      "prod": 250,
+      "dev": 1800,
+      "optional": 50,
+      "peer": 5,
+      "peerOptional": 2,
+      "total": 2107
+    }
+  }
+}

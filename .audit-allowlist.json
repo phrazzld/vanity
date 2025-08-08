@@ -4,5 +4,11 @@
     "package": "form-data",
     "justification": "Dependency of storybook packages, waiting for upstream fix. This vulnerability affects boundary generation in multipart forms which is not used in our application.",
     "expires": "2025-09-01T00:00:00Z"
+  },
+  {
+    "id": "GHSA-xffm-g5w8-qvg7",
+    "package": "@eslint/plugin-kit",
+    "justification": "Low severity RegEx DoS in ESLint plugin. Temporary allowlist to unblock CI while waiting for ESLint update. Not exploitable in our build-time usage.",
+    "expires": "2025-08-21T00:00:00Z"
   }
 ]

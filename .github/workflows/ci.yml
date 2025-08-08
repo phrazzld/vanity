@@ -21,6 +21,12 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Pin npm version
+        run: |
+          echo "📦 Installing npm@10.9.2 to match local development environment..."
+          npm install -g npm@10.9.2
+          echo "✅ npm version: $(npm --version)"
+
       - name: Install dependencies
         run: |
           echo "📦 Installing project dependencies..."
@@ -182,6 +188,12 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Pin npm version
+        run: |
+          echo "📦 Installing npm@10.9.2 to match local development environment..."
+          npm install -g npm@10.9.2
+          echo "✅ npm version: $(npm --version)"
+
       - name: Install dependencies
         run: |
           echo "📦 Installing project dependencies..."
@@ -243,6 +255,12 @@ jobs:
       - name: Run security scan with allowlist filtering
         run: |
           echo "🔒 Checking for non-allowlisted high and critical security vulnerabilities..."
+
+          # Log npm and node versions for debugging
+          echo "📋 Environment information:"
+          echo "→ npm version: $(npm --version)"
+          echo "→ node version: $(node --version)"
+          echo ""
 
           # Verify the compiled script is executable before running
           if [ ! -x "dist/scripts/audit-filter.js" ]; then

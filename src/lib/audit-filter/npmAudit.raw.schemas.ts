@@ -46,6 +46,9 @@ export const RawNpmV6AuditSchema = z.object({
 
 /**
  * Schema for npm v7+ vulnerability "via" item
+ *
+ * These are detailed vulnerability objects that appear in the `via` array.
+ * Some fields may be optional depending on the npm version and vulnerability type.
  */
 const ViaItemSchemaV7Plus = z.object({
   source: z.number(),
@@ -55,6 +58,14 @@ const ViaItemSchemaV7Plus = z.object({
   url: z.string(),
   severity: z.enum(['info', 'low', 'moderate', 'high', 'critical']),
   range: z.string(),
+  // Additional fields that may appear in newer npm versions
+  cwe: z.array(z.string()).optional(),
+  cvss: z
+    .object({
+      score: z.number(),
+      vectorString: z.string().nullable(),
+    })
+    .optional(),
 });
 
 /**
@@ -68,12 +79,19 @@ const FixInfoSchemaV7Plus = z.object({
 
 /**
  * Schema for npm v7+ vulnerability structure
+ *
+ * Note: The `via` field can be either:
+ * - An array of strings (referencing other vulnerable packages)
+ * - An array of objects (detailed vulnerability information)
  */
 const VulnerabilitySchemaV7Plus = z.object({
   name: z.string(),
   severity: z.enum(['info', 'low', 'moderate', 'high', 'critical']),
   isDirect: z.boolean(),
-  via: z.array(ViaItemSchemaV7Plus),
+  via: z.union([
+    z.array(z.string()), // Simple format: references to other packages
+    z.array(ViaItemSchemaV7Plus), // Complex format: detailed vulnerability info
+  ]),
   effects: z.array(z.string()),
   range: z.string(),
   nodes: z.array(z.string()),

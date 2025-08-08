@@ -58,8 +58,17 @@ export function normalizeV7PlusData(rawData: RawNpmV7PlusAudit): CanonicalNpmAud
   // Transform vulnerabilities object to vulnerabilities array
   for (const [packageName, vulnerability] of Object.entries(rawData.vulnerabilities)) {
     // In npm v7+, each package can have multiple vulnerabilities through the "via" array
-    // We need to extract each individual vulnerability source
+    // The via array can contain either:
+    // - Strings: references to other vulnerable packages (indirect vulnerabilities)
+    // - Objects: detailed vulnerability information (direct vulnerability sources)
     for (const viaItem of vulnerability.via) {
+      // Skip string references - these are indirect vulnerabilities
+      // that will be captured when processing the referenced package
+      if (typeof viaItem === 'string') {
+        continue;
+      }
+
+      // Process detailed vulnerability objects
       vulnerabilities.push({
         id: String(viaItem.source), // Use the source advisory ID
         package: packageName,

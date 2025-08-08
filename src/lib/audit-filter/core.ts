@@ -37,6 +37,88 @@ function isObject(value: unknown): value is Record<string, unknown> {
 }
 
 /**
+ * Detect the npm audit format version based on the structure
+ *
+ * @param data The parsed JSON object from npm audit
+ * @returns The detected format version or 'unknown'
+ */
+function detectNpmAuditFormat(data: Record<string, unknown>): 'npm-v6' | 'npm-v7+' | 'unknown' {
+  // npm v6 format has "advisories" as a top-level key
+  if ('advisories' in data && typeof data.advisories === 'object') {
+    return 'npm-v6';
+  }
+
+  // npm v7+ format has "vulnerabilities" as a top-level key and usually "auditReportVersion"
+  if ('vulnerabilities' in data && typeof data.vulnerabilities === 'object') {
+    return 'npm-v7+';
+  }
+
+  // Unknown format
+  return 'unknown';
+}
+
+/**
+ * Fallback parser that attempts to extract basic vulnerability information
+ * from unrecognized npm audit formats
+ *
+ * @param data The parsed JSON object from npm audit
+ * @returns Canonical npm audit report with extracted vulnerabilities
+ */
+function fallbackParser(data: Record<string, unknown>): CanonicalNpmAuditReport {
+  logger.warn('Using fallback parser for unrecognized npm audit format', {
+    function_name: 'fallbackParser',
+    module_name: 'audit-filter/core',
+    top_level_keys: Object.keys(data),
+  });
+
+  const vulnerabilities: CanonicalVulnerability[] = [];
+  const metadata = {
+    vulnerabilities: {
+      info: 0,
+      low: 0,
+      moderate: 0,
+      high: 0,
+      critical: 0,
+      total: 0,
+    },
+  };
+
+  // Try to extract metadata if it exists
+  if ('metadata' in data && typeof data.metadata === 'object' && data.metadata !== null) {
+    const meta = data.metadata as Record<string, unknown>;
+    if (
+      'vulnerabilities' in meta &&
+      typeof meta.vulnerabilities === 'object' &&
+      meta.vulnerabilities !== null
+    ) {
+      const vulnCounts = meta.vulnerabilities as Record<string, unknown>;
+      metadata.vulnerabilities = {
+        info: Number(vulnCounts.info) || 0,
+        low: Number(vulnCounts.low) || 0,
+        moderate: Number(vulnCounts.moderate) || 0,
+        high: Number(vulnCounts.high) || 0,
+        critical: Number(vulnCounts.critical) || 0,
+        total: Number(vulnCounts.total) || 0,
+      };
+    }
+  }
+
+  // If no vulnerabilities were found but metadata shows counts, return with metadata only
+  if (vulnerabilities.length === 0 && metadata.vulnerabilities.total > 0) {
+    logger.warn('Fallback parser found vulnerability counts but could not extract details', {
+      function_name: 'fallbackParser',
+      module_name: 'audit-filter/core',
+      vulnerability_counts: metadata.vulnerabilities,
+    });
+  }
+
+  return {
+    vulnerabilities,
+    metadata,
+  };
+}
+
+/**
  * Parse npm audit --json output into a canonical structured object
  *
  * This function uses schema-driven validation to support multiple npm audit
@@ -52,6 +134,11 @@ export function parseNpmAuditJsonCanonical(jsonString: string): CanonicalNpmAudi
     module_name: 'audit-filter/core',
     input_length: jsonString.length,
   });
+
+  // Add console.log to help debug CI failures
+  console.log('=== RAW NPM AUDIT JSON OUTPUT ===');
+  console.log(jsonString);
+  console.log('=== END RAW NPM AUDIT JSON OUTPUT ===');
 
   let parsedJson: unknown;
   try {
@@ -91,46 +178,199 @@ export function parseNpmAuditJsonCanonical(jsonString: string): CanonicalNpmAudi
     throw new Error('Invalid npm audit output: not a valid object');
   }
 
-  // Try npm v7+ format first (most common/current)
-  const modernResult = RawNpmV7PlusAuditSchema.safeParse(parsedJson);
-  if (modernResult.success) {
-    return normalizeV7PlusData(modernResult.data);
+  // Detect the format before attempting to parse
+  let detectedFormat: 'npm-v6' | 'npm-v7+' | 'unknown';
+  try {
+    detectedFormat = detectNpmAuditFormat(parsedJson);
+  } catch (detectionError) {
+    console.log('=== FORMAT DETECTION ERROR ===');
+    console.log('Error during format detection:', (detectionError as Error).message);
+    console.log('Top-level keys:', Object.keys(parsedJson));
+    console.log('=== END FORMAT DETECTION ERROR ===');
+
+    logger.error(
+      'Error during npm audit format detection',
+      {
+        function_name: 'parseNpmAuditJsonCanonical',
+        module_name: 'audit-filter/core',
+        error_type: 'FORMAT_DETECTION_ERROR',
+        top_level_keys: Object.keys(parsedJson),
+        error_message: (detectionError as Error).message,
+      },
+      detectionError as Error
+    );
+
+    // Default to unknown format if detection fails
+    detectedFormat = 'unknown';
   }
 
-  // Fall back to npm v6 format
-  const legacyResult = RawNpmV6AuditSchema.safeParse(parsedJson);
-  if (legacyResult.success) {
-    return normalizeV6Data(legacyResult.data);
+  logger.debug('Detected npm audit format', {
+    function_name: 'parseNpmAuditJsonCanonical',
+    module_name: 'audit-filter/core',
+    detected_format: detectedFormat,
+  });
+
+  // Parse based on detected format
+  switch (detectedFormat) {
+    case 'npm-v7+': {
+      const result = RawNpmV7PlusAuditSchema.safeParse(parsedJson);
+      if (result.success) {
+        try {
+          return normalizeV7PlusData(result.data);
+        } catch (normalizationError) {
+          // Log detailed error context for debugging
+          console.log('=== NORMALIZATION ERROR (npm v7+) ===');
+          console.log('Error:', (normalizationError as Error).message);
+          console.log('Stack:', (normalizationError as Error).stack);
+          console.log('Data keys:', Object.keys(result.data));
+          console.log('=== END NORMALIZATION ERROR ===');
+
+          logger.error(
+            'Failed to normalize npm v7+ data after successful validation',
+            {
+              function_name: 'parseNpmAuditJsonCanonical',
+              module_name: 'audit-filter/core',
+              error_type: 'NORMALIZATION_ERROR',
+              format: 'npm-v7+',
+              error_message: (normalizationError as Error).message,
+              data_keys: Object.keys(result.data),
+            },
+            normalizationError as Error
+          );
+
+          throw new Error(
+            `Failed to normalize npm v7+ data: ${(normalizationError as Error).message}\n\n` +
+              `This might indicate a bug in the normalization logic. Please report this issue.`
+          );
+        }
+      }
+
+      // Log validation errors for debugging
+      console.log('=== NPM V7+ VALIDATION ERRORS ===');
+      console.log(JSON.stringify(result.error.issues, null, 2));
+      console.log('=== END VALIDATION ERRORS ===');
+
+      logger.error(
+        'Failed to validate npm v7+ format',
+        {
+          function_name: 'parseNpmAuditJsonCanonical',
+          module_name: 'audit-filter/core',
+          error_type: 'VALIDATION_ERROR',
+          format: 'npm-v7+',
+          validation_errors: result.error.issues,
+        },
+        new Error('npm v7+ format validation failed')
+      );
+
+      throw new Error(
+        `Detected npm v7+ format but validation failed.\n\n` +
+          `Validation errors:\n${JSON.stringify(result.error.issues, null, 2)}`
+      );
+    }
+
+    case 'npm-v6': {
+      const result = RawNpmV6AuditSchema.safeParse(parsedJson);
+      if (result.success) {
+        try {
+          return normalizeV6Data(result.data);
+        } catch (normalizationError) {
+          // Log detailed error context for debugging
+          console.log('=== NORMALIZATION ERROR (npm v6) ===');
+          console.log('Error:', (normalizationError as Error).message);
+          console.log('Stack:', (normalizationError as Error).stack);
+          console.log('Data keys:', Object.keys(result.data));
+          console.log('=== END NORMALIZATION ERROR ===');
+
+          logger.error(
+            'Failed to normalize npm v6 data after successful validation',
+            {
+              function_name: 'parseNpmAuditJsonCanonical',
+              module_name: 'audit-filter/core',
+              error_type: 'NORMALIZATION_ERROR',
+              format: 'npm-v6',
+              error_message: (normalizationError as Error).message,
+              data_keys: Object.keys(result.data),
+            },
+            normalizationError as Error
+          );
+
+          throw new Error(
+            `Failed to normalize npm v6 data: ${(normalizationError as Error).message}\n\n` +
+              `This might indicate a bug in the normalization logic. Please report this issue.`
+          );
+        }
+      }
+
+      // Log validation errors for debugging
+      console.log('=== NPM V6 VALIDATION ERRORS ===');
+      console.log(JSON.stringify(result.error.issues, null, 2));
+      console.log('=== END VALIDATION ERRORS ===');
+
+      logger.error(
+        'Failed to validate npm v6 format',
+        {
+          function_name: 'parseNpmAuditJsonCanonical',
+          module_name: 'audit-filter/core',
+          error_type: 'VALIDATION_ERROR',
+          format: 'npm-v6',
+          validation_errors: result.error.issues,
+        },
+        new Error('npm v6 format validation failed')
+      );
+
+      throw new Error(
+        `Detected npm v6 format but validation failed.\n\n` +
+          `Validation errors:\n${JSON.stringify(result.error.issues, null, 2)}`
+      );
+    }
+
+    case 'unknown':
+    default: {
+      // Add detailed logging of the parsed structure for debugging
+      console.log('=== UNKNOWN FORMAT - USING FALLBACK PARSER ===');
+      console.log('Top-level keys:', Object.keys(parsedJson).join(', '));
+      console.log('=== PARSED JSON STRUCTURE (first 1000 chars) ===');
+      console.log(JSON.stringify(parsedJson, null, 2).substring(0, 1000));
+      console.log('=== END PARSED JSON STRUCTURE ===');
+
+      logger.warn('Unknown npm audit format detected, attempting fallback parser', {
+        function_name: 'parseNpmAuditJsonCanonical',
+        module_name: 'audit-filter/core',
+        error_type: 'UNKNOWN_FORMAT',
+        input_length: jsonString.length,
+        top_level_keys: Object.keys(parsedJson),
+      });
+
+      try {
+        // Attempt to use fallback parser
+        const result = fallbackParser(parsedJson);
+
+        console.log('=== FALLBACK PARSER SUCCESS ===');
+        console.log(`Extracted ${result.vulnerabilities.length} vulnerabilities`);
+        console.log(`Metadata counts: ${JSON.stringify(result.metadata.vulnerabilities)}`);
+
+        return result;
+      } catch (fallbackError) {
+        logger.error(
+          'Fallback parser also failed',
+          {
+            function_name: 'parseNpmAuditJsonCanonical',
+            module_name: 'audit-filter/core',
+            error_type: 'FALLBACK_PARSER_ERROR',
+          },
+          fallbackError as Error
+        );
+
+        throw new Error(
+          `Unable to parse npm audit format. The JSON structure doesn't match any known format ` +
+            `and the fallback parser also failed.\n\n` +
+            `Top-level keys found: ${Object.keys(parsedJson).join(', ')}\n` +
+            `Expected either 'advisories' (npm v6) or 'vulnerabilities' (npm v7+).\n\n` +
+            `Fallback error: ${(fallbackError as Error).message}`
+        );
+      }
+    }
   }
-
-  // If all schemas fail, provide detailed error information
-  const errorDetails = [
-    `npm v7+ format validation errors: ${modernResult.error.message}`,
-    `npm v6 format validation errors: ${legacyResult.error.message}`,
-  ].join('\n');
-
-  const hasAdvisories = parsedJson && typeof parsedJson === 'object' && 'advisories' in parsedJson;
-  const hasVulnerabilities =
-    parsedJson && typeof parsedJson === 'object' && 'vulnerabilities' in parsedJson;
-
-  logger.error(
-    'Unsupported npm audit format detected',
-    {
-      function_name: 'parseNpmAuditJsonCanonical',
-      module_name: 'audit-filter/core',
-      error_type: 'UNSUPPORTED_FORMAT',
-      input_length: jsonString.length,
-      has_advisories: hasAdvisories,
-      has_vulnerabilities: hasVulnerabilities,
-    },
-    new Error('Unsupported npm audit format')
-  );
-
-  throw new Error(
-    `The provided npm audit JSON does not match any supported format. ` +
-      `Please ensure you are using a compatible npm version.\n\n` +
-      `Validation details:\n${errorDetails}`
-  );
 }
 
 /**
