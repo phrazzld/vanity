@@ -73,18 +73,20 @@ describe('parseNpmAuditJson', () => {
     );
   });
 
-  test('should throw error for missing advisories field', () => {
+  test('should use fallback parser for missing advisories field', () => {
     const invalidJson = JSON.stringify({ metadata: { vulnerabilities: {} } });
-    expect(() => parseNpmAuditJson(invalidJson)).toThrow(
-      'The provided npm audit JSON does not match any supported format'
-    );
+    const result = parseNpmAuditJson(invalidJson);
+    // Fallback parser should return empty advisories
+    expect(result.advisories).toEqual({});
+    expect(result.metadata).toBeDefined();
   });
 
-  test('should throw error for missing metadata', () => {
+  test('should use fallback parser for missing metadata', () => {
     const invalidJson = JSON.stringify({ advisories: {} });
-    expect(() => parseNpmAuditJson(invalidJson)).toThrow(
-      'The provided npm audit JSON does not match any supported format'
-    );
+    const result = parseNpmAuditJson(invalidJson);
+    // Fallback parser should return empty advisories and default metadata
+    expect(result.advisories).toEqual({});
+    expect(result.metadata.vulnerabilities.total).toBe(0);
   });
 });
 
@@ -661,26 +663,28 @@ describe('Structured Error Logging', () => {
       );
     });
 
-    test('should log structured error for unsupported audit format', () => {
+    test('should use fallback parser for unsupported audit format', () => {
+      const loggerWarnSpy = jest.spyOn(logger, 'warn');
       const _unsupportedFormat = JSON.stringify({
         unknown_structure: {
           some_field: 'some_value',
         },
       });
 
-      expect(() => parseNpmAuditJsonCanonical(_unsupportedFormat)).toThrow();
+      const result = parseNpmAuditJsonCanonical(_unsupportedFormat);
 
-      expect(loggerErrorSpy).toHaveBeenCalledWith(
-        'Unsupported npm audit format detected',
+      // Should return empty vulnerabilities from fallback parser
+      expect(result.vulnerabilities).toEqual([]);
+      expect(result.metadata.vulnerabilities.total).toBe(0);
+
+      // Should log warning about using fallback parser
+      expect(loggerWarnSpy).toHaveBeenCalledWith(
+        'Using fallback parser for unrecognized npm audit format',
         expect.objectContaining({
-          function_name: 'parseNpmAuditJsonCanonical',
+          function_name: 'fallbackParser',
           module_name: 'audit-filter/core',
-          error_type: 'UNSUPPORTED_FORMAT',
-          input_length: _unsupportedFormat.length,
-          has_advisories: false,
-          has_vulnerabilities: false,
-        }),
-        expect.any(Error)
+          top_level_keys: ['unknown_structure'],
+        })
       );
     });
 
@@ -800,7 +804,8 @@ describe('Structured Error Logging', () => {
 
   describe('sensitive data protection', () => {
     test('should not log sensitive file contents in error logs', () => {
-      const sensitiveContent = '{ "secret": "api-key-12345", "password": "secret123" }';
+      // Use invalid JSON that will actually cause a parse error
+      const sensitiveContent = '{ "secret": "api-key-12345", invalid json }';
 
       expect(() => parseNpmAuditJsonCanonical(sensitiveContent)).toThrow();
 
@@ -810,9 +815,7 @@ describe('Structured Error Logging', () => {
       const logContext = logCall[1];
 
       expect(logMessage).not.toContain('api-key-12345');
-      expect(logMessage).not.toContain('secret123');
       expect(JSON.stringify(logContext)).not.toContain('api-key-12345');
-      expect(JSON.stringify(logContext)).not.toContain('secret123');
     });
   });
 

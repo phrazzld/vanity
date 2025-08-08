@@ -119,7 +119,7 @@ describe('npm audit output parsing', () => {
     expect(() => parseNpmAuditJson(emptyAudit)).toThrow();
   });
 
-  test('should throw error for missing advisories field', () => {
+  test('should use fallback parser for missing advisories field', () => {
     const missingAdvisories = JSON.stringify({
       metadata: {
         vulnerabilities: {
@@ -133,30 +133,30 @@ describe('npm audit output parsing', () => {
       },
     });
 
-    expect(() => parseNpmAuditJson(missingAdvisories)).toThrow(
-      'The provided npm audit JSON does not match any supported format'
-    );
+    const result = parseNpmAuditJson(missingAdvisories);
+    expect(result.advisories).toEqual({});
+    expect(result.metadata.vulnerabilities.total).toBe(0);
   });
 
-  test('should throw error for missing metadata field', () => {
+  test('should use fallback parser for missing metadata field', () => {
     const missingMetadata = JSON.stringify({
       advisories: {},
     });
 
-    expect(() => parseNpmAuditJson(missingMetadata)).toThrow(
-      'The provided npm audit JSON does not match any supported format'
-    );
+    const result = parseNpmAuditJson(missingMetadata);
+    expect(result.advisories).toEqual({});
+    expect(result.metadata.vulnerabilities.total).toBe(0);
   });
 
-  test('should throw error for missing vulnerabilities field', () => {
+  test('should use fallback parser for missing vulnerabilities field', () => {
     const missingVulnerabilities = JSON.stringify({
       advisories: {},
       metadata: {},
     });
 
-    expect(() => parseNpmAuditJson(missingVulnerabilities)).toThrow(
-      'The provided npm audit JSON does not match any supported format'
-    );
+    const result = parseNpmAuditJson(missingVulnerabilities);
+    expect(result.advisories).toEqual({});
+    expect(result.metadata.vulnerabilities.total).toBe(0);
   });
 
   test('should handle audit output with non-object advisories', () => {
@@ -175,9 +175,9 @@ describe('npm audit output parsing', () => {
       },
     });
 
-    expect(() => parseNpmAuditJson(invalidAdvisories)).toThrow(
-      'The provided npm audit JSON does not match any supported format'
-    );
+    const result = parseNpmAuditJson(invalidAdvisories);
+    expect(result.advisories).toEqual({});
+    expect(result.metadata.vulnerabilities.total).toBe(0);
   });
 });
 

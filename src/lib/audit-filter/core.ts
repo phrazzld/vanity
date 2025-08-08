@@ -43,17 +43,29 @@ function isObject(value: unknown): value is Record<string, unknown> {
  * @returns The detected format version or 'unknown'
  */
 function detectNpmAuditFormat(data: Record<string, unknown>): 'npm-v6' | 'npm-v7+' | 'unknown' {
-  // npm v6 format has "advisories" as a top-level key
-  if ('advisories' in data && typeof data.advisories === 'object') {
-    return 'npm-v6';
-  }
-
   // npm v7+ format has "vulnerabilities" as a top-level key and usually "auditReportVersion"
+  // Check this first to prioritize v7+ format when both structures exist
   if ('vulnerabilities' in data && typeof data.vulnerabilities === 'object') {
     return 'npm-v7+';
   }
 
-  // Unknown format
+  // npm v6 format has both "advisories" and "metadata" with "vulnerabilities" as required fields
+  if (
+    'advisories' in data &&
+    typeof data.advisories === 'object' &&
+    data.advisories !== null &&
+    !Array.isArray(data.advisories) && // Ensure advisories is an object, not an array
+    'metadata' in data &&
+    typeof data.metadata === 'object' &&
+    data.metadata !== null
+  ) {
+    const meta = data.metadata as Record<string, unknown>;
+    if ('vulnerabilities' in meta && typeof meta.vulnerabilities === 'object') {
+      return 'npm-v6';
+    }
+  }
+
+  // Unknown format (including incomplete v6 format)
   return 'unknown';
 }
 
