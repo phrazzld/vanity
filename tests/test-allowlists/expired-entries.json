@@ -1,8 +1,0 @@
-[
-  {
-    "id": "TEST-005",
-    "package": "test-package-expired",
-    "reason": "Test case for expired allowlist entry",
-    "expires": "2022-01-01T00:00:00Z"
-  }
-]
