@@ -14,10 +14,10 @@ export function debounce<Args extends unknown[], Return>(
 ): (..._args: Args) => void {
   let timeout: ReturnType<typeof setTimeout> | null = null;
 
-  return function (...args: Args): void {
+  return function (..._args: Args): void {
     const later = () => {
       timeout = null;
-      func(...args);
+      func(..._args);
     };
 
     if (timeout !== null) {
