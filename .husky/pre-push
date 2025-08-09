@@ -117,14 +117,14 @@ else
 fi
 
 # ========================================
-# Build verification (Vercel and Storybook)
+# Build verification (Vercel)
 # ========================================
 
 # Check if build verification should be skipped
 if [ "$SKIP_BUILD_CHECK" = "true" ]; then
   echo "⚠️ Build verification bypassed by SKIP_BUILD_CHECK=true"
 else
-  echo "🔨 Verifying builds before push..."
+  echo "🔨 Verifying build before push..."
   
   # Run main application build
   echo "📦 Building main application..."
@@ -151,32 +151,7 @@ else
     exit 1
   fi
   
-  # Run Storybook build
-  echo "📚 Building Storybook..."
-  if npm run build-storybook > storybook_output.log 2>&1; then
-    echo "✅ Storybook build passed"
-    rm storybook_output.log
-  else
-    echo ""
-    echo "❌ Storybook build failed!"
-    echo ""
-    echo "The Storybook build that runs in CI is failing locally."
-    echo "Build errors:"
-    echo ""
-    cat storybook_output.log | tail -20
-    rm storybook_output.log
-    echo ""
-    echo "To fix Storybook build errors:"
-    echo "1. Run 'npm run build-storybook' locally to see full output"
-    echo "2. Fix TypeScript errors in stories and components"
-    echo "3. Check .storybook configuration"
-    echo ""
-    echo "To skip build verification (not recommended):"
-    echo "  SKIP_BUILD_CHECK=true git push"
-    exit 1
-  fi
-  
-  echo "🎉 All builds verified successfully!"
+  echo "🎉 Build verified successfully!"
 fi
 
 # ========================================

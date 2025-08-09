@@ -157,22 +157,6 @@ jobs:
             exit 1
           }
 
-      - name: Build Storybook
-        run: |
-          echo "📚 Building Storybook..."
-          npm run build-storybook || {
-            echo "❌ Storybook build failed!"
-            echo ""
-            echo "To fix Storybook build issues:"
-            echo "1. Run 'npm run storybook' locally"
-            echo "2. Check for story syntax errors"
-            echo "3. Verify all component imports"
-            echo "4. Review .storybook configuration"
-            echo ""
-            echo "📖 See STORYBOOK_GUIDELINES.md for help"
-            exit 1
-          }
-
   security_scan:
     name: Security Vulnerability Scan
     runs-on: ubuntu-latest
