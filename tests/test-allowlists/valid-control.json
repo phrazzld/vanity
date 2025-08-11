@@ -1,9 +1,0 @@
-[
-  {
-    "id": "TEST-006",
-    "package": "test-package-valid",
-    "reason": "Test case for valid allowlist entry with future expiration",
-    "expires": "2026-12-31T00:00:00Z",
-    "reviewedOn": "2025-01-01T00:00:00Z"
-  }
-]

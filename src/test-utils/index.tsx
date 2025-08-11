@@ -309,7 +309,7 @@ export * from './a11y-helpers';
 declare global {
   namespace jest {
     interface Matchers<R> {
-      toMatchThemeSnapshots: (darkRender: unknown) => R;
+      toMatchThemeSnapshots: (_comparison: unknown) => R;
     }
   }
 }

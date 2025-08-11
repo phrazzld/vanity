@@ -104,3 +104,44 @@ export function sortReadingsWithinCategory(readings: Reading[], category: string
     return dateB.getTime() - dateA.getTime();
   });
 }
+
+export function getFullImageUrl(src: string | null): string {
+  if (!src) return '/images/projects/book-02.webp';
+  if (src.startsWith('http://') || src.startsWith('https://')) return src;
+  const baseUrl =
+    // eslint-disable-next-line no-undef
+    typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_SPACES_BASE_URL || '' : '';
+  return `${baseUrl}${src}`;
+}
+
+/**
+ * Validates an image URL for basic format correctness
+ *
+ * @param url URL string to validate
+ * @returns Object with validation result and error message if invalid
+ */
+export function validateImageUrl(url: string): { isValid: boolean; error?: string } {
+  if (!url) {
+    return { isValid: false, error: 'URL is required' };
+  }
+
+  // Allow internal paths
+  if (url.startsWith('/')) {
+    return { isValid: true };
+  }
+
+  // Validate external URLs
+  try {
+    const parsed = new URL(url);
+
+    // Only allow http and https protocols
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      return { isValid: false, error: 'Only HTTP and HTTPS URLs are allowed' };
+    }
+
+    // Valid URL - no domain restrictions
+    return { isValid: true };
+  } catch {
+    return { isValid: false, error: 'Invalid URL format' };
+  }
+}

@@ -68,7 +68,7 @@ A personal website built with Next.js, featuring a collection of readings, trave
 
 ### Prerequisites
 
-- Node.js 20+ and npm
+- Node.js 20+ and npm 10.9.2+
 - PostgreSQL database (Neon recommended)
 - Git
 

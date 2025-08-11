@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable max-lines */
 
 /**
  * Admin Readings Management Page
@@ -21,6 +22,7 @@ import {
   ReadingsList,
 } from '@/app/components';
 import type { FilterConfig } from '@/app/components/SearchBar';
+import { getFullImageUrl, validateImageUrl } from '@/lib/utils/readingUtils';
 
 export default function ReadingsManagementPage() {
   // Use the readings list hook for search, filter, and pagination
@@ -156,6 +158,14 @@ export default function ReadingsManagementPage() {
     if (!formData.author) {
       setFormError('Author is required');
       return false;
+    }
+
+    if (formData.coverImageSrc) {
+      const validation = validateImageUrl(formData.coverImageSrc);
+      if (!validation.isValid) {
+        setFormError(`Invalid image URL: ${validation.error}`);
+        return false;
+      }
     }
 
     return true;
@@ -737,10 +747,53 @@ export default function ReadingsManagementPage() {
                             name="coverImageSrc"
                             value={formData.coverImageSrc || ''}
                             onChange={handleInputChange}
-                            placeholder="https://example.com/cover.jpg"
+                            placeholder="https://example.com/cover.jpg or /local/path.jpg"
                             className="form-input pl-10"
                           />
                         </div>
+                        {formData.coverImageSrc && (
+                          <div className="mt-2">
+                            <span
+                              className={`text-sm ${
+                                formData.coverImageSrc.startsWith('/')
+                                  ? 'text-blue-600'
+                                  : formData.coverImageSrc.startsWith('http')
+                                    ? 'text-green-600'
+                                    : 'text-gray-600'
+                              }`}
+                            >
+                              {formData.coverImageSrc.startsWith('/')
+                                ? '📁 Internal image'
+                                : formData.coverImageSrc.startsWith('http')
+                                  ? '🌐 External URL'
+                                  : 'Enter a valid URL or path'}
+                            </span>
+                            {formData.coverImageSrc &&
+                              validateImageUrl(formData.coverImageSrc).isValid && (
+                                <div className="mt-2">
+                                  <p className="text-xs text-gray-500 mb-1">Preview:</p>
+                                  <div className="relative w-20 h-28 border border-gray-200 rounded overflow-hidden">
+                                    <Image
+                                      src={getFullImageUrl(formData.coverImageSrc)}
+                                      alt="Cover preview"
+                                      fill={true}
+                                      sizes="80px"
+                                      style={{ objectFit: 'cover' }}
+                                      onError={e => {
+                                        const target = e.target as HTMLImageElement;
+                                        target.style.display = 'none';
+                                        const parent = target.parentElement;
+                                        if (parent) {
+                                          parent.innerHTML =
+                                            '<div class="flex items-center justify-center h-full text-xs text-gray-400">Failed to load</div>';
+                                        }
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                              )}
+                          </div>
+                        )}
                       </div>
 
                       <div className="sm:col-span-3 flex items-start pl-5 pt-6">
@@ -972,10 +1025,7 @@ export default function ReadingsManagementPage() {
                             /* eslint-disable-next-line no-undef */
                             process.env.NEXT_PUBLIC_SPACES_BASE_URL ? (
                               <Image
-                                src={
-                                  /* eslint-disable-next-line no-undef */
-                                  `${typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_SPACES_BASE_URL : ''}${readingToDelete.coverImageSrc}`
-                                }
+                                src={getFullImageUrl(readingToDelete.coverImageSrc)}
                                 alt={`Cover for ${readingToDelete.title}`}
                                 width={40}
                                 height={56}
@@ -986,7 +1036,7 @@ export default function ReadingsManagementPage() {
                               />
                             ) : (
                               <Image
-                                src="/images/projects/book-02.webp"
+                                src={getFullImageUrl(null)}
                                 alt={`Cover for ${readingToDelete.title}`}
                                 width={40}
                                 height={56}
@@ -1022,6 +1072,20 @@ export default function ReadingsManagementPage() {
                       </div>
                     </div>
                   </div>
+                  {formData.coverImageSrc && (
+                    <div className="mt-2">
+                      <Image
+                        src={getFullImageUrl(formData.coverImageSrc)}
+                        alt="Cover preview"
+                        width={100}
+                        height={150}
+                        className="rounded"
+                        onError={e => {
+                          e.currentTarget.src = '/images/projects/book-02.webp';
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="modal-footer">

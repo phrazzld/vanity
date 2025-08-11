@@ -3,7 +3,6 @@ const js = require('@eslint/js');
 const prettier = require('eslint-config-prettier');
 const nextPlugin = require('@next/eslint-plugin-next');
 const tseslint = require('typescript-eslint');
-const storybook = require('eslint-plugin-storybook');
 const jsxA11y = require('eslint-plugin-jsx-a11y');
 
 // Create a TypeScript parser configuration
@@ -105,22 +104,13 @@ const testGlobals = {
 module.exports = [
   // Ignore built and generated files
   {
-    ignores: [
-      '.next/**',
-      'node_modules/**',
-      'build/**',
-      'dist/**',
-      'storybook-static/**',
-      'coverage/**',
-      '*.log',
-    ],
+    ignores: ['.next/**', 'node_modules/**', 'build/**', 'dist/**', 'coverage/**', '*.log'],
   },
 
   // Base JavaScript rules
   js.configs.recommended,
 
   // Storybook config (must come early to set up Storybook files properly)
-  ...storybook.configs['flat/recommended'],
 
   // Test files configuration (place before the general TypeScript configuration)
   {
@@ -319,17 +309,6 @@ module.exports = [
       globals: {
         ...nodeGlobals,
       },
-    },
-  },
-
-  // Storybook files
-  {
-    files: ['**/*.stories.{js,jsx,ts,tsx}', '**/.storybook/**/*.{js,jsx,ts,tsx}'],
-    rules: {
-      // Add any additional rules for Storybook files
-      'storybook/hierarchy-separator': 'error',
-      'storybook/default-exports': 'error',
-      'storybook/no-uninstalled-addons': 'error',
     },
   },
 

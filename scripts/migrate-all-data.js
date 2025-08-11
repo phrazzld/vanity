@@ -79,7 +79,7 @@ function parseReading(objectStr) {
   if (finishedDateMatch) {
     try {
       reading.finishedDate = new Date(finishedDateMatch[1]);
-    } catch (_e) {
+    } catch {
       reading.finishedDate = null;
     }
   }

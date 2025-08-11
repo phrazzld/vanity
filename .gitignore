@@ -63,3 +63,6 @@ storybook-static/
 /docs/leyline
 
 *.log
+
+# Test coverage
+coverage/
