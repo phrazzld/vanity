@@ -198,8 +198,11 @@ export default function ReadingCard({
   dropped,
   finishedDate,
 }: ReadingCardProps) {
-  // Generate a consistent placeholder background if no cover image is available
-  const placeholderStyles = !coverImageSrc ? getSeededPlaceholderStyles(slug) : {};
+  // State for image loading errors
+  const [imageError, setImageError] = useState(false);
+
+  // Generate a consistent placeholder background if no cover image is available or if image fails to load
+  const placeholderStyles = !coverImageSrc || imageError ? getSeededPlaceholderStyles(slug) : {};
 
   // State for hover effects
   const [isHovered, setIsHovered] = useState(false);
@@ -354,7 +357,7 @@ export default function ReadingCard({
           ...placeholderStyles,
         }}
       >
-        {coverImageSrc && (
+        {coverImageSrc && !imageError && (
           <Image
             // Use direct URL with the known base for book covers
             src={getFullImageUrl(coverImageSrc)}
@@ -362,6 +365,10 @@ export default function ReadingCard({
             fill={true}
             sizes="(max-width: 480px) 33vw, (max-width: 768px) 25vw, (max-width: 1024px) 20vw, 200px"
             loading="lazy" // BUG FIX: Removed conflicting priority="false" prop. Next.js Image component cannot use both priority and loading props.
+            onError={() => {
+              console.warn(`Failed to load image for "${title}": ${coverImageSrc}`);
+              setImageError(true);
+            }}
             style={{
               objectFit: 'cover',
               // Enhanced status-specific image treatments

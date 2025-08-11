@@ -2,20 +2,20 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   images: {
-    // Remote patterns for external images
+    // Allow images from any external domain (personal project)
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'book-covers.nyc3.digitaloceanspaces.com',
+        hostname: '**',
         port: '',
         pathname: '**',
         search: '',
       },
       {
-        protocol: 'https',
-        hostname: 'unpkg.com',
+        protocol: 'http',
+        hostname: '**',
         port: '',
-        pathname: '/leaflet@1.9.4/dist/images/**',
+        pathname: '**',
         search: '',
       },
     ],
