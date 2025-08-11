@@ -1,2 +1,0 @@
-- needs to be easier to manage images, for readings and projects etc
-  - could support image urls instead of having to point to self-hosted images

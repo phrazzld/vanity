@@ -125,7 +125,7 @@
   }
 
   .nav-list a {
-    @apply relative no-underline text-foreground font-semibold transition-colors duration-200 hover:text-primary-600 dark:hover:text-primary-400 focus-visible:outline-offset-4;
+    @apply relative no-underline text-foreground font-semibold transition-colors duration-200 hover:text-foreground focus-visible:outline-offset-4;
   }
 
   .nav-list a::after {
@@ -168,7 +168,7 @@
   }
 
   .secondary-link:hover {
-    @apply border-foreground;
+    @apply border-solid border-foreground;
   }
 
   /* Button styles */
