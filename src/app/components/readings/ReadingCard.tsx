@@ -14,6 +14,7 @@ import type { ReadingListItem } from '@/types';
 import { getSeededPlaceholderStyles } from './placeholderUtils';
 import { useTheme } from '@/app/context/ThemeContext';
 import { getFullImageUrl } from '@/lib/utils/readingUtils';
+import { logger, createLogContext } from '@/lib/logger';
 
 /**
  * Status color constants for reading states
@@ -122,7 +123,13 @@ export default function ReadingCard({
             sizes="(max-width: 480px) 33vw, (max-width: 768px) 25vw, (max-width: 1024px) 20vw, 200px"
             loading="lazy"
             onError={() => {
-              console.warn(`Failed to load image for "${title}"`);
+              logger.warn(
+                `Failed to load image for "${title}"`,
+                createLogContext('components/readings/ReadingCard', 'onImageError', {
+                  book_title: title,
+                  image_src: coverImageSrc,
+                })
+              );
               setImageError(true);
             }}
             style={{
