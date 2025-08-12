@@ -16,6 +16,15 @@ import { useTheme } from '@/app/context/ThemeContext';
 import { getFullImageUrl } from '@/lib/utils/readingUtils';
 
 /**
+ * Status color constants for reading states
+ */
+const STATUS_COLORS = {
+  READING: '#3b82f6', // blue
+  FINISHED: '#10b981', // green
+  PAUSED: '#6b7280', // gray
+} as const;
+
+/**
  * Props for the ReadingCard component
  */
 type ReadingCardProps = ReadingListItem;
@@ -63,10 +72,10 @@ export default function ReadingCard({
 
   // Simple status colors
   const statusColor = isCurrentlyReading
-    ? '#3b82f6' // blue
+    ? STATUS_COLORS.READING
     : isFinished
-      ? '#10b981' // green
-      : '#6b7280'; // gray
+      ? STATUS_COLORS.FINISHED
+      : STATUS_COLORS.PAUSED;
 
   // Status text
   const statusText = isCurrentlyReading

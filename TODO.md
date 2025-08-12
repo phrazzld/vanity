@@ -23,9 +23,10 @@ _None identified. All tests pass, functionality preserved, code simplified._
 
 ### Code Quality Improvements
 
-- [ ] Extract status colors to constants
+- [x] Extract status colors to constants ✅
   - Create `STATUS_COLORS` constant object with `READING`, `FINISHED`, `PAUSED` values
   - Replace inline color strings with constant references
+  - **Completed**: 2025-08-11 - All tests passing
 - [ ] Replace `console.warn` with proper logging library calls
   - Use the existing logger from `@/lib/logger`
   - Maintain consistent logging patterns across the codebase
