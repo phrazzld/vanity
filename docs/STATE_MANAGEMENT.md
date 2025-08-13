@@ -7,13 +7,11 @@ This document evaluates different state management solutions for the Vanity proj
 The codebase currently uses:
 
 1. **React's Built-in State Management**
-
    - `useState` for simple component state
    - `useContext` with ThemeContext for dark/light mode preferences
    - `useReducer` with custom hooks for complex list state
 
 2. **Custom State Hooks**
-
    - `useListState`: A generic hook for managing paginated, filterable, sortable lists using `useReducer`
    - `useQuotesList` and `useReadingsList`: Domain-specific hooks built on top of useListState
 
@@ -135,13 +133,14 @@ Based on the evaluation against project requirements, the recommended approach i
 Adopt a specialized hybrid approach using:
 
 - **TanStack Query** for server state (quotes, readings, user data)
-- **Zustand** for global UI state (theme, navigation, shared UI state)
+- **Zustand** for global UI state (navigation, modals, shared UI state)
+- **React Context** for theme management (already implemented and optimized)
 - **React's built-in hooks** for component-local state
 
 ### 2. Transition Plan
 
 1. Adopt TanStack Query first to improve data fetching, caching, and error handling
-2. Refactor ThemeContext to use Zustand for better performance
+2. Keep React Context for theme management (already optimized with memoization)
 3. Create specific Zustand stores for different state domains as needed
 4. Gradually migrate complex useReducer patterns to the new approach
 

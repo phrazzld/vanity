@@ -34,7 +34,28 @@ const DarkModeToggle = React.memo(function DarkModeToggle({
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [hasBeenVisible, setHasBeenVisible] = useState(false);
 
-  // Animation state management
+  /**
+   * Animation State Management
+   *
+   * The component uses a multi-layered animation system:
+   * 1. isAnimating: Tracks whether the toggle animation is currently running
+   *    - Prevents spam clicking during the 400ms animation duration
+   *    - Triggers the icon-spin-in animation when true
+   *
+   * 2. hasBeenVisible: Lazy-loads animations using Intersection Observer
+   *    - Defers animation classes until component is visible in viewport
+   *    - Improves initial page load performance by avoiding unnecessary GPU acceleration
+   *    - Once visible, animations are permanently enabled
+   *
+   * 3. GPU Acceleration: Uses transform-gpu class after visibility
+   *    - Forces GPU acceleration for smoother 60fps animations
+   *    - Only applied after component has been seen to reduce memory usage
+   *
+   * Animation Flow:
+   * - User clicks → isAnimating = true → icon rotates with elastic easing
+   * - After 400ms → isAnimating = false → ready for next interaction
+   * - Theme transition CSS handles color/background changes separately (300ms)
+   */
   const [isAnimating, setIsAnimating] = useState(false);
   const handleToggle = () => {
     if (isAnimating) return; // Prevent spam clicking
