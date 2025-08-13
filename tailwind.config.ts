@@ -179,8 +179,7 @@ export default {
         'spin-slow': 'spin 3s linear infinite',
         'bounce-slow': 'bounce 2s ease-in-out infinite',
         'pulse-reading': 'pulseReading 2s infinite',
-        'icon-spin-in': 'iconRotateIn 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-        'icon-spin-out': 'iconRotateOut 300ms ease-in-out',
+        'icon-switch': 'iconSwitch 200ms ease-in-out',
         'theme-pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {

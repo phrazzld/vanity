@@ -39,8 +39,8 @@ const DarkModeToggle = React.memo(function DarkModeToggle({
    *
    * The component uses a multi-layered animation system:
    * 1. isAnimating: Tracks whether the toggle animation is currently running
-   *    - Prevents spam clicking during the 400ms animation duration
-   *    - Triggers the icon-spin-in animation when true
+   *    - Prevents spam clicking during the 200ms animation duration
+   *    - Triggers the subtle scale pulse animation when true
    *
    * 2. hasBeenVisible: Lazy-loads animations using Intersection Observer
    *    - Defers animation classes until component is visible in viewport
@@ -52,8 +52,8 @@ const DarkModeToggle = React.memo(function DarkModeToggle({
    *    - Only applied after component has been seen to reduce memory usage
    *
    * Animation Flow:
-   * - User clicks → isAnimating = true → icon rotates with elastic easing
-   * - After 400ms → isAnimating = false → ready for next interaction
+   * - User clicks → isAnimating = true → icon scales down and back with subtle pulse
+   * - After 200ms → isAnimating = false → ready for next interaction
    * - Theme transition CSS handles color/background changes separately (300ms)
    */
   const [isAnimating, setIsAnimating] = useState(false);
@@ -61,7 +61,7 @@ const DarkModeToggle = React.memo(function DarkModeToggle({
     if (isAnimating) return; // Prevent spam clicking
     setIsAnimating(true);
     (onClick || toggleDarkMode)();
-    setTimeout(() => setIsAnimating(false), 400);
+    setTimeout(() => setIsAnimating(false), 200);
   };
 
   // Intersection observer to defer animations until visible
@@ -137,8 +137,8 @@ const DarkModeToggle = React.memo(function DarkModeToggle({
   const baseClasses =
     'dark-mode-toggle relative flex items-center justify-center bg-transparent rounded-full ' +
     'transition-all duration-300 ease-elegant-entrance ' +
-    'hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-lg hover:scale-110 ' +
-    'active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2';
+    'hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-md hover:scale-105 ' +
+    'active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2';
 
   return (
     <button
@@ -151,7 +151,7 @@ const DarkModeToggle = React.memo(function DarkModeToggle({
         {isDarkMode ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className={`${iconSize} ${hasBeenVisible && isAnimating ? 'animate-icon-spin-in' : ''} text-yellow-500 ${hasBeenVisible ? 'transform-gpu' : ''}`}
+            className={`${iconSize} ${hasBeenVisible && isAnimating ? 'animate-icon-switch' : ''} text-yellow-500 ${hasBeenVisible ? 'transform-gpu' : ''}`}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -173,7 +173,7 @@ const DarkModeToggle = React.memo(function DarkModeToggle({
         ) : (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className={`${iconSize} ${hasBeenVisible && isAnimating ? 'animate-icon-spin-in' : ''} text-slate-700 dark:text-slate-300 ${hasBeenVisible ? 'transform-gpu' : ''}`}
+            className={`${iconSize} ${hasBeenVisible && isAnimating ? 'animate-icon-switch' : ''} text-slate-700 dark:text-slate-300 ${hasBeenVisible ? 'transform-gpu' : ''}`}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

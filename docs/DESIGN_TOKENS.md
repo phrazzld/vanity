@@ -99,8 +99,7 @@ Standard Tailwind spacing scale extended with additional values:
 - `animate-spin-slow`: Slow spinning animation
 - `animate-bounce-slow`: Slow bouncing animation
 - `animate-pulse-reading`: Pulsing animation for reading indicator
-- `animate-icon-spin-in`: Icon rotation entrance animation with elastic easing (400ms)
-- `animate-icon-spin-out`: Icon rotation exit animation with smooth easing (300ms)
+- `animate-icon-switch`: Subtle scale pulse animation for theme toggle (200ms)
 - `animate-theme-pulse`: Continuous pulsing animation for theme-related effects (2s)
 
 ### Transitions
