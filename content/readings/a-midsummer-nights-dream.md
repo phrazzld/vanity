@@ -1,0 +1,8 @@
+---
+title: A Midsummer Night's Dream
+author: William Shakespeare
+finished: 2025-03-22T00:00:00.000Z
+coverImage: https://book-covers.nyc3.digitaloceanspaces.com/readings/a-midsummer-nights-dream-01.jpg
+dropped: false
+---
+

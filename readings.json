@@ -1,0 +1,3672 @@
+[
+  {
+    "id": 1,
+    "slug": "the-silmarillion",
+    "title": "The Silmarillion",
+    "author": "J.R.R. Tolkien",
+    "finishedDate": "2025-04-02T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-silmarillion-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 2,
+    "slug": "the-story-of-civilization-volume-i-our-oriental-heritage",
+    "title": "The Story of Civilization:: Volume I: Our Oriental Heritage",
+    "author": "Will Durant",
+    "finishedDate": "2025-03-13T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-story-of-civilization-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 3,
+    "slug": "the-technological-republic",
+    "title": "The Technological Republic: Hard Power, Soft Belief, and the Future of the West",
+    "author": "Alexander C. Karp and Nicholas W. Zamiska",
+    "finishedDate": "2025-03-13T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-technological-republic-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 4,
+    "slug": "dominion",
+    "title": "Dominion",
+    "author": "Tom Holland",
+    "finishedDate": "2025-02-08T00:00:00.000Z",
+    "coverImageSrc": "/readings/dominion-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 5,
+    "slug": "there-is-no-antimemetics-division",
+    "title": "There Is No Antimemetics Division",
+    "author": "qntm",
+    "finishedDate": "2025-02-18T00:00:00.000Z",
+    "coverImageSrc": "/readings/there-is-no-antimemetics-division-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 6,
+    "slug": "why-greatness-cannot-be-planned",
+    "title": "Why Greatness Cannot Be Planned: The Myth of the Objective",
+    "author": "Kenneth O. O. Stanley",
+    "finishedDate": "2025-02-24T00:00:00.000Z",
+    "coverImageSrc": "/readings/why-greatness-cannot-be-planned-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 7,
+    "slug": "how-to-win-friends-and-influence-people",
+    "title": "How to Win Friends and Influence People",
+    "author": "Dale Carnegie",
+    "finishedDate": "2024-01-30T00:00:00.000Z",
+    "coverImageSrc": "/readings/how-to-win-friends-and-influence-people-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 8,
+    "slug": "berserk",
+    "title": "Berserk",
+    "author": "Kentaro Miura",
+    "finishedDate": "2024-02-03T00:00:00.000Z",
+    "coverImageSrc": "/readings/berserk-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 9,
+    "slug": "salt-fat-acid-heat",
+    "title": "Salt Fat Acid Heat",
+    "author": "Samin Nosrat",
+    "finishedDate": "2024-02-09T00:00:00.000Z",
+    "coverImageSrc": "/readings/salt-fat-acid-heat-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 10,
+    "slug": "gradually-then-suddenly",
+    "title": "Gradually, Then Suddenly",
+    "author": "Parker Lewis",
+    "finishedDate": "2024-02-16T00:00:00.000Z",
+    "coverImageSrc": "/readings/gradually-then-suddenly-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 11,
+    "slug": "the-divine-comedy-purgatorio",
+    "title": "The Divine Comedy: The Purgatorio",
+    "author": "Dante Alighieri",
+    "finishedDate": "2024-02-20T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-divine-comedy-purgatorio-02.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 12,
+    "slug": "galapagos",
+    "title": "Galapagos",
+    "author": "Kurt Vonnegut",
+    "finishedDate": "2024-03-16T00:00:00.000Z",
+    "coverImageSrc": "/readings/galapagos-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 13,
+    "slug": "the-divine-comedy-paradiso",
+    "title": "The Divine Comedy: The Paradiso",
+    "author": "Dante Alighieri",
+    "finishedDate": "2024-04-16T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-divine-comedy-paradiso-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 14,
+    "slug": "a-prayer-journal",
+    "title": "A Prayer Journal",
+    "author": "Flannery O'Connor",
+    "finishedDate": "2024-05-19T00:00:00.000Z",
+    "coverImageSrc": "/readings/prayer-journal-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 15,
+    "slug": "the-bible",
+    "title": "The Bible",
+    "author": "Various Authors",
+    "finishedDate": "2024-06-11T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-bible-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 16,
+    "slug": "the-screwtape-letters",
+    "title": "The Screwtape Letters",
+    "author": "C.S. Lewis",
+    "finishedDate": "2024-06-16T00:00:00.000Z",
+    "coverImageSrc": "/readings/screwtape-letters-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 17,
+    "slug": "the-book-of-five-rings",
+    "title": "The Book of Five Rings",
+    "author": "Miyamoto Musashi",
+    "finishedDate": "2024-06-25T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-book-of-five-rings-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 18,
+    "slug": "reasonable-faith",
+    "title": "Reasonable Faith",
+    "author": "William Lane Craig",
+    "finishedDate": "2024-08-03T00:00:00.000Z",
+    "coverImageSrc": "/readings/reasonable-faith-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 19,
+    "slug": "the-everlasting-man",
+    "title": "The Everlasting Man",
+    "author": "G.K. Chesterton",
+    "finishedDate": "2024-08-27T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-everlasting-man-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 20,
+    "slug": "saint-thomas-aquinas",
+    "title": "Saint Thomas Aquinas",
+    "author": "G.K. Chesterton",
+    "finishedDate": "2024-09-25T00:00:00.000Z",
+    "coverImageSrc": "/readings/saint-thomas-aquinas-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 21,
+    "slug": "when-the-church-was-young",
+    "title": "When the Church Was Young",
+    "author": "Marcellino D'Ambrosio",
+    "finishedDate": "2024-10-20T00:00:00.000Z",
+    "coverImageSrc": "/readings/when-the-church-was-young-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 22,
+    "slug": "the-promised-neverland",
+    "title": "The Promised Neverland",
+    "author": "Kaiu Shirai",
+    "finishedDate": "2024-11-11T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-promised-neverland-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 23,
+    "slug": "story-of-a-soul",
+    "title": "Story of a Soul",
+    "author": "St. Therese of Lisieux",
+    "finishedDate": "2024-11-15T00:00:00.000Z",
+    "coverImageSrc": "/readings/story-of-a-soul-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 24,
+    "slug": "catechism-of-the-catholic-church",
+    "title": "Catechism of the Catholic Church",
+    "author": "",
+    "finishedDate": "2024-11-18T00:00:00.000Z",
+    "coverImageSrc": "/readings/catechism-of-the-catholic-church-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 25,
+    "slug": "walking-with-god",
+    "title": "Walking with God",
+    "author": "Tim Gray and Jeff Cavins",
+    "finishedDate": "2024-12-05T00:00:00.000Z",
+    "coverImageSrc": "/readings/walking-with-god-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 26,
+    "slug": "the-fiat-standard",
+    "title": "The Fiat Standard",
+    "author": "Saifedean Ammous",
+    "finishedDate": "2023-01-10T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-fiat-standard-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 27,
+    "slug": "the-man-without-a-face",
+    "title": "The Man Without a Face",
+    "author": "Masha Gessen",
+    "finishedDate": "2023-01-12T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-man-without-a-face-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 28,
+    "slug": "the-one-world-schoolhouse",
+    "title": "The One World Schoolhouse",
+    "author": "Salman Khan",
+    "finishedDate": "2023-01-16T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-one-world-schoolhouse-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 29,
+    "slug": "euthyphro",
+    "title": "Euthyphro",
+    "author": "Plato",
+    "finishedDate": "2023-01-18T00:00:00.000Z",
+    "coverImageSrc": "/readings/euthyphro-01.jpeg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 30,
+    "slug": "apology",
+    "title": "Apology",
+    "author": "Plato",
+    "finishedDate": "2023-01-18T00:00:00.000Z",
+    "coverImageSrc": "/readings/apology-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 31,
+    "slug": "human-action",
+    "title": "Human Action",
+    "author": "Ludwig Von Mises",
+    "finishedDate": "2023-01-22T00:00:00.000Z",
+    "coverImageSrc": "/readings/human-action-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 32,
+    "slug": "crito",
+    "title": "Crito",
+    "author": "Plato",
+    "finishedDate": "2023-01-24T00:00:00.000Z",
+    "coverImageSrc": "/readings/crito-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 33,
+    "slug": "where-wizards-stay-up-late",
+    "title": "Where Wizards Stay Up Late",
+    "author": "Katie Hafner",
+    "finishedDate": "2023-01-27T00:00:00.000Z",
+    "coverImageSrc": "/readings/where-wizards-stay-up-late-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 34,
+    "slug": "phaedo",
+    "title": "Phaedo",
+    "author": "Plato",
+    "finishedDate": "2023-02-23T00:00:00.000Z",
+    "coverImageSrc": "/readings/phaedo-02.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 35,
+    "slug": "andrew-carnegie",
+    "title": "Andrew Carnegie",
+    "author": "David Nasaw",
+    "finishedDate": "2023-03-08T00:00:00.000Z",
+    "coverImageSrc": "/readings/andrew-carnegie-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 36,
+    "slug": "mere-christianity",
+    "title": "Mere Christianity",
+    "author": "C.S. Lewis",
+    "finishedDate": "2023-03-14T00:00:00.000Z",
+    "coverImageSrc": "/readings/mere-christianity-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 37,
+    "slug": "impromptu",
+    "title": "Impromptu",
+    "author": "Reid Hoffman",
+    "finishedDate": "2023-03-26T00:00:00.000Z",
+    "coverImageSrc": "/readings/impromptu-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 38,
+    "slug": "debt",
+    "title": "Debt",
+    "author": "David Graeber",
+    "finishedDate": "2023-04-05T00:00:00.000Z",
+    "coverImageSrc": "/readings/debt-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 39,
+    "slug": "softwar",
+    "title": "Softwar",
+    "author": "Jason P. Lowery",
+    "finishedDate": "2023-04-29T00:00:00.000Z",
+    "coverImageSrc": "/readings/softwar-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 40,
+    "slug": "the-bhagavad-gita",
+    "title": "The Bhagavad Gita",
+    "author": "",
+    "finishedDate": "2023-05-02T00:00:00.000Z",
+    "coverImageSrc": "/readings/bhagavad-gita-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 41,
+    "slug": "cratylus",
+    "title": "Cratylus",
+    "author": "Plato",
+    "finishedDate": "2023-05-04T00:00:00.000Z",
+    "coverImageSrc": "/readings/cratylus-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 42,
+    "slug": "theaetetus",
+    "title": "Theaetetus",
+    "author": "Plato",
+    "finishedDate": "2023-05-06T00:00:00.000Z",
+    "coverImageSrc": "/readings/theaetetus-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 43,
+    "slug": "napoleon",
+    "title": "Napoleon",
+    "author": "Andrew Roberts",
+    "finishedDate": "2023-05-06T00:00:00.000Z",
+    "coverImageSrc": "/readings/napoleon-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 44,
+    "slug": "neuromancer",
+    "title": "Neuromancer",
+    "author": "William Gibson",
+    "finishedDate": "2023-05-07T00:00:00.000Z",
+    "coverImageSrc": "/readings/neuromancer-02.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 45,
+    "slug": "orthodoxy",
+    "title": "Orthodoxy",
+    "author": "G.K. Chesterton",
+    "finishedDate": "2023-05-13T00:00:00.000Z",
+    "coverImageSrc": "/readings/orthodoxy-01.webp",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 46,
+    "slug": "deadeye-dick",
+    "title": "Deadeye Dick",
+    "author": "Kurt Vonnegut",
+    "finishedDate": "2023-05-15T00:00:00.000Z",
+    "coverImageSrc": "/readings/deadeye-dick-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 47,
+    "slug": "means-of-ascent",
+    "title": "Means of Ascent",
+    "author": "Robert A. Caro",
+    "finishedDate": "2023-05-24T00:00:00.000Z",
+    "coverImageSrc": "/readings/means-of-ascent-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 48,
+    "slug": "thus-spoke-zarathustra",
+    "title": "Thus Spoke Zarathustra",
+    "author": "Friedrich Nietzsche",
+    "finishedDate": "2023-07-15T00:00:00.000Z",
+    "coverImageSrc": "/readings/thus-spoke-zarathustra-01.webp",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 49,
+    "slug": "master-of-the-senate",
+    "title": "Master of the Senate",
+    "author": "Robert A. Caro",
+    "finishedDate": "2023-08-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/master-of-the-senate-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 50,
+    "slug": "working",
+    "title": "Working",
+    "author": "Robert A. Caro",
+    "finishedDate": "2023-09-27T00:00:00.000Z",
+    "coverImageSrc": "/readings/working-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 51,
+    "slug": "hidden-repression",
+    "title": "Hidden Repression",
+    "author": "Alex Gladstein",
+    "finishedDate": "2023-10-08T00:00:00.000Z",
+    "coverImageSrc": "/readings/hidden-repression-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 52,
+    "slug": "confessions",
+    "title": "Confessions",
+    "author": "St. Augustine",
+    "finishedDate": "2023-10-12T00:00:00.000Z",
+    "coverImageSrc": "/readings/confessions-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 53,
+    "slug": "sophist",
+    "title": "Sophist",
+    "author": "Plato",
+    "finishedDate": "2023-10-17T00:00:00.000Z",
+    "coverImageSrc": "/readings/sophist-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 54,
+    "slug": "blood-meridian",
+    "title": "Blood Meridian",
+    "author": "Cormac McCarthy",
+    "finishedDate": "2023-10-28T00:00:00.000Z",
+    "coverImageSrc": "/readings/blood-meridian-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 55,
+    "slug": "broken-money",
+    "title": "Broken Money",
+    "author": "Lyn Alden",
+    "finishedDate": "2023-11-10T00:00:00.000Z",
+    "coverImageSrc": "/readings/broken-money-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 56,
+    "slug": "the-dark-forest",
+    "title": "The Dark Forest",
+    "author": "Cixin Liu",
+    "finishedDate": "2023-11-15T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-dark-forest-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 57,
+    "slug": "death-s-end",
+    "title": "Death's End",
+    "author": "Cixin Liu",
+    "finishedDate": "2023-11-25T00:00:00.000Z",
+    "coverImageSrc": "/readings/deaths-end-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 58,
+    "slug": "bluebeard",
+    "title": "Bluebeard",
+    "author": "Kurt Vonnegut",
+    "finishedDate": "2023-12-02T00:00:00.000Z",
+    "coverImageSrc": "/readings/bluebeard-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 59,
+    "slug": "the-killing-joke",
+    "title": "The Killing Joke",
+    "author": "Alan Moore",
+    "finishedDate": "2023-12-02T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-killing-joke-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 60,
+    "slug": "facing-violence",
+    "title": "Facing Violence",
+    "author": "Rory Miller",
+    "finishedDate": "2023-12-08T00:00:00.000Z",
+    "coverImageSrc": "/readings/facing-violence-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 61,
+    "slug": "the-creative-act",
+    "title": "The Creative Act",
+    "author": "Rick Rubin",
+    "finishedDate": "2023-12-10T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-creative-act-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 62,
+    "slug": "the-divine-comedy-inferno",
+    "title": "The Divine Comedy: The Inferno",
+    "author": "Dante Alighieri",
+    "finishedDate": "2023-12-15T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-divine-comedy-inferno-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 63,
+    "slug": "god-bless-you-mr-rosewater",
+    "title": "God Bless You, Mr. Rosewater",
+    "author": "Kurt Vonnegut",
+    "finishedDate": "2022-01-11T00:00:00.000Z",
+    "coverImageSrc": "/readings/god-bless-you-mr-rosewater-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 64,
+    "slug": "true-names",
+    "title": "True Names",
+    "author": "Vernor Vinge",
+    "finishedDate": "2022-01-16T00:00:00.000Z",
+    "coverImageSrc": "/readings/true-names-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 65,
+    "slug": "meditations",
+    "title": "Meditations",
+    "author": "Marcus Aurelius",
+    "finishedDate": "2022-02-11T00:00:00.000Z",
+    "coverImageSrc": "/readings/meditations-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 66,
+    "slug": "east-of-eden",
+    "title": "East of Eden",
+    "author": "John Steinbeck",
+    "finishedDate": "2022-02-13T00:00:00.000Z",
+    "coverImageSrc": "/readings/east-of-eden-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 67,
+    "slug": "mastering-the-lightning-network",
+    "title": "Mastering the Lightning Network",
+    "author": "Andreas M. Antonopoulos",
+    "finishedDate": "2022-02-25T00:00:00.000Z",
+    "coverImageSrc": "/readings/mastering-the-lightning-network-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 68,
+    "slug": "jailbird",
+    "title": "Jailbird",
+    "author": "Kurt Vonnegut",
+    "finishedDate": "2022-03-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/jailbird-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 69,
+    "slug": "bone",
+    "title": "Bone",
+    "author": "Jeff Smith",
+    "finishedDate": "2022-03-06T00:00:00.000Z",
+    "coverImageSrc": "/readings/bone-02.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 70,
+    "slug": "letters-from-a-stoic",
+    "title": "Letters From a Stoic",
+    "author": "Seneca",
+    "finishedDate": "2022-03-09T00:00:00.000Z",
+    "coverImageSrc": "/readings/letters-from-a-stoic-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 71,
+    "slug": "extreme-privacy",
+    "title": "Extreme Privacy",
+    "author": "Michael Bazzell",
+    "finishedDate": "2022-03-12T00:00:00.000Z",
+    "coverImageSrc": "/readings/extreme-privacy-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 72,
+    "slug": "thank-god-for-bitcoin",
+    "title": "Thank God for Bitcoin",
+    "author": "The Bitcoin and Bible Group",
+    "finishedDate": "2022-03-14T00:00:00.000Z",
+    "coverImageSrc": "/readings/thank-god-for-bitcoin-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 73,
+    "slug": "check-your-financial-privilege",
+    "title": "Check Your Financial Privilege",
+    "author": "Alex Gladstein",
+    "finishedDate": "2022-03-26T00:00:00.000Z",
+    "coverImageSrc": "/readings/check-your-financial-privilege-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 74,
+    "slug": "the-urban-homestead",
+    "title": "The Urban Homestead",
+    "author": "Kelly Coyne",
+    "finishedDate": "2022-03-27T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-urban-homestead-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 75,
+    "slug": "nausicaa-of-the-valley-of-the-wind",
+    "title": "Nausicaä of the Valley of the Wind",
+    "author": "Hayao Miyazaki",
+    "finishedDate": "2022-03-30T00:00:00.000Z",
+    "coverImageSrc": "/readings/nausicaa-01.webp",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 76,
+    "slug": "ghost-in-the-shell",
+    "title": "Ghost in the Shell",
+    "author": "Masamune Shirow",
+    "finishedDate": "2022-04-25T00:00:00.000Z",
+    "coverImageSrc": "/readings/ghost-in-the-shell-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 77,
+    "slug": "bitcoin-is-venice",
+    "title": "Bitcoin Is Venice",
+    "author": "Allen Farrington",
+    "finishedDate": "2022-04-30T00:00:00.000Z",
+    "coverImageSrc": "/readings/bitcoin-is-venice-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 78,
+    "slug": "the-mandibles",
+    "title": "The Mandibles",
+    "author": "Lionel Shriver",
+    "finishedDate": "2022-05-04T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-mandibles-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 79,
+    "slug": "free-software-free-society",
+    "title": "Free Software, Free Society",
+    "author": "Richard M. Stallman",
+    "finishedDate": "2022-05-10T00:00:00.000Z",
+    "coverImageSrc": "/readings/free-software-free-society-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 80,
+    "slug": "working-in-public",
+    "title": "Working in Public",
+    "author": "Nadia Eghbal",
+    "finishedDate": "2022-06-07T00:00:00.000Z",
+    "coverImageSrc": "/readings/working-in-public-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 81,
+    "slug": "leviathan-falls",
+    "title": "Leviathan Falls",
+    "author": "James S.A. Corey",
+    "finishedDate": "2022-06-19T00:00:00.000Z",
+    "coverImageSrc": "/readings/leviathan-falls-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 82,
+    "slug": "lonesome-dove",
+    "title": "Lonesome Dove",
+    "author": "Larry McMurtry",
+    "finishedDate": "2022-06-28T00:00:00.000Z",
+    "coverImageSrc": "/readings/lonesome-dove-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 83,
+    "slug": "the-aeneid",
+    "title": "The Aeneid",
+    "author": "Virgil",
+    "finishedDate": "2022-12-12T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-aeneid-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 84,
+    "slug": "mastering-bitcoin",
+    "title": "Mastering Bitcoin",
+    "author": "Andreas M. Antonopoulos",
+    "finishedDate": "2021-01-09T00:00:00.000Z",
+    "coverImageSrc": "/readings/mastering-bitcoin-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 85,
+    "slug": "the-three-body-problem",
+    "title": "The Three-Body Problem",
+    "author": "Cixin Liu",
+    "finishedDate": "2021-01-28T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-three-body-problem-01.webp",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 86,
+    "slug": "the-fourth-turning",
+    "title": "The Fourth Turning",
+    "author": "William Strauss",
+    "finishedDate": "2021-02-10T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-fourth-turning-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 87,
+    "slug": "genghis-khan-and-the-making-of-the-modern-world",
+    "title": "Genghis Khan and the Making of the Modern World",
+    "author": "Jack Weatherford",
+    "finishedDate": "2021-02-17T00:00:00.000Z",
+    "coverImageSrc": "/readings/genghis-khan-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 88,
+    "slug": "the-bitcoin-standard",
+    "title": "The Bitcoin Standard",
+    "author": "Saifedean Ammous",
+    "finishedDate": "2021-03-06T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-bitcoin-standard-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 89,
+    "slug": "bitcoin-and-black-america",
+    "title": "Bitcoin & Black America",
+    "author": "Isaiah Jackson",
+    "finishedDate": "2021-03-07T00:00:00.000Z",
+    "coverImageSrc": "/readings/bitcoin-and-black-america-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 90,
+    "slug": "the-sovereign-individual",
+    "title": "The Sovereign Individual",
+    "author": "James Dale Davidson and Lord William Rees-Mogg",
+    "finishedDate": "2021-03-10T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-sovereign-individual-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 91,
+    "slug": "the-art-of-loving",
+    "title": "The Art of Loving",
+    "author": "Erich Fromm",
+    "finishedDate": "2021-03-13T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-art-of-loving-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 92,
+    "slug": "beyond-order",
+    "title": "Beyond Order",
+    "author": "Jordan B. Peterson",
+    "finishedDate": "2021-03-18T00:00:00.000Z",
+    "coverImageSrc": "/readings/beyond-order-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 93,
+    "slug": "the-moon-is-a-harsh-mistress",
+    "title": "The Moon Is a Harsh Mistress",
+    "author": "Robert A. Heinlein",
+    "finishedDate": "2021-03-18T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-moon-is-a-harsh-mistress-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 94,
+    "slug": "thomas-jefferson",
+    "title": "Thomas Jefferson",
+    "author": "Jon Meacham",
+    "finishedDate": "2021-03-30T00:00:00.000Z",
+    "coverImageSrc": "/readings/thomas-jefferson-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 95,
+    "slug": "the-plague",
+    "title": "The Plague",
+    "author": "Albert Camus",
+    "finishedDate": "2021-04-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-plague-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 96,
+    "slug": "the-internet-of-money-volume-one",
+    "title": "The Internet of Money Volume One",
+    "author": "Andreas M. Antonopoulos",
+    "finishedDate": "2021-04-03T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-internet-of-money-volume-one-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 97,
+    "slug": "the-internet-of-money-volume-two",
+    "title": "The Internet of Money Volume Two",
+    "author": "Andreas M. Antonopoulos",
+    "finishedDate": "2021-04-04T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-internet-of-money-volume-two-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 98,
+    "slug": "the-internet-of-money-volume-three",
+    "title": "The Internet of Money Volume Three",
+    "author": "Andreas M. Antonopoulos",
+    "finishedDate": "2021-04-08T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-internet-of-money-volume-three-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 99,
+    "slug": "starship-troopers",
+    "title": "Starship Troopers",
+    "author": "Robert A. Heinlein",
+    "finishedDate": "2021-04-25T00:00:00.000Z",
+    "coverImageSrc": "/readings/starship-troopers-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 100,
+    "slug": "the-black-swan",
+    "title": "The Black Swan",
+    "author": "Nassim Nicholas Taleb",
+    "finishedDate": "2021-04-26T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-black-swan-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 101,
+    "slug": "the-law",
+    "title": "The Law",
+    "author": "Frédéric Bastiat",
+    "finishedDate": "2021-04-27T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-law-01.webp",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 102,
+    "slug": "breakfast-of-champions",
+    "title": "Breakfast of Champions",
+    "author": "Kurt Vonnegut",
+    "finishedDate": "2021-05-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/breakfast-of-champions-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 103,
+    "slug": "grokking-bitcoin",
+    "title": "Grokking Bitcoin",
+    "author": "Kalle Rosenbaum",
+    "finishedDate": "2021-05-02T00:00:00.000Z",
+    "coverImageSrc": "/readings/grokking-bitcoin-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 104,
+    "slug": "inventing-bitcoin",
+    "title": "Inventing Bitcoin",
+    "author": "Yan Pritzker",
+    "finishedDate": "2021-05-05T00:00:00.000Z",
+    "coverImageSrc": "/readings/inventing-bitcoin-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 105,
+    "slug": "the-myth-of-sisyphus",
+    "title": "The Myth of Sisyphus",
+    "author": "Albert Camus",
+    "finishedDate": "2021-05-07T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-myth-of-sisyphus-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 106,
+    "slug": "murder-on-the-orient-express",
+    "title": "Murder on the Orient Express",
+    "author": "Agatha Christie",
+    "finishedDate": "2021-05-09T00:00:00.000Z",
+    "coverImageSrc": "/readings/murder-on-the-orient-express-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 107,
+    "slug": "mother-night",
+    "title": "Mother Night",
+    "author": "Kurt Vonnegut",
+    "finishedDate": "2021-05-15T00:00:00.000Z",
+    "coverImageSrc": "/readings/mother-night-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 108,
+    "slug": "washington",
+    "title": "Washington",
+    "author": "Ron Chernow",
+    "finishedDate": "2021-05-16T00:00:00.000Z",
+    "coverImageSrc": "/readings/washington-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 109,
+    "slug": "the-book-of-satoshi",
+    "title": "The Book of Satoshi",
+    "author": "Phil Champagne",
+    "finishedDate": "2021-05-22T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-book-of-satoshi-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 110,
+    "slug": "mastering-ethereum",
+    "title": "Mastering Ethereum",
+    "author": "Andreas M. Antonopoulos",
+    "finishedDate": "2021-06-11T00:00:00.000Z",
+    "coverImageSrc": "/readings/mastering-ethereum-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 111,
+    "slug": "the-bed-of-procrustes",
+    "title": "The Bed of Procrustes",
+    "author": "Nassim Nicholas Taleb",
+    "finishedDate": "2021-06-11T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-bed-of-procrustes-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 112,
+    "slug": "titan",
+    "title": "Titan",
+    "author": "Ron Chernow",
+    "finishedDate": "2021-07-18T00:00:00.000Z",
+    "coverImageSrc": "/readings/titan-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 113,
+    "slug": "zero-to-one",
+    "title": "Zero to One",
+    "author": "Peter Thiel",
+    "finishedDate": "2021-07-30T00:00:00.000Z",
+    "coverImageSrc": "/readings/zero-to-one-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 114,
+    "slug": "bobby-fischer-teaches-chess",
+    "title": "Bobby Fischer Teaches Chess",
+    "author": "Bobby Fischer",
+    "finishedDate": "2021-07-30T00:00:00.000Z",
+    "coverImageSrc": "/readings/bobby-fischer-teaches-chess-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 115,
+    "slug": "demons",
+    "title": "Demons",
+    "author": "Fyodor Dostoevsky",
+    "finishedDate": "2021-08-17T00:00:00.000Z",
+    "coverImageSrc": "/readings/demons-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 116,
+    "slug": "21-lessons",
+    "title": "21 Lessons",
+    "author": "Gigi",
+    "finishedDate": "2021-08-20T00:00:00.000Z",
+    "coverImageSrc": "/readings/21-lessons-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 117,
+    "slug": "the-journalist-and-the-murderer",
+    "title": "The Journalist and the Murderer",
+    "author": "Janet Malcolm",
+    "finishedDate": "2021-08-20T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-journalist-and-the-murderer-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 118,
+    "slug": "the-rise-and-fall-of-the-third-reich",
+    "title": "The Rise and Fall of the Third Reich",
+    "author": "William L. Shirer",
+    "finishedDate": "2021-08-22T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-rise-and-fall-of-the-third-reich-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 119,
+    "slug": "atlas-shrugged",
+    "title": "Atlas Shrugged",
+    "author": "Ayn Rand",
+    "finishedDate": "2021-09-04T00:00:00.000Z",
+    "coverImageSrc": "/readings/atlas-shrugged-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 120,
+    "slug": "payments-systems-in-the-us",
+    "title": "Payments Systems in the U.S.",
+    "author": "Carol Coye Benson",
+    "finishedDate": "2021-09-05T00:00:00.000Z",
+    "coverImageSrc": "/readings/payments-systems-in-the-us-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 121,
+    "slug": "javascript",
+    "title": "Javascript",
+    "author": "Douglas Crockford",
+    "finishedDate": "2021-09-15T00:00:00.000Z",
+    "coverImageSrc": "/readings/javascript-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 122,
+    "slug": "mastery",
+    "title": "Mastery",
+    "author": "Robert Greene",
+    "finishedDate": "2021-09-22T00:00:00.000Z",
+    "coverImageSrc": "/readings/mastery-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 123,
+    "slug": "welcome-to-the-monkey-house",
+    "title": "Welcome to the Monkey House",
+    "author": "Kurt Vonnegut",
+    "finishedDate": "2021-09-24T00:00:00.000Z",
+    "coverImageSrc": "/readings/welcome-to-the-monkey-house-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 124,
+    "slug": "the-house-of-morgan",
+    "title": "The House of Morgan",
+    "author": "Ron Chernow",
+    "finishedDate": "2021-09-29T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-house-of-morgan-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 125,
+    "slug": "the-blocksize-war",
+    "title": "The Blocksize War",
+    "author": "Jonathan Bier",
+    "finishedDate": "2021-10-04T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-blocksize-war-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 126,
+    "slug": "the-bullish-case-for-bitcoin",
+    "title": "The Bullish Case for Bitcoin",
+    "author": "Vijay Boyapati",
+    "finishedDate": "2021-10-09T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-bullish-case-for-bitcoin-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 127,
+    "slug": "effective-typescript",
+    "title": "Effective Typescript",
+    "author": "Dan Vanderkam",
+    "finishedDate": "2021-10-10T00:00:00.000Z",
+    "coverImageSrc": "/readings/effective-typescript-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 128,
+    "slug": "websocket",
+    "title": "Websocket",
+    "author": "Andrew Lombardi",
+    "finishedDate": "2021-10-18T00:00:00.000Z",
+    "coverImageSrc": "/readings/websocket-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 129,
+    "slug": "the-cathedral-and-the-bazaar",
+    "title": "The Cathedral & the Bazaar",
+    "author": "Eric S. Raymond",
+    "finishedDate": "2021-10-28T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-cathedral-and-the-bazaar-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 130,
+    "slug": "the-infinite-machine",
+    "title": "The Infinite Machine",
+    "author": "Camila Russo",
+    "finishedDate": "2021-10-29T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-infinite-machine-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 131,
+    "slug": "masters-of-doom",
+    "title": "Masters of Doom",
+    "author": "David Kushner",
+    "finishedDate": "2021-11-09T00:00:00.000Z",
+    "coverImageSrc": "/readings/masters-of-doom-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 132,
+    "slug": "layered-money",
+    "title": "Layered Money",
+    "author": "Nik Bhatia",
+    "finishedDate": "2021-11-12T00:00:00.000Z",
+    "coverImageSrc": "/readings/layered-money-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 133,
+    "slug": "cryptoeconomics",
+    "title": "Cryptoeconomics",
+    "author": "Eric Voskuil",
+    "finishedDate": "2021-12-19T00:00:00.000Z",
+    "coverImageSrc": "/readings/cryptoeconomics-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 134,
+    "slug": "pride-and-prejudice",
+    "title": "Pride and Prejudice",
+    "author": "Jane Austen",
+    "finishedDate": "2020-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/pride-and-prejudice-01.webp",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 135,
+    "slug": "run-for-your-life",
+    "title": "Run for Your Life",
+    "author": "Mark Cucuzzella",
+    "finishedDate": "2020-01-17T00:00:00.000Z",
+    "coverImageSrc": "/readings/run-for-your-life-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 136,
+    "slug": "anarchist-education-and-the-modern-school",
+    "title": "Anarchist Education and the Modern School",
+    "author": "Francesc Ferrer I Guárdia",
+    "finishedDate": "2020-02-14T00:00:00.000Z",
+    "coverImageSrc": "/readings/anarchist-education-and-the-modern-school-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 137,
+    "slug": "why-nations-fail",
+    "title": "Why Nations Fail",
+    "author": "Daron Acemoğlu",
+    "finishedDate": "2020-05-10T00:00:00.000Z",
+    "coverImageSrc": "/readings/why-nations-fail-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 138,
+    "slug": "the-great-mortality",
+    "title": "The Great Mortality",
+    "author": "John Kelly",
+    "finishedDate": "2020-05-20T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-great-mortality-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 139,
+    "slug": "the-three-musketeers",
+    "title": "The Three Musketeers",
+    "author": "Alexandre Dumas",
+    "finishedDate": "2020-06-02T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-three-musketeers-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 140,
+    "slug": "the-power-broker",
+    "title": "The Power Broker",
+    "author": "Robert A. Caro",
+    "finishedDate": "2020-06-08T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-power-broker-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 141,
+    "slug": "endurance",
+    "title": "Endurance",
+    "author": "Alfred Lansing",
+    "finishedDate": "2020-06-13T00:00:00.000Z",
+    "coverImageSrc": "/readings/endurance-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 142,
+    "slug": "educated",
+    "title": "Educated",
+    "author": "Tara Westover",
+    "finishedDate": "2020-06-19T00:00:00.000Z",
+    "coverImageSrc": "/readings/educated-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 143,
+    "slug": "1984",
+    "title": "1984",
+    "author": "George Orwell",
+    "finishedDate": "2020-06-27T00:00:00.000Z",
+    "coverImageSrc": "/readings/1984-02.jpeg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 144,
+    "slug": "caesar",
+    "title": "Caesar",
+    "author": "Adrian Goldsworthy",
+    "finishedDate": "2020-06-28T00:00:00.000Z",
+    "coverImageSrc": "/readings/caesar-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 145,
+    "slug": "phaedrus",
+    "title": "Phaedrus",
+    "author": "Plato",
+    "finishedDate": "2020-07-02T00:00:00.000Z",
+    "coverImageSrc": "/readings/phaedrus-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 146,
+    "slug": "beyond-good-and-evil",
+    "title": "Beyond Good and Evil",
+    "author": "Friedrich Nietzsche",
+    "finishedDate": "2020-08-02T00:00:00.000Z",
+    "coverImageSrc": "/readings/beyond-good-and-evil-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 147,
+    "slug": "the-federalist-papers",
+    "title": "The Federalist Papers",
+    "author": "Alexander Hamilton",
+    "finishedDate": "2020-09-20T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-federalist-papers-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 148,
+    "slug": "escape-from-freedom",
+    "title": "Escape From Freedom",
+    "author": "Erich Fromm",
+    "finishedDate": "2020-10-04T00:00:00.000Z",
+    "coverImageSrc": "/readings/escape-from-freedom-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 149,
+    "slug": "loserthink",
+    "title": "Loserthink",
+    "author": "Scott Adams",
+    "finishedDate": "2020-10-10T00:00:00.000Z",
+    "coverImageSrc": "/readings/loserthink-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 150,
+    "slug": "everywhere-all-the-time",
+    "title": "Everywhere All the Time",
+    "author": "Matt Hern",
+    "finishedDate": "2020-11-07T00:00:00.000Z",
+    "coverImageSrc": "/readings/everywhere-all-the-time-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 151,
+    "slug": "team-of-rivals",
+    "title": "Team of Rivals",
+    "author": "Doris Kearns Goodwin",
+    "finishedDate": "2019-02-04T00:00:00.000Z",
+    "coverImageSrc": "/readings/team-of-rivals-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 152,
+    "slug": "anna-karenina",
+    "title": "Anna Karenina",
+    "author": "Leo Tolstoy",
+    "finishedDate": "2019-04-10T00:00:00.000Z",
+    "coverImageSrc": "/readings/anna-karenina-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 153,
+    "slug": "american-kingpin",
+    "title": "American Kingpin",
+    "author": "Nick Bilton",
+    "finishedDate": "2019-04-13T00:00:00.000Z",
+    "coverImageSrc": "/readings/american-kingpin-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 154,
+    "slug": "tiamats-wrath",
+    "title": "Tiamat's Wrath",
+    "author": "James S.A. Corey",
+    "finishedDate": "2019-04-20T00:00:00.000Z",
+    "coverImageSrc": "/readings/tiamats-wrath-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 155,
+    "slug": "the-emperor-of-all-maladies",
+    "title": "The Emperor of All Maladies",
+    "author": "Siddhartha Mukherjee",
+    "finishedDate": "2019-06-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-emperor-of-all-maladies-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 156,
+    "slug": "alexander-the-great",
+    "title": "Alexander the Great",
+    "author": "Philip Freeman",
+    "finishedDate": "2019-07-19T00:00:00.000Z",
+    "coverImageSrc": "/readings/alexander-the-great-02.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 157,
+    "slug": "the-48-laws-of-power",
+    "title": "The 48 Laws of Power",
+    "author": "Robert Greene",
+    "finishedDate": "2019-07-29T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-48-laws-of-power-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 158,
+    "slug": "the-simple-path-to-wealth",
+    "title": "The Simple Path to Wealth",
+    "author": "J.L. Collins",
+    "finishedDate": "2019-09-11T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-simple-path-to-wealth-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 159,
+    "slug": "surely-youre-joking-mr-feynman",
+    "title": "\"Surely You're Joking, Mr. Feynman!\"",
+    "author": "Richard Feynman",
+    "finishedDate": "2019-09-21T00:00:00.000Z",
+    "coverImageSrc": "/readings/surely-youre-joking-mr-feynman-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 160,
+    "slug": "the-big-sleep",
+    "title": "The Big Sleep",
+    "author": "Raymond Chandler",
+    "finishedDate": "2019-10-09T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-big-sleep-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 161,
+    "slug": "the-pragmatic-programmer",
+    "title": "The Pragmatic Programmer",
+    "author": "Andy Hunt",
+    "finishedDate": "2019-10-25T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-pragmatic-programmer-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 162,
+    "slug": "the-hard-thing-about-hard-things",
+    "title": "The Hard Thing About Hard Things",
+    "author": "Ben Horowitz",
+    "finishedDate": "2019-10-30T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-hard-thing-about-hard-things-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 163,
+    "slug": "great-expectations",
+    "title": "Great Expectations",
+    "author": "Charles Dickens",
+    "finishedDate": "2018-02-12T00:00:00.000Z",
+    "coverImageSrc": "/readings/great-expectations-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 164,
+    "slug": "foundation",
+    "title": "Foundation",
+    "author": "Isaac Asimov",
+    "finishedDate": "2018-02-14T00:00:00.000Z",
+    "coverImageSrc": "/readings/foundation-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 165,
+    "slug": "pimp",
+    "title": "Pimp",
+    "author": "Iceberg Slim",
+    "finishedDate": "2018-02-24T00:00:00.000Z",
+    "coverImageSrc": "/readings/pimp-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 166,
+    "slug": "12-rules-for-life",
+    "title": "12 Rules for Life",
+    "author": "Jordan B. Peterson",
+    "finishedDate": "2018-03-17T00:00:00.000Z",
+    "coverImageSrc": "/readings/12-rules-for-life-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 167,
+    "slug": "notes-from-underground",
+    "title": "Notes From Underground",
+    "author": "Fyodor Dostoevsky",
+    "finishedDate": "2018-03-23T00:00:00.000Z",
+    "coverImageSrc": "/readings/notes-from-underground-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 168,
+    "slug": "childhoods-end",
+    "title": "Childhood's End",
+    "author": "Arthur C. Clarke",
+    "finishedDate": "2018-04-10T00:00:00.000Z",
+    "coverImageSrc": "/readings/childhoods-end-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 169,
+    "slug": "modern-man-in-search-of-a-soul",
+    "title": "Modern Man in Search of a Soul",
+    "author": "Carl Jung",
+    "finishedDate": "2018-05-03T00:00:00.000Z",
+    "coverImageSrc": "/readings/modern-man-in-search-of-a-soul-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 170,
+    "slug": "the-road-to-wigan-pier",
+    "title": "The Road to Wigan Pier",
+    "author": "George Orwell",
+    "finishedDate": "2018-05-14T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-road-to-wigan-pier-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 171,
+    "slug": "one-day-in-the-life-of-ivan-denisovich",
+    "title": "One Day in the Life of Ivan Denisovich",
+    "author": "Aleksandr Solzhenitsyn",
+    "finishedDate": "2018-05-21T00:00:00.000Z",
+    "coverImageSrc": "/readings/one-day-in-the-life-of-ivan-denisovich-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 172,
+    "slug": "foundation-and-empire",
+    "title": "Foundation and Empire",
+    "author": "Isaac Asimov",
+    "finishedDate": "2018-05-27T00:00:00.000Z",
+    "coverImageSrc": "/readings/foundation-and-empire-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 173,
+    "slug": "unix-and-linux-system-administration-handbook",
+    "title": "Unix and Linux System Administration Handbook",
+    "author": "Evi Nemeth",
+    "finishedDate": "2018-05-29T00:00:00.000Z",
+    "coverImageSrc": "/readings/unix-and-linux-system-administration-handbook-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 174,
+    "slug": "second-foundation",
+    "title": "Second Foundation",
+    "author": "Isaac Asimov",
+    "finishedDate": "2018-06-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/second-foundation-02.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 175,
+    "slug": "leviathan-wakes",
+    "title": "Leviathan Wakes",
+    "author": "James S.A. Corey",
+    "finishedDate": "2018-06-16T00:00:00.000Z",
+    "coverImageSrc": "/readings/leviathan-wakes-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 176,
+    "slug": "eloquent-javascript",
+    "title": "Eloquent Javascript",
+    "author": "Marijn Haverbeke",
+    "finishedDate": "2018-06-21T00:00:00.000Z",
+    "coverImageSrc": "/readings/eloquent-javascript-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 177,
+    "slug": "calibans-war",
+    "title": "Caliban's War",
+    "author": "James S.A. Corey",
+    "finishedDate": "2018-06-22T00:00:00.000Z",
+    "coverImageSrc": "/readings/calibans-war-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 178,
+    "slug": "abaddons-gate",
+    "title": "Abaddon's Gate",
+    "author": "James S.A. Corey",
+    "finishedDate": "2018-06-26T00:00:00.000Z",
+    "coverImageSrc": "/readings/abaddons-gate-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 179,
+    "slug": "cibola-burn",
+    "title": "Cibola Burn",
+    "author": "James S.A. Corey",
+    "finishedDate": "2018-06-30T00:00:00.000Z",
+    "coverImageSrc": "/readings/cibola-burn-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 180,
+    "slug": "nemesis-games",
+    "title": "Nemesis Games",
+    "author": "James S.A. Corey",
+    "finishedDate": "2018-07-11T00:00:00.000Z",
+    "coverImageSrc": "/readings/nemesis-games-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 181,
+    "slug": "babylons-ashes",
+    "title": "Babylon's Ashes",
+    "author": "James S.A. Corey",
+    "finishedDate": "2018-07-31T00:00:00.000Z",
+    "coverImageSrc": "/readings/babylons-ashes-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 182,
+    "slug": "persepolis-rising",
+    "title": "Persepolis Rising",
+    "author": "James S.A. Corey",
+    "finishedDate": "2018-08-31T00:00:00.000Z",
+    "coverImageSrc": "/readings/persepolis-rising-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 183,
+    "slug": "strange-dogs",
+    "title": "Strange Dogs",
+    "author": "James S.A. Corey",
+    "finishedDate": "2018-09-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/strange-dogs-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 184,
+    "slug": "the-butcher-of-anderson-station",
+    "title": "The Butcher of Anderson Station",
+    "author": "James S.A. Corey",
+    "finishedDate": "2018-09-04T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-butcher-of-anderson-station-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 185,
+    "slug": "the-vital-abyss",
+    "title": "The Vital Abyss",
+    "author": "James S.A. Corey",
+    "finishedDate": "2018-09-05T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-vital-abyss-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 186,
+    "slug": "the-churn",
+    "title": "The Churn",
+    "author": "James S.A. Corey",
+    "finishedDate": "2018-09-08T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-churn-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 187,
+    "slug": "gods-of-risk",
+    "title": "Gods of Risk",
+    "author": "James S.A. Corey",
+    "finishedDate": "2018-09-08T00:00:00.000Z",
+    "coverImageSrc": "/readings/gods-of-risk-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 188,
+    "slug": "vulnerability-management-for-dummies",
+    "title": "Vulnerability Management for Dummies",
+    "author": "Qualys",
+    "finishedDate": "2018-09-13T00:00:00.000Z",
+    "coverImageSrc": "/readings/vulnerability-management-for-dummies-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 189,
+    "slug": "the-perfect-weapon",
+    "title": "The Perfect Weapon",
+    "author": "David E. Sanger",
+    "finishedDate": "2018-09-27T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-perfect-weapon-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 190,
+    "slug": "the-hacker-playbook-two",
+    "title": "The Hacker Playbook 2",
+    "author": "Peter Kim",
+    "finishedDate": "2018-10-04T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-hacker-playbook-two-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 191,
+    "slug": "mans-search-for-meaning",
+    "title": "Man's Search for Meaning",
+    "author": "Viktor E. Frankl",
+    "finishedDate": "2018-10-05T00:00:00.000Z",
+    "coverImageSrc": "/readings/mans-search-for-meaning-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 192,
+    "slug": "bad-blood",
+    "title": "Bad Blood",
+    "author": "John Carreyrou",
+    "finishedDate": "2018-10-10T00:00:00.000Z",
+    "coverImageSrc": "/readings/bad-blood-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 193,
+    "slug": "the-psychopath-test",
+    "title": "The Psychopath Test",
+    "author": "Jon Ronson",
+    "finishedDate": "2018-10-16T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-psychopath-test-02.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 194,
+    "slug": "skin-in-the-game",
+    "title": "Skin in the Game",
+    "author": "Nassim Nicholas Taleb",
+    "finishedDate": "2018-11-15T00:00:00.000Z",
+    "coverImageSrc": "/readings/skin-in-the-game-02.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 195,
+    "slug": "the-art-of-the-deal",
+    "title": "The Art of the Deal",
+    "author": "Donald J. Trump",
+    "finishedDate": "2017-01-27T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-art-of-the-deal-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 196,
+    "slug": "one-hundred-years-of-solitude",
+    "title": "One Hundred Years of Solitude",
+    "author": "Gabriel García Márquez",
+    "finishedDate": "2017-05-24T00:00:00.000Z",
+    "coverImageSrc": "/readings/one-hundred-years-of-solitude-02.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 197,
+    "slug": "how-to-read-a-book",
+    "title": "How to Read a Book",
+    "author": "Mortimer J. Adler",
+    "finishedDate": "2017-06-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/how-to-read-a-book-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 198,
+    "slug": "a-wrinkle-in-time",
+    "title": "A Wrinkle in Time",
+    "author": "Hope Larson",
+    "finishedDate": "2017-07-30T00:00:00.000Z",
+    "coverImageSrc": "/readings/a-wrinkle-in-time-graphic-novel-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 199,
+    "slug": "gullivers-travels",
+    "title": "Gulliver's Travels",
+    "author": "Jonathan Swift",
+    "finishedDate": "2017-09-22T00:00:00.000Z",
+    "coverImageSrc": "/readings/gullivers-travels-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 200,
+    "slug": "how-to-fail-at-almost-everything-and-still-win-big",
+    "title": "How to Fail at Almost Everything and Still Win Big",
+    "author": "Scott Adams",
+    "finishedDate": "2017-09-26T00:00:00.000Z",
+    "coverImageSrc": "/readings/how-to-fail-at-almost-everything-and-still-win-big-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 201,
+    "slug": "snow-crash",
+    "title": "Snow Crash",
+    "author": "Neal Stephenson",
+    "finishedDate": "2017-10-05T00:00:00.000Z",
+    "coverImageSrc": "/readings/snow-crash-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 202,
+    "slug": "stranger-in-a-strange-land",
+    "title": "Stranger in a Strange Land",
+    "author": "Robert A. Heinlein",
+    "finishedDate": "2017-10-17T00:00:00.000Z",
+    "coverImageSrc": "/readings/stranger-in-a-strange-land-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 203,
+    "slug": "sapiens",
+    "title": "Sapiens",
+    "author": "Yuval Noah Harari",
+    "finishedDate": "2017-10-21T00:00:00.000Z",
+    "coverImageSrc": "/readings/sapiens-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 204,
+    "slug": "win-bigly",
+    "title": "Win Bigly",
+    "author": "Scott Adams",
+    "finishedDate": "2017-11-04T00:00:00.000Z",
+    "coverImageSrc": "/readings/win-bigly-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 205,
+    "slug": "the-path-to-power",
+    "title": "The Path to Power",
+    "author": "Robert A. Caro",
+    "finishedDate": "2017-11-14T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-path-to-power-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 206,
+    "slug": "influence",
+    "title": "Influence",
+    "author": "Robert B. Cialdini",
+    "finishedDate": "2017-11-14T00:00:00.000Z",
+    "coverImageSrc": "/readings/influence-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 207,
+    "slug": "pre-suasion",
+    "title": "Pre-Suasion",
+    "author": "Robert B. Cialdini",
+    "finishedDate": "2017-12-04T00:00:00.000Z",
+    "coverImageSrc": "/readings/presuasion-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 208,
+    "slug": "the-man-in-the-high-castle",
+    "title": "The Man in the High Castle",
+    "author": "Philip K. Dick",
+    "finishedDate": "2016-01-23T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-man-in-the-high-castle-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 209,
+    "slug": "capitalism-and-freedom",
+    "title": "Capitalism and Freedom",
+    "author": "Milton Friedman",
+    "finishedDate": "2016-02-16T00:00:00.000Z",
+    "coverImageSrc": "/readings/capitalism-and-freedom-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 210,
+    "slug": "cloud-atlas",
+    "title": "Cloud Atlas",
+    "author": "David Mitchell",
+    "finishedDate": "2016-02-28T00:00:00.000Z",
+    "coverImageSrc": "/readings/cloud-atlas-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 211,
+    "slug": "stardust",
+    "title": "Stardust",
+    "author": "Neil Gaiman",
+    "finishedDate": "2016-03-21T00:00:00.000Z",
+    "coverImageSrc": "/readings/stardust-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 212,
+    "slug": "how-google-works",
+    "title": "How Google Works",
+    "author": "Eric Schmidt",
+    "finishedDate": "2016-03-31T00:00:00.000Z",
+    "coverImageSrc": "/readings/how-google-works-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 213,
+    "slug": "shantaram",
+    "title": "Shantaram",
+    "author": "Gregory David Roberts",
+    "finishedDate": "2016-05-08T00:00:00.000Z",
+    "coverImageSrc": "/readings/shantaram-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 214,
+    "slug": "the-war-of-art",
+    "title": "The War of Art",
+    "author": "Steven Pressfield",
+    "finishedDate": "2016-05-12T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-war-of-art-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 215,
+    "slug": "bird-by-bird",
+    "title": "Bird by Bird",
+    "author": "Anne Lamott",
+    "finishedDate": "2016-06-17T00:00:00.000Z",
+    "coverImageSrc": "/readings/bird-by-bird-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 216,
+    "slug": "on-writing",
+    "title": "On Writing",
+    "author": "Stephen King",
+    "finishedDate": "2016-06-21T00:00:00.000Z",
+    "coverImageSrc": "/readings/on-writing-02.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 217,
+    "slug": "steal-like-an-artist",
+    "title": "Steal Like an Artist",
+    "author": "Austin Kleon",
+    "finishedDate": "2016-07-16T00:00:00.000Z",
+    "coverImageSrc": "/readings/steal-like-an-artist-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 218,
+    "slug": "other-desert-cities",
+    "title": "Other Desert Cities",
+    "author": "Jon Robin Baitz",
+    "finishedDate": "2016-10-09T00:00:00.000Z",
+    "coverImageSrc": "/readings/other-desert-cities-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 219,
+    "slug": "player-piano",
+    "title": "Player Piano",
+    "author": "Kurt Vonnegut",
+    "finishedDate": "2016-10-11T00:00:00.000Z",
+    "coverImageSrc": "/readings/player-piano-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 220,
+    "slug": "narconomics",
+    "title": "Narconomics",
+    "author": "Tom Wainwright",
+    "finishedDate": "2016-10-30T00:00:00.000Z",
+    "coverImageSrc": "/readings/narconomics-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 221,
+    "slug": "the-sirens-of-titan",
+    "title": "The Sirens of Titan",
+    "author": "Kurt Vonnegut",
+    "finishedDate": "2016-12-02T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-sirens-of-titan-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 222,
+    "slug": "fooled-by-randomness",
+    "title": "Fooled by Randomness",
+    "author": "Nassim Nicholas Taleb",
+    "finishedDate": "2016-12-11T00:00:00.000Z",
+    "coverImageSrc": "/readings/fooled-by-randomness-02.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 223,
+    "slug": "antifragile",
+    "title": "Antifragile",
+    "author": "Nassim Nicholas Taleb",
+    "finishedDate": "2016-12-31T00:00:00.000Z",
+    "coverImageSrc": "/readings/antifragile-02.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 224,
+    "slug": "why-the-militia",
+    "title": "Why the Militia",
+    "author": "Red Beckman",
+    "finishedDate": "2015-01-02T00:00:00.000Z",
+    "coverImageSrc": "/readings/why-the-militia-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 225,
+    "slug": "the-beginners-guide-to-insight-meditation",
+    "title": "The Beginner's Guide to Insight Meditation",
+    "author": "Arinna Weisman",
+    "finishedDate": "2015-01-02T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-beginners-guide-to-insight-meditation-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 226,
+    "slug": "homage-to-catalonia",
+    "title": "Homage to Catalonia",
+    "author": "George Orwell",
+    "finishedDate": "2015-01-09T00:00:00.000Z",
+    "coverImageSrc": "/readings/homage-to-catalonia-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 227,
+    "slug": "your-first-meteor-application",
+    "title": "Your First Meteor Application",
+    "author": "David Turnbull",
+    "finishedDate": "2015-01-19T00:00:00.000Z",
+    "coverImageSrc": "/readings/your-first-meteor-application-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 228,
+    "slug": "benjamin-franklin",
+    "title": "Benjamin Franklin",
+    "author": "Walter Isaacson",
+    "finishedDate": "2015-02-08T00:00:00.000Z",
+    "coverImageSrc": "/readings/benjamin-franklin-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 229,
+    "slug": "the-age-of-innocence",
+    "title": "The Age of Innocence",
+    "author": "Edith Wharton",
+    "finishedDate": "2015-02-26T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-age-of-innocence-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 230,
+    "slug": "ready-player-one",
+    "title": "Ready Player One",
+    "author": "Ernest Cline",
+    "finishedDate": "2015-03-04T00:00:00.000Z",
+    "coverImageSrc": "/readings/ready-player-one-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 231,
+    "slug": "boxers-and-saints",
+    "title": "Boxers & Saints",
+    "author": "Gene Luen Yang",
+    "finishedDate": "2015-03-20T00:00:00.000Z",
+    "coverImageSrc": "/readings/boxers-and-saints-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 232,
+    "slug": "steppenwolf",
+    "title": "Steppenwolf",
+    "author": "Hermann Hesse",
+    "finishedDate": "2015-04-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/steppenwolf-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 233,
+    "slug": "war-and-peace-in-the-global-village",
+    "title": "War and Peace in the Global Village",
+    "author": "Marshall McLuhan",
+    "finishedDate": "2015-05-16T00:00:00.000Z",
+    "coverImageSrc": "/readings/war-and-peace-in-the-global-village-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 234,
+    "slug": "toward-a-libertarian-society",
+    "title": "Toward a Libertarian Society",
+    "author": "Walter Block",
+    "finishedDate": "2015-07-11T00:00:00.000Z",
+    "coverImageSrc": "/readings/toward-a-libertarian-society-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 235,
+    "slug": "the-martian",
+    "title": "The Martian",
+    "author": "Andy Weir",
+    "finishedDate": "2015-07-16T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-martian-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 236,
+    "slug": "the-circle",
+    "title": "The Circle",
+    "author": "Dave Eggers",
+    "finishedDate": "2015-07-27T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-circle-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 237,
+    "slug": "doing-good-better",
+    "title": "Doing Good Better",
+    "author": "William Macaskill",
+    "finishedDate": "2015-08-29T00:00:00.000Z",
+    "coverImageSrc": "/readings/doing-good-better-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 238,
+    "slug": "symposium",
+    "title": "Symposium",
+    "author": "Plato",
+    "finishedDate": "2015-12-09T00:00:00.000Z",
+    "coverImageSrc": "/readings/symposium-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 239,
+    "slug": "the-principles-of-beautiful-web-design",
+    "title": "The Principles of Beautiful Web Design",
+    "author": "Jason Beaird",
+    "finishedDate": "2015-12-14T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-principles-of-beautiful-web-design-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 240,
+    "slug": "pen-pals",
+    "title": "Pen Pals",
+    "author": "Aaron Cometbus",
+    "finishedDate": "2015-12-28T00:00:00.000Z",
+    "coverImageSrc": "/readings/pen-pals-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 241,
+    "slug": "the-road-less-traveled",
+    "title": "The Road Less Traveled",
+    "author": "M. Scott Peck",
+    "finishedDate": "2015-12-28T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-road-less-traveled-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 242,
+    "slug": "divine-fury",
+    "title": "Divine Fury",
+    "author": "Darrin M. McMahon",
+    "finishedDate": "2014-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/divine-fury-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 243,
+    "slug": "crime-and-punishment",
+    "title": "Crime and Punishment",
+    "author": "Fyodor Dostoevsky",
+    "finishedDate": "2014-01-14T00:00:00.000Z",
+    "coverImageSrc": "/readings/crime-and-punishment-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 244,
+    "slug": "crossing-the-mangrove",
+    "title": "Crossing the Mangrove",
+    "author": "Maryse Condé",
+    "finishedDate": "2014-02-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/crossing-the-mangrove-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 245,
+    "slug": "a-study-in-scarlet",
+    "title": "A Study in Scarlet",
+    "author": "Arthur Conan Doyle",
+    "finishedDate": "2014-04-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/a-study-in-scarlet-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 246,
+    "slug": "a-peoples-history-of-the-united-states",
+    "title": "A People's History of the United States",
+    "author": "Howard Zinn",
+    "finishedDate": "2014-04-08T00:00:00.000Z",
+    "coverImageSrc": "/readings/a-peoples-history-of-the-united-states-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 247,
+    "slug": "economics-in-one-lesson",
+    "title": "Economics in One Lesson",
+    "author": "Henry Hazlitt",
+    "finishedDate": "2014-05-02T00:00:00.000Z",
+    "coverImageSrc": "/readings/economics-in-one-lesson-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 248,
+    "slug": "the-fall",
+    "title": "The Fall",
+    "author": "Albert Camus",
+    "finishedDate": "2014-05-04T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-fall-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 249,
+    "slug": "a-clockwork-orange",
+    "title": "A Clockwork Orange",
+    "author": "Anthony Burgess",
+    "finishedDate": "2014-05-11T00:00:00.000Z",
+    "coverImageSrc": "/readings/a-clockwork-orange-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 250,
+    "slug": "dune",
+    "title": "Dune",
+    "author": "Frank Herbert",
+    "finishedDate": "2014-06-10T00:00:00.000Z",
+    "coverImageSrc": "/readings/dune-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 251,
+    "slug": "the-deacons-for-defense",
+    "title": "The Deacons for Defense",
+    "author": "Lance Hill",
+    "finishedDate": "2014-07-03T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-deacons-for-defense-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 252,
+    "slug": "the-brothers-karamazov",
+    "title": "The Brothers Karamazov",
+    "author": "Fyodor Dostoevsky",
+    "finishedDate": "2014-08-18T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-brothers-karamazov-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 253,
+    "slug": "the-anatomy-of-the-state",
+    "title": "The Anatomy of the State",
+    "author": "Murray N. Rothbard",
+    "finishedDate": "2014-08-21T00:00:00.000Z",
+    "coverImageSrc": "/readings/anatomy-of-the-state-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 254,
+    "slug": "t-sql-fundamentals",
+    "title": "T-SQL Fundamentals",
+    "author": "Itzik Ben-Gan",
+    "finishedDate": "2014-09-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/t-sql-fundamentals-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 255,
+    "slug": "the-art-of-learning",
+    "title": "The Art of Learning",
+    "author": "Josh Waitzkin",
+    "finishedDate": "2014-10-06T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-art-of-learning-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 256,
+    "slug": "so-you-want-to-play-go-beginner-level-one",
+    "title": "So You Want to Play Go: Beginner Level One",
+    "author": "Jonathan Hop",
+    "finishedDate": "2014-10-15T00:00:00.000Z",
+    "coverImageSrc": "/readings/so-you-want-to-play-go-beginner-level-one-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 257,
+    "slug": "training-kit-exam-70-461-querying-microsoft-sql-server-2012-mcsa",
+    "title": "Training Kit (Exam 70-461) Querying Microsoft SQL Server 2012 (MCSA)",
+    "author": "Dejan Sarka",
+    "finishedDate": "2014-10-24T00:00:00.000Z",
+    "coverImageSrc": "/readings/querying-microsoft-sql-server-2012-02.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 258,
+    "slug": "superintelligence",
+    "title": "Superintelligence",
+    "author": "Nick Bostrom",
+    "finishedDate": "2014-11-10T00:00:00.000Z",
+    "coverImageSrc": "/readings/superintelligence-02.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 259,
+    "slug": "the-privatization-of-roads-and-highways",
+    "title": "The Privatization of Roads and Highways",
+    "author": "Walter Block",
+    "finishedDate": "2014-11-23T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-privatization-of-roads-and-highways-02.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 260,
+    "slug": "business-model-generation",
+    "title": "Business Model Generation",
+    "author": "Alexander Osterwalder",
+    "finishedDate": "2013-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/business-model-generation-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 261,
+    "slug": "the-deadline",
+    "title": "The Deadline",
+    "author": "Tom Demarco",
+    "finishedDate": "2013-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-deadline-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 262,
+    "slug": "keep-the-aspidistra-flying",
+    "title": "Keep the Aspidistra Flying",
+    "author": "George Orwell",
+    "finishedDate": "2013-02-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/keep-the-aspidistra-flying-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 263,
+    "slug": "the-art-of-war",
+    "title": "The Art of War",
+    "author": "Sun Tzu",
+    "finishedDate": "2013-03-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-art-of-war-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 264,
+    "slug": "here-comes-everybody",
+    "title": "Here Comes Everybody",
+    "author": "Clay Shirky",
+    "finishedDate": "2013-03-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/here-comes-everybody-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 265,
+    "slug": "brave-new-war",
+    "title": "Brave New War",
+    "author": "John Robb",
+    "finishedDate": "2013-03-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/brave-new-war-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 266,
+    "slug": "peopleware",
+    "title": "Peopleware",
+    "author": "Tom Demarco",
+    "finishedDate": "2013-03-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/peopleware-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 267,
+    "slug": "emergence",
+    "title": "Emergence",
+    "author": "Steven Johnson",
+    "finishedDate": "2013-04-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/emergence-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 268,
+    "slug": "the-metamorphosis-of-prime-intellect",
+    "title": "The Metamorphosis of Prime Intellect",
+    "author": "Roger Williams",
+    "finishedDate": "2013-04-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-metamorphosis-of-prime-intellect-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 269,
+    "slug": "the-autobiography-of-malcolm-x",
+    "title": "The Autobiography of Malcolm X",
+    "author": "Malcolm X",
+    "finishedDate": "2013-04-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-autobiography-of-malcolm-x-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 270,
+    "slug": "nikola-tesla",
+    "title": "Nikola Tesla",
+    "author": "Sean Patrick",
+    "finishedDate": "2013-05-22T00:00:00.000Z",
+    "coverImageSrc": "/readings/nikola-tesla-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 271,
+    "slug": "cognitive-surplus",
+    "title": "Cognitive Surplus",
+    "author": "Clay Shirky",
+    "finishedDate": "2013-05-22T00:00:00.000Z",
+    "coverImageSrc": "/readings/cognitive-surplus-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 272,
+    "slug": "hackers-and-painters",
+    "title": "Hackers and Painters",
+    "author": "Paul Graham",
+    "finishedDate": "2013-05-23T00:00:00.000Z",
+    "coverImageSrc": "/readings/hackers-and-painters-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 273,
+    "slug": "a-game-of-thrones",
+    "title": "A Game of Thrones",
+    "author": "George R.R. Martin",
+    "finishedDate": "2013-06-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/a-game-of-thrones-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 274,
+    "slug": "pedagogy-of-the-oppressed",
+    "title": "Pedagogy of the Oppressed",
+    "author": "Paulo Friere",
+    "finishedDate": "2013-06-23T00:00:00.000Z",
+    "coverImageSrc": "/readings/pedagogy-of-the-oppressed-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 275,
+    "slug": "a-clash-of-kings",
+    "title": "A Clash of Kings",
+    "author": "George R.R. Martin",
+    "finishedDate": "2013-07-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/a-clash-of-kings-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 276,
+    "slug": "a-storm-of-swords",
+    "title": "A Storm of Swords",
+    "author": "George R.R. Martin",
+    "finishedDate": "2013-07-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/a-storm-of-swords-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 277,
+    "slug": "essential-fish-care-in-aquaponics",
+    "title": "Essential Fish Care in Aquaponics",
+    "author": "Victoria Kelley",
+    "finishedDate": "2013-08-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/essential-fish-care-in-aquaponics-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 278,
+    "slug": "aquaponics",
+    "title": "Aquaponics: Entrepreneurs Embrace Technology that Holds Key to Strengthening Local Food Systems and Increasing Food Security",
+    "author": "Melinda Clark",
+    "finishedDate": "2013-08-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/aquaponics-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 279,
+    "slug": "7-myths-about-aquaponics",
+    "title": "7 Myths About Aquaponics",
+    "author": "Michelle Booth",
+    "finishedDate": "2013-08-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/7-myths-about-aquaponics-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 280,
+    "slug": "aquaponic-gardening",
+    "title": "Aquaponic Gardening",
+    "author": "Sylvia Bernstein",
+    "finishedDate": "2013-08-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/aquaponic-gardening-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 281,
+    "slug": "the-urban-food-revolution",
+    "title": "The Urban Food Revolution",
+    "author": "Peter Ladner",
+    "finishedDate": "2013-08-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-urban-food-revolution-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 282,
+    "slug": "a-dance-with-dragons",
+    "title": "A Dance With Dragons",
+    "author": "George R.R. Martin",
+    "finishedDate": "2013-08-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/a-dance-with-dragons-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 283,
+    "slug": "a-feast-for-crows",
+    "title": "A Feast for Crows",
+    "author": "George R.R. Martin",
+    "finishedDate": "2013-08-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/a-feast-for-crows-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 284,
+    "slug": "letters-to-a-young-teacher",
+    "title": "Letters to a Young Teacher",
+    "author": "Jonathan Kozol",
+    "finishedDate": "2013-09-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/letters-to-a-young-teacher-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 285,
+    "slug": "the-post-american-world",
+    "title": "The Post-American World",
+    "author": "Fareed Zakaria",
+    "finishedDate": "2013-09-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-post-american-world-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 286,
+    "slug": "cats-cradle",
+    "title": "Cat's Cradle",
+    "author": "Kurt Vonnegut",
+    "finishedDate": "2013-09-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/cats-cradle-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 287,
+    "slug": "the-4-hour-workweek",
+    "title": "The 4-Hour Workweek",
+    "author": "Timothy Ferriss",
+    "finishedDate": "2013-11-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-4-hour-workweek-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 288,
+    "slug": "the-entrepreneurial-investor",
+    "title": "The Entrepreneurial Investor",
+    "author": "Paul Orfalea",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-entrepreneurial-investor-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 289,
+    "slug": "the-soft-revolution",
+    "title": "The Soft Revolution",
+    "author": "Neil Postman",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-soft-revolution-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 290,
+    "slug": "news-from-a-parallel-world",
+    "title": "News From a Parallel World",
+    "author": "Richard Raznikov",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/news-from-a-parallel-world-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 291,
+    "slug": "thinking-fast-and-slow",
+    "title": "Thinking, Fast and Slow",
+    "author": "Daniel Kahneman",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/thinking-fast-and-slow-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 292,
+    "slug": "disciplined-dreaming",
+    "title": "Disciplined Dreaming",
+    "author": "Josh Linkner",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/disciplined-dreaming-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 293,
+    "slug": "aftershock",
+    "title": "Aftershock",
+    "author": "Robert B. Reich",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/aftershock-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 294,
+    "slug": "rich-dad-poor-dad",
+    "title": "Rich Dad, Poor Dad",
+    "author": "Robert T. Kiyosaki",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/rich-dad-poor-dad-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 295,
+    "slug": "persuasion",
+    "title": "Persuasion",
+    "author": "James Borg",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/persuasion-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 296,
+    "slug": "on-the-road",
+    "title": "On the Road",
+    "author": "Jack Kerouac",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/on-the-road-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 297,
+    "slug": "slaughterhouse-five",
+    "title": "Slaughterhouse-Five",
+    "author": "Kurt Vonnegut",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/slaughterhouse-five-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 298,
+    "slug": "what-makes-a-terrorist",
+    "title": "What Makes a Terrorist",
+    "author": "Alan B. Krueger",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/what-makes-a-terrorist-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 299,
+    "slug": "the-prince",
+    "title": "The Prince",
+    "author": "Niccoló Machiavelli",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-prince-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 300,
+    "slug": "program-design-with-pseudocode",
+    "title": "Program Design With Pseudocode",
+    "author": "t.e. Bailey",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/program-design-with-pseudocode-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 301,
+    "slug": "the-four-steps-to-the-epiphany",
+    "title": "The Four Steps to the Epiphany",
+    "author": "Steve Blank",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-four-steps-to-the-epiphany-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 302,
+    "slug": "moneyball",
+    "title": "Moneyball",
+    "author": "Michael Lewis",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/moneyball-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 303,
+    "slug": "negotiating-rationally",
+    "title": "Negotiating Rationally",
+    "author": "Max H. Bazerman",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/negotiating-rationally-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 304,
+    "slug": "merchants-of-immortality",
+    "title": "Merchants of Immortality",
+    "author": "Stephen S. Hall",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/merchants-of-immortality-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 305,
+    "slug": "thinking-strategically",
+    "title": "Thinking Strategically",
+    "author": "Avinash K. Dixit",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/thinking-strategically-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 306,
+    "slug": "the-e-myth-revisited",
+    "title": "The E-Myth Revisited",
+    "author": "Michael E. Gerber",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-e-myth-revisited-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 307,
+    "slug": "flow",
+    "title": "Flow",
+    "author": "Mihály Csíkszentmihályi",
+    "finishedDate": "2012-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/flow-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 308,
+    "slug": "steve-jobs",
+    "title": "Steve Jobs",
+    "author": "Walter Isaacson",
+    "finishedDate": "2012-07-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/steve-jobs-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 309,
+    "slug": "rework",
+    "title": "Rework",
+    "author": "Jason Fried",
+    "finishedDate": "2012-07-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/rework-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 310,
+    "slug": "genome",
+    "title": "Genome",
+    "author": "Matt Ridley",
+    "finishedDate": "2012-07-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/genome-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 311,
+    "slug": "the-power-of-habit",
+    "title": "The Power of Habit",
+    "author": "Charles Duhigg",
+    "finishedDate": "2012-08-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-power-of-habit-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 312,
+    "slug": "brave-new-world",
+    "title": "Brave New World",
+    "author": "Aldous Huxley",
+    "finishedDate": "2012-08-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/brave-new-world-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 313,
+    "slug": "outliers",
+    "title": "Outliers",
+    "author": "Malcolm Gladwell",
+    "finishedDate": "2012-09-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/outliers-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 314,
+    "slug": "never-let-me-go",
+    "title": "Never Let Me Go",
+    "author": "Kazuo Ishiguro",
+    "finishedDate": "2012-09-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/never-let-me-go-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 315,
+    "slug": "i-robot",
+    "title": "I, Robot",
+    "author": "Isaac Asimov",
+    "finishedDate": "2012-10-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/i-robot-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 316,
+    "slug": "a-scanner-darkly",
+    "title": "A Scanner Darkly",
+    "author": "Philip K. Dick",
+    "finishedDate": "2012-10-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/a-scanner-darkly-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 317,
+    "slug": "go-for-beginners",
+    "title": "Go for Beginners",
+    "author": "Kaoru Iwamoto",
+    "finishedDate": "2012-10-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/go-for-beginners-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 318,
+    "slug": "fight-club",
+    "title": "Fight Club",
+    "author": "Chuck Palahniuk",
+    "finishedDate": "2012-10-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/fight-club-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 319,
+    "slug": "the-open-classroom",
+    "title": "The Open Classroom",
+    "author": "Herbert R. Kohl",
+    "finishedDate": "2012-11-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-open-classroom-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 320,
+    "slug": "operating-manual-for-spaceship-earth",
+    "title": "Operating Manual for Spaceship Earth",
+    "author": "R. Buckminster Fuller",
+    "finishedDate": "2012-11-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/operating-manual-for-spaceship-earth-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 321,
+    "slug": "the-mythical-man-month",
+    "title": "The Mythical Man-Month",
+    "author": "Frederick P. Brooks Jr.",
+    "finishedDate": "2012-12-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/mythical-man-month-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 322,
+    "slug": "making-ideas-happen",
+    "title": "Making Ideas Happen",
+    "author": "Scott Belsky",
+    "finishedDate": "2011-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/making-ideas-happen-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 323,
+    "slug": "inside-steves-brain",
+    "title": "Inside Steve's Brain",
+    "author": "Leander Kahney",
+    "finishedDate": "2011-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/inside-steves-brain-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 324,
+    "slug": "john-dies-at-the-end",
+    "title": "John Dies at the End",
+    "author": "David Wong",
+    "finishedDate": "2011-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/john-dies-at-the-end-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 325,
+    "slug": "spin-selling",
+    "title": "Spin Selling",
+    "author": "Neil Rackham",
+    "finishedDate": "2011-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/spin-selling-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 326,
+    "slug": "the-art-of-the-start",
+    "title": "The Art of the Start",
+    "author": "Guy Kawasaki",
+    "finishedDate": "2011-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-art-of-the-start-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 327,
+    "slug": "the-fountainhead",
+    "title": "The Fountainhead",
+    "author": "Ayn Rand",
+    "finishedDate": "2011-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-fountainhead-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 328,
+    "slug": "phil-gordons-little-green-book",
+    "title": "Phil Gordon's Little Green Book",
+    "author": "Phil Gordon",
+    "finishedDate": "2011-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/phil-gordons-little-green-book-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 329,
+    "slug": "illusions",
+    "title": "Illusions",
+    "author": "Richard Bach",
+    "finishedDate": "2011-01-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/illusions-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 330,
+    "slug": "designing-data-intensive-applications",
+    "title": "Designing Data-Intensive Applications",
+    "author": "Martin Kleppmann",
+    "finishedDate": null,
+    "coverImageSrc": "/readings/designing-data-intensive-applications-01.jpg",
+    "thoughts": "some short notes here about the meaning of quality and the tension between classical and romantic approaches...",
+    "dropped": true
+  },
+  {
+    "id": 331,
+    "slug": "man-and-woman-he-created-them-a-theology-of-the-body",
+    "title": "Man and Woman He Created Them: A Theology of the Body",
+    "author": "John Paul II",
+    "finishedDate": null,
+    "coverImageSrc": "/readings/man-and-woman-he-created-them-01.jpg",
+    "thoughts": "",
+    "dropped": true
+  },
+  {
+    "id": 332,
+    "slug": "paradise-lost",
+    "title": "Paradise Lost",
+    "author": "John Milton",
+    "finishedDate": null,
+    "coverImageSrc": "/readings/paradise-lost-01.jpg",
+    "thoughts": "",
+    "dropped": true
+  },
+  {
+    "id": 333,
+    "slug": "scaling-people",
+    "title": "Scaling People",
+    "author": "Claire Hughes Johnson",
+    "finishedDate": null,
+    "coverImageSrc": "/readings/scaling-people-01.jpg",
+    "thoughts": "",
+    "dropped": true
+  },
+  {
+    "id": 334,
+    "slug": "structure-and-interpretation-of-computer-programs-second-edition",
+    "title": "Structure and Interpretation of Computer Programs, Second Edition",
+    "author": "Abelson and Sussman",
+    "finishedDate": null,
+    "coverImageSrc": "/readings/structure-and-interpretation-of-computer-programs-01.jpg",
+    "thoughts": "",
+    "dropped": true
+  },
+  {
+    "id": 335,
+    "slug": "shorter-summa",
+    "title": "Shorter Summa",
+    "author": "St. Thomas Aquinas",
+    "finishedDate": null,
+    "coverImageSrc": "/readings/shorter-summa-01.jpg",
+    "thoughts": "",
+    "dropped": true
+  },
+  {
+    "id": 336,
+    "slug": "how-the-catholic-church-built-western-civilization",
+    "title": "How the Catholic Church Built Western Civilization",
+    "author": "Thomas E. Woods, Jr.",
+    "finishedDate": null,
+    "coverImageSrc": "/readings/how-the-catholic-church-built-western-civilization-01.jpg",
+    "thoughts": "",
+    "dropped": true
+  },
+  {
+    "id": 337,
+    "slug": "the-metamorphosis-of-prime-intellect-02",
+    "title": "The Metamorphosis of Prime Intellect",
+    "author": "Roger Williams",
+    "finishedDate": "2025-03-13T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-metamorphosis-of-prime-intellect-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 338,
+    "slug": "a-midsummer-nights-dream",
+    "title": "A Midsummer Night's Dream",
+    "author": "William Shakespeare",
+    "finishedDate": "2025-03-22T00:00:00.000Z",
+    "coverImageSrc": "/readings/a-midsummer-nights-dream-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 339,
+    "slug": "the-sovereign-individual-02",
+    "title": "The Sovereign Individual",
+    "author": "James Dale Davidson and Lord William Rees-Mogg",
+    "finishedDate": "2025-04-18T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-sovereign-individual-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 340,
+    "slug": "vagabond",
+    "title": "Vagabond",
+    "author": "Takehiko Inoue",
+    "finishedDate": "2025-04-05T00:00:00.000Z",
+    "coverImageSrc": "/readings/vagabond-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 341,
+    "slug": "julius-caesar",
+    "title": "The Tragedy of Julius Caesar",
+    "author": "William Shakespeare",
+    "finishedDate": "2025-03-28T00:00:00.000Z",
+    "coverImageSrc": "/readings/julius-caesar-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 342,
+    "slug": "steppenwolf-02",
+    "title": "Steppenwolf",
+    "author": "Hermann Hesse",
+    "finishedDate": "2023-11-06T00:00:00.000Z",
+    "coverImageSrc": "/readings/steppenwolf-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 343,
+    "slug": "engineering-management-for-the-rest-of-us",
+    "title": "Engineering Management for the Rest of Us",
+    "author": "Sarah Drasner",
+    "finishedDate": "2023-09-10T00:00:00.000Z",
+    "coverImageSrc": "/readings/engineering-management-for-the-rest-of-us-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 344,
+    "slug": "the-impending-crisis",
+    "title": "The Impending Crisis, 1848-1861",
+    "author": "David Morris Potter",
+    "finishedDate": "2022-12-07T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-impending-crisis-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 345,
+    "slug": "the-price-of-tomorrow",
+    "title": "The Price of Tomorrow",
+    "author": "Jeff Booth",
+    "finishedDate": "2022-12-06T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-price-of-tomorrow-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 346,
+    "slug": "the-iliad",
+    "title": "The Iliad",
+    "author": "Homer",
+    "finishedDate": "2022-11-29T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-iliad-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 347,
+    "slug": "the-tao-of-tmux",
+    "title": "The Tao of tmux",
+    "author": "Tony Narlock",
+    "finishedDate": "2022-11-03T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-tao-of-tmux-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 348,
+    "slug": "an-elegant-puzzle",
+    "title": "An Elegant Puzzle",
+    "author": "Will Larson",
+    "finishedDate": "2022-10-27T00:00:00.000Z",
+    "coverImageSrc": "/readings/an-elegant-puzzle-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 349,
+    "slug": "the-odyssey",
+    "title": "The Odyssey",
+    "author": "Homer",
+    "finishedDate": "2022-08-26T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-odyssey-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 350,
+    "slug": "the-network-state",
+    "title": "The Network State",
+    "author": "Balaji Srinivasan",
+    "finishedDate": "2022-07-31T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-network-state-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 351,
+    "slug": "the-gulag-archipelago-volume-i",
+    "title": "The Gulag Archipelago, Volume I",
+    "author": "Aleksandr Solzhenitsyn",
+    "finishedDate": "2022-07-25T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-gulag-archipelago-volume-i-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 352,
+    "slug": "discourses-fragments-handbook",
+    "title": "Discourses, Fragments, Handbook",
+    "author": "Epictetus",
+    "finishedDate": "2022-07-20T00:00:00.000Z",
+    "coverImageSrc": "/readings/discourses-fragments-handbook-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 353,
+    "slug": "how-to-read-a-book-02",
+    "title": "How to Read a Book",
+    "author": "Mortimer J. Adler",
+    "finishedDate": "2019-09-08T00:00:00.000Z",
+    "coverImageSrc": "/readings/how-to-read-a-book-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 354,
+    "slug": "the-fountainhead-02",
+    "title": "The Fountainhead",
+    "author": "Ayn Rand",
+    "finishedDate": "2019-07-06T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-fountainhead-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 355,
+    "slug": "phil-gordons-little-green-book-02",
+    "title": "Phil Gordon's Little Green Book",
+    "author": "Phil Gordon",
+    "finishedDate": "2013-11-01T00:00:00.000Z",
+    "coverImageSrc": "/readings/phil-gordons-little-green-book-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 356,
+    "slug": "antony-and-cleopatra",
+    "title": "Antony and Cleopatra",
+    "author": "William Shakespeare",
+    "finishedDate": "2025-04-07T00:00:00.000Z",
+    "coverImageSrc": "/readings/antony-and-cleopatra-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 357,
+    "slug": "the-hobbit",
+    "title": "The Hobbit",
+    "author": "J.R.R. Tolkien",
+    "finishedDate": "2025-04-13T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-hobbit-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 358,
+    "slug": "musashi",
+    "title": "Musashi",
+    "author": "Eiji Yoshikawa",
+    "finishedDate": null,
+    "coverImageSrc": "/readings/musashi-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 359,
+    "slug": "the-tempest",
+    "title": "The Tempest",
+    "author": "William Shakespeare",
+    "finishedDate": "2025-04-16T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-tempest-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 360,
+    "slug": "tao-te-ching",
+    "title": "Tao Te Ching",
+    "author": "Lao-Tzu",
+    "finishedDate": null,
+    "coverImageSrc": "/readings/tao-te-ching-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 361,
+    "slug": "the-fellowship-of-the-ring",
+    "title": "The Fellowship of the Ring",
+    "author": "J.R.R. Tolkien",
+    "finishedDate": "2025-06-07T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-fellowship-of-the-ring-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 362,
+    "slug": "the-war-of-art-ii",
+    "title": "The War of Art",
+    "author": "Steven Pressfield",
+    "finishedDate": "2025-05-18T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-war-of-art-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 363,
+    "slug": "the-two-towers",
+    "title": "The Two Towers",
+    "author": "J.R.R. Tolkien",
+    "finishedDate": "2025-07-04T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-two-towers-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 364,
+    "slug": "the-return-of-the-king",
+    "title": "The Return of the King",
+    "author": "J.R.R. Tolkien",
+    "finishedDate": "2025-07-29T00:00:00.000Z",
+    "coverImageSrc": "/readings/the-return-of-the-king-01.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 365,
+    "slug": "a-philosophy-of-software-design",
+    "title": "A Philosophy of Software Design",
+    "author": "John Ousterhout",
+    "finishedDate": null,
+    "coverImageSrc": "https://m.media-amazon.com/images/I/711Qnv05eTL._SL1231_.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 366,
+    "slug": "the-computer-and-the-brain",
+    "title": "The Computer and the Brain",
+    "author": "John von Neumann",
+    "finishedDate": null,
+    "coverImageSrc": "https://m.media-amazon.com/images/I/61rXo0j7w1L._SL1000_.jpg",
+    "thoughts": "",
+    "dropped": false
+  },
+  {
+    "id": 367,
+    "slug": "the-price-of-time",
+    "title": "The Price of Time",
+    "author": "Edward Chancellor",
+    "finishedDate": null,
+    "coverImageSrc": "https://m.media-amazon.com/images/I/91RTUFA19eL._SL1500_.jpg",
+    "thoughts": "",
+    "dropped": false
+  }
+]
