@@ -62,7 +62,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const toggleDarkMode = () => {
+    document.documentElement.classList.add('theme-transitioning');
     setIsDarkMode(prev => !prev);
+    setTimeout(() => document.documentElement.classList.remove('theme-transitioning'), 350);
   };
 
   return (

@@ -16,34 +16,22 @@ function Header() {
       <nav>
         <ul className="nav-list">
           <li>
-            <Link
-              href="/"
-              className="text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
-            >
+            <Link href="/" className="text-gray-900 dark:text-gray-100">
               home
             </Link>
           </li>
           <li>
-            <Link
-              href="/projects"
-              className="text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
-            >
+            <Link href="/projects" className="text-gray-900 dark:text-gray-100">
               projects
             </Link>
           </li>
           <li>
-            <Link
-              href="/readings"
-              className="text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
-            >
+            <Link href="/readings" className="text-gray-900 dark:text-gray-100">
               readings
             </Link>
           </li>
           <li>
-            <Link
-              href="/map"
-              className="text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
-            >
+            <Link href="/map" className="text-gray-900 dark:text-gray-100">
               travels
             </Link>
           </li>

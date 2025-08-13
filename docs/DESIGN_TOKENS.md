@@ -27,7 +27,6 @@ The base color palette consists of:
 #### Semantic Tokens
 
 - **Theme Tokens**: Dynamic tokens that adapt between light and dark modes
-
   - `background`: Page background
   - `foreground`: Primary text color
   - `card`: Card background
@@ -42,7 +41,6 @@ The base color palette consists of:
   - `accent-foreground`: Text on accent backgrounds
 
 - **Primary Colors**: Primary UI colors from `primary-50` to `primary-900`
-
   - In light mode: Based on blue palette
   - In dark mode: Inverted for better contrast
 
@@ -101,6 +99,8 @@ Standard Tailwind spacing scale extended with additional values:
 - `animate-spin-slow`: Slow spinning animation
 - `animate-bounce-slow`: Slow bouncing animation
 - `animate-pulse-reading`: Pulsing animation for reading indicator
+- `animate-icon-switch`: Subtle scale pulse animation for theme toggle (200ms)
+- `animate-theme-pulse`: Continuous pulsing animation for theme-related effects (2s)
 
 ### Transitions
 

@@ -179,6 +179,8 @@ export default {
         'spin-slow': 'spin 3s linear infinite',
         'bounce-slow': 'bounce 2s ease-in-out infinite',
         'pulse-reading': 'pulseReading 2s infinite',
+        'icon-switch': 'iconSwitch 200ms ease-in-out',
+        'theme-pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {
         'fade-in-up': {
