@@ -1,6 +1,6 @@
 'use client';
 
-import { PLACES } from '@/app/map/data';
+import type { Place } from '@/app/map/data';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
@@ -13,7 +13,11 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-export default function WhereIveBeenMap() {
+interface MapProps {
+  places: Place[];
+}
+
+export default function WhereIveBeenMap({ places }: MapProps) {
   const centerPosition: [number, number] = [40, -20];
 
   return (
@@ -43,7 +47,7 @@ export default function WhereIveBeenMap() {
           noWrap={true}
           attribution='&copy; <a href="http://openstreetmap.org">openstreetmap</a> contributors'
         />
-        {PLACES.map(place => (
+        {places.map(place => (
           <Marker key={place.id} position={[place.lat, place.lng]}>
             <Popup>
               <strong>{place.name}</strong>
