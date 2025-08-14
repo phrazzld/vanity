@@ -1,5 +1,5 @@
 import { GET } from '../logger-test/route';
-import { logger, createLogContext, CorrelationContext } from '@/lib/logger';
+import { logger, CorrelationContext } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { nanoid } from 'nanoid';
 
@@ -37,7 +37,7 @@ describe('/api/logger-test', () => {
     },
     nextUrl: {
       searchParams: {
-        get: jest.fn((key: string) => null),
+        get: jest.fn((_key: string) => null),
       },
     },
   } as unknown as NextRequest;
