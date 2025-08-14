@@ -1,0 +1,333 @@
+import { writeFile, mkdir } from 'fs/promises';
+import { join } from 'path';
+import { existsSync, statSync } from 'fs';
+import inquirer from 'inquirer';
+import chalk from 'chalk';
+import slugify from 'slugify';
+import sharp from 'sharp';
+import { openEditor } from '../lib/editor';
+import { previewReading } from '../lib/preview';
+import { getReadings } from '../../src/lib/data';
+
+const READINGS_DIR = join(process.cwd(), 'content', 'readings');
+const IMAGES_DIR = join(process.cwd(), 'public', 'images', 'readings');
+
+/**
+ * Adds a new reading interactively using inquirer prompts
+ */
+export async function addReading(): Promise<void> {
+  console.log(chalk.cyan("📚 Let's add a new reading...\n"));
+
+  try {
+    // Title and author prompts
+    const basicInfo = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'title',
+        message: 'Book title:',
+        validate: input => (input.trim() ? true : 'Title is required'),
+      },
+      {
+        type: 'input',
+        name: 'author',
+        message: 'Author:',
+        validate: input => (input.trim() ? true : 'Author is required'),
+      },
+    ]);
+
+    // Finished prompt
+    const { finished } = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'finished',
+        message: 'Have you finished this book?',
+        default: false,
+      },
+    ]);
+
+    // Date prompt if finished
+    let finishedDate: string | null = null;
+    if (finished) {
+      const { dateInput } = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'dateInput',
+          message: 'When did you finish? (YYYY-MM-DD or press Enter for today):',
+          default: new Date().toISOString().split('T')[0],
+          validate: input => {
+            if (!input) return true;
+            const date = new Date(input);
+            return !isNaN(date.getTime()) ? true : 'Please enter a valid date (YYYY-MM-DD)';
+          },
+        },
+      ]);
+      finishedDate = new Date(dateInput).toISOString();
+    }
+
+    // Cover image prompt
+    const { imageChoice } = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'imageChoice',
+        message: 'Add a cover image?',
+        choices: [
+          { name: '🔗 URL - Provide an image URL', value: 'url' },
+          { name: '📁 Local - Upload a local image file', value: 'local' },
+          { name: '⏭️  Skip - No cover image', value: 'skip' },
+        ],
+      },
+    ]);
+
+    let coverImage: string | null = null;
+    const slug = slugify(basicInfo.title, { lower: true, strict: true });
+
+    if (imageChoice === 'url') {
+      const { imageUrl } = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'imageUrl',
+          message: 'Image URL:',
+          validate: input => {
+            if (!input.trim()) return 'URL is required';
+            try {
+              new URL(input);
+              return true;
+            } catch {
+              return 'Please enter a valid URL';
+            }
+          },
+        },
+      ]);
+      coverImage = imageUrl;
+    } else if (imageChoice === 'local') {
+      const { imagePath } = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'imagePath',
+          message: 'Path to image file:',
+          validate: input => {
+            if (!input.trim()) return 'Path is required';
+
+            // Check if file exists
+            if (!existsSync(input)) return 'File not found';
+
+            // Validate file extension
+            const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif'];
+            const ext = input.toLowerCase().match(/\.[^.]+$/)?.[0];
+            if (!ext || !allowedExtensions.includes(ext)) {
+              return `Invalid image format. Allowed: ${allowedExtensions.join(', ')}`;
+            }
+
+            // Check file size (max 10MB)
+            const stats = statSync(input);
+            const fileSizeInMB = stats.size / (1024 * 1024);
+            if (fileSizeInMB > 10) {
+              return `File too large (${fileSizeInMB.toFixed(1)}MB). Maximum size: 10MB`;
+            }
+
+            // Check for directory traversal attempts
+            if (input.includes('..') || input.includes('~')) {
+              return 'Invalid path. Please use absolute or relative paths without .. or ~';
+            }
+
+            return true;
+          },
+        },
+      ]);
+
+      // Ensure images directory exists
+      if (!existsSync(IMAGES_DIR)) {
+        await mkdir(IMAGES_DIR, { recursive: true });
+      }
+
+      // Optimize and save image
+      const outputPath = join(IMAGES_DIR, `${slug}.webp`);
+      console.log(chalk.gray('Optimizing image...'));
+
+      try {
+        await sharp(imagePath)
+          .resize(400, 600, {
+            fit: 'cover',
+            position: 'center',
+          })
+          .webp({ quality: 80 })
+          .toFile(outputPath);
+
+        coverImage = `/images/readings/${slug}.webp`;
+        console.log(chalk.green('✓ Image optimized and saved'));
+      } catch (imageError) {
+        console.error(chalk.red('✖ Failed to process image:'), imageError);
+        const { continueWithoutImage } = await inquirer.prompt([
+          {
+            type: 'confirm',
+            name: 'continueWithoutImage',
+            message: 'Continue without cover image?',
+            default: true,
+          },
+        ]);
+        if (!continueWithoutImage) {
+          console.log(chalk.yellow('✖ Reading creation cancelled.'));
+          return;
+        }
+      }
+    }
+
+    // Thoughts prompt
+    const { addThoughts } = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'addThoughts',
+        message: 'Would you like to add your thoughts about this book?',
+        default: false,
+      },
+    ]);
+
+    let thoughts = '';
+    if (addThoughts) {
+      console.log(chalk.gray('\nOpening editor for your thoughts...'));
+      const thoughtsTemplate = `# Your thoughts on "${basicInfo.title}" by ${basicInfo.author}
+# Lines starting with # will be ignored
+# Write your thoughts below:
+
+`;
+      const thoughtsContent = await openEditor(thoughtsTemplate, '.md');
+      if (thoughtsContent) {
+        thoughts = thoughtsContent
+          .split('\n')
+          .filter(line => !line.startsWith('#'))
+          .join('\n')
+          .trim();
+      }
+    }
+
+    // Show preview
+    console.log(previewReading(basicInfo.title, basicInfo.author, finished, thoughts || undefined));
+
+    // Generate filename and create content
+    const filename = `${slug}.md`;
+    const filepath = join(READINGS_DIR, filename);
+
+    // Check if file already exists
+    if (existsSync(filepath)) {
+      const { overwrite } = await inquirer.prompt([
+        {
+          type: 'confirm',
+          name: 'overwrite',
+          message: chalk.yellow(`⚠️  ${filename} already exists. Overwrite?`),
+          default: false,
+        },
+      ]);
+
+      if (!overwrite) {
+        console.log(chalk.yellow('✖ Reading creation cancelled.'));
+        return;
+      }
+    }
+
+    // Create the reading file content
+    const frontmatter: any = {
+      title: basicInfo.title,
+      author: basicInfo.author,
+      finished: finishedDate || false,
+      dropped: false,
+    };
+
+    if (coverImage) {
+      frontmatter.coverImage = coverImage;
+    }
+
+    const fileContent = `---
+${Object.entries(frontmatter)
+  .map(([key, value]) => {
+    if (typeof value === 'string' && value.includes(':')) {
+      return `${key}: '${value}'`;
+    }
+    return `${key}: ${value}`;
+  })
+  .join('\n')}
+---
+
+${thoughts}`;
+
+    // Ensure readings directory exists
+    try {
+      if (!existsSync(READINGS_DIR)) {
+        await mkdir(READINGS_DIR, { recursive: true });
+      }
+    } catch (dirError) {
+      console.error(chalk.red('✖ Failed to create readings directory:'), dirError);
+      process.exit(1);
+    }
+
+    // Write the file
+    try {
+      await writeFile(filepath, fileContent);
+      console.log(chalk.green(`\n✅ Reading "${basicInfo.title}" saved to ${filename}`));
+    } catch (writeError) {
+      console.error(chalk.red('✖ Failed to save reading file:'), writeError);
+      console.log(chalk.gray(`  Attempted to write to: ${filepath}`));
+      process.exit(1);
+    }
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('prompt')) {
+      console.log(chalk.yellow('\n✖ Reading creation cancelled.'));
+    } else {
+      console.error(chalk.red('✖ Error adding reading:'), error);
+      process.exit(1);
+    }
+  }
+}
+
+/**
+ * Lists recent readings with formatting
+ * @param limit Number of readings to show (default 10)
+ */
+export function listReadings(limit: number = 10): void {
+  try {
+    const readings = getReadings();
+    const recentReadings = readings.slice(0, limit);
+
+    if (recentReadings.length === 0) {
+      console.log(chalk.yellow('No readings found.'));
+      return;
+    }
+
+    console.log(
+      chalk.cyan(`\n📚 Recent Readings (showing ${recentReadings.length} of ${readings.length})\n`)
+    );
+
+    recentReadings.forEach((reading, index) => {
+      const status = reading.finishedDate
+        ? chalk.green('✓') + ' ' + new Date(reading.finishedDate).toLocaleDateString()
+        : chalk.yellow('○ Reading');
+
+      console.log(chalk.bold(reading.title));
+      console.log(chalk.gray('   by ') + reading.author);
+      console.log(chalk.gray('   ') + status);
+
+      if (reading.thoughts && reading.thoughts.trim()) {
+        const truncatedThoughts =
+          reading.thoughts.length > 80
+            ? reading.thoughts.substring(0, 77) + '...'
+            : reading.thoughts;
+        console.log(chalk.gray('   ') + chalk.italic(`"${truncatedThoughts}"`));
+      }
+
+      if (index < recentReadings.length - 1) {
+        console.log();
+      }
+    });
+
+    const finishedCount = readings.filter(r => r.finishedDate).length;
+    const readingCount = readings.length - finishedCount;
+
+    console.log(
+      chalk.gray(
+        `\nTotal: ${readings.length} books (${finishedCount} finished, ${readingCount} reading)`
+      )
+    );
+  } catch (error) {
+    console.error(chalk.red('✖ Error listing readings:'), error);
+    process.exit(1);
+  }
+}
