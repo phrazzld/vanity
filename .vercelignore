@@ -37,8 +37,16 @@ logs
 
 # Misc
 README.md
-*.md
 .env.example
 .eslintrc*
 .prettierrc*
 docker-compose.yml
+
+# CRITICAL: content/ directory markdown files are REQUIRED for runtime data
+# Only exclude specific documentation markdown files, NOT all *.md files
+CONTRIBUTING.md
+BACKLOG.md
+TODO.md
+TASK.md
+CLAUDE.md
+docs/**/*.md

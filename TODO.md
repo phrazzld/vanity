@@ -183,6 +183,32 @@ _"Interactive where it matters, simple everywhere else."_
 
 ## 🔧 Phase 4: Production Cleanup
 
+### Critical Vercel Fix Required
+
+## Execution Log
+
+[2025-08-15 11:45] Identified root cause: line 40 `*.md` excludes all content
+[2025-08-15 11:46] Removed overly broad `*.md` pattern
+[2025-08-15 11:47] Added specific exclusions for docs while preserving content/
+[2025-08-15 11:48] Build successful - fix verified locally
+✅ .vercelignore Fixed - content will now deploy
+
+**Issue**: Content not loading on Vercel preview - all pages show empty data
+**Root Cause**: `.vercelignore` contains `*.md` which excludes ALL markdown files from deployment
+
+- [x] **Fix .vercelignore to include content directory**
+  - Remove the overly broad `*.md` exclusion pattern (line 40)
+  - Add specific exclusions: `CONTRIBUTING.md`, `BACKLOG.md`, `TODO.md`, `TASK.md`, `CLAUDE.md`
+  - Add `docs/**/*.md` to exclude documentation but keep content
+  - Add comment: `# CRITICAL: content/ directory markdown files are REQUIRED for runtime`
+  - This fixes the empty data issue since API routes read these files via fs.readFileSync()
+
+- [~] **Test and deploy the fix**
+  - Run `npm run build` locally to verify
+  - Commit with message: "fix: include content markdown files in Vercel deployment"
+  - Push to trigger new deployment
+  - Verify all content loads on preview URL (/readings, /quotes, /projects, /map)
+
 ### Vercel & Deploy
 
 ## Execution Log
@@ -193,15 +219,23 @@ _"Interactive where it matters, simple everywhere else."_
 [15:09] Created comprehensive PR with detailed summary
 ✅ PR Created: https://github.com/phrazzld/vanity/pull/52
 
+[19:00] Fixed vercel.json - removed prisma:generate from build command
+[19:01] Fixed CI workflow - removed Generate Prisma client step
+[19:02] Deployment and CI now passing
+✅ Deployment configuration fixed
+
 - [x] Create PR from `refactor/migrate-database-to-markdown` (https://github.com/phrazzld/vanity/pull/52)
-- [ ] Deploy to Vercel preview
+- [x] Fix vercel.json build command (removed Prisma references)
+- [x] Fix GitHub Actions CI (removed Prisma generation step)
+- [ ] Deploy to Vercel preview (pending .vercelignore fix above)
 - [ ] Remove Neon database from Vercel dashboard
 - [ ] Merge to main
 - [ ] Monitor for any issues
 
 ### Code Quality
 
-- [ ] Fix TypeScript errors in test files (remove db imports)
+- [x] Fix TypeScript lint warnings in CLI code (35 warnings)
+- [ ] Fix unused variable in debounce.ts
 - [ ] Update ESLint config to allow `process` global
 - [ ] Remove unused test files for deleted features
 - [ ] Clean up `.next` build directory
