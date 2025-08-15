@@ -236,7 +236,34 @@ _"Interactive where it matters, simple everywhere else."_
 - [ ] Merge to main
 - [ ] Monitor for any issues
 
-### Code Quality
+### Code Quality - PR Review Feedback
+
+#### Critical/Merge-blocking (Address Before Merge)
+
+- [ ] **[HIGH]** Fix manual YAML frontmatter construction in `cli/commands/reading.ts:377`
+  - Current issue: Manually constructing YAML with string concatenation is brittle
+  - Will fail for special characters (quotes, newlines, etc.)
+  - Solution: Use `matter.stringify()` for safe YAML serialization
+  - Impact: Prevents corrupted data files
+
+#### In-scope Improvements (Address in This Branch)
+
+- [ ] **[MEDIUM]** Fix manual YAML construction in `cli/commands/place.ts:170`
+  - Same issue as reading.ts - use `matter.stringify()`
+- [ ] **[MEDIUM]** Fix manual YAML construction in `cli/commands/project.ts:235`
+  - Dead code: `frontmatter` object created but unused
+  - Solution: Use `matter.stringify()` with the frontmatter object
+- [ ] **[MEDIUM]** Fix manual YAML construction in `cli/commands/quote.ts:113`
+  - String concatenation approach is fragile
+  - Solution: Use `matter.stringify()`
+- [ ] **[MEDIUM]** Convert sync file operations to async in `cli/commands/place.ts:31`
+  - Using `readdirSync` and `readFileSync` blocks event loop
+  - Solution: Use async versions for consistency
+- [ ] **[MEDIUM]** Fix import organization in `cli/commands/quote.ts:120`
+  - Dynamic import of `mkdir` inside try/catch
+  - Solution: Import at top of file
+
+### Code Quality - Original Items
 
 - [x] Fix TypeScript lint warnings in CLI code (35 warnings)
 - [ ] Fix unused variable in debounce.ts
