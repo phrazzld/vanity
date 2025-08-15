@@ -9,7 +9,7 @@
  * @returns A debounced version of the function
  */
 export function debounce<Args extends unknown[], Return>(
-  func: (...args: Args) => Return,
+  func: (..._args: Args) => Return,
   wait: number
 ): (..._args: Args) => void {
   let timeout: ReturnType<typeof setTimeout> | null = null;

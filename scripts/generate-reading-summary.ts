@@ -70,6 +70,8 @@ function generateReadingSummary() {
   // Add books grouped by year
   years.forEach(year => {
     const yearBooks = booksByYear[year];
+    if (!yearBooks) return; // Skip if no books for this year
+
     content += `### ${year} (${yearBooks.length} books)\n\n`;
 
     // Sort books by date finished (most recent first)
@@ -172,7 +174,7 @@ try {
 } catch (error) {
   console.error('❌ Error generating reading summary:', error);
   // Use exit code 1 to indicate failure
-   
+
   if (typeof process !== 'undefined') {
     // eslint-disable-next-line no-undef
     process.exit(1);
