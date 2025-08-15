@@ -4,6 +4,7 @@ import { existsSync } from 'fs';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import slugify from 'slugify';
+import matter from 'gray-matter';
 import { getProjects } from '../../src/lib/data';
 
 const PROJECTS_DIR = join(process.cwd(), 'content', 'projects');
@@ -214,25 +215,7 @@ export async function addProject(): Promise<void> {
       frontmatter.codeUrl = codeUrl;
     }
 
-    const yamlLines = [
-      '---',
-      `title: ${basicInfo.title}`,
-      `description: ${basicInfo.description}`,
-      'techStack:',
-      ...techStack.map((tech: string) => `  - ${tech}`),
-    ];
-
-    if (siteUrl) {
-      yamlLines.push(`siteUrl: ${siteUrl}`);
-    }
-
-    if (codeUrl) {
-      yamlLines.push(`codeUrl: ${codeUrl}`);
-    }
-
-    yamlLines.push(`imageSrc: ${imageSrc}`, `altText: ${altText}`, `order: ${order}`, '---');
-
-    const fileContent = yamlLines.join('\n');
+    const fileContent = matter.stringify('', frontmatter);
 
     // Ensure projects directory exists
     try {

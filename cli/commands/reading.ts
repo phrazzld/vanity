@@ -363,18 +363,7 @@ export async function addReading(): Promise<void> {
       frontmatter.coverImage = coverImage;
     }
 
-    const fileContent = `---
-${Object.entries(frontmatter)
-  .map(([key, value]) => {
-    if (typeof value === 'string' && value.includes(':')) {
-      return `${key}: '${value}'`;
-    }
-    return `${key}: ${value}`;
-  })
-  .join('\n')}
----
-
-${thoughts}`;
+    const fileContent = matter.stringify(thoughts, frontmatter);
 
     // Ensure readings directory exists
     try {

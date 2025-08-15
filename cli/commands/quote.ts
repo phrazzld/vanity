@@ -1,7 +1,8 @@
-import { readdir, writeFile } from 'fs/promises';
+import { readdir, writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
 import chalk from 'chalk';
+import matter from 'gray-matter';
 import { openEditor } from '../lib/editor';
 import { previewQuote } from '../lib/preview';
 import { getQuotes } from '../../src/lib/data';
@@ -105,17 +106,14 @@ export async function addQuote(): Promise<void> {
     console.log(previewQuote(cleanQuote, author, nextId));
 
     // Create the quote file content
-    const fileContent = `---
-author: '${author.replace(/'/g, "\\'")}'
-id: ${nextId}
----
-
-${cleanQuote}`;
+    const fileContent = matter.stringify(cleanQuote, {
+      author,
+      id: nextId,
+    });
 
     // Ensure quotes directory exists
     try {
       if (!existsSync(QUOTES_DIR)) {
-        const { mkdir } = await import('fs/promises');
         await mkdir(QUOTES_DIR, { recursive: true });
       }
     } catch (dirError) {

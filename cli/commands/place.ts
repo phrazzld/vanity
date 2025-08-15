@@ -1,6 +1,6 @@
-import { writeFile, mkdir } from 'fs/promises';
+import { writeFile, mkdir, readdir, readFile } from 'fs/promises';
 import { join } from 'path';
-import { existsSync, readdirSync, readFileSync } from 'fs';
+import { existsSync } from 'fs';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import slugify from 'slugify';
@@ -12,19 +12,21 @@ const PLACES_DIR = join(process.cwd(), 'content', 'places');
 /**
  * Gets the next available place ID by finding the max existing ID
  */
-function getNextPlaceId(): number {
+async function getNextPlaceId(): Promise<number> {
   try {
-    const files = readdirSync(PLACES_DIR);
-    const ids = files
-      .filter(f => f.endsWith('.md'))
-      .map(f => {
-        const content = readFileSync(join(PLACES_DIR, f), 'utf8');
-        const { data } = matter(content);
-        return parseInt(data.id);
-      })
-      .filter(n => !isNaN(n));
+    const files = await readdir(PLACES_DIR);
+    const ids = await Promise.all(
+      files
+        .filter(f => f.endsWith('.md'))
+        .map(async f => {
+          const content = await readFile(join(PLACES_DIR, f), 'utf8');
+          const { data } = matter(content);
+          return parseInt(data.id);
+        })
+    );
+    const validIds = ids.filter(n => !isNaN(n));
 
-    return ids.length > 0 ? Math.max(...ids) + 1 : 1;
+    return validIds.length > 0 ? Math.max(...validIds) + 1 : 1;
   } catch {
     return 1;
   }
@@ -100,7 +102,7 @@ export async function addPlace(): Promise<void> {
     }
 
     // Get next ID
-    const nextId = getNextPlaceId();
+    const nextId = await getNextPlaceId();
 
     // Show preview
     console.log('\n' + chalk.cyan('📋 Place Preview:'));
@@ -149,25 +151,15 @@ export async function addPlace(): Promise<void> {
     }
 
     // Create the place file content
-    // Use double quotes for strings that might contain apostrophes
-    const nameQuote = basicInfo.name.includes("'") ? '"' : "'";
-    const noteQuote = note && note.includes("'") ? '"' : "'";
+    const frontmatter = {
+      id: nextId.toString(),
+      name: basicInfo.name,
+      lat: coordinates.lat,
+      lng: coordinates.lng,
+      ...(note && { note }),
+    };
 
-    const yamlLines = [
-      '---',
-      `id: '${nextId}'`,
-      `name: ${nameQuote}${basicInfo.name}${nameQuote}`,
-      `lat: ${coordinates.lat}`,
-      `lng: ${coordinates.lng}`,
-    ];
-
-    if (note) {
-      yamlLines.push(`note: ${noteQuote}${note}${noteQuote}`);
-    }
-
-    yamlLines.push('---');
-
-    const fileContent = yamlLines.join('\n');
+    const fileContent = matter.stringify('', frontmatter);
 
     // Ensure places directory exists
     try {
