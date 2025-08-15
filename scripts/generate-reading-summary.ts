@@ -146,13 +146,16 @@ function generateReadingSummary() {
 
     for (const [category, keywords] of Object.entries(categories)) {
       if (keywords.some(keyword => fullText.includes(keyword.toLowerCase()))) {
-        booksByCategory[category].push(book);
-        categorized = true;
-        break;
+        const categoryBooks = booksByCategory[category];
+        if (categoryBooks) {
+          categoryBooks.push(book);
+          categorized = true;
+          break;
+        }
       }
     }
 
-    if (!categorized) {
+    if (!categorized && booksByCategory.other) {
       booksByCategory.other.push(book);
     }
   });
