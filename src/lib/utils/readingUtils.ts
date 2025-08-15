@@ -108,6 +108,11 @@ export function sortReadingsWithinCategory(readings: Reading[], category: string
 export function getFullImageUrl(src: string | null): string {
   if (!src) return '/images/projects/book-02.webp';
   if (src.startsWith('http://') || src.startsWith('https://')) return src;
+
+  // Local images (created by CLI tool) should be served directly from public directory
+  if (src.startsWith('/images/readings/')) return src;
+
+  // Legacy relative paths get prefixed with DigitalOcean Spaces URL
   const baseUrl =
     // eslint-disable-next-line no-undef
     typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_SPACES_BASE_URL || '' : '';
