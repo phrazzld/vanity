@@ -485,7 +485,7 @@ export async function updateReading() {
       })),
       ...finishedReadings.map(r => ({
         name: chalk.green(
-          `✓ ${r.title} - ${r.author} (finished ${new Date(r.finishedDate).toLocaleDateString()})`
+          `✓ ${r.title} - ${r.author} (finished ${r.finishedDate ? new Date(r.finishedDate).toLocaleDateString() : 'Unknown'})`
         ),
         value: r.slug,
       })),
