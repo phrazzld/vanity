@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 
 // dynamic load your actual map
 const DynamicMap = dynamic(() => import('@/app/components/Map'), {
+  loading: () => <p>Loading map...</p>,
   ssr: false,
 });
 

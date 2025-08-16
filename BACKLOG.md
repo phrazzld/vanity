@@ -4,13 +4,13 @@ _Quality-first prioritization with effort estimates and measurable impact metric
 
 ## Critical Priority (CRITICAL)
 
-_Security vulnerabilities, quality gate failures, high complexity violations that require immediate attention_
+_ACTUAL critical issues that affect the live site_
 
-- [ ] **[CRITICAL] [SECURITY]** Replace custom auth with NextAuth.js and implement secure session management | **Effort: L** | **Risk: Admin panel compromise, credential theft** | **Automation: Rate limiting, session expiry, credential detection hooks**
+- [ ] **[CRITICAL] [PERF]** Bundle size optimization | **Effort: M** | **Current: 2MB, Target: <1MB** | **Impact: 50% faster initial load**
 
-- [ ] **[CRITICAL] [SECURITY]** Implement comprehensive API security with Zod validation and CSRF protection | **Effort: M** | **Risk: Data manipulation, injection attacks** | **Automation: ESLint rules enforcing Zod schemas, CSRF token generation**
+- [ ] **[CRITICAL] [SECURITY]** Add comprehensive security headers (CSP, HSTS, X-Frame-Options) | **Effort: S** | **Quality: 8/10** | **Target: A+ security header rating**
 
-- [ ] **[CRITICAL] [SIMPLIFY]** Split 1140-line admin readings component into focused sub-components | **Effort: L** | **Metrics: 1140→400 lines main (-65%), <100 lines per component** | **Enforcement: ESLint max-lines:400, max-lines-per-function:50**
+- [ ] **[CRITICAL] [QUALITY]** Eliminate 59 lint suppressions and fix underlying issues | **Effort: M** | **Quality: 9/10** | **Target: Zero unexplained suppressions**
 
 ## High Priority (HIGH)
 
@@ -20,17 +20,7 @@ _Code health issues, DX blockers, architecture debt, philosophy violations_
 
 - [ ] **[HIGH] [SECURITY]** Upgrade to Snyk integration with automated vulnerability scanning | **Effort: S** | **Quality: 10/10** | **Target: Zero CVEs, automated PR creation for patches**
 
-- [ ] **[HIGH] [SECURITY]** Implement HashiCorp Vault or AWS Secrets Manager | **Effort: M** | **Quality: 9/10** | **Target: Zero plain-text credentials, automated rotation**
-
-- [ ] **[HIGH] [SECURITY]** Add comprehensive security headers (CSP, HSTS, X-Frame-Options) | **Effort: S** | **Quality: 8/10** | **Target: A+ security header rating**
-
 ### Code Quality & Testing
-
-- [ ] **[HIGH] [MAINTAIN]** Implement comprehensive middleware and auth testing | **Effort: M** | **Quality: 10/10** | **Target: 85%+ coverage for security-critical files**
-
-- [ ] **[HIGH] [MAINTAIN]** Create admin panel integration test suite | **Effort: L** | **Quality: 9/10** | **Target: 70%+ coverage for admin/\* pages**
-
-- [ ] **[HIGH] [ALIGN]** Eliminate 59 lint suppressions and fix underlying issues | **Effort: M** | **Quality: 9/10** | **Target: Zero unexplained suppressions**
 
 - [ ] **[HIGH] [EXTRACT]** Create custom hooks for form management and validation | **Effort: L** | **Quality: 8/10** | **Target: Reduce component size by 300+ lines (-25%)**
 
@@ -39,12 +29,6 @@ _Code health issues, DX blockers, architecture debt, philosophy violations_
 - [ ] **[HIGH] [DX]** Implement smart test execution with incremental coverage | **Effort: M** | **Time saved: 8-12 hrs/week** | **Quality: Maintains standards while accelerating cycles**
 
 - [ ] **[HIGH] [DX]** Parallel quality gates with early termination | **Effort: M** | **Time saved: 6-10 hrs/week** | **Quality: 5-10s feedback vs 15-30s**
-
-### Performance
-
-- [ ] **[HIGH] [PERF]** Add database indexes and optimize queries | **Effort: M** | **Target: 70% query time reduction (200ms→60ms)** | **Measurement: Query timing logs, EXPLAIN ANALYZE**
-
-- [ ] **[HIGH] [PERF]** Implement Redis caching layer | **Effort: L** | **Target: 85% API response time reduction, 95% cache hit rate** | **Measurement: APM tools, cache metrics**
 
 ### Features & Innovation
 
@@ -59,8 +43,6 @@ _Code health issues, DX blockers, architecture debt, philosophy violations_
 _Valuable features, simplifications, documentation, performance with metrics_
 
 ### Code Simplification
-
-- [ ] **[MEDIUM] [CONSOLIDATE]** Create shared AdminFormLayout components | **Effort: M** | **Value: Eliminate 200+ lines duplicate JSX (-30%)** | **Enforcement: DRY metrics in pre-commit**
 
 - [ ] **[MEDIUM] [SIMPLIFY]** Replace inline conditional JSX with render functions | **Effort: M** | **Value: Reduce render function 600→100 lines (-85%)** | **Enforcement: cognitive-complexity:10**
 
@@ -132,7 +114,6 @@ _Dedicated enforcement mechanisms to maintain code quality_
 
 - [ ] Enforce ESLint max-lines (400) and max-lines-per-function (50)
 - [ ] Run incremental test coverage checks on modified code
-- [ ] Detect secrets and credentials before commit
 - [ ] Validate JSDoc for exported functions
 - [ ] Check for duplicate code patterns
 
@@ -146,7 +127,6 @@ _Dedicated enforcement mechanisms to maintain code quality_
 
 ### Monitoring & Alerts
 
-- [ ] Health check endpoints with DB connectivity metrics
 - [ ] Error rate monitoring (<0.1% threshold)
 - [ ] Performance degradation alerts
 - [ ] Security header compliance checks
@@ -156,51 +136,33 @@ _Dedicated enforcement mechanisms to maintain code quality_
 
 _Gordian cuts that challenge fundamental assumptions - consider for v2.0_
 
-- [ ] **[GORDIAN]** Eliminate database + admin → static JSON/Markdown files | **Impact: Remove PostgreSQL, Prisma, NextAuth, entire admin system**
+- [x] **[GORDIAN] [COMPLETED]** ~~Eliminate database + admin → static JSON/Markdown files~~ | **✅ DONE in commit 08e6620**
 - [ ] **[GORDIAN]** Delete interactive map feature entirely | **Impact: Remove leaflet dependencies, 521-line places data**
 - [ ] **[GORDIAN]** Replace enterprise logging with dev-only console | **Impact: Remove Winston, correlation IDs, log rotation**
 
-## Grooming Summary [2025-08-12]
+## Grooming Summary [2025-08-16] - UPDATED
 
-### Items Added by Category
+### Post-Migration Reality Check
 
-- 9 security improvements (2 critical, 5 high, 2 automated)
-- 11 code quality improvements (complexity, coverage, maintainability)
-- 5 developer experience enhancements (quality gates, automation)
-- 8 simplification opportunities (measurable reduction targets)
-- 4 documentation improvements (inline to architectural)
-- 5 performance optimizations (with specific targets)
-- 9 innovative features (AI assistance, visualizations, PWA)
-- 3 radical simplification options (Gordian cuts)
+- ✅ Database and admin system successfully removed (commit 08e6620)
+- ✅ Saved $228/year in hosting costs
+- ✅ Removed 2000+ lines of unnecessary complexity
+- ✅ Site now runs as pure static files with markdown content
+
+### Actual Priorities
+
+- **Performance**: 2MB bundle needs reduction to <1MB
+- **Security**: Missing CSP headers for public site
+- **Code Quality**: 59 lint suppressions hiding issues
+- **Features**: Smart content pipeline, PWA capabilities, visualization improvements
 
 ### Quality Focus Metrics
 
 - Coverage targets: 25.66% current → 36% immediate → 85% goal
-- Complexity reductions: 1140-line component → 400 lines max
+- Bundle size: 2MB current → 1MB target
 - Quality gates: 10+ automation opportunities identified
-- Technical debt: 40%+ dependency reduction possible
-
-### Key Themes Discovered
-
-- **Primary concern**: Security vulnerabilities in auth and API
-- **Secondary pattern**: Monolithic admin components violating simplicity
-- **Automation opportunities**: Parallel quality gates, incremental coverage
-- **Documentation gaps**: ADRs, JSDoc, architectural documentation missing
-
-### Recommended Immediate Focus
-
-1. **[CRITICAL]** Fix authentication security vulnerabilities
-2. **[CRITICAL]** Implement API security with Zod validation
-3. **[HIGH]** Split monolithic admin components for maintainability
-
-### Quality Enforcement Added
-
-- ESLint rules for component size limits and complexity
-- Incremental coverage enforcement preventing regression
-- Automated security scanning and dependency updates
-- Performance budgets with monitoring and alerts
-- Pre-commit hooks for comprehensive quality checks
+- Technical debt: Successfully removed database dependency
 
 ---
 
-_This backlog follows quality-first prioritization based on security impact, code maintainability, and developer productivity. Each item includes measurable success criteria and automation strategies to prevent regression._
+_This backlog follows quality-first prioritization based on actual impact to the live site. Each item includes measurable success criteria and automation strategies to prevent regression._

@@ -72,6 +72,8 @@ export default function TypewriterQuotes() {
   const [displayedAuthor, setDisplayedAuthor] = useState('');
   // Controls the blinking cursor appearance
   const [cursorVisible, setCursorVisible] = useState(true);
+  // Controls whether the animation is paused
+  const [paused, setPaused] = useState(false);
 
   /**
    * Fetch quotes from the API when the component mounts
@@ -203,6 +205,23 @@ export default function TypewriterQuotes() {
   }, []);
 
   /**
+   * Keyboard event handler for pause/resume control
+   *
+   * Listens for Space key press to toggle pause state
+   */
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.code === 'Space' && event.target === document.body) {
+        event.preventDefault();
+        setPaused(prev => !prev);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  /**
    * Main typewriter animation effect
    *
    * Handles the core logic for the typewriter animation:
@@ -215,9 +234,9 @@ export default function TypewriterQuotes() {
    * primarily when the phase or displayed text changes.
    */
   useEffect(() => {
-    // Skip if still loading or no quotes available
-    if (phase === 'loading' || quotes.length === 0) {
-      return; // Don't run typewriter logic until quotes are loaded
+    // Skip if still loading, no quotes available, or animation is paused
+    if (phase === 'loading' || quotes.length === 0 || paused) {
+      return; // Don't run typewriter logic until quotes are loaded and not paused
     }
 
     // Use ReturnType<typeof globalThis.setTimeout> to handle both browser and Node environments
@@ -310,7 +329,7 @@ export default function TypewriterQuotes() {
         }
       }
     };
-  }, [phase, displayedQuote, displayedAuthor, rawQuote, rawAuthor, quoteIndex, quotes]);
+  }, [phase, displayedQuote, displayedAuthor, rawQuote, rawAuthor, quoteIndex, quotes, paused]);
 
   /**
    * Determine which element should display the cursor
@@ -348,6 +367,9 @@ export default function TypewriterQuotes() {
    */
   return (
     <div
+      aria-live="polite"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
       style={{
         // Fixed container size ensures quotes don't shift page layout
         margin: '2rem auto 0 auto',

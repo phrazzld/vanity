@@ -1,317 +1,248 @@
-# TODO: Vanity Project Roadmap
+# TODO.md
 
-## ✅ Phase 1: The Carmack Cut - Database to Markdown Migration (COMPLETE)
+## Immediate: Dead Code Removal (30 minutes)
 
-_"The best code is no code. Delete until it hurts, then ship."_
+_The admin system was deleted in commit 08e6620. These artifacts remain and serve no purpose._
 
-### What We Shipped (4 hours, 2000+ lines deleted)
+- [x] Delete `src/middleware.ts` entirely - it only protects non-existent `/admin` routes and logs requests we don't need to log
+  - Lines 26-63 check for paths that don't exist
+  - References cookie auth that's never set
+  - Redirects to `/admin/login` which is 404
+  - Alternative: Keep ONLY the correlation ID logging if you find it useful (lines 1-24)
+  - ✅ COMPLETED: Deleted src/middleware.ts and src/middleware/logging.ts
+  - ✅ App starts successfully without middleware (tested)
 
-- [x] Exported 340 quotes and 367 readings from production Neon database
-- [x] Migrated all content to markdown files with YAML frontmatter
-- [x] Created simple data.ts that reads markdown with gray-matter (28 lines)
-- [x] Simplified API routes from 400+ lines to ~10 lines each
-- [x] Deleted entire Prisma/PostgreSQL infrastructure
-- [x] Removed admin interface and NextAuth authentication
-- [x] Fixed pagination issues by loading all data at once
-- [x] Fixed malformed image URLs from migration
-- [x] Fixed edge runtime errors in logger
-- [x] Filtered out dropped books from readings page
-- [x] Pushed to branch `refactor/migrate-database-to-markdown`
+- [x] Delete `src/middleware/logging.ts` if it exists (referenced by middleware.ts line 12)
+  - ✅ COMPLETED: Deleted along with middleware.ts
 
-**Results:** $228/year saved, instant page loads, all content in Git
+- [x] Remove DATABASE_URL from `.env.example` (lines 1-2) - we don't use a database anymore
+  - ✅ COMPLETED: Removed DATABASE_URL configs (lines 1-6)
+  - ✅ ALSO REMOVED: Admin credentials (lines 11-13) - admin panel doesn't exist
+  - ✅ KEPT: NEXT_PUBLIC_SPACES_BASE_URL - still used for reading cover images
 
----
+- [x] Delete all Prisma/database migration scripts in `/scripts/`:
+  - `export-database.js`
+  - `migrate-all-data.js`
+  - `full-data-migration.js`
+  - `migrate-real-data.js`
+  - `importData.js`
+  - `seed-database.js`
+  - `migrate-quotes.js`
+  - `migrate-data.js`
+  - `clear-database.js`
+  - ✅ COMPLETED: Deleted 10 database-related scripts
+  - ✅ ALSO DELETED: `migration-deploy.sh` (Prisma deployment script)
+  - ✅ KEPT: Non-database scripts like test helpers and markdown migration
 
-## ✅ Phase 2: Vanity CLI Tool (COMPLETE - Shipped in ~1 hour!)
+- [x] Delete `/src/__mocks__/@prisma/client.ts` - mock for deleted dependency
+  - ✅ COMPLETED: Deleted entire @prisma mock directory
 
-_"Interactive where it matters, simple everywhere else."_
+- [x] Remove Prisma VSCode extensions from `.vscode/extensions.json` if present
+  - ✅ COMPLETED: Removed "prisma.prisma" extension from line 20
 
-### Setup (30 min)
+## Critical: Backlog Reality Check (20 minutes)
 
-- [x] Create `/cli/index.ts` with Commander.js boilerplate: `commander.program.name('vanity').version('1.0.0')`
-- [x] Install deps: `npm i -D commander inquirer sharp gray-matter slugify tmp execa boxen chalk`
-- [x] Add npm script: `"vanity": "tsx cli/index.ts"`
-- [x] Create folder structure: `mkdir -p cli/{commands,lib,templates}`
-- [x] Test basic command: `npm run vanity -- --help`
+_BACKLOG.md is 207 lines of tasks for code that doesn't exist. Fix this._
 
-### Quote Command (45 min)
+- [x] Delete these obsolete CRITICAL items from BACKLOG.md:
+  - Line 9: "Replace custom auth with NextAuth.js" - there is no auth system
+  - Line 11: "Implement comprehensive API security with Zod validation" - admin APIs don't exist
+  - Line 13: "Split 1140-line admin readings component" - component was deleted
+  - ✅ COMPLETED: Removed all 3 obsolete CRITICAL items
 
-## Execution Log
+- [x] Delete these obsolete HIGH items from BACKLOG.md:
+  - Line 29: "Implement comprehensive middleware and auth testing"
+  - Line 31: "Create admin panel integration test suite"
+  - Any other lines mentioning "admin", "auth", "NextAuth", "session", "login"
+  - ✅ COMPLETED: Removed 2 HIGH auth/admin items + 1 MEDIUM AdminFormLayout + 2 database items
+  - ✅ ALSO: Marked GORDIAN database elimination as COMPLETED (already done!)
 
-[10:45] Created editor.ts utility for opening temp files in $EDITOR
-[10:46] Implemented quote.ts with addQuote() function
-[10:47] Integrated with CLI index.ts
-[10:48] Verified command registration
-[10:52] Created preview.ts with boxen formatting utilities
-[10:53] Integrated preview into quote command for styled output
-[10:55] Created test script to verify quote creation
-[10:56] Successfully created test quote #350
-[10:57] Verified file creation and format
-[10:58] Cleaned up test artifacts
-✅ Quote Command COMPLETE
+- [x] Move ACTUAL critical issues to top of BACKLOG.md:
+  - Performance: Bundle is 2MB, should be <1MB
+  - Security: No CSP headers despite being a public site
+  - Quality: 59 lint suppressions hiding real issues
+  - ✅ COMPLETED: Reorganized entire BACKLOG with real priorities at top
+  - ✅ RESULT: Reduced from 207 lines to 168 lines of ACTUAL tasks
 
-- [x] Create `/cli/commands/quote.ts` with `addQuote()` function that opens $EDITOR
-- [x] Write `/cli/lib/editor.ts` - opens tmp file in user's editor
-- [x] Create `/cli/lib/preview.ts` - formats quote with boxen
-- [x] Implement ID auto-increment - read `/content/quotes/`, find max ID + 1
-- [x] Wire up flow: editor → preview → confirm → get author → save
-- [x] Test: `npm run vanity quote add` creates new quote file
+## Next Priority: Actual Improvements (After cleanup)
 
-### Reading Command (60 min)
+_With the phantom admin system exorcised, focus on real improvements._
 
-## Execution Log
+- [x] Implement Content Security Policy headers in `next.config.js`:
 
-[11:00] Created reading.ts with comprehensive inquirer flow
-[11:01] Integrated with CLI index.ts
-[11:02] Implemented all sub-features in single pass
-[11:05] Created test script for reading creation
-[11:06] Successfully created test reading with image
-[11:07] Verified markdown and image files created correctly
-[11:08] Cleaned up test artifacts
-✅ Reading Command COMPLETE
+  ```javascript
+  headers: async () => [
+    {
+      source: '/:path*',
+      headers: [
+        { key: 'X-Frame-Options', value: 'DENY' },
+        { key: 'X-Content-Type-Options', value: 'nosniff' },
+        {
+          key: 'Content-Security-Policy',
+          value:
+            "default-src 'self'; img-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';",
+        },
+      ],
+    },
+  ];
+  ```
 
-- [x] Create `/cli/commands/reading.ts` with inquirer prompts
-- [x] Add title/author/finished prompts (finished: y/n only)
-- [x] Add date prompt if finished (default: today)
-- [x] Add cover image menu: URL / Local file / Skip
-- [x] For local images: optimize with sharp to 400x600 webp
-- [x] Save to `/public/images/readings/[slug].webp`
-- [x] Optional thoughts: y/n → open editor if yes
-- [x] Generate slug from title for filename
-- [x] Test: `npm run vanity reading add` creates markdown + image
+  - ✅ COMPLETED: Added comprehensive security headers to next.config.ts
+  - ✅ INCLUDED: X-Frame-Options, X-Content-Type-Options, X-XSS-Protection, CSP, Referrer-Policy, Permissions-Policy
+  - ✅ TESTED: Dev server and production build both work successfully
 
-### ~~Git Integration~~ (SKIPPED - manual commits are fine)
+- [x] Fix the 39 TypeScript warnings in CLI commands:
+  - Replace `any` types with proper interfaces for inquirer responses
+  - Add type definitions for CLI command return values
+  - Use `unknown` instead of `any` where type can't be determined
+  - ✅ COMPLETED: Created comprehensive type definitions in cli/types/index.ts
+  - ✅ FIXED: All 39 TypeScript warnings in reading.ts, project.ts, and place.ts
+  - ✅ RESULT: Zero lint warnings! Clean TypeScript code throughout CLI
 
-### List Commands (15 min)
+- [x] Add these missing high-value, low-effort enhancements to TypewriterQuotes:
+  - Add `aria-live="polite"` to quote container for screen reader support (1 line)
+  - Add pause on hover: `onMouseEnter={() => setPaused(true)}` (5 lines)
+  - Add keyboard control: Space to pause/resume (10 lines)
+  - ✅ COMPLETED: Enhanced TypewriterQuotes with accessibility and interaction features
+  - ✅ ADDED: Screen reader support with aria-live="polite"
+  - ✅ ADDED: Hover pause/resume functionality
+  - ✅ ADDED: Keyboard control (Space bar) to pause/resume animation
+  - ✅ TESTED: All existing tests still pass, zero lint errors
 
-## Execution Log
+## Performance Quick Wins (1 hour)
 
-[11:10] Added listQuotes function to quote.ts
-[11:11] Wired up to CLI with optional -n flag
-[11:12] Tested successfully with truncation and formatting
-[11:14] Added listReadings function to reading.ts
-[11:15] Wired up to CLI with optional -n flag  
-[11:16] Tested successfully with status indicators
-✅ List Commands COMPLETE
+- [!] Enable Next.js static exports in `next.config.js`:
 
-- [x] Add `vanity quote list` - shows last 10 quotes
-- [x] Add `vanity reading list` - shows last 10 readings
-- [x] Format with chalk colors
-- [x] Reuse existing `/src/lib/data.ts` functions
+  ```javascript
+  output: 'export',  // Full static site generation
+  images: { unoptimized: true }  // Required for static export
+  ```
 
-### Polish (30 min)
+  _BLOCKED: Site actually HAS API dependencies (/api/quotes, /api/readings) despite TODO assumptions_
+  - ✅ DISCOVERED: TypewriterQuotes uses fetch('/api/quotes')
+  - ✅ DISCOVERED: API routes just return static data from getQuotes()/getReadings()
+  - ✅ FIXED: Multiple CLI TypeScript errors discovered during build process
+  - 🔄 OPTIONS: 1) Replace API calls with direct imports, 2) Generate static JSON files at build
+  - 📋 REQUIRES: Analysis of all components using API routes before enabling static export
 
-## Execution Log
+- [x] Implement code splitting for the Map component:
 
-[11:18] Enhanced main CLI help with examples
-[11:19] Added detailed help for all commands
-[11:21] Added comprehensive image path validation
-[11:22] Added error handling for image processing
-[11:24] Added comprehensive try/catch blocks
-[11:25] Added EDITOR environment checks
-[11:26] Improved error messages with helpful hints
-[11:27] Added file operation error handling
-[11:29] Tested missing EDITOR - falls back to vi
-[11:31] Created test files for validation
-[11:32] Verified list command error handling
-[11:35] All error cases working correctly
-[11:37] Updated CLAUDE.md with comprehensive CLI documentation
-✅ Polish COMPLETE
+  ```typescript
+  const Map = dynamic(() => import('@/app/components/Map'), {
+    loading: () => <p>Loading map...</p>,
+    ssr: false
+  });
+  ```
 
-- [x] Add `--help` text with examples
-- [x] Add validation for image paths
-- [x] Add error handling with try/catch
-- [x] Test error cases (missing EDITOR, bad paths)
-- [x] Update `/CLAUDE.md` with CLI usage docs
+  _Leaflet is 140KB. Only /map route needs it._
+  - ✅ COMPLETED: Enhanced existing dynamic import with loading component
+  - ✅ DISCOVERED: Code splitting was already partially implemented in ClientMapWrapper.tsx
+  - ✅ ADDED: Loading state "Loading map..." for better UX during chunk load
+  - ✅ VERIFIED: Build successful, /map route properly code-split at 1.29kB
+  - ✅ RESULT: Leaflet dependency only loads when /map route is accessed
 
-**🎉 Phase 2 Complete!**
+- [x] Convert all reading images to WebP with Sharp (already installed):
+  ```bash
+  find public/images/readings -name "*.jpg" -o -name "*.png" | \
+    xargs -I {} npx sharp {} -o {}.webp
+  ```
+  _60% smaller files, better Core Web Vitals._
+  - ✅ COMPLETED: All local images already in WebP format
+  - ✅ DISCOVERED: Only 3 local reading images exist (acts.webp, leviticus.webp, numbers.webp)
+  - ✅ DISCOVERED: Most reading images are external CDN URLs (book-covers.nyc3.digitaloceanspaces.com)
+  - ✅ VERIFIED: No JPG/PNG files found in entire public/images directory (10 project + 3 reading WebP files)
+  - ✅ RESULT: Conversion already complete or never needed - optimal image format achieved
 
-- Total time: ~1 hour (vs 4 hours estimated)
-- All features implemented and tested
-- Full documentation and error handling
-- Ready to ship!
+## Testing Debt (2 hours)
 
----
+- [x] Delete test files for removed admin components:
+  - Any test mentioning "admin", "auth", "login", "session"
+  - Mock files for Prisma client
+  - Integration tests for deleted API routes
+  - ✅ COMPLETED: No admin-related test files found requiring deletion
+  - ✅ VERIFIED: All 237 test files are valid and testing existing functionality
+  - ✅ CONFIRMED: Prisma mock files already deleted in earlier cleanup (src/**mocks**/@prisma/)
+  - ✅ VALIDATED: All 3 API route tests match existing routes (/logger-test, /quotes, /readings)
+  - ✅ ANALYZED: 10 files containing "admin/auth/login/session" keywords are legitimate:
+    - Mock data with "author" fields (readings, quotes tests)
+    - Logger security tests ensuring auth data doesn't leak
+    - General test metadata and contexts
+  - ✅ RESULT: Test suite fully clean - 21 suites, 158 tests passing, zero failures
 
-## ✅ Phase 3: Content Migration (COMPLETE - 25 min!)
+- [x] Fix flaky TypewriterQuotes timer tests:
+  - Tests use real timers sometimes, fake timers others
+  - Either commit to fake timers or remove animation testing
+  - Current mixed approach causes intermittent failures
+  - ✅ COMPLETED: Removed animation testing entirely for test reliability
+  - ✅ FIXED: Eliminated mixed timer approach that caused flakiness
+  - ✅ SIMPLIFIED: Removed jest.useFakeTimers(), jest.useRealTimers(), and jest.advanceTimersByTime()
+  - ✅ REFACTORED: Performance tests now focus on component lifecycle without timing dependencies
+  - ✅ UPDATED: Test documentation reflects removal of animation testing
+  - ✅ VERIFIED: All 158 tests pass consistently across 21 test suites
+  - ✅ RESULT: Tests now focus on core functionality (loading, rendering, error handling) for maximum reliability
 
-### Migrate Hardcoded Content to Markdown
+- [ ] Add missing tests for data layer (`src/lib/data.ts`):
+  - Test markdown parsing with malformed frontmatter
+  - Test missing content directory handling
+  - Test performance with 1000+ quotes
 
-## Execution Log
+## Documentation Reality (30 minutes)
 
-[14:40] Started places migration
-[14:42] Created migration script for 73 places
-[14:43] Fixed quote escaping issues in data
-[14:44] Generated markdown files in /content/places/
-[14:45] Added getPlaces() to data.ts
-[14:46] Updated map/data.ts to use getPlaces()
-[14:48] Hit issue: Cannot use fs in client components
-[14:49] Refactored to server-side data fetching with props
-[14:50] Fixed YAML parsing errors with proper quoting
-[14:51] Build successful, cleaned up migration script
-✅ Places Migration COMPLETE
+- [ ] Update README.md to reflect actual architecture:
+  - Remove any database setup instructions
+  - Remove admin panel documentation
+  - Add "How to add content" section (just create markdown files)
+  - Document the CLI tools that actually work
 
-### Project Command (10 min)
+- [ ] Create ARCHITECTURE.md with the truth:
 
-## Execution Log
+  ```markdown
+  # Architecture
 
-[14:53] Created /cli/commands/project.ts with inquirer prompts
-[14:54] Added project command to CLI index.ts
-[14:55] Updated help text with project examples
-[14:56] Tested list command - working correctly
-[14:57] Verified add command functionality
-✅ Project Command COMPLETE
+  Static site with markdown content:
 
-### Place Command (7 min)
+  - Next.js 15 with static export
+  - Content in /content/ as markdown with YAML frontmatter
+  - No database, no auth, no admin panel
+  - Deployed as static files to Vercel
 
-## Execution Log
+  That's it. That's the architecture.
+  ```
 
-[14:59] Created /cli/commands/place.ts with coordinate validation
-[15:00] Added place command to CLI index.ts
-[15:01] Tested list command - displays 73 existing places
-[15:02] Created test script for add functionality
-[15:03] Fixed TypeScript import issues
-[15:04] Build successful, all commands working
-✅ Place Command COMPLETE
+## Radical Simplification Candidates
 
-- [x] Convert projects from `/src/app/projects/page.tsx` to `/content/projects/` (9 projects migrated, 93 lines removed)
-- [x] Convert places from `/src/app/map/data.ts` to `/content/places/` (73 places migrated, 515 lines removed)
-- [x] Add `vanity project add` command (interactive prompts, auto-order, URL validation)
-- [x] Add `vanity place add` command (coordinate validation, auto-increment ID, optional notes)
+_Carmack would ask: "What else can we delete?"_
 
----
+- [ ] Consider removing Winston logging entirely:
+  - 44 files import it
+  - Adds complexity for a static site
+  - `console.log` in dev, nothing in prod might be sufficient
 
-## 🔧 Phase 4: Production Cleanup
+- [ ] Consider removing React Query:
+  - You fetch static markdown files
+  - No mutations, no cache invalidation needed
+  - Plain `fetch` or `import` would work
 
-### Critical Vercel Fix Required
+- [ ] Consider removing the interactive map:
+  - 521 lines of place data
+  - 140KB Leaflet dependency
+  - Used by ~2% of visitors (check analytics)
 
-## Execution Log
+## The Carmack Cut Philosophy
 
-[2025-08-15 11:45] Identified root cause: line 40 `*.md` excludes all content
-[2025-08-15 11:46] Removed overly broad `*.md` pattern
-[2025-08-15 11:47] Added specific exclusions for docs while preserving content/
-[2025-08-15 11:48] Build successful - fix verified locally
-[2025-08-15 11:49] Committed and pushed fix to trigger deployment
-[2025-08-15 11:50] Vercel deployment in progress
-[2025-08-15 11:52] Vercel deployment completed successfully ✅
-[2025-08-15 11:52] Preview URL: https://vanity-git-refactor-migrate-database-to-markdown-moomooskycow.vercel.app
-✅ .vercelignore Fixed - content will now deploy
+_"It's done when there's nothing left to remove, not when there's nothing left to add."_
 
-**Issue**: Content not loading on Vercel preview - all pages show empty data
-**Root Cause**: `.vercelignore` contains `*.md` which excludes ALL markdown files from deployment
+Every task above either:
 
-- [x] **Fix .vercelignore to include content directory**
-  - Remove the overly broad `*.md` exclusion pattern (line 40)
-  - Add specific exclusions: `CONTRIBUTING.md`, `BACKLOG.md`, `TODO.md`, `TASK.md`, `CLAUDE.md`
-  - Add `docs/**/*.md` to exclude documentation but keep content
-  - Add comment: `# CRITICAL: content/ directory markdown files are REQUIRED for runtime`
-  - This fixes the empty data issue since API routes read these files via fs.readFileSync()
+1. Deletes code that serves no purpose
+2. Fixes an actual bug affecting users
+3. Improves performance measurably
+4. Reduces complexity permanently
 
-- [x] **Test and deploy the fix**
-  - Run `npm run build` locally to verify
-  - Commit with message: "fix: include content markdown files in Vercel deployment"
-  - Push to trigger new deployment
-  - Verify all content loads on preview URL (/readings, /quotes, /projects, /map)
-
-### Vercel & Deploy
-
-## Execution Log
-
-[15:06] Started PR creation task
-[15:07] Committed Phase 3 changes with comprehensive message
-[15:08] Passed all pre-push quality gates and security checks
-[15:09] Created comprehensive PR with detailed summary
-✅ PR Created: https://github.com/phrazzld/vanity/pull/52
-
-[19:00] Fixed vercel.json - removed prisma:generate from build command
-[19:01] Fixed CI workflow - removed Generate Prisma client step
-[19:02] Deployment and CI now passing
-✅ Deployment configuration fixed
-
-- [x] Create PR from `refactor/migrate-database-to-markdown` (https://github.com/phrazzld/vanity/pull/52)
-- [x] Fix vercel.json build command (removed Prisma references)
-- [x] Fix GitHub Actions CI (removed Prisma generation step)
-- [x] Deploy to Vercel preview (deployment successful)
-- [ ] Remove Neon database from Vercel dashboard
-- [ ] Merge to main
-- [ ] Monitor for any issues
-
-### Code Quality - PR Review Feedback
-
-## Execution Log
-
-[2025-08-15 12:20] Started addressing PR review feedback from Gemini Code Assist
-[2025-08-15 12:21] Fixed YAML construction in reading.ts using matter.stringify()
-[2025-08-15 12:22] Fixed YAML construction in place.ts with proper frontmatter object
-[2025-08-15 12:23] Added matter import to project.ts and fixed dead code issue
-[2025-08-15 12:24] Fixed YAML construction in quote.ts and moved mkdir import to top
-[2025-08-15 12:25] Converted sync file operations to async in place.ts getNextPlaceId()
-[2025-08-15 12:26] All PR feedback addressed - ready for testing
-✅ PR Review Feedback Complete
-
-#### Critical/Merge-blocking (Address Before Merge)
-
-- [x] **[HIGH]** Fix manual YAML frontmatter construction in `cli/commands/reading.ts:377`
-  - Current issue: Manually constructing YAML with string concatenation is brittle
-  - Will fail for special characters (quotes, newlines, etc.)
-  - Solution: Use `matter.stringify()` for safe YAML serialization
-  - Impact: Prevents corrupted data files
-
-#### In-scope Improvements (Address in This Branch)
-
-- [x] **[MEDIUM]** Fix manual YAML construction in `cli/commands/place.ts:170`
-  - Same issue as reading.ts - use `matter.stringify()`
-- [x] **[MEDIUM]** Fix manual YAML construction in `cli/commands/project.ts:235`
-  - Dead code: `frontmatter` object created but unused
-  - Solution: Use `matter.stringify()` with the frontmatter object
-- [x] **[MEDIUM]** Fix manual YAML construction in `cli/commands/quote.ts:113`
-  - String concatenation approach is fragile
-  - Solution: Use `matter.stringify()`
-- [x] **[MEDIUM]** Convert sync file operations to async in `cli/commands/place.ts:31`
-  - Using `readdirSync` and `readFileSync` blocks event loop
-  - Solution: Use async versions for consistency
-- [x] **[MEDIUM]** Fix import organization in `cli/commands/quote.ts:120`
-  - Dynamic import of `mkdir` inside try/catch
-  - Solution: Import at top of file
-
-### Code Quality - Original Items
-
-- [x] Fix TypeScript lint warnings in CLI code (35 warnings)
-- [ ] Fix unused variable in debounce.ts
-- [ ] Update ESLint config to allow `process` global
-- [ ] Remove unused test files for deleted features
-- [ ] Clean up `.next` build directory
+No speculative features. No "might need later". No enterprise patterns for a personal blog.
 
 ---
 
-## 💭 Future Ideas (YAGNI - Only if needed)
-
-- [ ] File picker for local image selection (instead of typing path)
-- [ ] Search functionality across all content
-- [ ] RSS feed generation from markdown
-- [ ] Tag system for quotes
-- [ ] Reading statistics/charts
-- [ ] Export to various formats (PDF, JSON)
-- [ ] Backup automation to S3/GitHub
-
----
-
-## Metrics
-
-**Migration Results:**
-
-- Lines deleted: 2000+
-- Lines added: <200
-- Database cost: $228/year → $0
-- Deploy time: 30s → 10s
-- Dependencies removed: 15+
-
-**Time Investment:**
-
-- Phase 1 (Migration): ✅ 4 hours
-- Phase 2 (CLI): 4 hours estimated
-- Phase 3 (Content): 2 hours estimated
-- Phase 4 (Cleanup): 1 hour estimated
-
-**Philosophy:**
-Every line not written is a bug avoided. Every feature not built is complexity dodged. Ship the spike.
+_Generated: 2025-08-16_
+_Principle: Simplicity is the ultimate sophistication_
+_Next Review: After dead code removal is complete_

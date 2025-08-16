@@ -9,6 +9,18 @@ import matter from 'gray-matter';
 import { openEditor } from '../lib/editor';
 import { previewReading } from '../lib/preview';
 import { getReadings } from '../../src/lib/data';
+import type {
+  BasicReadingInfo,
+  FinishedPrompt,
+  DateInputPrompt,
+  ImageChoicePrompt,
+  ImageUrlPrompt,
+  ImageFilePrompt,
+  ThoughtsPrompt,
+  ContinueWithoutImagePrompt,
+  ReadingActionPrompt,
+  ReadingFrontmatter,
+} from '../types';
 
 const READINGS_DIR = join(process.cwd(), 'content', 'readings');
 const IMAGES_DIR = join(process.cwd(), 'public', 'images', 'readings');
@@ -76,7 +88,7 @@ async function getMostRecentReading(
     const content = await readFile(filepath, 'utf8');
     const { data } = matter(content);
     return {
-      date: data.finished || null,
+      date: (data.finished as string | null) || null,
       count: existingFiles.length,
     };
   } catch {
@@ -92,7 +104,7 @@ export async function addReading(): Promise<void> {
 
   try {
     // Title and author prompts
-    const basicInfo = await inquirer.prompt([
+    const basicInfo = await inquirer.prompt<BasicReadingInfo>([
       {
         type: 'input',
         name: 'title',
@@ -108,7 +120,7 @@ export async function addReading(): Promise<void> {
     ]);
 
     // Finished prompt
-    const { finished } = await inquirer.prompt([
+    const { finished } = await inquirer.prompt<FinishedPrompt>([
       {
         type: 'confirm',
         name: 'finished',
@@ -120,7 +132,7 @@ export async function addReading(): Promise<void> {
     // Date prompt if finished
     let finishedDate: string | null = null;
     if (finished) {
-      const { dateInput } = await inquirer.prompt([
+      const { dateInput } = await inquirer.prompt<DateInputPrompt>([
         {
           type: 'input',
           name: 'dateInput',
@@ -137,7 +149,7 @@ export async function addReading(): Promise<void> {
     }
 
     // Cover image prompt
-    const { imageChoice } = await inquirer.prompt([
+    const { imageChoice } = await inquirer.prompt<ImageChoicePrompt>([
       {
         type: 'list',
         name: 'imageChoice',
@@ -154,7 +166,7 @@ export async function addReading(): Promise<void> {
     const slug = slugify(basicInfo.title, { lower: true, strict: true });
 
     if (imageChoice === 'url') {
-      const { imageUrl } = await inquirer.prompt([
+      const { imageUrl } = await inquirer.prompt<ImageUrlPrompt>([
         {
           type: 'input',
           name: 'imageUrl',
@@ -172,7 +184,7 @@ export async function addReading(): Promise<void> {
       ]);
       coverImage = imageUrl;
     } else if (imageChoice === 'local') {
-      const { imagePath } = await inquirer.prompt([
+      const { imagePath } = await inquirer.prompt<ImageFilePrompt>([
         {
           type: 'input',
           name: 'imagePath',
@@ -230,7 +242,7 @@ export async function addReading(): Promise<void> {
         console.log(chalk.green('✓ Image optimized and saved'));
       } catch (imageError) {
         console.error(chalk.red('✖ Failed to process image:'), imageError);
-        const { continueWithoutImage } = await inquirer.prompt([
+        const { continueWithoutImage } = await inquirer.prompt<ContinueWithoutImagePrompt>([
           {
             type: 'confirm',
             name: 'continueWithoutImage',
@@ -246,7 +258,7 @@ export async function addReading(): Promise<void> {
     }
 
     // Thoughts prompt
-    const { addThoughts } = await inquirer.prompt([
+    const { addThoughts } = await inquirer.prompt<ThoughtsPrompt>([
       {
         type: 'confirm',
         name: 'addThoughts',
@@ -298,7 +310,7 @@ export async function addReading(): Promise<void> {
 
       console.log('\n' + message);
 
-      const { action } = await inquirer.prompt([
+      const { action } = await inquirer.prompt<ReadingActionPrompt>([
         {
           type: 'list',
           name: 'action',
@@ -340,7 +352,7 @@ export async function addReading(): Promise<void> {
               const { renameSync } = await import('fs');
               renameSync(originalPath, newOutputPath);
               coverImage = `/images/readings/${rereadSlug}.webp`;
-            } catch (renameError) {
+            } catch {
               console.warn(
                 chalk.yellow('⚠️  Could not rename image for reread, using original path')
               );
@@ -352,10 +364,10 @@ export async function addReading(): Promise<void> {
     }
 
     // Create the reading file content
-    const frontmatter: any = {
+    const frontmatter: ReadingFrontmatter = {
       title: basicInfo.title,
       author: basicInfo.author,
-      finished: finishedDate || false,
+      finished: finishedDate || null,
       dropped: false,
     };
 
