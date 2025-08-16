@@ -38,17 +38,6 @@ jobs:
             exit 1
           }
 
-      - name: Generate Prisma client
-        run: |
-          echo "🗄️ Generating Prisma client..."
-          npm run prisma:generate || {
-            echo "❌ Failed to generate Prisma client!"
-            echo "→ Ensure prisma schema is valid"
-            echo "→ Check prisma/schema.prisma for syntax errors"
-            echo "→ Run 'npm run prisma:generate' locally to debug"
-            exit 1
-          }
-
       # Note: Code formatting check removed - pre-commit hooks ensure formatting
       # This eliminates redundancy while maintaining code quality
 

@@ -157,16 +157,8 @@ const createLogger = (): LoggerInterface => {
     // In production environment, use structured JSON logging
     if (IS_PRODUCTION) {
       const output = JSON.stringify(logEntry);
-      // For tests simulating production, use console.log for easy capturing
-      // In real production, use process.stdout to avoid console.* calls
-      if (typeof jest !== 'undefined') {
-        console.log(output);
-      } else if (typeof process !== 'undefined' && process.stdout) {
-        process.stdout.write(output + '\n');
-      } else {
-        // Fallback for edge runtime environments
-        console.log(output);
-      }
+      // Use console.log for all environments (works in edge runtime)
+      console.log(output);
     } else {
       // In development, use human-readable console output
       const logString = `${timestamp} [${level.toUpperCase()}]: ${message}`;

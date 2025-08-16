@@ -112,6 +112,40 @@ module.exports = [
 
   // Storybook config (must come early to set up Storybook files properly)
 
+  // CLI and Node.js files configuration (Node.js environment)
+  {
+    files: ['cli/**/*.{js,ts}', 'src/lib/data.ts'],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+      globals: {
+        process: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        Buffer: 'readonly',
+        console: 'readonly',
+        require: 'readonly',
+        module: 'readonly',
+        exports: 'readonly',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
+    },
+    rules: {
+      ...tseslint.configs.recommended.rules,
+      '@typescript-eslint/no-explicit-any': 'off', // Allow any for inquirer prompts
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      'no-empty': ['error', { allowEmptyCatch: true }], // Allow empty catch blocks for cleanup
+    },
+  },
+
   // Test files configuration (place before the general TypeScript configuration)
   {
     files: [
