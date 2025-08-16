@@ -275,10 +275,76 @@ _Carmack would ask: "What else can we delete?"_
   - [ ] Update tests to use console.log directly
   - [ ] Remove correlation ID complexity for static site
 
-- [ ] Consider removing React Query:
+- [x] Consider removing React Query:
   - You fetch static markdown files
   - No mutations, no cache invalidation needed
   - Plain `fetch` or `import` would work
+
+  ### Analysis Started (2025-08-16 12:15)
+
+  ### Complexity: COMPLEX
+
+  ### Context Discovery
+
+  [12:15] Analyzing React Query usage patterns across codebase
+  [12:16] Searching for React Query imports: Found in only 2 files (query.ts, providers.tsx)
+  [12:17] Searching for hook usage (useQuery, useMutation): ZERO components use React Query!
+  [12:18] Verified data fetching: TypewriterQuotes and readings use plain fetch()
+  [12:19] Package size analysis: 4.4MB total (@tanstack/react-query: 1.5MB, query-core: 2.6MB, devtools: 264KB)
+
+  ### Execution Log
+
+  [12:20] Critical discovery: React Query is installed but COMPLETELY UNUSED
+  - Configured in src/lib/query.ts with QueryClient
+  - Wrapped in providers.tsx with QueryClientProvider
+  - DevTools included for development
+  - But NO components actually use useQuery, useMutation, or any React Query hooks!
+
+  ### Current Data Fetching Reality
+  - TypewriterQuotes.tsx: Uses plain fetch() with useState/useEffect
+  - readings/page.tsx: Uses plain fetch() with useState/useEffect
+  - All data is static markdown - no need for cache invalidation
+  - No mutations happening anywhere in the app
+
+  ### Recommendation: REMOVE TANSTACK QUERY IMMEDIATELY
+
+  This is worse than Winston - at least Winston was just unused. React Query is:
+  1. **4.4MB of dependencies** for zero functionality
+  2. **Added complexity** with providers and configuration
+  3. **DevTools bloat** in development builds
+  4. **Zero actual usage** - not a single component uses it!
+
+  ### Removal Action Plan
+  1. Remove packages: `npm uninstall @tanstack/react-query @tanstack/react-query-devtools`
+  2. Delete `src/lib/query.ts` entirely
+  3. Remove QueryClientProvider from `src/app/providers.tsx`
+  4. Update documentation that mentions React Query
+
+  ### Impact Assessment
+  - **Bundle size reduction**: 4.4MB removed from node_modules
+  - **Zero functionality loss**: Nothing uses React Query
+  - **Simpler mental model**: One less abstraction layer
+  - **Tests unaffected**: No tests use React Query either
+
+  ### Actions Taken ✅
+
+  [12:25] Executed removal plan:
+  1. ✅ REMOVED: @tanstack/react-query and @tanstack/react-query-devtools packages
+  2. ✅ DELETED: src/lib/query.ts (65 lines of unused configuration)
+  3. ✅ SIMPLIFIED: src/app/providers.tsx (removed QueryClientProvider wrapper)
+  4. ✅ VERIFIED: Build successful, all 175 tests pass
+
+  ### Results
+  - **Packages removed**: 4 total (@tanstack/react-query, devtools, query-core, query-sync)
+  - **Bundle impact**: 4.4MB eliminated from node_modules
+  - **Code removed**: 65 lines of configuration + provider boilerplate
+  - **Zero breakage**: Nothing was using React Query!
+
+  ### Learnings
+  - React Query was added speculatively but never used
+  - Static sites with markdown content don't need complex caching
+  - Plain fetch() is sufficient for this use case
+  - Always question enterprise patterns in personal projects
 
 - [ ] Consider removing the interactive map:
   - 521 lines of place data

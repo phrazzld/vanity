@@ -16,7 +16,7 @@
 - **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript 5.4 (strict mode)
 - **Styling**: Tailwind CSS with custom design tokens
-- **State Management**: TanStack Query (server state) + Zustand (UI state)
+- **State Management**: Zustand (UI state) + native fetch API
 - **Maps**: Leaflet/React-Leaflet (code-split for performance)
 
 ### Content Management
@@ -105,8 +105,8 @@ Epic space opera with incredible world-building...
 1. **Content Creation**: CLI tools create/edit markdown files in `/content/`
 2. **Build Time**: Next.js reads markdown files via `src/lib/data.ts`
 3. **Runtime**: API routes serve parsed content as JSON
-4. **Frontend**: Components fetch data via TanStack Query
-5. **State**: UI state managed by Zustand, server state by TanStack Query
+4. **Frontend**: Components fetch data via native fetch API
+5. **State**: UI state managed by Zustand, data fetched with native fetch
 
 ## Performance Optimizations
 
@@ -191,7 +191,7 @@ Every architectural decision prioritizes:
 The architecture continues to evolve toward simplicity:
 
 - **Winston Logging**: 44 files import enterprise logging - consider `console.log` for development
-- **TanStack Query**: Complex caching for static files - plain `fetch` might suffice
+- ~~**TanStack Query**: Complex caching for static files - plain `fetch` might suffice~~ ✅ REMOVED
 - **Interactive Map**: 140KB dependency for 91 locations - evaluate usage analytics
 
 ---

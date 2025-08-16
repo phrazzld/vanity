@@ -34,7 +34,7 @@ A personal website built with Next.js, featuring a collection of readings, trave
 - **Responsive Design**: Optimized for all device sizes using Tailwind's responsive utilities
 - **Dark Mode**: Fully implemented dark mode support with theme persistence
 - **Accessibility**: WCAG 2.1 AA compliant with keyboard navigation, semantic HTML, and ARIA attributes
-- **State Management**: Hybrid approach with TanStack Query for server state and Zustand for UI state
+- **State Management**: Zustand for UI state, native fetch for data loading
 - **Type Safety**: Strict TypeScript throughout with comprehensive type definitions
 
 ## Tech Stack
@@ -45,7 +45,7 @@ A personal website built with Next.js, featuring a collection of readings, trave
 - **Language**: TypeScript 5.4
 - **Component Library**: Custom React 19 components
 - **Styling**: Tailwind CSS with custom design tokens
-- **State Management**: TanStack Query v5 (server state) + Zustand v5 (UI state)
+- **State Management**: Zustand v5 (UI state) + native fetch API
 - **Maps**: Leaflet/React-Leaflet v5
 
 ### Content & Data
@@ -319,7 +319,7 @@ For more details, see [KEYBOARD_NAVIGATION.md](docs/KEYBOARD_NAVIGATION.md) and 
 
 The project uses a hybrid approach to state management:
 
-- **Server State**: TanStack Query for data fetching, caching, and synchronization
+- **Server State**: Native fetch API for loading static markdown data
 - **UI State**: Zustand for simple, lightweight global state management
 - **Local State**: React's useState and useReducer for component-specific state
 
