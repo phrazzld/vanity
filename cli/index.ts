@@ -2,7 +2,7 @@
 
 import { program } from 'commander';
 import { addQuote, listQuotes } from './commands/quote';
-import { addReading, listReadings } from './commands/reading';
+import { addReading, listReadings, updateReading } from './commands/reading';
 import { addProject, listProjects } from './commands/project';
 import { addPlace, listPlaces } from './commands/place';
 
@@ -19,6 +19,7 @@ Examples:
   $ vanity quote list -n 20       # List last 20 quotes
   
   $ vanity reading add            # Add a new reading with prompts
+  $ vanity reading update         # Update a reading (mark finished, etc.)
   $ vanity reading list           # List recent readings
   $ vanity reading list -n 5      # List last 5 readings
 
@@ -127,6 +128,36 @@ Examples:
   .action(options => {
     const limit = parseInt(options.number, 10);
     listReadings(isNaN(limit) ? 10 : limit);
+  });
+
+reading
+  .command('update')
+  .description('Update an existing reading (mark as finished, update thoughts, etc.)')
+  .addHelpText(
+    'after',
+    `
+This command lets you:
+  • Mark a book as finished (today or custom date)
+  • Update your thoughts about a book
+  • Mark a book as dropped
+  
+The update wizard will:
+  1. Show currently reading books first
+  2. Let you select which book to update
+  3. Present relevant update options
+  4. Save changes to the markdown file
+
+Examples:
+  $ vanity reading update     # Interactive update wizard
+  
+Common use case:
+  Finishing a book you're currently reading - just run 'update',
+  select the book, and choose "Mark as finished (today)".
+  No need to manually edit dates in YAML frontmatter!
+  `
+  )
+  .action(async () => {
+    await updateReading();
   });
 
 // Project commands

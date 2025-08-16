@@ -459,3 +459,168 @@ export function listReadings(limit: number = 10): void {
     process.exit(1);
   }
 }
+
+/**
+ * Update an existing reading (mark as finished, update thoughts, etc.)
+ */
+export async function updateReading() {
+  try {
+    // Get all readings
+    const readings = getReadings();
+
+    // Filter to show only unfinished readings first, then recent finished ones
+    const unfinishedReadings = readings.filter(r => !r.finishedDate);
+    const finishedReadings = readings.filter(r => r.finishedDate).slice(0, 10);
+
+    if (unfinishedReadings.length === 0 && finishedReadings.length === 0) {
+      console.log(chalk.yellow('No readings found to update.'));
+      return;
+    }
+
+    // Build choices for selection
+    const choices = [
+      ...unfinishedReadings.map(r => ({
+        name: chalk.yellow(`○ ${r.title} - ${r.author} (currently reading)`),
+        value: r.slug,
+      })),
+      ...finishedReadings.map(r => ({
+        name: chalk.green(
+          `✓ ${r.title} - ${r.author} (finished ${new Date(r.finishedDate).toLocaleDateString()})`
+        ),
+        value: r.slug,
+      })),
+    ];
+
+    // Prompt for which reading to update
+    const { selectedSlug } = await inquirer.prompt<{ selectedSlug: string }>([
+      {
+        type: 'list',
+        name: 'selectedSlug',
+        message: 'Which reading would you like to update?',
+        choices,
+        pageSize: 15,
+      },
+    ]);
+
+    // Find the file for this reading
+    const filename = `${selectedSlug}.md`;
+    const filepath = join(READINGS_DIR, filename);
+
+    if (!existsSync(filepath)) {
+      console.error(chalk.red(`✖ Reading file not found: ${filename}`));
+      return;
+    }
+
+    // Read current content
+    const fileContent = await readFile(filepath, 'utf-8');
+    const { data: frontmatter, content } = matter(fileContent);
+    const currentReading = readings.find(r => r.slug === selectedSlug);
+
+    if (!currentReading) {
+      console.error(chalk.red('✖ Could not find reading data'));
+      return;
+    }
+
+    // Show current status
+    console.log(chalk.cyan('\n📖 Current Reading:'));
+    console.log(chalk.gray(`   Title: ${currentReading.title}`));
+    console.log(chalk.gray(`   Author: ${currentReading.author}`));
+    if (currentReading.finishedDate) {
+      console.log(
+        chalk.gray(
+          `   Status: Finished on ${new Date(currentReading.finishedDate).toLocaleDateString()}`
+        )
+      );
+    } else {
+      console.log(chalk.gray(`   Status: Currently reading`));
+    }
+
+    // Ask what to update
+    const { updateAction } = await inquirer.prompt<{ updateAction: string }>([
+      {
+        type: 'list',
+        name: 'updateAction',
+        message: 'What would you like to update?',
+        choices: [
+          ...(currentReading.finishedDate
+            ? []
+            : [
+                { name: 'Mark as finished (today)', value: 'finish_today' },
+                { name: 'Mark as finished (custom date)', value: 'finish_custom' },
+              ]),
+          { name: 'Update thoughts', value: 'thoughts' },
+          { name: 'Mark as dropped', value: 'dropped' },
+          { name: 'Cancel', value: 'cancel' },
+        ],
+      },
+    ]);
+
+    if (updateAction === 'cancel') {
+      console.log(chalk.yellow('✖ Update cancelled.'));
+      return;
+    }
+
+    let updatedFrontmatter = { ...frontmatter };
+    let updatedContent = content;
+
+    // Handle different update actions
+    if (updateAction === 'finish_today') {
+      updatedFrontmatter.finished = new Date().toISOString();
+      console.log(chalk.green(`✓ Marked as finished today (${new Date().toLocaleDateString()})`));
+    } else if (updateAction === 'finish_custom') {
+      const { dateInput } = await inquirer.prompt<DateInputPrompt>([
+        {
+          type: 'input',
+          name: 'dateInput',
+          message: 'When did you finish? (MM/DD/YYYY):',
+          validate: (input: string) => {
+            const date = new Date(input);
+            if (isNaN(date.getTime())) {
+              return 'Please enter a valid date (MM/DD/YYYY)';
+            }
+            if (date > new Date()) {
+              return 'Date cannot be in the future';
+            }
+            return true;
+          },
+        },
+      ]);
+
+      const date = new Date(dateInput);
+      updatedFrontmatter.finished = date.toISOString();
+      console.log(chalk.green(`✓ Marked as finished on ${date.toLocaleDateString()}`));
+    } else if (updateAction === 'thoughts') {
+      console.log(chalk.gray('\nOpening editor for your thoughts...'));
+      const currentThoughts = content.trim();
+      const thoughtsTemplate = `# Your thoughts on "${currentReading.title}" by ${currentReading.author}
+# Lines starting with # will be ignored
+# Current thoughts are shown below. Edit as needed:
+
+${currentThoughts}`;
+
+      const newThoughts = await openEditor(thoughtsTemplate, '.md');
+      if (newThoughts) {
+        updatedContent = newThoughts
+          .split('\n')
+          .filter(line => !line.startsWith('#'))
+          .join('\n')
+          .trim();
+        console.log(chalk.green('✓ Updated thoughts'));
+      }
+    } else if (updateAction === 'dropped') {
+      updatedFrontmatter.dropped = true;
+      // Remove finished date if it exists
+      delete updatedFrontmatter.finished;
+      console.log(chalk.yellow('✓ Marked as dropped'));
+    }
+
+    // Write updated file
+    const newContent = matter.stringify(updatedContent, updatedFrontmatter);
+    await writeFile(filepath, newContent);
+
+    console.log(chalk.green(`\n✅ Successfully updated "${currentReading.title}"`));
+  } catch (error) {
+    console.error(chalk.red('✖ Error updating reading:'), error);
+    process.exit(1);
+  }
+}
