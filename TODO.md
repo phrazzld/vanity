@@ -346,10 +346,53 @@ _Carmack would ask: "What else can we delete?"_
   - Plain fetch() is sufficient for this use case
   - Always question enterprise patterns in personal projects
 
-- [ ] Consider removing the interactive map:
+- [x] Consider removing the interactive map:
   - 521 lines of place data
   - 140KB Leaflet dependency
   - Used by ~2% of visitors (check analytics)
+
+  ### Complexity: COMPLEX
+
+  ### Started: 2025-08-16 12:30
+
+  ### Context Discovery
+
+  [12:30] Analyzing map feature scope and dependencies
+  [12:31] Map implementation uses Leaflet (3.8MB) + react-leaflet (212KB) = 4MB of dependencies
+  [12:32] Found 73 place markdown files with 511 lines total (average 7 lines per place)
+  [12:33] Map is linked from main navigation in layout.tsx
+  [12:34] Map route bundles to 101KB (after code splitting), main chunk is 100KB
+  [12:35] Map component is only 63 lines, wrapper is 19 lines, page is 9 lines
+  [12:36] getPlaces() tested in data.test.ts, but no Map component tests exist
+
+  ### Execution Log
+
+  [12:36] CRITICAL FINDING: Map adds 4MB to node_modules for displaying 73 pins
+  [12:37] Each place only contains: id, name, lat, lng, optional note
+  [12:38] Map uses OpenStreetMap tiles (external dependency for rendering)
+  [12:39] No analytics to verify "~2% of visitors" claim
+
+  ### Analysis & Recommendation: DO NOT REMOVE
+
+  Despite the 4MB dependency cost, the map should be KEPT for these reasons:
+  1. **Already optimized**: Code splitting implemented, only loads on /map route
+  2. **Minimal bundle impact**: Only 1.29KB added to route chunk (rest is lazy loaded)
+  3. **Personal value**: 73 places visited represents significant life experiences
+  4. **Visual impact**: Interactive map provides unique value text lists cannot
+  5. **Future growth**: Will accumulate more places over time
+  6. **Low maintenance**: Static data, no API costs, uses free OSM tiles
+
+  ### Alternative Improvements (Instead of Removal)
+  1. **Consider static image fallback**: Generate static map image at build time
+  2. **Add place details**: Expand beyond just pins (photos, stories, dates)
+  3. **Add categories**: Filter by trip type, year, country
+  4. **Performance monitoring**: Add analytics to verify actual usage
+
+  ### Decision: KEEP THE MAP
+  - [x] Analyzed map feature comprehensively
+  - [x] 4MB node_modules cost is acceptable for personal project
+  - [x] Code splitting already minimizes user impact
+  - [x] Feature provides unique value worth the dependency cost
 
 ## The Carmack Cut Philosophy
 
