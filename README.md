@@ -6,13 +6,14 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
-A personal website built with Next.js, featuring a collection of readings, travel map, and quotes with a minimalist design aesthetic. The project emphasizes type safety, accessibility, and maintainable code architecture.
+A personal website built with Next.js, featuring a collection of readings, travel map, and quotes with a minimalist design aesthetic. Content is managed through markdown files and a custom CLI tool, emphasizing simplicity, type safety, and accessibility.
 
 ## Table of Contents
 
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Getting Started](#getting-started)
+- [Content Management](#content-management)
 - [Development Scripts](#development-scripts)
 - [Project Structure](#project-structure)
 - [Development Philosophy](#development-philosophy)
@@ -29,12 +30,12 @@ A personal website built with Next.js, featuring a collection of readings, trave
 - **Readings Collection**: Showcase books and readings with cover images, organized by year and category
 - **Travel Map**: Interactive map using Leaflet to display travel locations with custom markers and popups
 - **Quote Display**: Animated typewriter effect for displaying quotes with randomization
-- **Admin Interface**: Content management system for readings and quotes with authentication
+- **Content Management**: Custom CLI tools for adding and managing readings and quotes via markdown files
 - **Responsive Design**: Optimized for all device sizes using Tailwind's responsive utilities
 - **Dark Mode**: Fully implemented dark mode support with theme persistence
 - **Accessibility**: WCAG 2.1 AA compliant with keyboard navigation, semantic HTML, and ARIA attributes
 - **State Management**: Hybrid approach with TanStack Query for server state and Zustand for UI state
-- **Type Safety**: Strict TypeScript throughout with Prisma-generated types for database models
+- **Type Safety**: Strict TypeScript throughout with comprehensive type definitions
 
 ## Tech Stack
 
@@ -47,12 +48,11 @@ A personal website built with Next.js, featuring a collection of readings, trave
 - **State Management**: TanStack Query v5 (server state) + Zustand v5 (UI state)
 - **Maps**: Leaflet/React-Leaflet v5
 
-### Backend
+### Content & Data
 
-- **API Routes**: Next.js API Routes with Next-Auth v5
-- **Database**: PostgreSQL via Neon
-- **ORM**: Prisma v6
-- **Authentication**: Next-Auth with credential provider
+- **Content Storage**: Markdown files with YAML frontmatter
+- **API Routes**: Next.js API Routes serving static content
+- **CLI Tools**: Custom TypeScript CLI for content management
 - **Logging**: Winston for structured JSON logging
 
 ### Testing & Quality
@@ -69,8 +69,8 @@ A personal website built with Next.js, featuring a collection of readings, trave
 ### Prerequisites
 
 - Node.js 20+ and npm 10.9.2+
-- PostgreSQL database (Neon recommended)
 - Git
+- Text editor (for content creation)
 
 ### Installation
 
@@ -87,26 +87,14 @@ A personal website built with Next.js, featuring a collection of readings, trave
    npm install
    ```
 
-3. Set up environment variables
+3. Set up environment variables (optional)
 
    ```bash
    # Create a .env file with:
-   DATABASE_URL="your_neon_connection_string"
-   ADMIN_USERNAME="your_admin_username"
-   ADMIN_PASSWORD="your_admin_password"
-   NEXT_PUBLIC_SPACES_BASE_URL="your_image_hosting_url"
-   NEXTAUTH_URL="http://localhost:3000"
-   NEXTAUTH_SECRET="your_nextauth_secret"
+   NEXT_PUBLIC_SPACES_BASE_URL="your_image_hosting_url"  # For reading cover images
    ```
 
-4. Generate Prisma client and apply migrations
-
-   ```bash
-   npm run prisma:generate
-   npm run migrate:deploy
-   ```
-
-5. Start the development server
+4. Start the development server
 
    ```bash
    npm run dev
@@ -114,12 +102,75 @@ A personal website built with Next.js, featuring a collection of readings, trave
 
    The application will be available at [http://localhost:3000](http://localhost:3000).
 
+## Content Management
+
+Content is managed through markdown files and a custom CLI tool. All content is stored in the `/content/` directory.
+
+### Adding Quotes
+
+```bash
+# Add a new quote (opens your $EDITOR for quote and author)
+npm run vanity -- quote add
+
+# List recent quotes
+npm run vanity -- quote list
+npm run vanity -- quote list -n 20  # Show 20 quotes
+```
+
+Quotes are saved as `/content/quotes/[ID].md` with YAML frontmatter:
+
+```markdown
+---
+author: 'Author Name'
+id: 42
+---
+
+The quote text goes here.
+```
+
+### Adding Readings
+
+```bash
+# Add a new reading (interactive prompts)
+npm run vanity -- reading add
+
+# List recent readings
+npm run vanity -- reading list
+```
+
+Readings support:
+
+- Cover image URLs or local files (auto-optimized to WebP)
+- Finish status and rating
+- Optional thoughts via $EDITOR
+- Saved as `/content/readings/[slug].md`
+
+### CLI Configuration
+
+- Set `EDITOR` environment variable for preferred editor (default: `vi`)
+- Example: `export EDITOR=nvim`
+
+### Content Structure
+
+```
+content/
+├── quotes/
+│   ├── 0001.md
+│   ├── 0002.md
+│   └── ...
+└── readings/
+    ├── book-title.md
+    └── ...
+
+public/images/readings/
+└── book-title.webp  # Optimized cover images
+```
+
 ### Troubleshooting
 
-- **Database Connection Issues**: Ensure your DATABASE_URL is correctly formatted and the database server is accessible.
-- **Authentication Issues**: Check that NEXTAUTH_SECRET and NEXTAUTH_URL are properly set.
-- **Prisma Errors**: Run `npx prisma studio` to view and manage your database directly.
 - **Build Errors**: Check for TypeScript errors with `npm run typecheck`.
+- **Missing Content**: Ensure content directories exist: `/content/quotes/` and `/content/readings/`.
+- **Image Issues**: Check that NEXT_PUBLIC_SPACES_BASE_URL is set for reading cover images.
 
 ## Development Scripts
 
@@ -150,13 +201,13 @@ A personal website built with Next.js, featuring a collection of readings, trave
 - `npm run security:audit` - Run npm audit for high and critical vulnerabilities
 - `npm run security:scan` - Run security scan with allowlist filtering
 
-### Database
+### Content Management
 
-- `npm run prisma:generate` - Generate Prisma client
-- `npm run migrate:deploy` - Apply Prisma migrations
-- `npm run migrate:data` - Migrate readings data
-- `npm run migrate:quotes` - Migrate quotes data
-- `npm run migrate:all` - Run full data migration
+- `npm run vanity -- quote add` - Add new quote interactively
+- `npm run vanity -- quote list` - List recent quotes
+- `npm run vanity -- reading add` - Add new reading interactively
+- `npm run vanity -- reading list` - List recent readings
+- `npm run reading-summary` - Generate reading summary report
 
 ### Storybook
 
@@ -176,17 +227,17 @@ A personal website built with Next.js, featuring a collection of readings, trave
 
 ```
 /
-├── prisma/                  # Database schema and migrations
-│   ├── migrations/          # Database migration files
-│   └── schema.prisma        # Prisma schema definition
+├── cli/                     # Custom CLI tools for content management
+├── content/                 # Markdown content files
+│   ├── quotes/              # Quote markdown files (auto-numbered)
+│   └── readings/            # Reading markdown files (slug-based)
 ├── public/                  # Static assets
-│   ├── images/              # Project images
+│   ├── images/              # Project and reading cover images
 │   └── ...                  # Other static files
-├── scripts/                 # Utility scripts for data migration, etc.
+├── scripts/                 # Utility scripts and build tools
 ├── src/
 │   ├── app/                 # Next.js App Router
-│   │   ├── admin/           # Admin panel pages
-│   │   ├── api/             # API routes
+│   │   ├── api/             # API routes (serve static content)
 │   │   ├── components/      # React components
 │   │   │   ├── keyboard/    # Keyboard navigation components
 │   │   │   ├── quotes/      # Quote-related components
@@ -196,8 +247,7 @@ A personal website built with Next.js, featuring a collection of readings, trave
 │   │   └── utils/           # Utility functions
 │   ├── lib/                 # Core library code
 │   │   ├── api/             # API client functions
-│   │   ├── db/              # Database access functions
-│   │   └── prisma.ts        # Prisma client instance
+│   │   └── data.ts          # Markdown file parsing
 │   ├── store/               # Zustand store definitions
 │   └── types/               # TypeScript type definitions
 ├── docs/                    # Documentation files
@@ -209,15 +259,15 @@ A personal website built with Next.js, featuring a collection of readings, trave
 
 ### Key Files
 
-- [`prisma/schema.prisma`](prisma/schema.prisma) - Database schema
+- [`cli/index.ts`](cli/index.ts) - CLI tool entry point
 - [`src/app/layout.tsx`](src/app/layout.tsx) - Root layout with providers
 - [`src/app/page.tsx`](src/app/page.tsx) - Home page
-- [`src/lib/db/readings.ts`](src/lib/db/readings.ts) - Reading data access
-- [`src/lib/db/quotes.ts`](src/lib/db/quotes.ts) - Quote data access
+- [`src/lib/data.ts`](src/lib/data.ts) - Markdown content parsing
 - [`src/app/api/readings/route.ts`](src/app/api/readings/route.ts) - Readings API
 - [`src/app/api/quotes/route.ts`](src/app/api/quotes/route.ts) - Quotes API
 - [`src/store/theme.ts`](src/store/theme.ts) - Theme state management
 - [`tailwind.config.ts`](tailwind.config.ts) - Design token configuration
+- [`content/`](content/) - All content as markdown files
 
 ## Development Philosophy
 
