@@ -45,5 +45,15 @@
     ".storybook/**/*.ts",
     ".storybook/**/*.tsx"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "src/test-utils/**/*",
+    "src/__mocks__/**/*",
+    "jest.setup.js",
+    "jest.config.js"
+  ]
 }
