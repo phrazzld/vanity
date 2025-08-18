@@ -11,9 +11,9 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 
-/* eslint-disable no-unused-vars */
+ 
 
 import React from 'react';
 
@@ -112,7 +112,7 @@ export const useMap = () => {
 export const useMapEvents = (handlers: Record<string, Function>) => {
   // Call handlers immediately for testing if needed
   return {
-    on: jest.fn((event: string, handler: Function) => {
+    on: jest.fn((event: string, _handler: Function) => {
       if (handlers[event]) {
         // Store for potential testing
       }

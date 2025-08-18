@@ -16,6 +16,7 @@ class MockIcon {
   static Default = {
     prototype: {
       _getIconUrl: undefined,
+      _options: {} as any,
     },
     mergeOptions: jest.fn((options: any) => {
       // Store options for testing if needed
