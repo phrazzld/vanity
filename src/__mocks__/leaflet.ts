@@ -10,7 +10,6 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 // Mock Icon class
 class MockIcon {
@@ -53,7 +52,7 @@ class MockMap {
 }
 
 // Mock marker function
-const mockMarker = jest.fn((latlng: any, options?: any) => ({
+const mockMarker = jest.fn((latlng: any, _options?: any) => ({
   addTo: jest.fn(),
   bindPopup: jest.fn(),
   openPopup: jest.fn(),
@@ -81,7 +80,7 @@ const mockControl = {
 };
 
 // Mock tileLayer function
-const mockTileLayer = jest.fn((url: string, options?: any) => ({
+const mockTileLayer = jest.fn((_url: string, _options?: any) => ({
   addTo: jest.fn(),
   remove: jest.fn(),
   setUrl: jest.fn(),
@@ -99,7 +98,7 @@ const L = {
   control: mockControl,
   tileLayer: mockTileLayer,
   latLng: (lat: number, lng: number) => new MockLatLng(lat, lng),
-  latLngBounds: jest.fn((corner1: any, corner2: any) => ({
+  latLngBounds: jest.fn((_corner1: any, _corner2: any) => ({
     extend: jest.fn(),
     getCenter: jest.fn(() => new MockLatLng(0, 0)),
     contains: jest.fn(() => true),

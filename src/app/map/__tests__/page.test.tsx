@@ -30,9 +30,7 @@ jest.mock('../ClientMapWrapper', () => {
   };
 });
 
-// TODO: Fix mock interaction with ClientMapWrapper
-// Map component tests work but page integration needs different approach
-describe.skip('Map Page Integration', () => {
+describe('Map Page Integration', () => {
   const mockPlaces: Place[] = [
     {
       id: '1',

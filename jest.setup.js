@@ -12,7 +12,7 @@ configure({
   asyncUtilTimeout: 5000,
   // When true, all queries from Testing Library are
   // wrapped with expect assertions
-  throwSuggestions: true,
+  throwSuggestions: false,
 });
 
 // =============================================================================
