@@ -9,6 +9,18 @@ import matter from 'gray-matter';
 import { openEditor } from '../lib/editor';
 import { previewReading } from '../lib/preview';
 import { getReadings } from '../../src/lib/data';
+import type {
+  BasicReadingInfo,
+  FinishedPrompt,
+  DateInputPrompt,
+  ImageChoicePrompt,
+  ImageUrlPrompt,
+  ImageFilePrompt,
+  ThoughtsPrompt,
+  ContinueWithoutImagePrompt,
+  ReadingActionPrompt,
+  ReadingFrontmatter,
+} from '../types';
 
 const READINGS_DIR = join(process.cwd(), 'content', 'readings');
 const IMAGES_DIR = join(process.cwd(), 'public', 'images', 'readings');
@@ -76,7 +88,7 @@ async function getMostRecentReading(
     const content = await readFile(filepath, 'utf8');
     const { data } = matter(content);
     return {
-      date: data.finished || null,
+      date: (data.finished as string | null) || null,
       count: existingFiles.length,
     };
   } catch {
@@ -92,7 +104,7 @@ export async function addReading(): Promise<void> {
 
   try {
     // Title and author prompts
-    const basicInfo = await inquirer.prompt([
+    const basicInfo = await inquirer.prompt<BasicReadingInfo>([
       {
         type: 'input',
         name: 'title',
@@ -108,7 +120,7 @@ export async function addReading(): Promise<void> {
     ]);
 
     // Finished prompt
-    const { finished } = await inquirer.prompt([
+    const { finished } = await inquirer.prompt<FinishedPrompt>([
       {
         type: 'confirm',
         name: 'finished',
@@ -120,7 +132,7 @@ export async function addReading(): Promise<void> {
     // Date prompt if finished
     let finishedDate: string | null = null;
     if (finished) {
-      const { dateInput } = await inquirer.prompt([
+      const { dateInput } = await inquirer.prompt<DateInputPrompt>([
         {
           type: 'input',
           name: 'dateInput',
@@ -137,7 +149,7 @@ export async function addReading(): Promise<void> {
     }
 
     // Cover image prompt
-    const { imageChoice } = await inquirer.prompt([
+    const { imageChoice } = await inquirer.prompt<ImageChoicePrompt>([
       {
         type: 'list',
         name: 'imageChoice',
@@ -154,7 +166,7 @@ export async function addReading(): Promise<void> {
     const slug = slugify(basicInfo.title, { lower: true, strict: true });
 
     if (imageChoice === 'url') {
-      const { imageUrl } = await inquirer.prompt([
+      const { imageUrl } = await inquirer.prompt<ImageUrlPrompt>([
         {
           type: 'input',
           name: 'imageUrl',
@@ -172,7 +184,7 @@ export async function addReading(): Promise<void> {
       ]);
       coverImage = imageUrl;
     } else if (imageChoice === 'local') {
-      const { imagePath } = await inquirer.prompt([
+      const { imagePath } = await inquirer.prompt<ImageFilePrompt>([
         {
           type: 'input',
           name: 'imagePath',
@@ -230,7 +242,7 @@ export async function addReading(): Promise<void> {
         console.log(chalk.green('✓ Image optimized and saved'));
       } catch (imageError) {
         console.error(chalk.red('✖ Failed to process image:'), imageError);
-        const { continueWithoutImage } = await inquirer.prompt([
+        const { continueWithoutImage } = await inquirer.prompt<ContinueWithoutImagePrompt>([
           {
             type: 'confirm',
             name: 'continueWithoutImage',
@@ -246,7 +258,7 @@ export async function addReading(): Promise<void> {
     }
 
     // Thoughts prompt
-    const { addThoughts } = await inquirer.prompt([
+    const { addThoughts } = await inquirer.prompt<ThoughtsPrompt>([
       {
         type: 'confirm',
         name: 'addThoughts',
@@ -298,7 +310,7 @@ export async function addReading(): Promise<void> {
 
       console.log('\n' + message);
 
-      const { action } = await inquirer.prompt([
+      const { action } = await inquirer.prompt<ReadingActionPrompt>([
         {
           type: 'list',
           name: 'action',
@@ -340,7 +352,7 @@ export async function addReading(): Promise<void> {
               const { renameSync } = await import('fs');
               renameSync(originalPath, newOutputPath);
               coverImage = `/images/readings/${rereadSlug}.webp`;
-            } catch (renameError) {
+            } catch {
               console.warn(
                 chalk.yellow('⚠️  Could not rename image for reread, using original path')
               );
@@ -352,10 +364,10 @@ export async function addReading(): Promise<void> {
     }
 
     // Create the reading file content
-    const frontmatter: any = {
+    const frontmatter: ReadingFrontmatter = {
       title: basicInfo.title,
       author: basicInfo.author,
-      finished: finishedDate || false,
+      finished: finishedDate || null,
       dropped: false,
     };
 
@@ -444,6 +456,171 @@ export function listReadings(limit: number = 10): void {
     );
   } catch (error) {
     console.error(chalk.red('✖ Error listing readings:'), error);
+    process.exit(1);
+  }
+}
+
+/**
+ * Update an existing reading (mark as finished, update thoughts, etc.)
+ */
+export async function updateReading() {
+  try {
+    // Get all readings
+    const readings = getReadings();
+
+    // Filter to show only unfinished readings first, then recent finished ones
+    const unfinishedReadings = readings.filter(r => !r.finishedDate);
+    const finishedReadings = readings.filter(r => r.finishedDate).slice(0, 10);
+
+    if (unfinishedReadings.length === 0 && finishedReadings.length === 0) {
+      console.log(chalk.yellow('No readings found to update.'));
+      return;
+    }
+
+    // Build choices for selection
+    const choices = [
+      ...unfinishedReadings.map(r => ({
+        name: chalk.yellow(`○ ${r.title} - ${r.author} (currently reading)`),
+        value: r.slug,
+      })),
+      ...finishedReadings.map(r => ({
+        name: chalk.green(
+          `✓ ${r.title} - ${r.author} (finished ${r.finishedDate ? new Date(r.finishedDate).toLocaleDateString() : 'Unknown'})`
+        ),
+        value: r.slug,
+      })),
+    ];
+
+    // Prompt for which reading to update
+    const { selectedSlug } = await inquirer.prompt<{ selectedSlug: string }>([
+      {
+        type: 'list',
+        name: 'selectedSlug',
+        message: 'Which reading would you like to update?',
+        choices,
+        pageSize: 15,
+      },
+    ]);
+
+    // Find the file for this reading
+    const filename = `${selectedSlug}.md`;
+    const filepath = join(READINGS_DIR, filename);
+
+    if (!existsSync(filepath)) {
+      console.error(chalk.red(`✖ Reading file not found: ${filename}`));
+      return;
+    }
+
+    // Read current content
+    const fileContent = await readFile(filepath, 'utf-8');
+    const { data: frontmatter, content } = matter(fileContent);
+    const currentReading = readings.find(r => r.slug === selectedSlug);
+
+    if (!currentReading) {
+      console.error(chalk.red('✖ Could not find reading data'));
+      return;
+    }
+
+    // Show current status
+    console.log(chalk.cyan('\n📖 Current Reading:'));
+    console.log(chalk.gray(`   Title: ${currentReading.title}`));
+    console.log(chalk.gray(`   Author: ${currentReading.author}`));
+    if (currentReading.finishedDate) {
+      console.log(
+        chalk.gray(
+          `   Status: Finished on ${new Date(currentReading.finishedDate).toLocaleDateString()}`
+        )
+      );
+    } else {
+      console.log(chalk.gray(`   Status: Currently reading`));
+    }
+
+    // Ask what to update
+    const { updateAction } = await inquirer.prompt<{ updateAction: string }>([
+      {
+        type: 'list',
+        name: 'updateAction',
+        message: 'What would you like to update?',
+        choices: [
+          ...(currentReading.finishedDate
+            ? []
+            : [
+                { name: 'Mark as finished (today)', value: 'finish_today' },
+                { name: 'Mark as finished (custom date)', value: 'finish_custom' },
+              ]),
+          { name: 'Update thoughts', value: 'thoughts' },
+          { name: 'Mark as dropped', value: 'dropped' },
+          { name: 'Cancel', value: 'cancel' },
+        ],
+      },
+    ]);
+
+    if (updateAction === 'cancel') {
+      console.log(chalk.yellow('✖ Update cancelled.'));
+      return;
+    }
+
+    let updatedFrontmatter = { ...frontmatter };
+    let updatedContent = content;
+
+    // Handle different update actions
+    if (updateAction === 'finish_today') {
+      updatedFrontmatter.finished = new Date().toISOString();
+      console.log(chalk.green(`✓ Marked as finished today (${new Date().toLocaleDateString()})`));
+    } else if (updateAction === 'finish_custom') {
+      const { dateInput } = await inquirer.prompt<DateInputPrompt>([
+        {
+          type: 'input',
+          name: 'dateInput',
+          message: 'When did you finish? (MM/DD/YYYY):',
+          validate: (input: string) => {
+            const date = new Date(input);
+            if (isNaN(date.getTime())) {
+              return 'Please enter a valid date (MM/DD/YYYY)';
+            }
+            if (date > new Date()) {
+              return 'Date cannot be in the future';
+            }
+            return true;
+          },
+        },
+      ]);
+
+      const date = new Date(dateInput);
+      updatedFrontmatter.finished = date.toISOString();
+      console.log(chalk.green(`✓ Marked as finished on ${date.toLocaleDateString()}`));
+    } else if (updateAction === 'thoughts') {
+      console.log(chalk.gray('\nOpening editor for your thoughts...'));
+      const currentThoughts = content.trim();
+      const thoughtsTemplate = `# Your thoughts on "${currentReading.title}" by ${currentReading.author}
+# Lines starting with # will be ignored
+# Current thoughts are shown below. Edit as needed:
+
+${currentThoughts}`;
+
+      const newThoughts = await openEditor(thoughtsTemplate, '.md');
+      if (newThoughts) {
+        updatedContent = newThoughts
+          .split('\n')
+          .filter(line => !line.startsWith('#'))
+          .join('\n')
+          .trim();
+        console.log(chalk.green('✓ Updated thoughts'));
+      }
+    } else if (updateAction === 'dropped') {
+      updatedFrontmatter.dropped = true;
+      // Remove finished date if it exists
+      delete updatedFrontmatter.finished;
+      console.log(chalk.yellow('✓ Marked as dropped'));
+    }
+
+    // Write updated file
+    const newContent = matter.stringify(updatedContent, updatedFrontmatter);
+    await writeFile(filepath, newContent);
+
+    console.log(chalk.green(`\n✅ Successfully updated "${currentReading.title}"`));
+  } catch (error) {
+    console.error(chalk.red('✖ Error updating reading:'), error);
     process.exit(1);
   }
 }

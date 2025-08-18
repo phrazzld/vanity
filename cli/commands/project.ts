@@ -6,6 +6,18 @@ import chalk from 'chalk';
 import slugify from 'slugify';
 import matter from 'gray-matter';
 import { getProjects } from '../../src/lib/data';
+import type {
+  BasicProjectInfo,
+  ProjectTechStackInput,
+  ProjectHasSiteUrl,
+  ProjectHasCodeUrl,
+  ProjectUrlPrompt,
+  ProjectImageChoice,
+  ProjectImageName,
+  ProjectConfirm,
+  ProjectOverwrite,
+  ProjectFrontmatter,
+} from '../types';
 
 const PROJECTS_DIR = join(process.cwd(), 'content', 'projects');
 
@@ -17,7 +29,7 @@ export async function addProject(): Promise<void> {
 
   try {
     // Basic project info
-    const basicInfo = await inquirer.prompt([
+    const basicInfo = await inquirer.prompt<BasicProjectInfo>([
       {
         type: 'input',
         name: 'title',
@@ -33,7 +45,7 @@ export async function addProject(): Promise<void> {
     ]);
 
     // Tech stack prompt
-    const { techStackInput } = await inquirer.prompt([
+    const { techStackInput } = await inquirer.prompt<ProjectTechStackInput>([
       {
         type: 'input',
         name: 'techStackInput',
@@ -49,7 +61,7 @@ export async function addProject(): Promise<void> {
       .filter((tech: string) => tech.length > 0);
 
     // URLs prompts
-    const { hasSiteUrl } = await inquirer.prompt([
+    const { hasSiteUrl } = await inquirer.prompt<ProjectHasSiteUrl>([
       {
         type: 'confirm',
         name: 'hasSiteUrl',
@@ -60,7 +72,7 @@ export async function addProject(): Promise<void> {
 
     let siteUrl: string | undefined;
     if (hasSiteUrl) {
-      const { url } = await inquirer.prompt([
+      const { url } = await inquirer.prompt<ProjectUrlPrompt>([
         {
           type: 'input',
           name: 'url',
@@ -79,7 +91,7 @@ export async function addProject(): Promise<void> {
       siteUrl = url;
     }
 
-    const { hasCodeUrl } = await inquirer.prompt([
+    const { hasCodeUrl } = await inquirer.prompt<ProjectHasCodeUrl>([
       {
         type: 'confirm',
         name: 'hasCodeUrl',
@@ -90,7 +102,7 @@ export async function addProject(): Promise<void> {
 
     let codeUrl: string | undefined;
     if (hasCodeUrl) {
-      const { url } = await inquirer.prompt([
+      const { url } = await inquirer.prompt<ProjectUrlPrompt>([
         {
           type: 'input',
           name: 'url',
@@ -110,7 +122,7 @@ export async function addProject(): Promise<void> {
     }
 
     // Image handling
-    const { imageChoice } = await inquirer.prompt([
+    const { imageChoice } = await inquirer.prompt<ProjectImageChoice>([
       {
         type: 'list',
         name: 'imageChoice',
@@ -124,7 +136,7 @@ export async function addProject(): Promise<void> {
 
     let imageSrc = '/images/projects/placeholder.webp';
     if (imageChoice === 'existing') {
-      const { imageName } = await inquirer.prompt([
+      const { imageName } = await inquirer.prompt<ProjectImageName>([
         {
           type: 'input',
           name: 'imageName',
@@ -161,7 +173,7 @@ export async function addProject(): Promise<void> {
     console.log(chalk.gray('─'.repeat(40)) + '\n');
 
     // Confirm save
-    const { confirm } = await inquirer.prompt([
+    const { confirm } = await inquirer.prompt<ProjectConfirm>([
       {
         type: 'confirm',
         name: 'confirm',
@@ -182,7 +194,7 @@ export async function addProject(): Promise<void> {
 
     // Check if file already exists
     if (existsSync(filepath)) {
-      const { overwrite } = await inquirer.prompt([
+      const { overwrite } = await inquirer.prompt<ProjectOverwrite>([
         {
           type: 'confirm',
           name: 'overwrite',
@@ -198,7 +210,7 @@ export async function addProject(): Promise<void> {
     }
 
     // Create the project file content
-    const frontmatter: any = {
+    const frontmatter: ProjectFrontmatter = {
       title: basicInfo.title,
       description: basicInfo.description,
       techStack,

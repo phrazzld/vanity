@@ -70,6 +70,9 @@ npm run vanity -- quote list -n 20  # Show 20 quotes
 # Add a new reading (interactive prompts)
 npm run vanity -- reading add
 
+# Update a reading (mark finished, add thoughts, etc.)
+npm run vanity -- reading update
+
 # List recent readings (default: 10)
 npm run vanity -- reading list
 npm run vanity -- reading list -n 5  # Show 5 readings
@@ -78,6 +81,7 @@ npm run vanity -- reading list -n 5  # Show 5 readings
 **Reading Features:**
 
 - Interactive prompts for title, author, finish status
+- **Update command**: Easy way to mark books as finished without editing YAML
 - Cover image support (URL or local file)
 - Local images optimized to 400x600 WebP
 - Optional thoughts via $EDITOR

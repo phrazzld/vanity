@@ -104,7 +104,16 @@ const testGlobals = {
 module.exports = [
   // Ignore built and generated files
   {
-    ignores: ['.next/**', 'node_modules/**', 'build/**', 'dist/**', 'coverage/**', '*.log'],
+    ignores: [
+      '.next/**',
+      'out/**',
+      'node_modules/**',
+      'build/**',
+      'dist/**',
+      'coverage/**',
+      '*.log',
+      'public/data/**',
+    ],
   },
 
   // Base JavaScript rules
@@ -114,7 +123,13 @@ module.exports = [
 
   // CLI and Node.js files configuration (Node.js environment)
   {
-    files: ['cli/**/*.{js,ts}', 'src/lib/data.ts'],
+    files: [
+      'cli/**/*.{js,ts}',
+      'src/lib/data.ts',
+      'src/lib/static-data.ts',
+      'src/lib/utils/readingUtils.ts',
+      'src/app/error.tsx',
+    ],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
@@ -170,7 +185,10 @@ module.exports = [
       globals: {
         ...testGlobals,
         ...browserGlobals,
+        ...nodeGlobals,
         require: 'readonly',
+        performance: 'readonly',
+        Buffer: 'readonly',
       },
     },
     plugins: {
@@ -211,7 +229,7 @@ module.exports = [
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
-        project: './tsconfig.json',
+        project: './tsconfig.eslint.json',
         ecmaFeatures: {
           jsx: true,
         },

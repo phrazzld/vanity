@@ -6,6 +6,14 @@ import chalk from 'chalk';
 import slugify from 'slugify';
 import matter from 'gray-matter';
 import { getPlaces } from '../../src/lib/data';
+import type {
+  BasicPlaceInfo,
+  PlaceCoordinatesPrompt,
+  PlaceHasNote,
+  PlaceNoteInput,
+  PlaceConfirm,
+  PlaceOverwrite,
+} from '../types';
 
 const PLACES_DIR = join(process.cwd(), 'content', 'places');
 
@@ -40,7 +48,7 @@ export async function addPlace(): Promise<void> {
 
   try {
     // Basic place info
-    const basicInfo = await inquirer.prompt([
+    const basicInfo = await inquirer.prompt<BasicPlaceInfo>([
       {
         type: 'input',
         name: 'name',
@@ -51,7 +59,7 @@ export async function addPlace(): Promise<void> {
     ]);
 
     // Coordinates prompts
-    const coordinates = await inquirer.prompt([
+    const coordinates = await inquirer.prompt<PlaceCoordinatesPrompt>([
       {
         type: 'input',
         name: 'lat',
@@ -79,7 +87,7 @@ export async function addPlace(): Promise<void> {
     ]);
 
     // Optional note prompt
-    const { hasNote } = await inquirer.prompt([
+    const { hasNote } = await inquirer.prompt<PlaceHasNote>([
       {
         type: 'confirm',
         name: 'hasNote',
@@ -90,7 +98,7 @@ export async function addPlace(): Promise<void> {
 
     let note: string | undefined;
     if (hasNote) {
-      const { noteInput } = await inquirer.prompt([
+      const { noteInput } = await inquirer.prompt<PlaceNoteInput>([
         {
           type: 'input',
           name: 'noteInput',
@@ -114,7 +122,7 @@ export async function addPlace(): Promise<void> {
     console.log(chalk.gray('─'.repeat(40)) + '\n');
 
     // Confirm save
-    const { confirm } = await inquirer.prompt([
+    const { confirm } = await inquirer.prompt<PlaceConfirm>([
       {
         type: 'confirm',
         name: 'confirm',
@@ -135,7 +143,7 @@ export async function addPlace(): Promise<void> {
 
     // Check if file already exists
     if (existsSync(filepath)) {
-      const { overwrite } = await inquirer.prompt([
+      const { overwrite } = await inquirer.prompt<PlaceOverwrite>([
         {
           type: 'confirm',
           name: 'overwrite',

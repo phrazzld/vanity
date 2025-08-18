@@ -26,11 +26,9 @@ export interface PaginationProps {
   /** Number of items per page */
   pageSize: number;
   /** Callback when page changes */
-  // eslint-disable-next-line no-unused-vars
-  onPageChange: (page: number) => void;
+  onPageChange: (_page: number) => void;
   /** Callback when page size changes */
-  // eslint-disable-next-line no-unused-vars
-  onPageSizeChange?: (pageSize: number) => void;
+  onPageSizeChange?: (_pageSize: number) => void;
   /** Available page size options */
   pageSizeOptions?: number[];
   /** Whether to show the items per page selector */

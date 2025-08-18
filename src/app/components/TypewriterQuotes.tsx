@@ -7,7 +7,8 @@
 
 import { useEffect, useState } from 'react';
 import type { Quote } from '@/types';
-import { logger, createLogContext } from '@/lib/logger';
+import { logger } from '@/lib/logger';
+import { getStaticQuotes } from '@/lib/static-data';
 
 /**
  * Represents the current animation phase of the typewriter effect
@@ -72,87 +73,56 @@ export default function TypewriterQuotes() {
   const [displayedAuthor, setDisplayedAuthor] = useState('');
   // Controls the blinking cursor appearance
   const [cursorVisible, setCursorVisible] = useState(true);
+  // Controls whether the animation is paused
+  const [paused, setPaused] = useState(false);
 
   /**
-   * Fetch quotes from the API when the component mounts
+   * Load quotes from static data when the component mounts
    *
    * This effect:
-   * 1. Makes a request to the quotes API with cache-busting headers
-   * 2. Processes the response and updates the quotes state
+   * 1. Loads quotes from pre-generated static JSON
+   * 2. Updates the quotes state
    * 3. Randomly selects the first quote to display
-   * 4. Provides a fallback quote if the API call fails
+   * 4. Provides a fallback quote if loading fails
    */
   useEffect(() => {
     /**
-     * Fetches quotes from the API and handles the response
-     * @async
+     * Loads quotes from static data
      */
-    const fetchQuotes = async () => {
+    const loadQuotes = () => {
       try {
-        logger.info(
-          'Fetching quotes for typewriter animation',
-          createLogContext('components/TypewriterQuotes', 'fetchQuotes')
-        );
-        const response = await fetch('/api/quotes', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            // Add cache busting to prevent stale data
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            Pragma: 'no-cache',
-          },
-          // Force fetch even if response is in the cache
-          cache: 'no-store',
-        });
+        logger.info('Loading quotes for typewriter animation');
 
-        logger.debug(
-          'Quotes API response received',
-          createLogContext('components/TypewriterQuotes', 'fetchQuotes', {
-            response_status: response.status,
-          })
-        );
+        const staticQuotes = getStaticQuotes();
 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch quotes: ${response.status} ${response.statusText}`);
+        logger.debug(`Quotes loaded from static data: ${staticQuotes.length} quotes`);
+
+        // Validate the loaded data
+        if (!Array.isArray(staticQuotes)) {
+          throw new Error('Invalid quotes data format: expected an array');
         }
 
-        // Cast response data to Quote[] with validation
-        const data = (await response.json()) as Quote[];
+        logger.info(`Successfully loaded ${staticQuotes.length} quotes for typewriter`);
 
-        // Validate the response data
-        if (!Array.isArray(data)) {
-          throw new Error('Invalid response format: expected an array of quotes');
-        }
-        logger.info(
-          'Successfully fetched quotes for typewriter',
-          createLogContext('components/TypewriterQuotes', 'fetchQuotes', {
-            quotes_count: data.length,
-          })
-        );
-
-        if (data.length === 0) {
-          throw new Error('No quotes received from API');
+        if (staticQuotes.length === 0) {
+          throw new Error('No quotes available in static data');
         }
 
-        setQuotes(data);
+        setQuotes(staticQuotes);
 
-        // Initialize with a random quote after fetching
-        const randomIndex = Math.floor(Math.random() * data.length);
+        // Initialize with a random quote after loading
+        const randomIndex = Math.floor(Math.random() * staticQuotes.length);
         setQuoteIndex(randomIndex);
         setPhase('typingQuote');
       } catch (error) {
         logger.error(
-          'Error fetching quotes for typewriter animation',
-          createLogContext('components/TypewriterQuotes', 'fetchQuotes', {
-            error_type: error instanceof Error ? error.constructor.name : 'Unknown',
-          }),
-          error instanceof Error ? error : new Error(String(error))
+          `Error loading quotes: ${error instanceof Error ? error.message : String(error)}`
         );
-        // Fallback to a default quote if API fails
+        // Fallback to a default quote if loading fails
         // Use a properly typed fallback quote
         const fallbackQuote: Quote = {
           id: 0,
-          text: 'Error loading quotes from database. Please check console for details.',
+          text: 'Error loading quotes. Please check console for details.',
           author: 'System',
         };
         setQuotes([fallbackQuote]);
@@ -160,7 +130,7 @@ export default function TypewriterQuotes() {
       }
     };
 
-    fetchQuotes();
+    loadQuotes();
   }, []);
 
   /**
@@ -190,16 +160,28 @@ export default function TypewriterQuotes() {
       try {
         // Use globalThis which is more reliable in both browser and test environments
         globalThis.clearInterval(blink);
-      } catch (e) {
+      } catch {
         // Silently fail in test environments where this might not be available
-        logger.warn(
-          'Failed to clear animation interval',
-          createLogContext('components/TypewriterQuotes', 'cleanupBlink', {
-            error_type: e instanceof Error ? e.constructor.name : 'Unknown',
-          })
-        );
+        logger.warn('Failed to clear animation interval');
       }
     };
+  }, []);
+
+  /**
+   * Keyboard event handler for pause/resume control
+   *
+   * Listens for Space key press to toggle pause state
+   */
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.code === 'Space' && event.target === document.body) {
+        event.preventDefault();
+        setPaused(prev => !prev);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   /**
@@ -215,9 +197,9 @@ export default function TypewriterQuotes() {
    * primarily when the phase or displayed text changes.
    */
   useEffect(() => {
-    // Skip if still loading or no quotes available
-    if (phase === 'loading' || quotes.length === 0) {
-      return; // Don't run typewriter logic until quotes are loaded
+    // Skip if still loading, no quotes available, or animation is paused
+    if (phase === 'loading' || quotes.length === 0 || paused) {
+      return; // Don't run typewriter logic until quotes are loaded and not paused
     }
 
     // Use ReturnType<typeof globalThis.setTimeout> to handle both browser and Node environments
@@ -299,18 +281,13 @@ export default function TypewriterQuotes() {
         try {
           // Use globalThis which is more reliable in both browser and test environments
           globalThis.clearTimeout(timer);
-        } catch (e) {
+        } catch {
           // Silently fail in test environments where this might not be available
-          logger.warn(
-            'Failed to clear animation timeout',
-            createLogContext('components/TypewriterQuotes', 'cleanupTimer', {
-              error_type: e instanceof Error ? e.constructor.name : 'Unknown',
-            })
-          );
+          logger.warn('Failed to clear animation timeout');
         }
       }
     };
-  }, [phase, displayedQuote, displayedAuthor, rawQuote, rawAuthor, quoteIndex, quotes]);
+  }, [phase, displayedQuote, displayedAuthor, rawQuote, rawAuthor, quoteIndex, quotes, paused]);
 
   /**
    * Determine which element should display the cursor
@@ -348,6 +325,9 @@ export default function TypewriterQuotes() {
    */
   return (
     <div
+      aria-live="polite"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
       style={{
         // Fixed container size ensures quotes don't shift page layout
         margin: '2rem auto 0 auto',

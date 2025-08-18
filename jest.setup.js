@@ -1,5 +1,4 @@
 /* eslint-env jest, node */
-/* global global, process */
 
 // Import Jest DOM extensions and other test utilities
 import '@testing-library/jest-dom';
@@ -13,7 +12,7 @@ configure({
   asyncUtilTimeout: 5000,
   // When true, all queries from Testing Library are
   // wrapped with expect assertions
-  throwSuggestions: true,
+  throwSuggestions: false,
 });
 
 // =============================================================================

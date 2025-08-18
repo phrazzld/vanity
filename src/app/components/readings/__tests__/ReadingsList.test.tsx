@@ -44,7 +44,6 @@ jest.mock('next/image', () => ({
 
 // Mock environment variable for image URLs
 // In Jest environment, we can safely set environment variables
-// eslint-disable-next-line no-undef
 process.env.NEXT_PUBLIC_SPACES_BASE_URL = 'https://example.com/';
 
 describe('ReadingsList Component', () => {

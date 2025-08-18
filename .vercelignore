@@ -13,7 +13,7 @@
 storybook-static
 
 # Development files
-scripts
+# scripts directory is REQUIRED for build process (generate-static-data.js)
 docs
 jest.config.js
 jest.setup.js

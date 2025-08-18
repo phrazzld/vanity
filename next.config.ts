@@ -1,7 +1,15 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  // Enable full static export
+  output: 'export',
+
+  // Security headers must be configured at the web server/CDN level for static sites
+  // Headers configuration is not compatible with static export
+
   images: {
+    // Required for static export
+    unoptimized: true,
     // Allow images from any external domain (personal project)
     remotePatterns: [
       {

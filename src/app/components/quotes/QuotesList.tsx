@@ -14,7 +14,7 @@ import { useCallback } from 'react';
 import type { Quote } from '@/types';
 import type { ListSortOption } from '@/app/hooks';
 import { useTheme } from '@/app/context/ThemeContext';
-import { logger, createLogContext } from '@/lib/logger';
+import { logger } from '@/lib/logger';
 
 // Icons for sort indicators
 const SortAscIcon = () => (
@@ -50,15 +50,13 @@ export interface QuotesListProps {
   sort: ListSortOption;
 
   /** Function to call when a column header is clicked for sorting */
-  // eslint-disable-next-line no-unused-vars
-  onSortChange: (field: string) => void;
+  onSortChange: (_field: string) => void;
 
   /** Current search query for highlighting */
   searchQuery?: string;
 
   /** Function to call when a quote item is selected */
-  // eslint-disable-next-line no-unused-vars
-  onSelectQuote: (quote: Quote) => void;
+  onSelectQuote: (_quote: Quote) => void;
 
   /** Currently selected quote (if any) */
   selectedQuote?: Quote | null;
@@ -97,12 +95,7 @@ const highlightSearchTerm = (text: string, searchTerm: string) => {
   } catch (error) {
     // If there's any error with the regex, just return the original text
     logger.warn(
-      'Error highlighting search term in quote',
-      createLogContext('components/quotes/QuotesList', 'highlightText', {
-        text_length: text.length,
-        search_term_length: searchTerm.length,
-        error_type: error instanceof Error ? error.constructor.name : 'Unknown',
-      })
+      `Error highlighting search term: ${error instanceof Error ? error.message : String(error)}`
     );
     return text;
   }

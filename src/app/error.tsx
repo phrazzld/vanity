@@ -14,14 +14,7 @@ interface ErrorProps {
 export default function Error({ error, reset }: ErrorProps) {
   useEffect(() => {
     // Log the error when the component mounts
-    logger.error(`Global error handler: ${error.message}`, {
-      error: {
-        name: error.name,
-        message: error.message,
-        stack: error.stack,
-        digest: error.digest,
-      },
-    });
+    logger.error(`Global error handler: ${error.name} - ${error.message}`);
   }, [error]);
 
   return (
@@ -37,7 +30,6 @@ export default function Error({ error, reset }: ErrorProps) {
             it.
           </p>
 
-          {/* eslint-disable-next-line no-undef */}
           {typeof process !== 'undefined' && process.env.NODE_ENV !== 'production' && (
             <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-700 rounded overflow-auto">
               <p className="font-mono text-sm text-red-500 dark:text-red-400">{error.message}</p>
