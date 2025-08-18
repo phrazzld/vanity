@@ -3,15 +3,8 @@
 import { useState, useEffect } from 'react';
 import YearSection from '../components/readings/YearSection';
 import type { Reading } from '@/types';
-import { logger, createLogContext } from '@/lib/logger';
-
-// Type for API responses
-interface ReadingsApiResponse {
-  data: Reading[];
-  totalCount: number;
-  hasMore?: boolean;
-}
-
+import { logger } from '@/lib/logger';
+import { getStaticReadings } from '@/lib/static-data';
 import {
   groupReadingsByYear,
   getSortedYearKeys,
@@ -25,55 +18,32 @@ export default function ReadingsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch all readings data
+  // Load all readings data
   useEffect(() => {
-    const fetchReadings = async () => {
+    const loadReadings = () => {
       try {
         setError(null);
-        
-        const response = await fetch('/api/readings');
-        
-        if (!response.ok) {
-          throw new Error(`Failed to fetch readings: ${response.status} ${response.statusText}`);
-        }
-        
-        const result = (await response.json()) as ReadingsApiResponse;
-        
+
+        const result = getStaticReadings();
+
         // Validate the result structure
         if (!result || !Array.isArray(result.data)) {
-          logger.error(
-            'Invalid API response format received',
-            createLogContext('pages/readings', 'fetchReadings', {
-              response_type: typeof result,
-              has_data: result ? 'data' in result : false,
-            })
-          );
-          throw new Error('Invalid response format from API');
+          logger.error('Invalid static data format received');
+          throw new Error('Invalid static data format');
         }
-        
-        logger.debug(
-          'Successfully fetched all readings',
-          createLogContext('pages/readings', 'fetchReadings', {
-            total_count: result.totalCount,
-          })
-        );
-        
+
+        logger.debug(`Successfully loaded ${result.totalCount} readings`);
+
         setReadings(result.data);
       } catch (err) {
-        logger.error(
-          'Error fetching readings from API',
-          createLogContext('pages/readings', 'fetchReadings', {
-            error_type: err instanceof Error ? err.constructor.name : 'Unknown',
-          }),
-          err instanceof Error ? err : new Error(String(err))
-        );
+        logger.error(`Error loading readings: ${err instanceof Error ? err.message : String(err)}`);
         setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setIsLoading(false);
       }
     };
-    
-    fetchReadings();
+
+    loadReadings();
   }, []);
 
   // Group readings by year whenever they change
@@ -97,7 +67,8 @@ export default function ReadingsPage() {
       )}
 
       {/* Year-based sections */}
-      {!isLoading && years.length > 0 &&
+      {!isLoading &&
+        years.length > 0 &&
         years.map(year => (
           <YearSection
             key={year}

@@ -2,8 +2,6 @@
  * Tests for data layer functions that parse markdown content
  */
 
-/* eslint-disable no-undef */
-
 import fs from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
@@ -466,5 +464,3 @@ describe('Data Layer', () => {
     });
   });
 });
-
-/* eslint-enable no-undef */

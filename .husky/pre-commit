@@ -7,6 +7,22 @@ echo "🔍 Running pre-commit checks..."
 echo "Checking code formatting and linting..."
 npx lint-staged || exit 1
 
+# Check for ESLint suppressions
+echo "Checking for ESLint suppressions..."
+SUPPRESSION_COUNT=$(grep -r "eslint-disable\|@ts-ignore\|@ts-nocheck" src/ --include="*.ts" --include="*.tsx" 2>/dev/null | wc -l | tr -d ' ')
+MAX_SUPPRESSIONS=1  # Allow 1 legitimate suppression in Map.a11y.test.tsx
+if [ "$SUPPRESSION_COUNT" -gt "$MAX_SUPPRESSIONS" ]; then
+  echo "❌ Too many ESLint suppressions detected! Found: $SUPPRESSION_COUNT (Maximum allowed: $MAX_SUPPRESSIONS)"
+  echo ""
+  echo "   Suppressions found in:"
+  grep -r "eslint-disable\|@ts-ignore\|@ts-nocheck" src/ --include="*.ts" --include="*.tsx" 2>/dev/null | head -5 | sed 's/^/   /'
+  echo ""
+  echo "   Please fix the underlying issues instead of suppressing warnings."
+  echo "   The only allowed suppression is in Map.a11y.test.tsx for role=application tabIndex."
+  exit 1
+fi
+echo "✅ ESLint suppressions within limit ($SUPPRESSION_COUNT/$MAX_SUPPRESSIONS)"
+
 # Check for sensitive data and large files
 echo "Checking for sensitive data and large files..."
 node -e "

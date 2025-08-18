@@ -67,3 +67,8 @@ storybook-static/
 # Test coverage
 coverage/
 READING_SUMMARY.md
+
+# Generated static data
+/public/data/
+quotes.json
+readings.json

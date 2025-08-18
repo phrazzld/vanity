@@ -2,7 +2,7 @@
  * TypewriterQuotes Component Tests
  *
  * This file demonstrates testing patterns for a component with:
- * - API data fetching
+ * - Static data loading
  * - Loading states
  * - Error handling
  * - Component lifecycle management
@@ -15,9 +15,17 @@
 
 /* eslint-env jest */
 
-import { renderWithTheme, screen, waitFor, createMockErrorResponse, mockFetch } from '@/test-utils';
+import { renderWithTheme, screen, waitFor } from '@/test-utils';
 import TypewriterQuotes from '../TypewriterQuotes';
 import type { Quote } from '@/types';
+
+// Mock the static data module
+jest.mock('@/lib/static-data', () => ({
+  getStaticQuotes: jest.fn(),
+}));
+
+// Import mocked module
+import { getStaticQuotes } from '@/lib/static-data';
 
 // Sample quotes for testing
 const mockQuotes: Quote[] = [
@@ -35,47 +43,37 @@ describe('TypewriterQuotes', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Setup default fetch mock
-    mockFetch(mockQuotes);
+    // Setup default static data mock
+    (getStaticQuotes as jest.Mock).mockReturnValue(mockQuotes);
   });
 
   describe('Initial Rendering and Data Fetching', () => {
-    it('shows loading state initially', () => {
+    it('loads and displays quotes from static data', async () => {
       // Arrange & Act
       renderWithTheme(<TypewriterQuotes />);
 
-      // Assert
-      expect(screen.getByText('Loading quotes...')).toBeInTheDocument();
+      // Assert - should display quotes immediately after loading
+      await waitFor(() => {
+        // Check that at least one quote text or author appears
+        const allText = screen.getByRole('article').textContent || '';
+        const hasQuoteContent = mockQuotes.some(
+          quote => allText.includes(quote.text.substring(0, 10)) || allText.includes(quote.author)
+        );
+        expect(hasQuoteContent).toBe(true);
+      });
     });
 
-    it('fetches quotes from API on mount with correct parameters', async () => {
-      // Arrange
-      // Create a typed mock fetch response
-      const { mockFetch: mockFetchFn } = mockFetch<Quote[]>(mockQuotes);
-
-      // Define expected request options with proper typing to avoid unsafe assignment
-      const expectedRequestOptions: RequestInit = {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          Pragma: 'no-cache',
-        },
-        cache: 'no-store',
-      };
-
+    it('loads quotes from static data on mount', async () => {
       // Act
       renderWithTheme(<TypewriterQuotes />);
 
-      // Assert - use properly typed expectations
-      expect(mockFetchFn).toHaveBeenCalledWith(
-        '/api/quotes',
-        expect.objectContaining(expectedRequestOptions)
-      );
+      // Assert - verify static data function was called
+      expect(getStaticQuotes).toHaveBeenCalled();
 
-      // Wait for loading state to disappear
+      // Wait for quotes to be displayed
       await waitFor(() => {
-        expect(screen.queryByText('Loading quotes...')).not.toBeInTheDocument();
+        const article = screen.getByRole('article');
+        expect(article).toBeInTheDocument();
       });
     });
 
@@ -92,19 +90,22 @@ describe('TypewriterQuotes', () => {
   });
 
   describe('Error Handling', () => {
-    it('handles API failures appropriately', async () => {
-      // Arrange - mock a failed API response
-      mockFetch(createMockErrorResponse(500, 'Server Error', 'Failed to fetch quotes'));
+    it('handles data loading failures appropriately', async () => {
+      // Arrange - mock a failed data load
+      (getStaticQuotes as jest.Mock).mockImplementation(() => {
+        throw new Error('Failed to load quotes');
+      });
 
       // Act
       renderWithTheme(<TypewriterQuotes />);
 
-      // Assert - wait for loading to finish and error handling to occur
+      // Assert - wait for error handling to occur
       await waitFor(
         () => {
-          expect(screen.queryByText('Loading quotes...')).not.toBeInTheDocument();
           const quoteContainer = screen.getByTestId('quote-text');
           expect(quoteContainer).toBeInTheDocument();
+          // Should show fallback quote
+          expect(quoteContainer.textContent).toContain('Error loading quotes');
         },
         { timeout: 10000 }
       );
@@ -118,9 +119,9 @@ describe('TypewriterQuotes', () => {
       // Act - render component
       renderWithTheme(<TypewriterQuotes />);
 
-      // Wait for loading to finish
+      // Wait for quotes to render
       await waitFor(() => {
-        expect(screen.queryByText('Loading quotes...')).not.toBeInTheDocument();
+        expect(screen.getByTestId('quote-text')).toBeInTheDocument();
       });
 
       // Assert quote container is present
@@ -134,9 +135,9 @@ describe('TypewriterQuotes', () => {
       // Arrange & Act
       renderWithTheme(<TypewriterQuotes />, { themeMode: 'dark' });
 
-      // Wait for loading to finish
+      // Wait for quotes to render
       await waitFor(() => {
-        expect(screen.queryByText('Loading quotes...')).not.toBeInTheDocument();
+        expect(screen.getByTestId('quote-text')).toBeInTheDocument();
       });
 
       // We can't reliably test theme since we've mocked the ThemeProvider,

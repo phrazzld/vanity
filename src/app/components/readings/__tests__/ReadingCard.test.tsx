@@ -50,7 +50,6 @@ jest.mock('next/image', () => ({
 }));
 
 // Mock environment variables
-// eslint-disable-next-line no-undef
 process.env.NEXT_PUBLIC_SPACES_BASE_URL = 'https://test-space.com';
 
 // Sample test data with fixed date for consistent testing

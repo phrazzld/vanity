@@ -8,7 +8,7 @@
  */
 
 import { useState, useEffect, useCallback, useReducer } from 'react';
-import { logger, createLogContext } from '@/lib/logger';
+import { logger } from '@/lib/logger';
 
 // Types for list state
 export interface ListSortOption {
@@ -265,16 +265,7 @@ export function useListState<
       };
 
       logger.debug(
-        'Fetching data for list pagination',
-        createLogContext('hooks/useListState', 'fetchData', {
-          current_page: state.pagination.currentPage,
-          page_size: state.pagination.pageSize,
-          search_query: state.search,
-          sort_field: state.sort.field,
-          sort_order: state.sort.order,
-          filters_count: Object.keys(state.filters).length,
-          offset,
-        })
+        `Fetching list data - Page: ${state.pagination.currentPage}, Size: ${state.pagination.pageSize}, Search: ${state.search || 'none'}`
       );
 
       // Fetch data using the provided function
@@ -294,14 +285,7 @@ export function useListState<
       }
     } catch (error) {
       logger.error(
-        'Error fetching list data',
-        createLogContext('hooks/useListState', 'fetchData', {
-          current_page: state.pagination.currentPage,
-          search_query: state.search,
-          filters_count: Object.keys(state.filters).length,
-          error_type: error instanceof Error ? error.constructor.name : 'Unknown',
-        }),
-        error instanceof Error ? error : new Error(String(error))
+        `Error fetching list data - Page: ${state.pagination.currentPage}: ${error instanceof Error ? error.message : String(error)}`
       );
 
       dispatch({
