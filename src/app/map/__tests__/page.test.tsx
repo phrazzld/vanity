@@ -30,9 +30,8 @@ jest.mock('../ClientMapWrapper', () => {
   };
 });
 
-// TODO: Fix dynamic import mocking for Leaflet components
-// These tests fail due to complex interactions between Next.js dynamic() and Jest
-// Consider replacing with E2E tests for better map functionality coverage
+// TODO: Fix mock interaction with ClientMapWrapper
+// Map component tests work but page integration needs different approach
 describe.skip('Map Page Integration', () => {
   const mockPlaces: Place[] = [
     {

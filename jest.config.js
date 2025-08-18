@@ -17,6 +17,11 @@ const customJestConfig = {
     // Mock JSON data imports to fix test resolution issues
     '^.*/public/data/quotes\\.json$': '<rootDir>/src/__mocks__/quotesData.json',
     '^.*/public/data/readings\\.json$': '<rootDir>/src/__mocks__/readingsData.json',
+    // Mock Leaflet and react-leaflet for map component testing
+    '^leaflet$': '<rootDir>/src/__mocks__/leaflet.ts',
+    '^react-leaflet$': '<rootDir>/src/__mocks__/react-leaflet.tsx',
+    // Mock CSS imports for Leaflet
+    '^leaflet/dist/leaflet\\.css$': '<rootDir>/src/__mocks__/leaflet.css',
   },
   // Snapshot configuration
   snapshotResolver: '<rootDir>/snapshotResolver.js',

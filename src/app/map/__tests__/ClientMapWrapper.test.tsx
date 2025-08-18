@@ -61,7 +61,7 @@ describe('ClientMapWrapper', () => {
     jest.clearAllMocks();
   });
 
-  // TODO: Fix Next.js dynamic() testing with Leaflet - complex async loading patterns
+  // TODO: Fix Next.js dynamic() testing - needs different mock strategy
   describe.skip('Dynamic Loading', () => {
     it('shows loading state initially', () => {
       render(<ClientMapWrapper places={mockPlaces} />);

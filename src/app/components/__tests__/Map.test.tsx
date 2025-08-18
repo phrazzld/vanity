@@ -9,51 +9,8 @@ import { render, screen } from '@testing-library/react';
 import WhereIveBeenMap from '../Map';
 import type { Place } from '@/app/map/data';
 
-// Mock Leaflet to avoid SSR/Jest issues
-jest.mock('leaflet', () => ({
-  Icon: {
-    Default: {
-      prototype: {
-        _getIconUrl: jest.fn(),
-      },
-      mergeOptions: jest.fn(),
-    },
-  },
-}));
-
-// Mock react-leaflet components
-jest.mock('react-leaflet', () => ({
-  MapContainer: ({
-    children,
-    center,
-    zoom,
-    scrollWheelZoom,
-    maxBounds,
-    maxBoundsViscosity,
-    style,
-  }: any) => (
-    <div
-      data-testid="map-container"
-      data-center={JSON.stringify(center)}
-      data-zoom={zoom}
-      data-scroll-wheel-zoom={scrollWheelZoom}
-      data-max-bounds={JSON.stringify(maxBounds)}
-      data-max-bounds-viscosity={maxBoundsViscosity}
-      style={style}
-    >
-      {children}
-    </div>
-  ),
-  TileLayer: ({ url, attribution }: any) => (
-    <div data-testid="tile-layer" data-url={url} data-attribution={attribution} />
-  ),
-  Marker: ({ children, position }: any) => (
-    <div data-testid="marker" data-position={JSON.stringify(position)}>
-      {children}
-    </div>
-  ),
-  Popup: ({ children }: any) => <div data-testid="popup">{children}</div>,
-}));
+// Using global mocks from src/__mocks__/leaflet.ts and src/__mocks__/react-leaflet.tsx
+// These are configured in jest.config.js moduleNameMapper
 
 describe('Map Component', () => {
   const mockPlaces: Place[] = [
