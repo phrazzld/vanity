@@ -7,8 +7,8 @@ import type { Quote, Reading } from '@/types';
 
 // Import static JSON data
 // These files are generated at build time by scripts/generate-static-data.js
-import quotesData from '@/../../public/data/quotes.json';
-import readingsData from '@/../../public/data/readings.json';
+import quotesData from '../../public/data/quotes.json';
+import readingsData from '../../public/data/readings.json';
 
 export function getStaticQuotes(): Quote[] {
   // Return mock data in test environment if needed

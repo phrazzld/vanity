@@ -60,6 +60,12 @@ jobs:
             exit 1
           }
 
+      - name: Generate static data
+        run: |
+          echo "📊 Generating static data files for type checking..."
+          node scripts/generate-static-data.js
+          echo "✅ Static data generated successfully"
+
       - name: Type check
         run: |
           echo "📝 Running TypeScript type check..."
