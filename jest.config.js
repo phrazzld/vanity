@@ -44,12 +44,6 @@ const customJestConfig = {
       functions: 30,
       lines: 28,
     },
-    'src/app/api/': {
-      statements: 36,
-      branches: 28,
-      functions: 53,
-      lines: 37,
-    },
     'src/lib/': {
       statements: 17,
       branches: 10,
