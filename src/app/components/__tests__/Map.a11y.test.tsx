@@ -27,15 +27,7 @@ jest.mock('leaflet', () => ({
 
 // Mock react-leaflet with accessibility attributes
 jest.mock('react-leaflet', () => ({
-  MapContainer: ({
-    children,
-    _center,
-    _zoom,
-    _scrollWheelZoom,
-    _maxBounds,
-    _maxBoundsViscosity,
-    style,
-  }: any) => (
+  MapContainer: ({ children, style }: any) => (
     <div
       data-testid="map-container"
       role="application"
@@ -227,13 +219,13 @@ describe('Map Component Accessibility', () => {
       const markers = screen.getAllByRole('button', { name: /map marker at/i });
 
       // Focus first marker
-      markers[0].focus();
+      markers[0]!.focus();
 
       // Press Enter (should activate marker/show popup)
       await user.keyboard('{Enter}');
 
       // Marker should still be focused
-      expect(document.activeElement).toBe(markers[0]);
+      expect(document.activeElement).toBe(markers[0]!);
     });
 
     it('can activate markers with Space key', async () => {
@@ -243,13 +235,13 @@ describe('Map Component Accessibility', () => {
       const markers = screen.getAllByRole('button', { name: /map marker at/i });
 
       // Focus second marker
-      markers[1].focus();
+      markers[1]!.focus();
 
       // Press Space (should activate marker/show popup)
       await user.keyboard(' ');
 
       // Marker should still be focused
-      expect(document.activeElement).toBe(markers[1]);
+      expect(document.activeElement).toBe(markers[1]!);
     });
 
     it('supports reverse tabbing with Shift+Tab', async () => {
@@ -259,14 +251,14 @@ describe('Map Component Accessibility', () => {
       const markers = screen.getAllByRole('button', { name: /map marker at/i });
 
       // Focus last marker
-      markers[2].focus();
+      markers[2]!.focus();
 
       // Shift+Tab to go backwards
       await user.keyboard('{Shift>}{Tab}{/Shift}');
-      expect(document.activeElement).toBe(markers[1]);
+      expect(document.activeElement).toBe(markers[1]!);
 
       await user.keyboard('{Shift>}{Tab}{/Shift}');
-      expect(document.activeElement).toBe(markers[0]);
+      expect(document.activeElement).toBe(markers[0]!);
     });
   });
 
@@ -322,8 +314,8 @@ describe('Map Component Accessibility', () => {
       const markers = screen.getAllByRole('button', { name: /map marker at/i });
 
       // Focus and activate first marker
-      markers[0].focus();
-      expect(document.activeElement).toBe(markers[0]);
+      markers[0]!.focus();
+      expect(document.activeElement).toBe(markers[0]!);
 
       await user.keyboard('{Enter}');
 
@@ -335,13 +327,13 @@ describe('Map Component Accessibility', () => {
       const user = userEvent.setup();
       render(<WhereIveBeenMap places={mockPlaces} />);
 
-      const _mapContainer = screen.getByRole('application', {
+      screen.getByRole('application', {
         name: /interactive map showing places visited/i,
       });
       const markers = screen.getAllByRole('button', { name: /map marker at/i });
 
       // Focus a marker
-      markers[0].focus();
+      markers[0]!.focus();
 
       // Press Escape
       await user.keyboard('{Escape}');

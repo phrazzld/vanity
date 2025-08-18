@@ -12,7 +12,7 @@ import type { Place } from '../data';
 // Mock next/dynamic
 jest.mock('next/dynamic', () => ({
   __esModule: true,
-  default: (loader: () => Promise<any>, options?: any) => {
+  default: (_loader: () => Promise<any>, options?: any) => {
     // Extract the loading component if provided
     const LoadingComponent = options?.loading || (() => null);
 

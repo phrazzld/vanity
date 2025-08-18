@@ -57,7 +57,8 @@ describe('TypewriterQuotes', () => {
         // Check that at least one quote text or author appears
         const allText = screen.getByRole('article').textContent || '';
         const hasQuoteContent = mockQuotes.some(
-          quote => allText.includes(quote.text.substring(0, 10)) || allText.includes(quote.author)
+          quote =>
+            allText.includes(quote.text.substring(0, 10)) || allText.includes(quote.author || '')
         );
         expect(hasQuoteContent).toBe(true);
       });
