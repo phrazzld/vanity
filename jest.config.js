@@ -14,6 +14,9 @@ const customJestConfig = {
     '^@/(.*)$': '<rootDir>/src/$1',
     // Mock nanoid to fix ES module import issues in Jest
     '^nanoid$': '<rootDir>/src/__mocks__/nanoid',
+    // Mock JSON data imports to fix test resolution issues
+    '^.*/public/data/quotes\\.json$': '<rootDir>/src/__mocks__/quotesData.json',
+    '^.*/public/data/readings\\.json$': '<rootDir>/src/__mocks__/readingsData.json',
   },
   // Snapshot configuration
   snapshotResolver: '<rootDir>/snapshotResolver.js',
