@@ -129,152 +129,155 @@ export default function QuotesList({
     [onSortChange]
   );
 
-  return (
-    <div className={`w-full ${className}`}>
-      {/* Column Headers with Enhanced Sort Indicators */}
-      <div className="border-b border-gray-200 dark:border-gray-700">
-        <div
-          className="grid grid-cols-12 py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-750"
-          role="row"
-        >
-          <div
-            className="col-span-9 flex items-center cursor-pointer hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-150"
-            onClick={() => handleSortClick('text')}
-            role="columnheader"
-            aria-sort={
-              sort.field === 'text' ? (sort.order === 'asc' ? 'ascending' : 'descending') : 'none'
-            }
-            tabIndex={0}
-          >
-            <span>QUOTE</span>
-            {sort.field === 'text' ? (
-              sort.order === 'asc' ? (
-                <SortAscIcon />
-              ) : (
-                <SortDescIcon />
-              )
-            ) : (
-              <span className="ml-1 text-gray-300 dark:text-gray-600">↕</span>
-            )}
-          </div>
+  // Render column header with sort indicator
+  const renderColumnHeader = (field: string, label: string, colSpan: string) => {
+    const isActive = sort.field === field;
+    const ariaSort = isActive ? (sort.order === 'asc' ? 'ascending' : 'descending') : 'none';
 
-          <div
-            className="col-span-3 flex items-center cursor-pointer hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-150"
-            onClick={() => handleSortClick('author')}
-            role="columnheader"
-            aria-sort={
-              sort.field === 'author' ? (sort.order === 'asc' ? 'ascending' : 'descending') : 'none'
-            }
-            tabIndex={0}
-          >
-            <span>AUTHOR</span>
-            {sort.field === 'author' ? (
-              sort.order === 'asc' ? (
-                <SortAscIcon />
-              ) : (
-                <SortDescIcon />
-              )
-            ) : (
-              <span className="ml-1 text-gray-300 dark:text-gray-600">↕</span>
-            )}
-          </div>
-        </div>
+    return (
+      <div
+        className={`${colSpan} flex items-center cursor-pointer hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-150`}
+        onClick={() => handleSortClick(field)}
+        role="columnheader"
+        aria-sort={ariaSort}
+        tabIndex={0}
+      >
+        <span>{label}</span>
+        {isActive ? (
+          sort.order === 'asc' ? (
+            <SortAscIcon />
+          ) : (
+            <SortDescIcon />
+          )
+        ) : (
+          <span className="ml-1 text-gray-300 dark:text-gray-600">↕</span>
+        )}
       </div>
+    );
+  };
 
-      {/* Quotes List Items */}
-      {quotes.length === 0 ? (
-        <div className="p-8 text-center text-gray-500 dark:text-gray-400">
-          <div className="w-16 h-16 mx-auto bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mb-3">
+  // Render column headers section
+  const renderColumnHeaders = () => (
+    <div className="border-b border-gray-200 dark:border-gray-700">
+      <div
+        className="grid grid-cols-12 py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-750"
+        role="row"
+      >
+        {renderColumnHeader('text', 'QUOTE', 'col-span-9')}
+        {renderColumnHeader('author', 'AUTHOR', 'col-span-3')}
+      </div>
+    </div>
+  );
+
+  // Render empty state when no quotes
+  const renderEmptyState = () => (
+    <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+      <div className="w-16 h-16 mx-auto bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mb-3">
+        <svg
+          className="h-8 w-8 text-gray-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+          />
+        </svg>
+      </div>
+      <h3 className="text-sm font-medium text-gray-900 dark:text-white">No quotes found</h3>
+      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+        {searchQuery
+          ? 'Try adjusting your search criteria or filters'
+          : 'Start building your collection of inspirational quotes'}
+      </p>
+    </div>
+  );
+
+  // Render individual quote item
+  const renderQuoteItem = (quote: Quote) => {
+    const isSelected = selectedQuote?.id === quote.id;
+    const shouldHighlightText =
+      searchQuery && quote.text.toLowerCase().includes(searchQuery.toLowerCase());
+    const shouldHighlightAuthor =
+      searchQuery && quote.author && quote.author.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return (
+      <div
+        key={quote.id}
+        className={`item-list-item group ${isSelected ? 'item-list-item-selected' : ''} hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150`}
+        role="button"
+        onClick={() => onSelectQuote(quote)}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            onSelectQuote(quote);
+            e.preventDefault();
+          }
+        }}
+        tabIndex={0}
+        aria-current={isSelected ? 'true' : 'false'}
+      >
+        <div className="flex flex-col">
+          <div className="flex items-start">
+            {/* Quote icon */}
             <svg
-              className="h-8 w-8 text-gray-400"
+              className="h-4 w-4 text-gray-400 mt-0.5 mr-1.5 flex-shrink-0 group-hover:text-gray-500 dark:group-hover:text-gray-300 transition-colors duration-150"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                strokeWidth={2}
+                d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
               />
             </svg>
+
+            {/* Quote text with search highlighting */}
+            <p className="text-sm font-medium text-gray-900 dark:text-white leading-5">
+              {shouldHighlightText ? (
+                <>&ldquo;{highlightSearchTerm(truncateText(quote.text), searchQuery)}&rdquo;</>
+              ) : (
+                <>&ldquo;{truncateText(quote.text)}&rdquo;</>
+              )}
+            </p>
           </div>
-          <h3 className="text-sm font-medium text-gray-900 dark:text-white">No quotes found</h3>
-          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            {searchQuery
-              ? 'Try adjusting your search criteria or filters'
-              : 'Start building your collection of inspirational quotes'}
-          </p>
+
+          {/* Author with search highlighting */}
+          <div className="mt-1 ml-5.5 text-xs text-gray-500 dark:text-gray-400">
+            {shouldHighlightAuthor ? (
+              <>
+                —{' '}
+                <span className="inline-block">
+                  {highlightSearchTerm(quote.author, searchQuery)}
+                </span>
+              </>
+            ) : (
+              <>
+                — <span className="inline-block">{quote.author || 'Anonymous'}</span>
+              </>
+            )}
+          </div>
         </div>
-      ) : (
-        <ul className="item-list-body" aria-label="Quotes list">
-          {quotes.map(quote => (
-            <div
-              key={quote.id}
-              className={`item-list-item group ${selectedQuote?.id === quote.id ? 'item-list-item-selected' : ''} hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150`}
-              role="button"
-              onClick={() => onSelectQuote(quote)}
-              onKeyDown={e => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  onSelectQuote(quote);
-                  e.preventDefault();
-                }
-              }}
-              tabIndex={0}
-              aria-current={selectedQuote?.id === quote.id ? 'true' : 'false'}
-            >
-              <div className="flex flex-col">
-                <div className="flex items-start">
-                  {/* Quote icon */}
-                  <svg
-                    className="h-4 w-4 text-gray-400 mt-0.5 mr-1.5 flex-shrink-0 group-hover:text-gray-500 dark:group-hover:text-gray-300 transition-colors duration-150"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
-                    />
-                  </svg>
+      </div>
+    );
+  };
 
-                  {/* Quote text with search highlighting */}
-                  <p className="text-sm font-medium text-gray-900 dark:text-white leading-5">
-                    {searchQuery && quote.text.toLowerCase().includes(searchQuery.toLowerCase()) ? (
-                      <>
-                        &ldquo;{highlightSearchTerm(truncateText(quote.text), searchQuery)}&rdquo;
-                      </>
-                    ) : (
-                      <>&ldquo;{truncateText(quote.text)}&rdquo;</>
-                    )}
-                  </p>
-                </div>
+  // Render quotes list
+  const renderQuotesList = () => (
+    <ul className="item-list-body" aria-label="Quotes list">
+      {quotes.map(renderQuoteItem)}
+    </ul>
+  );
 
-                {/* Author with search highlighting */}
-                <div className="mt-1 ml-5.5 text-xs text-gray-500 dark:text-gray-400">
-                  {searchQuery &&
-                  quote.author &&
-                  quote.author.toLowerCase().includes(searchQuery.toLowerCase()) ? (
-                    <>
-                      —{' '}
-                      <span className="inline-block">
-                        {highlightSearchTerm(quote.author, searchQuery)}
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      — <span className="inline-block">{quote.author || 'Anonymous'}</span>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </ul>
-      )}
+  return (
+    <div className={`w-full ${className}`}>
+      {renderColumnHeaders()}
+      {quotes.length === 0 ? renderEmptyState() : renderQuotesList()}
     </div>
   );
 }

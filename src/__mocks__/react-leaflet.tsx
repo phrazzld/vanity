@@ -9,11 +9,8 @@
  * This allows tests to run without complex browser APIs and WebGL dependencies.
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
- 
-
- 
+/* eslint-disable @typescript-eslint/no-explicit-any -- Test mocks require flexible typing to simulate react-leaflet's complex prop interfaces without importing the actual library */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment -- Mock components need to accept and pass through any props for comprehensive test coverage */
 
 import React from 'react';
 

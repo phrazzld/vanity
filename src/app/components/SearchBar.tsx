@@ -14,8 +14,11 @@
  * - Support for both button-triggered and automatic searching
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useCallback } from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { useFormState } from '@/hooks/useFormState';
+import { useSearchFilters, type FilterConfig as HookFilterConfig } from '@/hooks/useSearchFilters';
+import { useDebouncedCallback } from '@/hooks/useDebounce';
 
 export type FilterOption = {
   value: string;
@@ -61,7 +64,7 @@ export default function SearchBar({
   className = '',
   filters = [],
   debounceMs = 300,
-  searchAsYouType = false, // Changed default to false
+  searchAsYouType = false,
   searchButtonText = 'Search',
   filtersUpdateOnChange = false,
   buttonVariant = 'primary',
@@ -69,120 +72,105 @@ export default function SearchBar({
   // Access theme context - required for context
   useTheme();
 
-  // Search input state (current value in input)
-  const [query, setQuery] = useState(initialQuery);
+  // Use useFormState for query management (dual state tracking)
+  const queryState = useFormState({ query: initialQuery });
 
-  // The last search query that was actually submitted/triggered
-  const [submittedQuery, setSubmittedQuery] = useState(initialQuery);
+  // Use useSearchFilters for filter management (dual state tracking)
+  const filterState = useSearchFilters(filters as HookFilterConfig[]);
 
-  // Filters state in UI
-  const [activeFilters, setActiveFilters] = useState<Record<string, string>>(() => {
-    // Initialize with default values from filter configs
-    return filters.reduce(
-      (acc, filter) => {
-        acc[filter.name] = filter.defaultValue || '';
-        return acc;
-      },
-      {} as Record<string, string>
-    );
-  });
-
-  // The last set of filters that were actually submitted/triggered
-  const [submittedFilters, setSubmittedFilters] = useState<Record<string, string>>(
-    filters.reduce(
-      (acc, filter) => {
-        acc[filter.name] = filter.defaultValue || '';
-        return acc;
-      },
-      {} as Record<string, string>
-    )
+  // Create debounced search function
+  const debouncedSearch = useDebouncedCallback(
+    (searchQuery: string, searchFilters: Record<string, string>) => {
+      // Submit both states
+      queryState.submitWithCallback(() => {
+        filterState.submitWithCallback(() => {
+          onSearch(searchQuery, searchFilters);
+        });
+      });
+    },
+    debounceMs
   );
 
-  // For debouncing search
-  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Clear any existing timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
-      }
-    };
-  }, []);
-
   // Handle input change
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newQuery = e.target.value;
-    setQuery(newQuery);
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newQuery = e.target.value;
+      queryState.setValue('query', newQuery);
 
-    // If searchAsYouType is enabled, trigger search with debounce
-    if (searchAsYouType) {
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
+      // If searchAsYouType is enabled, trigger search with debounce
+      if (searchAsYouType) {
+        if (debounceMs > 0) {
+          debouncedSearch(newQuery, filterState.activeFilters);
+        } else {
+          queryState.submitWithCallback(() => {
+            filterState.submitWithCallback(() => {
+              onSearch(newQuery, filterState.activeFilters);
+            });
+          });
+        }
       }
-
-      if (debounceMs > 0) {
-        searchTimeoutRef.current = setTimeout(() => {
-          triggerSearch(newQuery, activeFilters);
-        }, debounceMs);
-      } else {
-        triggerSearch(newQuery, activeFilters);
-      }
-    }
-  };
+    },
+    [searchAsYouType, debounceMs, debouncedSearch, queryState, filterState, onSearch]
+  );
 
   // Handle filter change
-  const handleFilterChange = (filterName: string, value: string) => {
-    const newFilters = { ...activeFilters, [filterName]: value };
-    setActiveFilters(newFilters);
+  const handleFilterChange = useCallback(
+    (filterName: string, value: string) => {
+      filterState.setFilter(filterName, value);
 
-    // If filtersUpdateOnChange is true, trigger search
-    if (filtersUpdateOnChange) {
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
+      // If filtersUpdateOnChange is true, trigger search
+      if (filtersUpdateOnChange) {
+        if (debounceMs > 0) {
+          debouncedSearch(queryState.values.query, {
+            ...filterState.activeFilters,
+            [filterName]: value,
+          });
+        } else {
+          queryState.submitWithCallback(() => {
+            filterState.submitWithCallback(() => {
+              onSearch(queryState.values.query, {
+                ...filterState.activeFilters,
+                [filterName]: value,
+              });
+            });
+          });
+        }
       }
-
-      if (debounceMs > 0) {
-        searchTimeoutRef.current = setTimeout(() => {
-          triggerSearch(query, newFilters);
-        }, debounceMs);
-      } else {
-        triggerSearch(query, newFilters);
-      }
-    }
-  };
-
-  // Centralized function to trigger search and update submitted state
-
-  const triggerSearch = (searchQuery: string, searchFilters: Record<string, string>) => {
-    setSubmittedQuery(searchQuery);
-    setSubmittedFilters(searchFilters);
-    onSearch(searchQuery, searchFilters);
-  };
+    },
+    [filtersUpdateOnChange, debounceMs, debouncedSearch, queryState, filterState, onSearch]
+  );
 
   // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
 
-    // Only trigger search on form submission if searchAsYouType is false
-    // When searchAsYouType is true, search is already triggered on input change
-    if (!searchAsYouType) {
-      triggerSearch(query, activeFilters);
-    }
-  };
+      // Only trigger search on form submission if searchAsYouType is false
+      if (!searchAsYouType) {
+        queryState.submitWithCallback(() => {
+          filterState.submitWithCallback(() => {
+            onSearch(queryState.values.query, filterState.activeFilters);
+          });
+        });
+      }
+    },
+    [searchAsYouType, queryState, filterState, onSearch]
+  );
 
   // Handle clearing the search
-  const handleClear = () => {
-    setQuery('');
+  const handleClear = useCallback(() => {
+    queryState.setValue('query', '');
 
     // Always trigger the search with empty query when clearing
-    triggerSearch('', activeFilters);
-  };
+    queryState.submitWithCallback(() => {
+      filterState.submitWithCallback(() => {
+        onSearch('', filterState.activeFilters);
+      });
+    });
+  }, [queryState, filterState, onSearch]);
 
   // Determine if current input differs from last submitted search
-  const hasUnsearchedChanges =
-    query !== submittedQuery ||
-    Object.entries(activeFilters).some(([key, value]) => value !== submittedFilters[key]);
+  const hasUnsearchedChanges = queryState.hasChanges || filterState.hasChanges;
 
   // Generate button class based on variant
   const getButtonClasses = () => {
@@ -206,7 +194,6 @@ export default function SearchBar({
         <form
           onSubmit={handleSubmit}
           className="w-full flex flex-col sm:flex-row gap-2"
-          // No onKeyDown handler here - moved to the input element where it's more appropriate
           role="search"
         >
           {/* Search input with icon and clear button */}
@@ -230,7 +217,7 @@ export default function SearchBar({
 
             <input
               type="text"
-              value={query}
+              value={queryState.values.query}
               onChange={handleInputChange}
               placeholder={placeholder}
               className="appearance-none block w-full px-3 py-2 pl-10 pr-10 border border-gray-300 dark:border-gray-600 
@@ -243,7 +230,7 @@ export default function SearchBar({
             />
 
             {/* Clear button - only show when there's text */}
-            {query && (
+            {queryState.values.query && (
               <button
                 type="button"
                 onClick={handleClear}
@@ -272,7 +259,7 @@ export default function SearchBar({
           {filters.map(filter => (
             <div key={filter.name} className="sm:w-auto">
               <select
-                value={activeFilters[filter.name] || ''}
+                value={filterState.activeFilters[filter.name] || ''}
                 onChange={e => handleFilterChange(filter.name, e.target.value)}
                 className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 
                 rounded-md shadow-sm text-gray-900 dark:text-white bg-white dark:bg-gray-700

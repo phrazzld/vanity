@@ -8,10 +8,6 @@ _ACTUAL critical issues that affect the live site_
 
 - [ ] **[CRITICAL] [PERF]** Bundle size optimization | **Effort: M** | **Current: 2MB, Target: <1MB** | **Impact: 50% faster initial load**
 
-- [ ] **[CRITICAL] [SECURITY]** Add comprehensive security headers (CSP, HSTS, X-Frame-Options) | **Effort: S** | **Quality: 8/10** | **Target: A+ security header rating**
-
-- [ ] **[CRITICAL] [QUALITY]** Eliminate 59 lint suppressions and fix underlying issues | **Effort: M** | **Quality: 9/10** | **Target: Zero unexplained suppressions**
-
 ## High Priority (HIGH)
 
 _Code health issues, DX blockers, architecture debt, philosophy violations_
@@ -19,10 +15,6 @@ _Code health issues, DX blockers, architecture debt, philosophy violations_
 ### Security & Infrastructure
 
 - [ ] **[HIGH] [SECURITY]** Upgrade to Snyk integration with automated vulnerability scanning | **Effort: S** | **Quality: 10/10** | **Target: Zero CVEs, automated PR creation for patches**
-
-### Code Quality & Testing
-
-- [ ] **[HIGH] [EXTRACT]** Create custom hooks for form management and validation | **Effort: L** | **Quality: 8/10** | **Target: Reduce component size by 300+ lines (-25%)**
 
 ### Developer Experience
 
@@ -41,14 +33,6 @@ _Code health issues, DX blockers, architecture debt, philosophy violations_
 ## Medium Priority (MEDIUM)
 
 _Valuable features, simplifications, documentation, performance with metrics_
-
-### Code Simplification
-
-- [ ] **[MEDIUM] [SIMPLIFY]** Replace inline conditional JSX with render functions | **Effort: M** | **Value: Reduce render function 600→100 lines (-85%)** | **Enforcement: cognitive-complexity:10**
-
-- [ ] **[MEDIUM] [STANDARDIZE]** Create reusable DeleteConfirmationModal | **Effort: S** | **Value: Remove 150+ lines duplicate modals (-15%)** | **Enforcement: Storybook documentation**
-
-- [ ] **[MEDIUM] [GORDIAN]** Simplify to single state management solution | **Effort: M** | **Value: Remove TanStack Query OR Zustand** | **Focus: Static content doesn't need dual state**
 
 ### Testing & Documentation
 
@@ -80,10 +64,6 @@ _Nice-to-have features, minor optimizations, future-proofing_
 
 ### UI & Styling
 
-- [ ] **[LOW] [STYLE]** Overhaul style with magic UI background effects | **Effort: L** | **Note: Original backlog item - particles, grids, animations**
-
-- [ ] **[LOW] [FEATURE]** Real-time reading status sync | **Effort: S** | **Note: WebSocket for live updates**
-
 - [ ] **[LOW] [FEATURE]** Smart image optimization pipeline | **Effort: S** | **Note: Cloudinary integration for asset management**
 
 ### Documentation & Monitoring
@@ -99,10 +79,6 @@ _Nice-to-have features, minor optimizations, future-proofing_
 - [ ] **[LOW] [DX]** Quality metrics dashboard with trends | **Effort: L** | **Time saved: 2-4 hrs/week** | **Note: Real-time quality visibility**
 
 ### Cleanup
-
-- [ ] **[LOW] [GORDIAN]** Remove demo/development pages from production | **Effort: S** | **Note: Delete /responsive-examples, \*Demo.tsx components**
-
-- [ ] **[LOW] [MAINTAIN]** Remove legacy component versions | **Effort: S** | **Note: Delete .v1/.v2 files and unused imports**
 
 - [ ] **[LOW] [PERF]** Memoize components and implement virtual scrolling | **Effort: M** | **Note: 50% rendering time reduction for large lists**
 

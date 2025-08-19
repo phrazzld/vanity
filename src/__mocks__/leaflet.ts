@@ -8,8 +8,8 @@
  * particularly the Icon configuration used in Map.tsx
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-explicit-any -- Mock files deliberately use 'any' to simplify test setup and avoid complex type gymnastics for third-party library mocking */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment -- Mock implementations need flexible type assignments to simulate Leaflet's dynamic API behavior */
 
 // Mock Icon class
 class MockIcon {

@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+/* eslint-disable no-undef -- Node.js config file uses CommonJS globals (require, module) which are not defined in browser environment but are standard in Node.js */
 const fs = require('fs');
 
 /**
@@ -19,7 +19,7 @@ function filterSymlinks(files) {
 }
 /* eslint-enable no-undef */
 
-/* eslint-disable no-undef */
+/* eslint-disable no-undef -- CommonJS module.exports is standard in Node.js config files but not recognized by ESLint's browser environment settings */
 module.exports = {
   // JavaScript and TypeScript files - run ESLint with flat config and Prettier
   '**/*.{js,jsx,ts,tsx}': files => {

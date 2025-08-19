@@ -32,7 +32,7 @@ jest.mock('react-leaflet', () => ({
       data-testid="map-container"
       role="application"
       aria-label="Interactive map showing places visited"
-      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- Maps with role="application" need tabIndex=0 for keyboard navigation per ARIA authoring practices for interactive widgets
       tabIndex={0}
       style={style}
     >

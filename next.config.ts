@@ -35,6 +35,25 @@ const nextConfig: NextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
   },
+
+  // Webpack configuration to exclude demo/development pages from production
+  webpack: (config, { dev }) => {
+    // Only apply exclusions in production builds
+    if (!dev) {
+      // Use null-loader to replace demo/example files with empty modules
+      config.module.rules.push({
+        test: /.*Demo\.tsx$/,
+        use: 'null-loader',
+      });
+
+      config.module.rules.push({
+        test: /.*Example\.tsx$/,
+        use: 'null-loader',
+      });
+    }
+
+    return config;
+  },
 };
 
 export default nextConfig;
