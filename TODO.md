@@ -271,19 +271,6 @@ Generated from TASK.md on 2025-08-18
   - Clear function names describing their purpose
   - Preserved all functionality and TypeScript types
 
-- [ ] Create reusable DeleteConfirmationModal component
-  - Success criteria: Single modal replaces duplicates, uses FocusTrap
-  - Can start: Immediately
-  - Estimated complexity: SIMPLE
-  - Files: Create `src/app/components/modals/DeleteConfirmationModal.tsx`
-  - Uses: Existing `FocusTrap` component and Zustand modal state
-
-- [ ] Replace duplicate modal implementations
-  - Success criteria: 150+ lines removed, all modals use new component
-  - Dependencies: DeleteConfirmationModal created
-  - Estimated complexity: SIMPLE
-  - Files: Search and replace modal patterns across components
-
 ### Stream C: State Management Consolidation
 
 - [ ] Remove all TanStack Query references
@@ -374,12 +361,6 @@ Generated from TASK.md on 2025-08-18
   - Files: `src/hooks/__tests__/*.test.ts`
   - **Progress**: ✅ useDebounce (10 tests), ✅ useFormState (25 tests), ✅ useSearchFilters (29 tests)
   - **Completed**: All hooks have comprehensive test coverage (64 total hook tests)
-
-- [ ] Test DeleteConfirmationModal accessibility
-  - Success criteria: Passes axe checks, keyboard navigation works
-  - Dependencies: Modal component created
-  - Estimated complexity: SIMPLE
-  - Files: `src/app/components/modals/__tests__/DeleteConfirmationModal.a11y.test.tsx`
 
 - [ ] Verify bundle size reduction
   - Success criteria: Bundle < 1MB (from 2MB baseline)

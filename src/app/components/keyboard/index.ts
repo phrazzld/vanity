@@ -4,5 +4,3 @@
 
 // Re-export all components
 export * from './FocusTrap';
-export * from './SkipLink';
-export * from './ArrowNavigation';

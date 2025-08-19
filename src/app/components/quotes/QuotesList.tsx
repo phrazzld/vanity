@@ -12,9 +12,14 @@
 
 import { useCallback } from 'react';
 import type { Quote } from '@/types';
-import type { ListSortOption } from '@/app/hooks';
 import { useTheme } from '@/app/context/ThemeContext';
 import { logger } from '@/lib/logger';
+
+// Sort option interface
+interface ListSortOption {
+  field: string;
+  order: 'asc' | 'desc';
+}
 
 // Icons for sort indicators
 const SortAscIcon = () => (

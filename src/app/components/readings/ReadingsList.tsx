@@ -14,8 +14,13 @@
 import { useCallback } from 'react';
 import Image from 'next/image';
 import type { Reading } from '@/types';
-import type { ListSortOption } from '@/app/hooks';
 import { logger } from '@/lib/logger';
+
+// Sort option interface
+interface ListSortOption {
+  field: string;
+  order: 'asc' | 'desc';
+}
 
 /**
  * Format a date without timezone issues

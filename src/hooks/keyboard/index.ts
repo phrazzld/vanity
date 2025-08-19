@@ -4,6 +4,4 @@
 
 // Re-export all hooks
 export * from './useFocusTrap';
-export * from './useArrowNavigation';
-export * from './useGridNavigation';
 export * from './useShortcuts';
