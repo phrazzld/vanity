@@ -258,7 +258,7 @@ export default function QuotesList({
               <>
                 —{' '}
                 <span className="inline-block">
-                  {highlightSearchTerm(quote.author, searchQuery)}
+                  {highlightSearchTerm(quote.author || 'Anonymous', searchQuery)}
                 </span>
               </>
             ) : (

@@ -51,7 +51,7 @@ import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
  * }
  * ```
  */
-export function useFormState<T extends Record<string, any>>(initialValues: T) {
+export function useFormState<T extends Record<string, unknown>>(initialValues: T) {
   // Current values (what's in the form inputs)
   const [values, setValues] = useState<T>(initialValues);
 
@@ -113,7 +113,7 @@ export function useFormState<T extends Record<string, any>>(initialValues: T) {
   /**
    * Submit with callback
    */
-  const submitWithCallback = useCallback((callback: (values: T) => void) => {
+  const submitWithCallback = useCallback((callback: (_values: T) => void) => {
     // Use the ref to get the most current values
     const currentValues = valuesRef.current;
     setSubmittedValues(currentValues);
@@ -231,4 +231,4 @@ export type FormStateValues<T> = T extends { values: infer V } ? V : never;
 /**
  * Type helper for the return type of useFormState
  */
-export type FormState<T extends Record<string, any>> = ReturnType<typeof useFormState<T>>;
+export type FormState<T extends Record<string, unknown>> = ReturnType<typeof useFormState<T>>;

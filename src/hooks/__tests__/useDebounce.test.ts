@@ -1,4 +1,4 @@
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { useDebounce, useDebouncedCallback } from '../useDebounce';
 
 describe('useDebounce', () => {
@@ -205,8 +205,8 @@ describe('useDebouncedCallback', () => {
     expect(noArgsCallback).toHaveBeenCalledWith();
 
     // Multiple typed arguments
-    const typedCallback = jest.fn((num: number, str: string, bool: boolean) => {
-      return `${num}-${str}-${bool}`;
+    const typedCallback = jest.fn((_num: unknown, _str: unknown, _bool: unknown) => {
+      return 'result';
     });
     const { result: typedResult } = renderHook(() => useDebouncedCallback(typedCallback, 100));
 

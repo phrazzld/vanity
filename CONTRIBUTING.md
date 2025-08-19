@@ -99,35 +99,27 @@ For detailed setup instructions, please refer to our [Development Setup Guide](d
 Branches should follow a consistent naming pattern based on the type of change:
 
 - **Feature Branches**: `feature/description-of-feature`
-
   - Example: `feature/dark-mode-toggle`
 
 - **Bug Fix Branches**: `fix/description-of-bug`
-
   - Example: `fix/pagination-calculation`
 
 - **Documentation Branches**: `docs/what-was-documented`
-
   - Example: `docs/api-endpoints`
 
 - **Refactoring Branches**: `refactor/what-was-refactored`
-
   - Example: `refactor/auth-flow`
 
 - **Testing Branches**: `test/what-was-tested`
-
   - Example: `test/keyboard-navigation`
 
 - **Performance Branches**: `perf/what-was-optimized`
-
   - Example: `perf/image-loading`
 
 - **Planning Branches**: `plan/what-was-planned`
-
   - Example: `plan/infrastructure-ci-cd`
 
 - **Release Branches**: `release/vX.Y.Z`
-
   - Example: `release/v1.2.0`
 
 - **Hotfix Branches**: `hotfix/description`
@@ -161,7 +153,6 @@ Branches should follow a consistent naming pattern based on the type of change:
 ### PR Requirements
 
 - **Title**: Use the same format as [commit messages](#commit-guidelines)
-
   - Example: `feat(ui): add dark mode toggle to settings page`
 
 - **Description**: Provide context, reasoning, and details about implementation choices.
@@ -204,6 +195,78 @@ Branches should follow a consistent naming pattern based on the type of change:
   ```bash
   npm run lint
   ```
+
+### ESLint Suppression Policy
+
+The project maintains strict ESLint rules to ensure code quality. However, there are legitimate cases where suppressions are necessary. We maintain a target of **fewer than 10 suppressions** across the entire codebase.
+
+#### When Suppressions Are Acceptable
+
+1. **Node.js Configuration Files**
+   - Files like `.lintstagedrc.js` and scripts that use CommonJS globals (`require`, `module`, `process`)
+   - ESLint is configured for browser environments and doesn't recognize Node.js globals
+   - Example: `// eslint-disable-next-line no-undef`
+
+2. **Test Mock Files**
+   - Mock implementations that deliberately use `any` types for flexibility
+   - Complex third-party library mocks that would require extensive type gymnastics
+   - Example: `// eslint-disable-next-line @typescript-eslint/no-explicit-any`
+
+3. **Accessibility Requirements**
+   - Special ARIA patterns that require specific implementations
+   - Example: Maps with `role="application"` require `tabIndex` for keyboard navigation
+
+4. **Temporary Suppressions During Refactoring**
+   - When refactoring large sections of code, temporary suppressions may be needed
+   - These must include a TODO comment with a timeline for removal
+
+#### How to Properly Document Suppressions
+
+Every ESLint suppression **MUST** include a clear justification comment:
+
+```javascript
+// Bad - No justification
+// eslint-disable-next-line no-undef
+const foo = require('foo');
+
+// Good - Clear justification
+// eslint-disable-next-line no-undef -- CommonJS globals in Node.js config file
+const foo = require('foo');
+
+// Better - Detailed explanation
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// Mock flexibility - allows tests to pass any props without complex type definitions
+export const mockComponent = (props: any) => <div {...props} />;
+```
+
+#### Common Legitimate Suppression Patterns
+
+1. **Unused Variables in TypeScript**
+   - Prefix with underscore instead of suppressing: `_unusedVar`
+   - This follows the configured ESLint rule for unused variables
+
+2. **Type Annotations**
+   - Prefer `unknown` over `any` when possible
+   - Use generics for better type safety: `<T extends Record<string, unknown>>`
+
+3. **Import Issues**
+   - Use proper module resolution instead of suppressing import errors
+   - Configure TypeScript paths correctly in `tsconfig.json`
+
+#### Review Process for Suppressions
+
+- All new suppressions must be justified in PR reviews
+- Suppressions without clear justification will be rejected
+- Periodic audits will be conducted to remove unnecessary suppressions
+- The goal is to maintain fewer than 10 suppressions total
+
+#### Current Suppression Status
+
+As of the last audit, the project has **9 ESLint suppressions**, all with documented justifications:
+
+- 4 in Node.js configuration files (CommonJS globals)
+- 4 in test mock files (deliberate `any` usage)
+- 1 in accessibility test (ARIA requirement)
 
 ### Testing Requirements
 
@@ -261,7 +324,6 @@ The project follows the [Conventional Commits](https://www.conventionalcommits.o
 ### Key Points
 
 - **Format**: `<type>([scope]): <description>`
-
   - Example: `feat(api): add endpoint for user preferences`
 
 - **Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
@@ -269,7 +331,6 @@ The project follows the [Conventional Commits](https://www.conventionalcommits.o
 - **Scope**: Component or area affected (e.g., `ui`, `api`, `auth`, `db`)
 
 - **Subject**:
-
   - Use imperative, present tense (e.g., "add" not "added")
   - Don't capitalize first letter
   - No period at the end

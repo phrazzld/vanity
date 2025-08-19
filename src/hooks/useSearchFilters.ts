@@ -133,7 +133,7 @@ export function useSearchFilters(filterConfigs: FilterConfig[] = []) {
   /**
    * Submit with callback
    */
-  const submitWithCallback = useCallback((callback: (filters: Record<string, string>) => void) => {
+  const submitWithCallback = useCallback((callback: (_filters: Record<string, string>) => void) => {
     const currentFilters = activeFiltersRef.current;
     setSubmittedFilters(currentFilters);
     callback(currentFilters);
@@ -196,8 +196,9 @@ export function useSearchFilters(filterConfigs: FilterConfig[] = []) {
   const getChangedFilters = useCallback((): Record<string, string> => {
     const changes: Record<string, string> = {};
     Object.keys(activeFilters).forEach(key => {
-      if (activeFilters[key] !== submittedFilters[key]) {
-        changes[key] = activeFilters[key];
+      const value = activeFilters[key];
+      if (value !== undefined && value !== submittedFilters[key]) {
+        changes[key] = value;
       }
     });
     return changes;
