@@ -12,6 +12,7 @@ const mockQuotes = [
 ];
 
 const mockReading = {
+  id: 1,
   title: 'Test Book',
   author: 'Test Author',
   finished: true,
@@ -19,6 +20,9 @@ const mockReading = {
   thoughts: 'Great book',
   slug: 'test-book',
   coverImage: '/test-image.jpg',
+  finishedDate: '2024-01-01',
+  coverImageSrc: '/test-image.jpg',
+  dropped: false,
 };
 
 const mockProject = {
@@ -31,19 +35,13 @@ const mockProject = {
   altText: 'Screenshot of Test Project showing the main interface',
 };
 
-const _mockReadings = [
-  {
-    year: 2024,
-    readings: [mockReading],
-  },
-];
-
 describe('Accessibility Tests for All Components', () => {
   describe('QuotesList', () => {
     const mockProps = {
       quotes: mockQuotes,
       sort: { field: 'id', order: 'asc' as const },
       onSortChange: jest.fn(),
+      onSelectQuote: jest.fn(),
       searchQuery: '',
     };
 
@@ -61,6 +59,7 @@ describe('Accessibility Tests for All Components', () => {
       readings: [mockReading],
       sort: { field: 'year', order: 'desc' as const },
       onSortChange: jest.fn(),
+      onSelectReading: jest.fn(),
       searchQuery: '',
     };
 
