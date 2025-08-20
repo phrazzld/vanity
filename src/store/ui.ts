@@ -80,7 +80,9 @@ const createUIStore = () => {
       const storedTheme = localStorage.getItem('ui-store');
       if (!storedTheme) {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        set({ isDarkMode: prefersDark });
+        if (get().isDarkMode !== prefersDark) {
+          set({ isDarkMode: prefersDark });
+        }
         if (prefersDark) {
           document.documentElement.classList.add('dark');
         }
@@ -98,7 +100,9 @@ const createUIStore = () => {
         // Only update if the user hasn't explicitly set a preference
         const stored = localStorage.getItem('ui-store');
         if (!stored) {
-          set({ isDarkMode: e.matches });
+          if (get().isDarkMode !== e.matches) {
+            set({ isDarkMode: e.matches });
+          }
           if (e.matches) {
             document.documentElement.classList.add('dark');
           } else {
@@ -107,7 +111,9 @@ const createUIStore = () => {
         } else {
           const parsed = JSON.parse(stored) as { state: { isDarkMode?: boolean } };
           if (!Object.prototype.hasOwnProperty.call(parsed.state, 'isDarkMode')) {
-            set({ isDarkMode: e.matches });
+            if (get().isDarkMode !== e.matches) {
+              set({ isDarkMode: e.matches });
+            }
             if (e.matches) {
               document.documentElement.classList.add('dark');
             } else {
@@ -167,10 +173,7 @@ export const useUIStore = createUIStore();
  * Hook to use theme from UIStore (for easy migration from ThemeContext)
  */
 export function useTheme() {
-  const { isDarkMode, toggleDarkMode } = useUIStore(state => ({
-    isDarkMode: state.isDarkMode,
-    toggleDarkMode: state.toggleDarkMode,
-  }));
-
+  const isDarkMode = useUIStore(state => state.isDarkMode);
+  const toggleDarkMode = useUIStore(state => state.toggleDarkMode);
   return { isDarkMode, toggleDarkMode };
 }

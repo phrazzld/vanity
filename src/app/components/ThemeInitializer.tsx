@@ -16,11 +16,9 @@ import { useUIStore } from '@/store/ui';
  * - Sets up system preference change listener
  */
 export default function ThemeInitializer() {
-  const initializeTheme = useUIStore(state => state.initializeTheme);
-
   useEffect(() => {
-    initializeTheme();
-  }, [initializeTheme]);
+    useUIStore.getState().initializeTheme();
+  }, []);
 
   return null;
 }
