@@ -3,7 +3,6 @@ import { axe } from 'jest-axe';
 import type { ReactElement } from 'react';
 import type { RenderResult } from '@testing-library/react';
 import { render } from '@testing-library/react';
-import { ThemeProvider } from '@/app/context/ThemeContext';
 
 /**
  * Options for configuring the accessibility tests
@@ -45,23 +44,28 @@ export async function checkA11y(ui: ReactElement, options: A11yTestOptions = {})
 }
 
 /**
- * Renders a component inside a ThemeProvider
+ * Renders a component with theme mock
  *
  * @param ui The component to render
  * @param isDarkMode Whether to use dark mode
  * @returns The rendered component
  */
 function renderWithTheme(ui: ReactElement, isDarkMode = false): RenderResult {
-  // Mock the ThemeContext value
-  jest.doMock('@/app/context/ThemeContext', () => ({
+  // Mock the useTheme hook from store
+  jest.doMock('@/store/ui', () => ({
     useTheme: () => ({
       isDarkMode,
       toggleDarkMode: jest.fn(),
     }),
-    ThemeProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    useUIStore: jest.fn(() => ({
+      isDarkMode,
+      toggleDarkMode: jest.fn(),
+      setDarkMode: jest.fn(),
+      initializeTheme: jest.fn(),
+    })),
   }));
 
-  return render(<ThemeProvider>{ui}</ThemeProvider>);
+  return render(ui);
 }
 
 /**

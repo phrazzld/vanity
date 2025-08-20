@@ -12,7 +12,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import type { ReadingListItem } from '@/types';
 import { getSeededPlaceholderStyles } from './placeholderUtils';
-import { useTheme } from '@/app/context/ThemeContext';
+import { useTheme } from '@/store/ui';
 import { getFullImageUrl } from '@/lib/utils/readingUtils';
 import { logger } from '@/lib/logger';
 

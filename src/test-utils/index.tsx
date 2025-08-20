@@ -3,14 +3,14 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import type { RenderOptions } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ThemeProvider } from '@/app/context/ThemeContext';
 
 // ===========================================================================
 // Theme Provider Test Setup
 // ===========================================================================
 
 /**
- * A custom theme provider for tests that doesn't use browser APIs
+ * A simple test wrapper that sets a data-theme attribute for testing
+ * Note: Theme is now managed by Zustand store, so we don't need a provider
  */
 export function TestThemeProvider({
   children,
@@ -19,12 +19,7 @@ export function TestThemeProvider({
   children: React.ReactNode;
   initialTheme?: 'light' | 'dark';
 }) {
-  // We're using the mocked ThemeProvider from jest.setup.js
-  return (
-    <ThemeProvider>
-      <div data-theme={initialTheme}>{children}</div>
-    </ThemeProvider>
-  );
+  return <div data-theme={initialTheme}>{children}</div>;
 }
 
 /**

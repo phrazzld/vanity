@@ -7,10 +7,15 @@ import '@testing-library/jest-dom';
 import YearSection from '../YearSection';
 import type { Reading } from '@/types';
 
-// Mock the theme context
-jest.mock('../../../context/ThemeContext', () => ({
+// Mock UIStore because it's used in the component
+jest.mock('@/store/ui', () => ({
   useTheme: () => ({ isDarkMode: false, toggleDarkMode: jest.fn() }),
-  ThemeProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  useUIStore: jest.fn(() => ({
+    isDarkMode: false,
+    toggleDarkMode: jest.fn(),
+    setDarkMode: jest.fn(),
+    initializeTheme: jest.fn(),
+  })),
 }));
 
 // Mock the ReadingCard component to prevent Next.js Image issues in tests

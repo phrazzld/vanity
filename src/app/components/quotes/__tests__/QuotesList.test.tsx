@@ -6,10 +6,15 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import QuotesList from '../QuotesList';
 
-// Mock ThemeContext because it's used in the component
-jest.mock('../../../context/ThemeContext', () => ({
+// Mock UIStore because it's used in the component
+jest.mock('@/store/ui', () => ({
   useTheme: () => ({ isDarkMode: false, toggleDarkMode: jest.fn() }),
-  ThemeProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  useUIStore: jest.fn(() => ({
+    isDarkMode: false,
+    toggleDarkMode: jest.fn(),
+    setDarkMode: jest.fn(),
+    initializeTheme: jest.fn(),
+  })),
 }));
 
 describe('QuotesList Component', () => {

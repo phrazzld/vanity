@@ -1,8 +1,8 @@
 import DarkModeToggle from '@/app/components/DarkModeToggle';
+import ThemeInitializer from '@/app/components/ThemeInitializer';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import './globals.css';
-import { ThemeProvider } from './context/ThemeContext';
 import { Suspense } from 'react';
 
 export const metadata: Metadata = {
@@ -42,17 +42,15 @@ function Header() {
   );
 }
 
-// Use a client component with ThemeProvider
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
-        <ThemeProvider>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Header />
-          </Suspense>
-          <main className="bg-white dark:bg-gray-900">{children}</main>
-        </ThemeProvider>
+        <ThemeInitializer />
+        <Suspense fallback={<div>Loading...</div>}>
+          <Header />
+        </Suspense>
+        <main className="bg-white dark:bg-gray-900">{children}</main>
       </body>
     </html>
   );

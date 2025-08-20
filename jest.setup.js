@@ -179,20 +179,29 @@ global.ResizeObserver = class ResizeObserver {
 // Next.js and App Mocks
 // =============================================================================
 
-// Mock the ThemeContext
-jest.mock('@/app/context/ThemeContext', () => ({
+// Mock the Zustand UI Store
+jest.mock('@/store/ui', () => ({
+  useUIStore: jest.fn(() => ({
+    isDarkMode: false,
+    toggleDarkMode: jest.fn(),
+    setDarkMode: jest.fn(),
+    initializeTheme: jest.fn(),
+    isSidebarOpen: false,
+    openSidebar: jest.fn(),
+    closeSidebar: jest.fn(),
+    toggleSidebar: jest.fn(),
+    activeModal: null,
+    openModal: jest.fn(),
+    closeModal: jest.fn(),
+    globalSearchQuery: '',
+    setGlobalSearchQuery: jest.fn(),
+    isSearchActive: false,
+    setSearchActive: jest.fn(),
+  })),
   useTheme: () => ({
     isDarkMode: false,
     toggleDarkMode: jest.fn(),
   }),
-  ThemeProvider: ({ children }) =>
-    React.createElement(
-      'div',
-      {
-        'data-testid': 'theme-provider',
-      },
-      children
-    ),
 }));
 
 // Mock Next.js router

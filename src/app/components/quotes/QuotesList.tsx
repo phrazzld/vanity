@@ -12,7 +12,7 @@
 
 import { useCallback } from 'react';
 import type { Quote } from '@/types';
-import { useTheme } from '@/app/context/ThemeContext';
+import { useTheme } from '@/store/ui';
 import { logger } from '@/lib/logger';
 
 // Sort option interface
