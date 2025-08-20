@@ -163,7 +163,7 @@ export default function QuotesList({
 
   // Render column headers section
   const renderColumnHeaders = () => (
-    <div className="border-b border-gray-200 dark:border-gray-700">
+    <div className="border-b border-gray-200 dark:border-gray-700" role="grid">
       <div
         className="grid grid-cols-12 py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-750"
         role="row"
@@ -210,65 +210,66 @@ export default function QuotesList({
       searchQuery && quote.author && quote.author.toLowerCase().includes(searchQuery.toLowerCase());
 
     return (
-      <div
-        key={quote.id}
-        className={`item-list-item group ${isSelected ? 'item-list-item-selected' : ''} hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150`}
-        role="button"
-        onClick={() => onSelectQuote(quote)}
-        onKeyDown={e => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            onSelectQuote(quote);
-            e.preventDefault();
-          }
-        }}
-        tabIndex={0}
-        aria-current={isSelected ? 'true' : 'false'}
-      >
-        <div className="flex flex-col">
-          <div className="flex items-start">
-            {/* Quote icon */}
-            <svg
-              className="h-4 w-4 text-gray-400 mt-0.5 mr-1.5 flex-shrink-0 group-hover:text-gray-500 dark:group-hover:text-gray-300 transition-colors duration-150"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
-              />
-            </svg>
+      <li key={quote.id} className="list-none">
+        <div
+          className={`item-list-item group ${isSelected ? 'item-list-item-selected' : ''} hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150`}
+          role="button"
+          onClick={() => onSelectQuote(quote)}
+          onKeyDown={e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              onSelectQuote(quote);
+              e.preventDefault();
+            }
+          }}
+          tabIndex={0}
+          aria-current={isSelected ? 'true' : 'false'}
+        >
+          <div className="flex flex-col">
+            <div className="flex items-start">
+              {/* Quote icon */}
+              <svg
+                className="h-4 w-4 text-gray-400 mt-0.5 mr-1.5 flex-shrink-0 group-hover:text-gray-500 dark:group-hover:text-gray-300 transition-colors duration-150"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+                />
+              </svg>
 
-            {/* Quote text with search highlighting */}
-            <p className="text-sm font-medium text-gray-900 dark:text-white leading-5">
-              {shouldHighlightText ? (
-                <>&ldquo;{highlightSearchTerm(truncateText(quote.text), searchQuery)}&rdquo;</>
+              {/* Quote text with search highlighting */}
+              <p className="text-sm font-medium text-gray-900 dark:text-white leading-5">
+                {shouldHighlightText ? (
+                  <>&ldquo;{highlightSearchTerm(truncateText(quote.text), searchQuery)}&rdquo;</>
+                ) : (
+                  <>&ldquo;{truncateText(quote.text)}&rdquo;</>
+                )}
+              </p>
+            </div>
+
+            {/* Author with search highlighting */}
+            <div className="mt-1 ml-5.5 text-xs text-gray-500 dark:text-gray-400">
+              {shouldHighlightAuthor ? (
+                <>
+                  —{' '}
+                  <span className="inline-block">
+                    {highlightSearchTerm(quote.author || 'Anonymous', searchQuery)}
+                  </span>
+                </>
               ) : (
-                <>&ldquo;{truncateText(quote.text)}&rdquo;</>
+                <>
+                  — <span className="inline-block">{quote.author || 'Anonymous'}</span>
+                </>
               )}
-            </p>
-          </div>
-
-          {/* Author with search highlighting */}
-          <div className="mt-1 ml-5.5 text-xs text-gray-500 dark:text-gray-400">
-            {shouldHighlightAuthor ? (
-              <>
-                —{' '}
-                <span className="inline-block">
-                  {highlightSearchTerm(quote.author || 'Anonymous', searchQuery)}
-                </span>
-              </>
-            ) : (
-              <>
-                — <span className="inline-block">{quote.author || 'Anonymous'}</span>
-              </>
-            )}
+            </div>
           </div>
         </div>
-      </div>
+      </li>
     );
   };
 
