@@ -23,8 +23,8 @@ export default {
     extend: {
       // Font families
       fontFamily: {
-        inter: ['Inter', ...defaultTheme.fontFamily.sans],
-        'space-grotesk': ['Space Grotesk', ...defaultTheme.fontFamily.sans],
+        inter: ['var(--font-inter)', ...defaultTheme.fontFamily.sans],
+        'space-grotesk': ['var(--font-space-grotesk)', ...defaultTheme.fontFamily.sans],
       },
 
       // Color system with semantic naming

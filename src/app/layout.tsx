@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import './globals.css';
 import { Suspense } from 'react';
+import { inter, spaceGrotesk } from './fonts';
 
 export const metadata: Metadata = {
   title: 'phaedrus | software engineer and general tinkerer',
@@ -44,7 +45,11 @@ function Header() {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${inter.variable} ${spaceGrotesk.variable}`}
+    >
       <body className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
         <ThemeInitializer />
         <Suspense fallback={<div>Loading...</div>}>

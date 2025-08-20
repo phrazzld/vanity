@@ -31,7 +31,7 @@ const mockProject = {
   altText: 'Screenshot of Test Project showing the main interface',
 };
 
-const mockReadings = [
+const _mockReadings = [
   {
     year: 2024,
     readings: [mockReading],
