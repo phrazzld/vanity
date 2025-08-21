@@ -130,7 +130,7 @@ describe('Data Layer', () => {
             author: 'Author One',
             finished: '2023-01-15',
             coverImage: 'cover1.jpg',
-            dropped: false,
+            audiobook: false,
           },
           content: 'Thoughts on book one',
         } as any)
@@ -140,7 +140,7 @@ describe('Data Layer', () => {
             author: 'Author Two',
             finished: '2023-02-20',
             coverImage: null,
-            dropped: false,
+            audiobook: false,
           },
           content: 'Thoughts on book two',
         } as any);
@@ -155,7 +155,7 @@ describe('Data Layer', () => {
           finishedDate: '2023-02-20',
           coverImageSrc: null,
           thoughts: 'Thoughts on book two',
-          dropped: false,
+          audiobook: false,
         },
         {
           slug: 'book-one',
@@ -164,13 +164,13 @@ describe('Data Layer', () => {
           finishedDate: '2023-01-15',
           coverImageSrc: 'cover1.jpg',
           thoughts: 'Thoughts on book one',
-          dropped: false,
+          audiobook: false,
         },
       ]);
     });
 
-    it('should filter out dropped readings', () => {
-      mockFs.readdirSync.mockReturnValue(['active.md', 'dropped.md'] as any);
+    it('should process all readings (dropped status removed)', () => {
+      mockFs.readdirSync.mockReturnValue(['book-one.md', 'book-two.md'] as any);
       mockFs.readFileSync
         .mockReturnValueOnce('mock content 1')
         .mockReturnValueOnce('mock content 2');
@@ -178,27 +178,30 @@ describe('Data Layer', () => {
       mockMatter
         .mockReturnValueOnce({
           data: {
-            title: 'Active Book',
+            title: 'Book One',
             author: 'Author',
             finished: '2023-01-15',
-            dropped: false,
+            audiobook: false,
           },
-          content: 'Active thoughts',
+          content: 'Book one thoughts',
         } as any)
         .mockReturnValueOnce({
           data: {
-            title: 'Dropped Book',
+            title: 'Book Two',
             author: 'Author',
             finished: '2023-02-20',
-            dropped: true,
+            audiobook: true,
           },
-          content: 'Dropped thoughts',
+          content: 'Book two thoughts',
         } as any);
 
       const readings = getReadings();
 
-      expect(readings).toHaveLength(1);
-      expect(readings[0]!.title).toBe('Active Book');
+      expect(readings).toHaveLength(2);
+      expect(readings[0]!.title).toBe('Book Two');
+      expect(readings[0]!.audiobook).toBe(true);
+      expect(readings[1]!.title).toBe('Book One');
+      expect(readings[1]!.audiobook).toBe(false);
     });
 
     it('should handle null/undefined finished dates', () => {

@@ -22,7 +22,6 @@ import { logger } from '@/lib/logger';
 const STATUS_COLORS = {
   READING: '#3b82f6', // blue
   FINISHED: '#10b981', // green
-  PAUSED: '#6b7280', // gray
 } as const;
 
 /**
@@ -57,7 +56,7 @@ export default function ReadingCard({
   title,
   author,
   coverImageSrc,
-  dropped,
+  audiobook,
   finishedDate,
 }: ReadingCardProps) {
   const [imageError, setImageError] = useState(false);
@@ -68,22 +67,15 @@ export default function ReadingCard({
   const placeholderStyles = !coverImageSrc || imageError ? getSeededPlaceholderStyles(slug) : {};
 
   // Determine reading status
-  const isCurrentlyReading = finishedDate === null && !dropped;
-  const isFinished = finishedDate !== null && !dropped;
+  const isCurrentlyReading = finishedDate === null;
 
   // Simple status colors
-  const statusColor = isCurrentlyReading
-    ? STATUS_COLORS.READING
-    : isFinished
-      ? STATUS_COLORS.FINISHED
-      : STATUS_COLORS.PAUSED;
+  const statusColor = isCurrentlyReading ? STATUS_COLORS.READING : STATUS_COLORS.FINISHED;
 
   // Status text
   const statusText = isCurrentlyReading
     ? 'Currently Reading'
-    : isFinished
-      ? `Finished ${formatDate(finishedDate)}`
-      : 'Paused';
+    : `Finished ${formatDate(finishedDate)}`;
 
   return (
     <div
@@ -220,6 +212,22 @@ export default function ReadingCard({
             >
               {statusText}
             </span>
+            {/* Audiobook indicator */}
+            {audiobook && (
+              <span
+                style={{
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontSize: '10px',
+                  fontWeight: 400,
+                  marginLeft: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '2px',
+                }}
+              >
+                🎧 Audiobook
+              </span>
+            )}
           </div>
         </div>
       </div>

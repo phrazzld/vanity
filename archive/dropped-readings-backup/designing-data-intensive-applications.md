@@ -1,7 +1,7 @@
 ---
 title: Designing Data-Intensive Applications
 author: Martin Kleppmann
-finished: 
+finished:
 coverImage: https://book-covers.nyc3.digitaloceanspaces.com/readings/designing-data-intensive-applications-01.jpg
 dropped: true
 ---

@@ -139,7 +139,7 @@ reading
 This command lets you:
   • Mark a book as finished (today or custom date)
   • Update your thoughts about a book
-  • Mark a book as dropped
+  • Delete a reading from your collection
   
 The update wizard will:
   1. Show currently reading books first

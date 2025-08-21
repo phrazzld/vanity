@@ -32,6 +32,10 @@ export interface ThoughtsPrompt {
   addThoughts: boolean;
 }
 
+export interface AudiobookPrompt {
+  audiobook: boolean;
+}
+
 export interface ContinueWithoutImagePrompt {
   continueWithoutImage: boolean;
 }
@@ -152,7 +156,7 @@ export interface ReadingFrontmatter {
   author: string;
   finished?: string | null;
   coverImage?: string;
-  dropped: boolean;
+  audiobook?: boolean;
 }
 
 export interface ProjectFrontmatter {

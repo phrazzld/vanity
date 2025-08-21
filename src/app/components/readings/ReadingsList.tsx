@@ -367,9 +367,9 @@ export default function ReadingsList({
                           : 'Unfinished'}
                       </span>
 
-                      {reading.dropped && (
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300">
-                          Dropped
+                      {reading.audiobook && (
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300">
+                          🎧 Audiobook
                         </span>
                       )}
 

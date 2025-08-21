@@ -1,7 +1,5 @@
 # BACKLOG
 
-- [ ] remove "dropped" status / handling from readings -- either a book is being read or has been read
-- [ ] add "audiobook" flag for readings, visible in hover state
 - [ ] navbar should have the same width as page content
 - [ ] fonts should be redone, esp on readings page (headings are meh all around, fonts and overall design)
 - [ ] we should have a very simple, clean, fullwidth footer that links to email and github

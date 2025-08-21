@@ -17,6 +17,7 @@ import type {
   ImageUrlPrompt,
   ImageFilePrompt,
   ThoughtsPrompt,
+  AudiobookPrompt,
   ContinueWithoutImagePrompt,
   ReadingActionPrompt,
   ReadingFrontmatter,
@@ -147,6 +148,16 @@ export async function addReading(): Promise<void> {
       ]);
       finishedDate = new Date(dateInput).toISOString();
     }
+
+    // Audiobook prompt
+    const { audiobook } = await inquirer.prompt<AudiobookPrompt>([
+      {
+        type: 'confirm',
+        name: 'audiobook',
+        message: 'Is this an audiobook?',
+        default: false,
+      },
+    ]);
 
     // Cover image prompt
     const { imageChoice } = await inquirer.prompt<ImageChoicePrompt>([
@@ -368,11 +379,14 @@ export async function addReading(): Promise<void> {
       title: basicInfo.title,
       author: basicInfo.author,
       finished: finishedDate || null,
-      dropped: false,
     };
 
     if (coverImage) {
       frontmatter.coverImage = coverImage;
+    }
+
+    if (audiobook) {
+      frontmatter.audiobook = audiobook;
     }
 
     const fileContent = matter.stringify(thoughts, frontmatter);
@@ -549,7 +563,7 @@ export async function updateReading() {
                 { name: 'Mark as finished (custom date)', value: 'finish_custom' },
               ]),
           { name: 'Update thoughts', value: 'thoughts' },
-          { name: 'Mark as dropped', value: 'dropped' },
+          { name: 'Delete reading', value: 'delete' },
           { name: 'Cancel', value: 'cancel' },
         ],
       },
@@ -607,11 +621,12 @@ ${currentThoughts}`;
           .trim();
         console.log(chalk.green('✓ Updated thoughts'));
       }
-    } else if (updateAction === 'dropped') {
-      updatedFrontmatter.dropped = true;
-      // Remove finished date if it exists
-      delete updatedFrontmatter.finished;
-      console.log(chalk.yellow('✓ Marked as dropped'));
+    } else if (updateAction === 'delete') {
+      // TODO: Task 8 will implement file deletion functionality
+      // Temporarily disabled to fix TypeScript compilation
+      console.log(
+        chalk.yellow('⚠️ Delete functionality temporarily disabled - will be implemented in Task 8')
+      );
     }
 
     // Write updated file

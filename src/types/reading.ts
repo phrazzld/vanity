@@ -34,8 +34,8 @@ export interface Reading {
   /** Thoughts or notes about the reading */
   thoughts: string;
 
-  /** Indicates if the reading was abandoned before completion */
-  dropped: boolean;
+  /** Indicates if this reading is an audiobook */
+  audiobook?: boolean;
 }
 
 /**
@@ -51,7 +51,7 @@ export interface ReadingInput {
   finishedDate?: Date | string | null;
   coverImageSrc?: string | null;
   thoughts?: string;
-  dropped?: boolean;
+  audiobook?: boolean;
 }
 
 /**
@@ -66,5 +66,5 @@ export interface ReadingListItem {
   author: string;
   finishedDate: Date | string | null;
   coverImageSrc: string | null;
-  dropped: boolean;
+  audiobook?: boolean;
 }

@@ -27,16 +27,13 @@ export function getReadings() {
       finishedDate: (data.finished as string | null) || null,
       coverImageSrc: (data.coverImage as string | null) || null,
       thoughts: content.trim(),
-      dropped: (data.dropped as boolean) || false,
+      audiobook: (data.audiobook as boolean) || false,
     };
   });
 
-  // Filter out dropped readings
-  const activeReadings = readings.filter(r => !r.dropped);
-
   // Sort by finished date (most recent first)
   // Put null dates (currently reading) at the end
-  return activeReadings.sort((a, b) => {
+  return readings.sort((a, b) => {
     if (!a.finishedDate && !b.finishedDate) return 0;
     if (!a.finishedDate) return 1;
     if (!b.finishedDate) return -1;

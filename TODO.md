@@ -1,707 +1,245 @@
-# Vanity Project Implementation TODO
+# Reading Status Simplification & Audiobook Enhancement TODO
 
-Generated from TASK.md on 2025-08-18
+Generated from TASK.md on 2025-01-21
 
 ## Critical Path Items (Must complete in order)
 
-### Phase 1: Security & Quality Foundation
-
-- [x] Configure security headers at CDN/hosting level
-  - Success criteria: A+ rating on securityheaders.com
-  - Dependencies: None (configure in vercel.json or netlify.toml)
-  - Estimated complexity: SIMPLE
-  - Files: Create `vercel.json` or update existing deployment config
-
-  ### Execution Log
-  - **Started**: 2025-08-18
-  - **Completed**: 2025-08-18
-  - **Files Modified**:
-    - `vercel.json` - Added comprehensive security headers configuration
-    - `docs/deployment.md` - Created deployment documentation
-  - **Implementation Notes**:
-    - Added CSP with Next.js static export compatibility (requires unsafe-inline)
-    - Configured HSTS for 1 year with subdomains
-    - Set X-Frame-Options to DENY for clickjacking protection
-    - Added Permissions-Policy to disable unused browser features
-    - Included Referrer-Policy for privacy protection
-  - **Next Steps**: Deploy to Vercel and test on securityheaders.com
-
-- [x] Document all existing ESLint suppressions with justification comments
-  - Success criteria: All 5-10 suppressions have clear "why" comments
+- [x] **1. Create migration script to backup and delete dropped readings**
+  - Success criteria: Script identifies 7 dropped reading files, creates backup, safely deletes files
   - Dependencies: None
+  - Estimated complexity: MEDIUM
+  - Files: `scripts/migrate-reading-status.js`
+
+  ```
+  Work Log:
+  - ✅ Successfully created migration script following existing patterns from generate-static-data.js
+  - ✅ Script identified exactly 7 dropped readings (as expected from specification)
+  - ✅ Created backup directory: /archive/dropped-readings-backup
+  - ✅ Safely deleted: Designing Data-Intensive Applications, How the Catholic Church Built Western Civilization, Man and Woman He Created Them, Paradise Lost, Scaling People, Shorter Summa, Structure and Interpretation of Computer Programs 2nd Ed
+  - ✅ Cleaned 'dropped' field from all 365 remaining reading frontmatter files
+  - ✅ Reading status system now simplified to binary: reading/finished
+  ```
+
+- [x] **2. Update Reading TypeScript interface**
+  - Success criteria: Remove `dropped: boolean` field, add `audiobook?: boolean` field, TypeScript compiles
+  - Dependencies: Migration script completed
   - Estimated complexity: SIMPLE
-  - Files: `scripts/generate-reading-summary.ts`, `src/__mocks__/*.ts`, `.lintstagedrc.js`
+  - Files: `src/types/reading.ts`
 
-  ### Execution Log
-  - **Started**: 2025-08-18
-  - **Completed**: 2025-08-18
-  - **Complexity**: SIMPLE
-  - **Total Suppressions**: 9 (within expected 5-10 range)
+  ```
+  Work Log:
+  - ✅ Removed `dropped: boolean` field from Reading interface
+  - ✅ Added `audiobook?: boolean` field to Reading interface
+  - ✅ Updated ReadingInput interface (removed dropped, added audiobook)
+  - ✅ Updated ReadingListItem interface (removed dropped, added audiobook)
+  - ⚠️ TypeScript compilation errors expected - will be resolved by Tasks 3-6 which update references throughout codebase
+  ```
 
-  ### Files Modified
-  - `.lintstagedrc.js` - Added justifications for Node.js CommonJS globals (2 suppressions)
-  - `scripts/generate-reading-summary.ts` - Documented Node.js process global usage (2 suppressions)
-  - `src/__mocks__/leaflet.ts` - Explained any-type usage for mock flexibility (2 suppressions)
-  - `src/__mocks__/react-leaflet.tsx` - Justified any-type for test mock props (2 suppressions)
-  - `src/app/components/__tests__/Map.a11y.test.tsx` - Clarified tabIndex for ARIA application role (1 suppression)
-
-  ### Justification Patterns
-  - **Node.js files**: CommonJS globals (require, module, process) not recognized by browser-targeted ESLint
-  - **Mock files**: Deliberate use of 'any' to simplify test setup and avoid complex type gymnastics
-  - **Accessibility test**: Maps with role="application" require tabIndex for keyboard navigation per ARIA standards
-
-  ### Key Learnings
-  - All suppressions are legitimate and necessary for their contexts
-  - Mock files inherently need flexible typing for comprehensive test coverage
-  - Node.js config files require different ESLint environment settings
-  - No unnecessary suppressions found - codebase has good discipline
-
-- [x] Run bundle analyzer and document current state
-  - Success criteria: Baseline metrics recorded (current: 2MB)
-  - Dependencies: None
+- [x] **3. Update Reading frontmatter interface**
+  - Success criteria: ReadingFrontmatter type updated to match Reading interface, no compilation errors
+  - Dependencies: Reading interface updated
   - Estimated complexity: SIMPLE
-  - Command: `ANALYZE=true npm run build`
+  - Files: `src/types/reading.ts`, `cli/commands/reading.ts`
 
-  ### Execution Log
-  - **Started**: 2025-08-18
-  - **Completed**: 2025-08-18
-  - **Complexity**: SIMPLE
+  ```
+  Work Log:
+  - ✅ Updated ReadingFrontmatter interface in cli/types/index.ts (removed dropped, added audiobook)
+  - ✅ Removed dropped: false from frontmatter creation in CLI reading command
+  - ✅ Temporarily disabled dropped update functionality (will be replaced in Task 8)
+  - ✅ ReadingFrontmatter interface now compiles without errors
+  - ✅ No more ReadingFrontmatter-related TypeScript compilation errors
+  ```
 
-  ### Bundle Analysis Results
-  - **Current Total**: 1.12 MB uncompressed (not 2MB as estimated)
-  - **Largest Route**: /readings at 163 KB
-  - **Shared Code**: 100 KB across all routes
-  - **Framework Overhead**: 180 KB (React) + 116 KB (Next.js)
+- [x] **4. Update CLI reading type definitions**
+  - Success criteria: CLI types align with updated Reading interface, inquirer prompts compile
+  - Dependencies: Frontmatter interface updated
+  - Estimated complexity: SIMPLE
+  - Files: `cli/commands/reading.ts`, `cli/types/index.ts`
 
-  ### Files Created
-  - `docs/bundle-analysis.md` - Comprehensive baseline documentation
+  ```
+  Work Log:
+  - ✅ Updated CLI help text to reflect "Delete a reading from your collection" instead of "Mark as dropped"
+  - ✅ Changed inquirer prompt option from "Mark as dropped" to "Delete reading"
+  - ✅ Updated action handler from 'dropped' to 'delete' (implementation deferred to Task 8)
+  - ✅ Removed all references to 'dropped' from CLI codebase
+  - ✅ CLI types now align with updated Reading interface
+  - ✅ No CLI-related TypeScript compilation errors
+  ```
 
-  ### Key Findings
-  - Already closer to 1MB target than expected (1.12 MB vs 2MB estimate)
-  - Main optimization opportunities:
-    - Remove demo pages (102 KB savings)
-    - Optimize polyfills (112 KB current)
-    - Better code splitting for /readings route
-  - Quick wins available through cleanup tasks
+- [x] **5. Remove dropped filtering from data layer**
+  - Success criteria: `data.ts` no longer filters dropped readings, static data generation works
+  - Dependencies: Type definitions updated
+  - Estimated complexity: SIMPLE
+  - Files: `src/lib/data.ts:34-35`
 
-  ### Next Actions
-  - Proceed with Stream D cleanup tasks for immediate size reduction
-  - Re-analyze after cleanup to measure progress toward <1MB target
+  ```
+  Work Log:
+  - ✅ Removed `dropped: (data.dropped as boolean) || false` field assignment from reading object creation
+  - ✅ Removed dropped filtering logic: `const activeReadings = readings.filter(r => !r.dropped)`
+  - ✅ Updated return statement to use `readings` directly instead of `activeReadings`
+  - ✅ Static data generation works: Generated 365 readings successfully
+  - ✅ Data layer no longer references dropped field anywhere
+  ```
+
+- [x] **6. Update reading utilities to remove dropped status logic**
+  - Success criteria: `readingUtils.ts` no longer handles "Dropped" section, only "Currently Reading" and year sections
+  - Dependencies: Data layer updated
+  - Estimated complexity: MEDIUM
+  - Files: `src/lib/utils/readingUtils.ts:70`
+  ```
+  Work Log:
+  - ✅ Removed "Dropped" section initialization from grouped object in groupReadingsByYear()
+  - ✅ Removed dropped reading handling logic (reading.dropped check and push to Dropped section)
+  - ✅ Removed "Dropped" from specialSections array in getSortedYearKeys()
+  - ✅ Removed dropped category sorting logic from sortReadingsWithinCategory()
+  - ✅ Reading utilities now only handle "Currently Reading" and year sections
+  - ✅ No TypeScript errors in readingUtils.ts file
+  ```
 
 ## Parallel Work Streams
 
-### Stream A: Form Management Refactoring
+### Stream A: CLI Enhancement (After Critical Path Items 1-6)
 
-- [x] Create useDebounce hook
-  - Success criteria: Extracted from SearchBar, unit tested
-  - Can start: Immediately
-  - Estimated complexity: SIMPLE
-  - Files: Create `src/hooks/useDebounce.ts` with tests
-
-  ### Execution Log
-  - **Started**: 2025-08-19 (using Opus model)
-  - **Completed**: 2025-08-19
-  - **Complexity Assessment**: SIMPLE - Single hook with existing utility
-
-  ### Context Discovery
-  - Existing utility: `src/app/utils/debounce.ts` has generic debounce function
-  - SearchBar pattern: Uses `useRef` for timeout + manual cleanup in useEffect
-  - Lines to extract: SearchBar.tsx:102-131 (manual debounce management)
-
-  ### Implementation
-  - [10:45] Creating useDebounce hook to encapsulate timeout management
-  - [10:46] Created two hooks: `useDebounce` for values, `useDebouncedCallback` for functions
-  - [10:47] Added comprehensive tests with 100% coverage
-  - [10:48] Fixed implementation bug with timeout management using useRef
-  - [10:49] All 210 tests passing, no regressions
-
-  ### Files Created
-  - `src/hooks/useDebounce.ts` - Two debounce hooks with JSDoc and examples
-  - `src/hooks/__tests__/useDebounce.test.ts` - 10 comprehensive test cases
-
-  ### Key Decisions
-  - Created two variants: useDebounce for values, useDebouncedCallback for functions
-  - Used useRef instead of useState for timeout management (more efficient)
-  - Added comprehensive JSDoc with usage examples
-  - Included proper TypeScript generics for type safety
-
-- [x] Create useFormState hook for dual state tracking
-  - Success criteria: Manages value/submittedValue pattern from SearchBar
-  - Can start: Immediately
+- [x] **7. Add audiobook prompt to CLI reading add command**
+  - Success criteria: `reading add` command prompts for audiobook status, saves to frontmatter
+  - Dependencies: Type definitions updated (Task 4)
   - Estimated complexity: MEDIUM
-  - Files: Create `src/hooks/useFormState.ts` with tests
+  - Can start: After Task 4
+  - Files: `cli/commands/reading.ts:102-407`
 
-  ### Execution Log
-  - **Started**: 2025-08-19 (using Opus model)
-  - **Completed**: 2025-08-19
-  - **Complexity Assessment**: MEDIUM - Dual state pattern with submission tracking
+  ```
+  Work Log:
+  - ✅ Added AudiobookPrompt interface to cli/types/index.ts
+  - ✅ Added AudiobookPrompt import to reading command
+  - ✅ Inserted audiobook prompt between finished date and cover image prompts (optimal UX flow)
+  - ✅ Added conditional frontmatter assignment: if (audiobook) frontmatter.audiobook = audiobook
+  - ✅ Updated data.ts to process audiobook field from markdown frontmatter
+  - ✅ CLI now prompts: "Is this an audiobook?" with default false
+  - ✅ Audiobook status saves to frontmatter and loads in data layer
+  - ✅ Follows existing CLI patterns perfectly (boolean prompts, conditional assignments)
+  ```
 
-  ### Context Discovery
-  - SearchBar pattern: Lines 73-99 dual state for query and filters
-  - `triggerSearch` function: Lines 157-161 updates submitted state
-  - `hasUnsearchedChanges`: Lines 183-185 detects pending changes
-  - Pattern: Track both "current" and "submitted" values separately
-
-  ### Implementation
-  - [10:52] Creating generic useFormState hook for dual state tracking
-  - [10:53] Added comprehensive functionality: setValue, updateValues, submit, reset
-  - [10:54] Created 25 test cases covering all functionality
-  - [10:55] Fixed timing issue with immediate ref updates for synchronous operations
-  - [10:56] All 235 tests passing, no regressions
-
-  ### Files Created
-  - `src/hooks/useFormState.ts` - Generic dual state hook with full API
-  - `src/hooks/__tests__/useFormState.test.ts` - 25 comprehensive test cases
-
-  ### Key Features
-  - Dual state tracking (current vs submitted)
-  - Multiple update methods (setValue, updateValues, replaceValues)
-  - Submit with optional callback
-  - Reset to initial or submitted values
-  - Change detection (hasChanges, getChanges, hasFieldChanged)
-  - TypeScript generics for type safety
-  - Immediate ref updates for synchronous operations
-
-- [x] Create useSearchFilters hook
-  - Success criteria: Manages filter state and changes detection
-  - Can start: Immediately
+- [ ] **8. Update CLI reading update command to delete files**
+  - Success criteria: `reading update` offers "Delete reading" option, removes file from filesystem
+  - Dependencies: Type definitions updated (Task 4)
   - Estimated complexity: MEDIUM
-  - Files: Create `src/hooks/useSearchFilters.ts` with tests
+  - Can start: After Task 4
+  - Files: `cli/commands/reading.ts:371`
 
-  ### Execution Log
-  - **Started**: 2025-08-19 (using Opus model)
-  - **Completed**: 2025-08-19
-  - **Complexity Assessment**: MEDIUM - Filter management with change detection
+### Stream B: UI Implementation (After Critical Path Items 1-6)
 
-  ### Context Discovery
-  - SearchBar pattern: Lines 79-99 activeFilters and submittedFilters state
-  - FilterConfig type: Lines 25-30 defines filter structure
-  - handleFilterChange: Lines 135-137 updates filter state
-  - Similar to useFormState dual tracking pattern
-
-  ### Implementation
-  - [11:05] Creating useSearchFilters hook for filter management
-  - [11:06] Added comprehensive filter management functionality
-  - [11:07] Created 29 test cases covering all functionality
-  - [11:08] Fixed timing issue with ref updates (same as useFormState)
-  - [11:09] All 264 tests passing, no regressions
-
-  ### Files Created
-  - `src/hooks/useSearchFilters.ts` - Filter management hook with dual state
-  - `src/hooks/__tests__/useSearchFilters.test.ts` - 29 comprehensive test cases
-
-  ### Key Features
-  - Dual state tracking (active vs submitted filters)
-  - Filter-specific utilities (getFilterConfig, getFilterValueLabel)
-  - Active filter detection (hasActiveFilters, activeFilterCount)
-  - Change tracking (hasChanges, getChangedFilters, hasFilterChanged)
-  - Clear and reset functionality
-  - TypeScript support with FilterConfig interface
-
-- [x] Refactor SearchBar to use new hooks
-  - Success criteria: Component reduced by 50+ lines, all tests pass
-  - Dependencies: All three hooks above
-  - Estimated complexity: MEDIUM
-  - Files: Update `src/app/components/SearchBar.tsx`
-
-  ### Execution Log
-  - **Started**: 2025-08-19 (using Opus model)
-  - **Completed**: 2025-08-19
-  - **Complexity Assessment**: MEDIUM - Refactoring to use 3 new hooks
-
-  ### Context Discovery
-  - Current lines: 313 total
-  - Query state management: Lines 73-76 (dual state pattern)
-  - Filter state management: Lines 79-99 (dual state pattern)
-  - Debounce management: Lines 102-131, 140-152 (manual timeout refs)
-  - Need to replace with: useFormState, useSearchFilters, useDebouncedCallback
-
-  ### Implementation
-  - [11:15] Refactoring SearchBar to use new hooks
-  - [11:16] Replaced dual state tracking with useFormState and useSearchFilters
-  - [11:17] Replaced manual debouncing with useDebouncedCallback
-  - [11:18] All 264 tests passing, no regressions
-
-  ### Results
-  - **Line reduction**: 29 lines (313 → 284)
-  - **Code quality**: Significantly improved with hook abstraction
-  - **Removed**: Manual state management, timeout refs, debounce logic
-  - **Added**: Clean hook usage with built-in change detection
-
-  ### Key Improvements
-  - Eliminated manual dual state tracking (20+ lines)
-  - Removed manual debounce timeout management (15+ lines)
-  - Simplified change detection to use hooks' built-in hasChanges
-  - Better separation of concerns with specialized hooks
-
-### Stream B: Component Simplification
-
-- [x] Extract render functions from QuotesList
-  - Success criteria: Main render < 100 lines, cognitive complexity < 10
-  - Can start: Immediately
-  - Estimated complexity: MEDIUM
-  - Files: Refactor `src/app/components/quotes/QuotesList.tsx`
-  - Pattern: Extract `renderContent()`, `renderItem()`, `renderFilters()` functions
-
-  ### Execution Log
-  - **Started**: 2025-08-19 (using Opus model)
-  - **Completed**: 2025-08-19
-  - **Complexity Assessment**: MEDIUM - Large render with nested conditionals
-
-  ### Context Discovery
-  - Current lines: 281 total, 147 in main render
-  - Sections to extract: Column headers, empty state, quote items
-  - Patterns: Conditional rendering, search highlighting, sort indicators
-
-  ### Implementation
-  - [11:35] Analyzing component structure and identifying extraction points
-  - [11:36] Extracted 5 render functions: renderColumnHeader, renderColumnHeaders, renderEmptyState, renderQuoteItem, renderQuotesList
-  - [11:37] All 264 tests passing, no regressions
-
-  ### Results
-  - **Main render reduction**: 147 lines → 6 lines (96% reduction!)
-  - **Total lines**: 283 (slight increase due to function declarations)
-  - **Cognitive complexity**: Significantly reduced with clear separation of concerns
-  - **Code quality**: Improved readability and maintainability
-
-  ### Key Improvements
-  - Extracted column header rendering with sort logic
-  - Separated empty state UI into dedicated function
-  - Isolated quote item rendering with highlighting logic
-  - Clear function names describing their purpose
-  - Preserved all functionality and TypeScript types
-
-### Stream C: State Management Consolidation
-
-- [x] Remove all TanStack Query references
-  - Success criteria: No imports or mentions of @tanstack/react-query
-  - Can start: Immediately
+- [ ] **9. Remove dropped status handling from ReadingsList component**
+  - Success criteria: No "Dropped" badges rendered, no dropped status logic in component
+  - Dependencies: Data layer updated (Task 5)
   - Estimated complexity: SIMPLE
-  - Files: Check all components and remove dead imports
+  - Can start: After Task 5
+  - Files: `src/app/components/readings/ReadingsList.tsx:370-374`
 
-  ### Execution Log
-  - **Started**: 2025-08-19 (using Opus model)
-  - **Completed**: 2025-08-19
-  - **Complexity Assessment**: SIMPLE - Cleanup task
+- [ ] **10. Add audiobook hover indicator to ReadingCard component**
+  - Success criteria: Audiobook readings show headphone icon on hover, smooth CSS transitions, accessible
+  - Dependencies: Type definitions updated (Task 2)
+  - Estimated complexity: COMPLEX
+  - Can start: After Task 2
+  - Files: `src/app/components/readings/ReadingCard.tsx:88-227`
 
-  ### Context Discovery
-  - No TanStack Query imports found in source code
-  - Package already removed from dependencies (in removedDependencies section)
-  - Draft layout file with stale comment found: `src/app/layout.tsx.draft`
-  - Old planning docs in docs/ still mention TanStack Query
-
-  ### Implementation
-  - [Time] Searched for all TanStack Query references
-  - [Time] Verified no imports in src/ directory
-  - [Time] Confirmed packages already removed from package.json
-  - [Time] Removed stale draft file: `src/app/layout.tsx.draft`
-
-  ### Files Removed
-  - `src/app/layout.tsx.draft` - Outdated draft with TanStack Query comment
-
-  ### Key Findings
-  - TanStack Query already fully removed from codebase
-  - Package.json documents removal in "removedDependencies" section
-  - ARCHITECTURE.md confirms removal as completed (✅ REMOVED)
-  - Old state management docs in docs/ are historical artifacts
-  - No actual cleanup needed in source code
-
-- [x] Migrate theme from Context to Zustand
-  - Success criteria: Theme state in UIStore, Context removed
-  - Can start: Immediately
-  - Estimated complexity: MEDIUM
-  - Files: Update `src/store/ui.ts`, remove from `providers.tsx`
-
-  ### Execution Log
-  - **Started**: 2025-08-19 (using Opus model)
-  - **Completed**: 2025-08-19
-  - **Complexity Assessment**: MEDIUM - State management migration across multiple files
-
-  ### Context Discovery
-  - ThemeContext: src/app/context/ThemeContext.tsx manages theme state with localStorage
-  - UIStore: src/store/ui.ts already exists with Zustand setup
-  - Components using theme: DarkModeToggle, layout.tsx, providers.tsx, test utilities
-  - Features to preserve: localStorage persistence, system preference detection, theme transition class
-
-  ### Implementation
-  - [Time] Updated UIStore to include theme state with persistence
-  - [Time] Created ThemeInitializer component for initialization
-  - [Time] Updated DarkModeToggle to use store instead of context
-  - [Time] Updated layout.tsx to use ThemeInitializer
-  - [Time] Updated test utilities and jest.setup.js for Zustand mocking
-  - [Time] Updated all components to import from store
-  - [Time] Fixed all test mocks to use new store
-
-  ### Files Modified
-  - `src/store/ui.ts` - Added theme state, persistence, and useTheme hook
-  - `src/app/components/ThemeInitializer.tsx` - Created for theme initialization
-  - `src/app/components/DarkModeToggle.tsx` - Updated import to use store
-  - `src/app/components/quotes/QuotesList.tsx` - Updated import
-  - `src/app/components/readings/ReadingCard.tsx` - Updated import
-  - `src/app/layout.tsx` - Removed ThemeProvider, added ThemeInitializer
-  - `jest.setup.js` - Updated mock from Context to Store
-  - `src/test-utils/index.tsx` - Removed ThemeProvider import
-  - `src/test-utils/a11y-helpers.tsx` - Updated to use store mock
-  - 3 test files - Updated mocks to use @/store/ui
-
-  ### Files Deleted
-  - `src/app/context/ThemeContext.tsx` - No longer needed
-  - `src/app/providers.tsx` - No longer needed
-
-  ### Results
-  - **Theme persistence**: ✅ Using Zustand persist middleware
-  - **System preference**: ✅ Handled in initializeTheme
-  - **Transition animation**: ✅ Preserved in toggleDarkMode
-  - **Tests**: All 217 tests passing
-  - **Single state solution**: ✅ Zustand only (Context removed)
-
-- [x] Ensure Zustand DevTools only in development
-  - Success criteria: DevTools not included in production bundle
-  - Dependencies: Theme migration complete
+- [ ] **11. Remove dropped status display from ReadingCard component**
+  - Success criteria: No "Paused" status shown, only reading/finished status indicators
+  - Dependencies: Type definitions updated (Task 2)
   - Estimated complexity: SIMPLE
-  - Files: Update `src/store/ui.ts` with environment check
+  - Can start: After Task 2
+  - Files: `src/app/components/readings/ReadingCard.tsx:22-26`
 
-  ### Execution Log
-  - **Started**: 2025-08-19 (using Opus model)
-  - **Completed**: 2025-08-19
-  - **Complexity Assessment**: SIMPLE - Already has localhost check
-
-  ### Implementation
-  - [Time] Refactored store to conditionally load devtools based on hostname
-  - [Time] Used dynamic require() to only load devtools in development
-  - [Time] Added ESLint suppressions for Node.js require in browser code
-
-  ### Results
-  - **Development**: DevTools enabled for localhost/127.0.0.1
-  - **Production**: DevTools code not included in bundle
-  - **Tests**: All 217 tests passing
-  - **Build**: Production build works without devtools import
-
-### Stream D: Production Cleanup
-
-- [x] Configure webpack to exclude demo pages from production
-  - Success criteria: responsive-examples not in production bundle
-  - Can start: Immediately
+- [ ] **12. Update static data generation to handle simplified schema**
+  - Success criteria: `generate-static-data.js` creates JSON without dropped filtering, build succeeds
+  - Dependencies: Data layer updated (Task 5)
   - Estimated complexity: SIMPLE
-  - Files: Update `next.config.ts` with webpack rules
-
-  ### Execution Log
-  - **Started**: 2025-08-18
-  - **Completed**: 2025-08-18
-  - **Complexity**: SIMPLE (turned out more complex than expected)
-
-  ### Files Modified
-  - `next.config.ts` - Added webpack rules with null-loader for Demo/Example components
-  - `src/app/responsive-examples/page.tsx` - Added development-only warning and noindex metadata
-  - `package.json` - Added null-loader as dev dependency
-
-  ### Implementation Approach
-  1. Added webpack configuration to use null-loader for *Demo.tsx and *Example.tsx files
-  2. Installed null-loader package for webpack bundling
-  3. Updated responsive-examples page with noindex robots meta
-
-  ### Results
-  - **Bundle Size**: Remained at 1.12 MB (no significant change)
-  - **Route Still Generated**: /responsive-examples still appears in build (102 KB)
-  - **Demo Components**: Small files (~18KB total), minimal impact
-
-  ### Key Learning
-  - With Next.js App Router and static export, pages are still generated even with webpack exclusions
-  - The null-loader approach replaces module content but doesn't prevent route generation
-  - For true exclusion, would need to physically move demo pages out of app directory
-  - The demo pages are relatively small and don't significantly impact bundle size
-
-- [x] Remove legacy component versions (.v1, .v2 files)
-  - Success criteria: No versioned component files exist
-  - Can start: Immediately
-  - Estimated complexity: SIMPLE
-  - Command: `find . -name "*.v1.*" -o -name "*.v2.*" | xargs rm`
-
-  ### Execution Log
-  - **Started**: 2025-08-19
-  - **Completed**: 2025-08-19
-  - **Complexity**: SIMPLE
-
-  ### Files Removed
-  - No source code legacy files found (already cleaned)
-  - Removed 3 webpack cache `.old` files from `.next/cache/webpack/`
-  - Removed 4 coverage report references to v1/v2 components
-
-  ### Key Finding
-  - No actual source code with .v1 or .v2 versions existed
-  - Only build artifacts and coverage reports contained legacy references
-  - Codebase already clean of versioned component files
-
-- [x] Clean up unused imports and dead code
-  - Success criteria: No unused imports, all tests pass
-  - Dependencies: Legacy components removed
-  - Estimated complexity: SIMPLE
-  - Command: `npm run lint --fix`
-
-  ### Execution Log
-  - **Started**: 2025-08-19 (using Opus model)
-  - **Completed**: 2025-08-19
-  - **Complexity Assessment**: SIMPLE - Linting cleanup
-
-  ### Context Discovery
-  - 12 ESLint warnings found, all in newly created hook files
-  - No unused imports in actual component code
-  - Warnings: unused test imports, unused variables, explicit any types
-
-  ### Implementation
-  - [Time] Ran `npm run lint -- --fix` to auto-fix issues
-  - [Time] Fixed remaining warnings manually:
-    - Removed unused `waitFor` import from useDebounce.test.ts
-    - Prefixed unused variables with underscore (per convention)
-    - Replaced `any` types with `unknown` for better type safety
-  - [Time] Verified all tests still pass (217 tests, 100% pass rate)
-
-  ### Files Modified
-  - `src/hooks/__tests__/useDebounce.test.ts` - Removed unused import
-  - `src/hooks/__tests__/useFormState.test.ts` - Prefixed unused variables
-  - `src/hooks/useDebounce.ts` - Fixed type annotations, prefixed unused args
-  - `src/hooks/useFormState.ts` - Replaced any with unknown
-  - `src/hooks/useSearchFilters.ts` - Prefixed unused parameter
-
-  ### Results
-  - **Before**: 12 ESLint warnings
-  - **After**: 0 warnings, 0 errors
-  - **Tests**: All 217 tests passing
-  - **Code quality**: Improved type safety with unknown vs any
+  - Can start: After Task 5
+  - Files: `scripts/generate-static-data.js:55-56`
 
 ## Testing & Validation
 
-- [x] Write unit tests for all new hooks
-  - Success criteria: 100% coverage for useDebounce, useFormState, useSearchFilters
-  - Dependencies: Hooks created
+### Unit Testing (After UI Implementation)
+
+- [ ] **13. Update ReadingCard component tests**
+  - Success criteria: Tests cover audiobook hover indicator, no dropped status tests, 90%+ coverage
+  - Dependencies: ReadingCard updated (Tasks 10, 11)
   - Estimated complexity: MEDIUM
-  - Files: `src/hooks/__tests__/*.test.ts`
-  - **Progress**: ✅ useDebounce (10 tests), ✅ useFormState (25 tests), ✅ useSearchFilters (29 tests)
-  - **Completed**: All hooks have comprehensive test coverage (64 total hook tests)
+  - Files: `src/app/components/readings/__tests__/ReadingCard.test.tsx`
 
-- [x] Verify bundle size reduction
-  - Success criteria: Bundle < 1MB (from 2MB baseline)
-  - Dependencies: All cleanup tasks complete
-  - Estimated complexity: SIMPLE
-  - Command: `npm run build && npm run analyze`
+- [ ] **14. Update ReadingsList component tests**
+  - Success criteria: Tests verify no dropped badges, reading/finished filtering works
+  - Dependencies: ReadingsList updated (Task 9)
+  - Estimated complexity: MEDIUM
+  - Files: `src/app/components/readings/__tests__/ReadingsList.test.tsx`
 
-  ### Execution Log
-  - **Started**: 2025-08-20
-  - **Completed**: 2025-08-20
-  - **Complexity**: SIMPLE - Running build analysis commands
+- [ ] **15. Create migration script tests**
+  - Success criteria: Tests verify backup creation, file deletion, error handling with mock filesystem
+  - Dependencies: Migration script created (Task 1)
+  - Estimated complexity: MEDIUM
+  - Files: `scripts/__tests__/migrate-reading-status.test.js`
 
-  ### Bundle Analysis Results
-  - **Total JavaScript**: 1.36 MB uncompressed
-  - **Gzipped Size**: 348 KB (0.34 MB) ✅
-  - **Largest chunks**:
-    - 592 chunk: 256 KB (likely readings page with map dependencies)
-    - Framework: 192 KB
-    - Application chunks: 192 KB each
-    - Polyfills: 128 KB
+### Integration Testing (After CLI & UI Implementation)
 
-  ### Comparison to Baseline
-  - **Previous baseline**: 1.12 MB (from earlier analysis)
-  - **Current**: 1.36 MB uncompressed
-  - **Network transfer (gzipped)**: 348 KB - well under 1MB target! ✅
+- [ ] **16. Test CLI audiobook workflow end-to-end**
+  - Success criteria: Can add audiobook reading via CLI, appears with hover indicator in UI
+  - Dependencies: CLI enhanced (Tasks 7, 8), UI updated (Task 10)
+  - Estimated complexity: MEDIUM
 
-  ### Key Findings
-  - Gzipped size (348 KB) meets the < 1MB target for network transfer
-  - Uncompressed size increased slightly (1.12 → 1.36 MB) due to new hooks
-  - Main optimization remaining: Lazy load map component (256 KB chunk)
-  - Polyfills could potentially be reduced for modern browsers
+- [ ] **17. Test hover interaction accessibility**
+  - Success criteria: Audiobook indicators accessible via keyboard focus, screen reader compatible, WCAG 2.1 compliant
+  - Dependencies: ReadingCard hover implemented (Task 10)
+  - Estimated complexity: COMPLEX
 
-  ### Success Criteria Met
-  - ✅ Bundle size for network transfer: 348 KB gzipped (< 1MB target)
-  - ✅ Reasonable uncompressed size: 1.36 MB
-  - ✅ Good code splitting: Largest route-specific chunk only 16 KB
+## Documentation & Cleanup
 
-- [ ] Validate security headers on deployed site
-  - Success criteria: A+ rating on securityheaders.com
-  - Dependencies: Security headers configured and deployed
-  - Estimated complexity: SIMPLE
-  - Test: Visit securityheaders.com with production URL
-
-## Documentation & Finalization
-
-- [x] Document security header configuration
-  - Success criteria: Clear instructions in deployment guide
-  - Dependencies: Security headers working
-  - Estimated complexity: SIMPLE
-  - Files: Create or update `docs/deployment.md`
-  - **Note**: Completed as part of security headers task (see Critical Path Items)
-
-- [x] Update contributing guide with ESLint suppression policy
-  - Success criteria: Clear guidelines on when/how to suppress
-  - Dependencies: Suppressions documented
-  - Estimated complexity: SIMPLE
-  - Files: Update `CONTRIBUTING.md`
-
-  ### Execution Log
-  - **Started**: 2025-08-19 (using Opus model)
-  - **Completed**: 2025-08-19
-  - **Complexity Assessment**: SIMPLE - Documentation update
-
-  ### Context Discovery
-  - CONTRIBUTING.md already comprehensive (531 lines)
-  - Has existing pre-commit hook policy against --no-verify
-  - Missing ESLint suppression guidelines
-  - Project maintains 9 suppressions, all documented
-
-  ### Implementation
-  - [Time] Added ESLint Suppression Policy section after Code Style
-  - [Time] Documented acceptable suppression scenarios
-  - [Time] Provided clear examples of good vs bad suppressions
-  - [Time] Listed common patterns and alternatives
-  - [Time] Added review process and current status
-
-  ### Content Added
-  - When suppressions are acceptable (4 categories)
-  - How to properly document suppressions with examples
-  - Common patterns to avoid suppressions
-  - Review process for maintaining <10 suppressions
-  - Current suppression audit status (9 total)
-
-  ### Key Guidelines
-  - Every suppression MUST have justification comment
-  - Prefer underscore prefix for unused variables
-  - Use `unknown` over `any` when possible
-  - Target: fewer than 10 suppressions total
-
-- [x] Document new hooks API and usage
-  - Success criteria: JSDoc comments and usage examples
-  - Dependencies: All hooks complete
-  - Estimated complexity: SIMPLE
-  - Files: Update hook files with comprehensive JSDoc
-  - **Note**: Completed as part of hook creation - all hooks have JSDoc with examples
-
-- [x] Final code review and cleanup
-  - Success criteria: No linting errors, < 10 suppressions, tests pass
+- [ ] **18. Update README with simplified reading status documentation**
+  - Success criteria: Documentation reflects two-state system, audiobook CLI commands explained
   - Dependencies: All implementation complete
   - Estimated complexity: SIMPLE
-  - Commands: `npm run lint`, `npm test`, `npm run typecheck`
 
-  ### Execution Log
-  - **Started**: 2025-08-20
-  - **Completed**: 2025-08-20
-  - **Complexity**: SIMPLE - Running validation commands
-
-  ### Validation Results
-  - **Linting**: ✅ No errors or warnings
-  - **TypeScript**: ✅ No type errors
-  - **Tests**: ✅ All 217 tests passing
-  - **ESLint Suppressions**: ✅ 5 suppressions (< 10 target)
-    - `.lintstagedrc.js`: 2 (Node.js CommonJS globals)
-    - `src/__mocks__/leaflet.ts`: 2 (Mock typing flexibility)
-    - `src/__mocks__/react-leaflet.tsx`: 1 (Mock typing)
-  - **Test Coverage**: ⚠️ 42.68% (below 80% target)
-
-  ### Key Findings
-  - All code quality metrics pass except test coverage
-  - ESLint suppressions well below limit (5 vs 10)
-  - All suppressions have proper justifications
-  - Main gaps in coverage: UI components, store, navigation utils
-
-  ### Success Criteria Assessment
-  - ✅ No linting errors
-  - ✅ < 10 suppressions (5 found)
-  - ✅ All tests pass (217/217)
-  - ⚠️ Coverage below target (42.68% vs 80%)
-
-## Success Metrics Checklist
-
-### Must Achieve:
-
-- [x] Security headers: A+ rating (configured, awaiting deployment test)
-- [x] Bundle size: < 1MB (✅ 348 KB gzipped, meets target!)
-- [x] ESLint suppressions: < 10 with documentation (5 suppressions, all documented)
-- [x] Component complexity: QuotesList < 10 cognitive complexity
-- [ ] Test coverage: > 80% (⚠️ Currently 42.68%)
-- [x] Single state solution: Zustand only (✅ Context removed, Zustand only)
-- [x] All tests passing (217 tests, 100% pass rate)
-
-### Performance Targets:
-
-- [ ] Lighthouse score: > 95
-  - Success criteria: Lighthouse performance score > 95
-  - Dependencies: Site deployed or proper local server setup
+- [ ] **19. Remove TODO.md reference to dropped status**
+  - Success criteria: No references to three-state system in project documentation
+  - Dependencies: All implementation complete
   - Estimated complexity: SIMPLE
-  - Commands: Run Lighthouse audit and optimize if needed
 
-  ### Execution Log
-  - **Started**: 2025-08-20
-  - **Status**: Blocked - Requires proper deployment or server setup
-  - **Notes**:
-    - Next.js static export needs proper static file server
-    - Local testing with `python3 -m http.server` or `npx serve` having issues
-    - Recommend testing against deployed site for accurate results
-    - Current optimizations already in place:
-      - Bundle size: 348 KB gzipped (excellent)
-      - Code splitting: Working properly
-      - Static generation: All pages pre-rendered
-      - Accessibility: Zero violations (tested)
+- [ ] **20. End-to-end workflow verification**
+  - Success criteria: Complete reading lifecycle works (add → audiobook flag → hover indicator → status update → file deletion)
+  - Dependencies: All tasks complete
+  - Estimated complexity: MEDIUM
 
-- [ ] Initial load time: < 2s
-- [x] Zero accessibility violations
-  - Success criteria: No accessibility violations in axe-core tests
-  - Dependencies: None
-  - Estimated complexity: SIMPLE
-  - Commands: Run accessibility tests and fix any violations
+## Performance & Security Validation
 
-  ### Execution Log
-  - **Started**: 2025-08-20
-  - **Completed**: 2025-08-20
-  - **Complexity**: SIMPLE - Running a11y tests and fixing violations
+- [ ] **Verify hover interactions maintain 60fps performance**
+  - Success criteria: CSS hover animations run smoothly, no JavaScript render blocking
+  - Dependencies: ReadingCard hover implemented (Task 10)
 
-  ### Context Discovery
-  - [10:00] Created comprehensive a11y test suite for main components
-  - [10:05] Found accessibility violations in QuotesList and ReadingsList:
-    - ARIA role="row" must be contained by proper parent (grid/table/treegrid)
-    - <ul> elements cannot have direct children with role="button"
+- [ ] **Confirm bundle size increase <5KB**
+  - Success criteria: Bundle analyzer shows minimal size impact from changes
+  - Dependencies: All UI changes complete
 
-  ### Violations Found
-  1. **QuotesList** (2 violations):
-     - `role="row"` on div needs parent with `role="grid"` or `role="table"`
-     - `<ul>` contains buttons directly instead of within `<li>` elements
-  2. **ReadingsList** (2 violations):
-     - Same ARIA parent/child role violations as QuotesList
-  3. **ReadingCard**: ✅ No violations
-  4. **ProjectCard**: ✅ No violations
-  5. **TypewriterQuotes**: ✅ No violations
-  6. **DarkModeToggle**: ✅ No violations (existing test)
-  7. **Map**: ✅ No violations (existing test)
-
-  ### Fix Implementation
-  - [10:10] Fixed ARIA role structure in both list components:
-    - Added `role="grid"` to parent of `role="row"` elements
-    - Wrapped all list items in proper `<li>` elements
-  - [10:15] Fixed test data to use correct prop names
-
-  ### Results
-  - **All accessibility tests passing**: 38 tests across 3 test suites
-  - **Files Modified**:
-    - `src/app/components/quotes/QuotesList.tsx` - Fixed ARIA roles and list structure
-    - `src/app/components/readings/ReadingsList.tsx` - Fixed ARIA roles and list structure
-    - `src/app/components/__tests__/AllComponents.a11y.test.tsx` - Created comprehensive test suite
-
-  ### Key Learnings
-  - ARIA roles have strict parent-child relationships that must be followed
-  - Lists (`<ul>`, `<ol>`) can only have `<li>`, `<script>`, or `<template>` as direct children
-  - Interactive elements inside lists must be wrapped in `<li>` elements
-  - Comprehensive a11y testing catches issues that visual testing might miss
+- [ ] **Validate reading list render time unchanged**
+  - Success criteria: Performance profiling shows no regression in component render time
+  - Dependencies: All data layer changes complete
 
 ## Future Enhancements (BACKLOG.md candidates)
 
-- [ ] Implement visual regression testing for components
-- [ ] Add Storybook for component documentation
-- [ ] Create component library with extracted patterns
-- [ ] Add performance monitoring with Web Vitals
-- [ ] Implement progressive web app features
-- [ ] Add E2E tests with Playwright
+- [ ] **Advanced Audiobook Metadata** - Narrator information, playback speed tracking
+- [ ] **Reading Progress Indicators** - Page/percentage completion in hover state
+- [ ] **Batch Status Operations** - CLI commands for bulk reading management
+- [ ] **Performance Optimization** - Lazy loading for large reading collections
+- [ ] **Enhanced Filtering** - Complex queries across reading metadata
+- [ ] **Integration Opportunities** - Goodreads import, audiobook platform sync
 
-## Notes
+---
 
-- Focus on 80/20 principle: These tasks deliver maximum value for a personal website
-- YAGNI applied: No new libraries unless proven need (React Hook Form, Radix UI avoided)
-- Existing infrastructure leveraged: FocusTrap, Zustand store already available
-- Security headers must be configured at hosting level due to static export
-- Bundle optimization is critical priority (2MB → <1MB target)
+## Summary
+
+**Total Tasks:** 20 (Critical: 6, Parallel: 6, Testing: 5, Cleanup: 3)
+**Estimated Duration:** 6-8 hours
+**Critical Dependencies:** Migration → Types → Data Layer → CLI/UI Implementation → Testing
+**Key Success Metrics:**
+
+- Zero dropped status references in codebase
+- Audiobook hover indicators work smoothly
+- All existing reading/finished functionality preserved
+- WCAG 2.1 accessibility compliance maintained
