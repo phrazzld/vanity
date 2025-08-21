@@ -58,7 +58,7 @@ describe('ReadingsList Component', () => {
       finishedDate: new Date().toISOString(),
       coverImageSrc: '/test-cover-1.jpg',
       thoughts: 'Great book',
-      dropped: false,
+      audiobook: false,
     },
     {
       id: 2,
@@ -68,7 +68,7 @@ describe('ReadingsList Component', () => {
       finishedDate: null,
       coverImageSrc: null,
       thoughts: 'Currently reading',
-      dropped: false,
+      audiobook: false,
     },
     {
       id: 3,
@@ -77,8 +77,8 @@ describe('ReadingsList Component', () => {
       author: 'Test Author 3',
       finishedDate: null,
       coverImageSrc: '/test-cover-3.jpg',
-      thoughts: 'Not my favorite',
-      dropped: true,
+      thoughts: 'Great audiobook',
+      audiobook: true,
     },
   ];
 
@@ -111,7 +111,7 @@ describe('ReadingsList Component', () => {
     expect(container.textContent).toContain('Test Author 3');
 
     // Check if status indicators are rendered
-    expect(container.textContent).toContain('Dropped');
+    expect(container.textContent).toContain('🎧 Audiobook');
     expect(container.textContent).toContain('Unfinished');
   });
 
