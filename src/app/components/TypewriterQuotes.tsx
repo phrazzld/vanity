@@ -256,7 +256,9 @@ export default function TypewriterQuotes() {
           }, ERASE_SPEED);
         } else {
           // Author is fully erased, begin erasing the quote
-          setPhase('erasingQuote');
+          timer = globalThis.setTimeout(() => {
+            setPhase('erasingQuote');
+          }, 0);
         }
         break;
 
@@ -268,9 +270,11 @@ export default function TypewriterQuotes() {
           }, ERASE_SPEED);
         } else {
           // Quote is fully erased, select a new random quote and start over
-          const nextIndex = Math.floor(Math.random() * quotes.length);
-          setQuoteIndex(nextIndex);
-          setPhase('typingQuote');
+          timer = globalThis.setTimeout(() => {
+            const nextIndex = Math.floor(Math.random() * quotes.length);
+            setQuoteIndex(nextIndex);
+            setPhase('typingQuote');
+          }, 0);
         }
         break;
     }

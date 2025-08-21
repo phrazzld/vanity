@@ -1,6 +1,12 @@
 # BACKLOG
 
-_Quality-first prioritization with effort estimates and measurable impact metrics._
+- [ ] remove "dropped" status / handling from readings -- either a book is being read or has been read
+- [ ] add "audiobook" flag for readings, visible in hover state
+- [ ] navbar should have the same width as page content
+- [ ] fonts should be redone, esp on readings page (headings are meh all around, fonts and overall design)
+- [ ] we should have a very simple, clean, fullwidth footer that links to email and github
+- [ ] light/dark mode toggle creates a sort of flicker of page content -- it should not
+- [ ] redesign projects section to be more single column, only refer to projects that are actually deployed and live
 
 ## Critical Priority (CRITICAL)
 
@@ -115,30 +121,3 @@ _Gordian cuts that challenge fundamental assumptions - consider for v2.0_
 - [x] **[GORDIAN] [COMPLETED]** ~~Eliminate database + admin → static JSON/Markdown files~~ | **✅ DONE in commit 08e6620**
 - [ ] **[GORDIAN]** Delete interactive map feature entirely | **Impact: Remove leaflet dependencies, 521-line places data**
 - [ ] **[GORDIAN]** Replace enterprise logging with dev-only console | **Impact: Remove Winston, correlation IDs, log rotation**
-
-## Grooming Summary [2025-08-16] - UPDATED
-
-### Post-Migration Reality Check
-
-- ✅ Database and admin system successfully removed (commit 08e6620)
-- ✅ Saved $228/year in hosting costs
-- ✅ Removed 2000+ lines of unnecessary complexity
-- ✅ Site now runs as pure static files with markdown content
-
-### Actual Priorities
-
-- **Performance**: 2MB bundle needs reduction to <1MB
-- **Security**: Missing CSP headers for public site
-- **Code Quality**: 59 lint suppressions hiding issues
-- **Features**: Smart content pipeline, PWA capabilities, visualization improvements
-
-### Quality Focus Metrics
-
-- Coverage targets: 25.66% current → 36% immediate → 85% goal
-- Bundle size: 2MB current → 1MB target
-- Quality gates: 10+ automation opportunities identified
-- Technical debt: Successfully removed database dependency
-
----
-
-_This backlog follows quality-first prioritization based on actual impact to the live site. Each item includes measurable success criteria and automation strategies to prevent regression._
