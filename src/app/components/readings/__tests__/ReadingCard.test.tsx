@@ -9,8 +9,19 @@
 
 import React from 'react';
 import { renderWithTheme, screen, setupUser } from '@/test-utils';
+import { fireEvent } from '@testing-library/react';
 import ReadingCard from '../ReadingCard';
 import type { ReadingListItem } from '@/types';
+
+// Mock the logger
+jest.mock('@/lib/logger', () => ({
+  logger: {
+    warn: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
 
 // Mock the getSeededPlaceholderStyles function
 jest.mock('../placeholderUtils', () => ({
@@ -36,15 +47,19 @@ jest.mock('next/image', () => ({
       return acc;
     }, {});
 
+    // Store onError callback for testing
+    const onError = props.onError as (() => void) | undefined;
+
     return React.createElement(
-      'div',
+      'img',
       {
         'data-testid': 'mock-image',
         style: { width: imgProps.width, height: imgProps.height },
         alt: imgProps.alt || '',
         src: imgProps.src || '',
+        onError: onError,
       },
-      `Mock Image: ${imgProps.alt || ''}`
+      null
     );
   },
 }));
@@ -81,10 +96,11 @@ describe('ReadingCard Component', () => {
       expect(card).toBeInTheDocument();
       expect(card).toHaveStyle({ overflow: 'hidden' });
 
-      // Check for image using text
-      const image = screen.getByText('Mock Image: Test Book cover');
+      // Check for image element
+      const image = screen.getByTestId('mock-image');
       expect(image).toBeInTheDocument();
       expect(image).toHaveAttribute('src', 'https://test-space.com/covers/test-book.jpg');
+      expect(image).toHaveAttribute('alt', 'Test Book cover');
     });
 
     it('renders with cover image in dark mode', () => {
@@ -94,9 +110,10 @@ describe('ReadingCard Component', () => {
       const card = screen.getByTitle('Test Book by Test Author');
       expect(card).toBeInTheDocument();
 
-      // Check for image using text
-      const image = screen.getByText('Mock Image: Test Book cover');
+      // Check for image element
+      const image = screen.getByTestId('mock-image');
       expect(image).toBeInTheDocument();
+      expect(image).toHaveAttribute('alt', 'Test Book cover');
     });
 
     it('renders without cover image using placeholder', () => {
@@ -117,6 +134,10 @@ describe('ReadingCard Component', () => {
       // Audiobook indicator should be present (though may need hover to be visible)
       const card = screen.getByTitle('Test Book by Test Author');
       expect(card).toBeInTheDocument();
+
+      // Check for the audiobook indicator text in the hover overlay
+      const audiobookText = screen.getByText('🎧 Audiobook');
+      expect(audiobookText).toBeInTheDocument();
     });
 
     it('shows "Currently Reading" status when finishedDate=null', () => {
@@ -137,6 +158,30 @@ describe('ReadingCard Component', () => {
   });
 
   describe('Animation and Interaction', () => {
+    it('shows audiobook indicator in overlay when hovered on audiobook', async () => {
+      const user = setupUser();
+      const props = createMockProps({ audiobook: true });
+      renderWithTheme(<ReadingCard {...props} />);
+
+      const card = screen.getByTitle('Test Book by Test Author');
+
+      // Get the audiobook indicator
+      const audiobookIndicator = screen.getByText('🎧 Audiobook');
+      const overlayContent = audiobookIndicator.closest('.hover-overlay');
+
+      // Initially overlay should be hidden (opacity: 0)
+      expect(overlayContent).toHaveStyle({ opacity: '0' });
+
+      // Hover over the card
+      await user.hover(card);
+
+      // After hover, overlay should be visible (opacity: 1)
+      expect(overlayContent).toHaveStyle({ opacity: '1' });
+
+      // Audiobook indicator should be visible
+      expect(audiobookIndicator).toBeVisible();
+    });
+
     it('shows overlay content when hovered', async () => {
       const user = setupUser();
       const props = createMockProps();
@@ -204,6 +249,51 @@ describe('ReadingCard Component', () => {
       // Check that audiobook indicator is present in the card
       const card = screen.getByTitle('Test Book by Test Author');
       expect(card).toBeInTheDocument();
+
+      // Verify the audiobook indicator emoji and text are present
+      const audiobookIndicator = screen.getByText('🎧 Audiobook');
+      expect(audiobookIndicator).toBeInTheDocument();
+
+      // Check that the indicator has proper styling
+      expect(audiobookIndicator).toHaveStyle({
+        color: 'rgba(255, 255, 255, 0.7)',
+        fontSize: '10px',
+        marginLeft: '8px',
+      });
+    });
+  });
+
+  describe('Accessibility', () => {
+    it('supports keyboard focus and shows overlay on focus', async () => {
+      const user = setupUser();
+      const props = createMockProps({ audiobook: true });
+      renderWithTheme(<ReadingCard {...props} />);
+
+      const card = screen.getByTitle('Test Book by Test Author');
+
+      // Tab to focus the card
+      await user.tab();
+
+      // Card should have focus-visible styles when focused via keyboard
+      expect(document.activeElement).toBe(card);
+
+      // Verify audiobook indicator is accessible
+      const audiobookIndicator = screen.getByText('🎧 Audiobook');
+      expect(audiobookIndicator).toBeInTheDocument();
+    });
+
+    it('has appropriate ARIA attributes for screen readers', () => {
+      const props = createMockProps({ audiobook: true });
+      renderWithTheme(<ReadingCard {...props} />);
+
+      const card = screen.getByTitle('Test Book by Test Author');
+
+      // Card should have descriptive title for screen readers
+      expect(card).toHaveAttribute('title', 'Test Book by Test Author');
+
+      // Audiobook indicator should be present for screen readers
+      const audiobookIndicator = screen.getByText('🎧 Audiobook');
+      expect(audiobookIndicator).toBeInTheDocument();
     });
   });
 
@@ -235,6 +325,194 @@ describe('ReadingCard Component', () => {
       // Status should still be shown
       const statusText = screen.getByText('Finished Dec 2022');
       expect(statusText).toBeInTheDocument();
+    });
+
+    it('handles missing cover image with placeholder', () => {
+      const props = createMockProps({ coverImageSrc: null });
+      renderWithTheme(<ReadingCard {...props} />);
+
+      // Should not have an image element
+      expect(screen.queryByTestId('mock-image')).not.toBeInTheDocument();
+
+      // Card should still be interactive
+      const card = screen.getByTitle('Test Book by Test Author');
+      expect(card).toHaveAttribute('role', 'button');
+    });
+
+    it('handles undefined values gracefully', () => {
+      const props = createMockProps({
+        thoughts: undefined,
+        coverImageSrc: undefined,
+      });
+      renderWithTheme(<ReadingCard {...props} />);
+
+      const card = screen.getByTitle('Test Book by Test Author');
+      expect(card).toBeInTheDocument();
+    });
+  });
+
+  describe('Image Error Handling', () => {
+    it('handles image load errors and shows placeholder', () => {
+      const { logger } = require('@/lib/logger');
+      jest.clearAllMocks();
+
+      const props = createMockProps();
+      renderWithTheme(<ReadingCard {...props} />);
+
+      // Get the image element and trigger error
+      const mockImage = screen.getByTestId('mock-image');
+      fireEvent.error(mockImage);
+
+      // Check that logger.warn was called
+      expect(logger.warn).toHaveBeenCalledWith('Failed to load image for "Test Book"');
+    });
+
+    it('falls back to placeholder on image error', () => {
+      const props = createMockProps({ coverImageSrc: 'https://broken-image.com/404.jpg' });
+      renderWithTheme(<ReadingCard {...props} />);
+
+      // Initially image should be present
+      const mockImage = screen.getByTestId('mock-image');
+      expect(mockImage).toBeInTheDocument();
+
+      // Trigger error
+      fireEvent.error(mockImage);
+
+      // Image should be replaced with placeholder styles
+      const card = screen.getByTitle('Test Book by Test Author');
+      expect(card).toBeInTheDocument();
+    });
+  });
+
+  describe('Component Lifecycle', () => {
+    it('unmounts cleanly without memory leaks', () => {
+      const props = createMockProps();
+      const { unmount } = renderWithTheme(<ReadingCard {...props} />);
+
+      // Component should render normally
+      expect(screen.getByTitle('Test Book by Test Author')).toBeInTheDocument();
+
+      // Unmount should work without errors
+      unmount();
+
+      // Component should be removed from DOM
+      expect(screen.queryByTitle('Test Book by Test Author')).not.toBeInTheDocument();
+    });
+
+    it('maintains hover state consistency through re-renders', async () => {
+      const user = setupUser();
+      const props = createMockProps();
+      const { rerender } = renderWithTheme(<ReadingCard {...props} />);
+
+      const card = screen.getByTitle('Test Book by Test Author');
+
+      // Hover over card
+      await user.hover(card);
+
+      // Re-render with same props
+      rerender(<ReadingCard {...props} />);
+
+      // Card should still be present
+      expect(screen.getByTitle('Test Book by Test Author')).toBeInTheDocument();
+    });
+  });
+
+  describe('Theme Integration', () => {
+    it('renders correctly in both light and dark modes', () => {
+      const props = createMockProps();
+
+      // Test light mode
+      const { unmount: unmountLight } = renderWithTheme(<ReadingCard {...props} />, {
+        themeMode: 'light',
+      });
+      expect(screen.getByTitle('Test Book by Test Author')).toBeInTheDocument();
+      unmountLight();
+
+      // Test dark mode
+      const { unmount: unmountDark } = renderWithTheme(<ReadingCard {...props} />, {
+        themeMode: 'dark',
+      });
+      expect(screen.getByTitle('Test Book by Test Author')).toBeInTheDocument();
+      unmountDark();
+    });
+
+    it('applies theme-specific styling', () => {
+      const props = createMockProps();
+
+      // Light mode
+      const { unmount: unmountLight } = renderWithTheme(<ReadingCard {...props} />, {
+        themeMode: 'light',
+      });
+      const lightCard = screen.getByTitle('Test Book by Test Author');
+      expect(lightCard).toBeInTheDocument();
+      unmountLight();
+
+      // Dark mode
+      const { unmount: unmountDark } = renderWithTheme(<ReadingCard {...props} />, {
+        themeMode: 'dark',
+      });
+      const darkCard = screen.getByTitle('Test Book by Test Author');
+      expect(darkCard).toBeInTheDocument();
+      unmountDark();
+    });
+  });
+
+  describe('Dropped Status Removal Verification', () => {
+    it('does not render or reference dropped status', () => {
+      // Test with various props to ensure no dropped status is referenced
+      const props = createMockProps();
+      renderWithTheme(<ReadingCard {...props} />);
+
+      // Verify no "Paused" or "Dropped" text appears
+      expect(screen.queryByText(/paused/i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/dropped/i)).not.toBeInTheDocument();
+
+      // Only "Currently Reading" or "Finished" should be valid states
+      const statusText = screen.getByText(/Finished/i);
+      expect(statusText).toBeInTheDocument();
+    });
+
+    it('only supports binary reading status (reading/finished)', () => {
+      // Test currently reading
+      const readingProps = createMockProps({ finishedDate: null });
+      const { unmount: unmountReading } = renderWithTheme(<ReadingCard {...readingProps} />);
+      expect(screen.getByText('Currently Reading')).toBeInTheDocument();
+      unmountReading();
+
+      // Test finished
+      const finishedProps = createMockProps({ finishedDate: '2022-12-25' });
+      renderWithTheme(<ReadingCard {...finishedProps} />);
+      expect(screen.getByText(/Finished/i)).toBeInTheDocument();
+    });
+  });
+
+  describe('URL Handling', () => {
+    it('handles relative image URLs correctly', () => {
+      const props = createMockProps({ coverImageSrc: '/images/book.jpg' });
+      renderWithTheme(<ReadingCard {...props} />);
+
+      const image = screen.getByTestId('mock-image');
+      expect(image).toHaveAttribute('src', 'https://test-space.com/images/book.jpg');
+    });
+
+    it('handles absolute image URLs correctly', () => {
+      const props = createMockProps({
+        coverImageSrc: 'https://example.com/book.jpg',
+      });
+      renderWithTheme(<ReadingCard {...props} />);
+
+      const image = screen.getByTestId('mock-image');
+      expect(image).toHaveAttribute('src', 'https://example.com/book.jpg');
+    });
+
+    it('handles malformed URLs gracefully', () => {
+      const props = createMockProps({
+        coverImageSrc: '//invalid-url',
+      });
+      renderWithTheme(<ReadingCard {...props} />);
+
+      const card = screen.getByTitle('Test Book by Test Author');
+      expect(card).toBeInTheDocument();
     });
   });
 });

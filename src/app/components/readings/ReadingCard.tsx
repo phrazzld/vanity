@@ -95,7 +95,12 @@ export default function ReadingCard({
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsHovered(true)}
+      onBlur={() => setIsHovered(false)}
       title={`${title} by ${author}`}
+      tabIndex={0}
+      role="button"
+      aria-label={`${title} by ${author}${audiobook ? ', Audiobook' : ''}${isCurrentlyReading ? ', Currently Reading' : finishedDate ? `, Finished ${formatDate(finishedDate)}` : ''}`}
     >
       {/* Book cover image */}
       <div

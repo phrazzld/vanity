@@ -48,6 +48,10 @@ export interface ConfirmPrompt {
   confirmed: boolean;
 }
 
+export interface ConfirmDeletePrompt {
+  confirmDelete: boolean;
+}
+
 // Project command types
 export interface BasicProjectInfo {
   title: string;

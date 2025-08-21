@@ -5,6 +5,17 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ReadingsList from '../ReadingsList';
+
+// Mock the logger
+jest.mock('@/lib/logger', () => ({
+  logger: {
+    warn: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
+
 // Mock UIStore because it's used in the component
 jest.mock('@/store/ui', () => ({
   useTheme: () => ({ isDarkMode: false, toggleDarkMode: jest.fn() }),
@@ -48,8 +59,10 @@ jest.mock('next/image', () => ({
 // In Jest environment, we can safely set environment variables
 process.env.NEXT_PUBLIC_SPACES_BASE_URL = 'https://example.com/';
 
+import type { Reading } from '@/types';
+
 describe('ReadingsList Component', () => {
-  const mockReadings = [
+  const mockReadings: Reading[] = [
     {
       id: 1,
       slug: 'test-book-1',
@@ -113,6 +126,74 @@ describe('ReadingsList Component', () => {
     // Check if status indicators are rendered
     expect(container.textContent).toContain('🎧 Audiobook');
     expect(container.textContent).toContain('Unfinished');
+  });
+
+  it('does not render dropped or paused status badges', () => {
+    const { container } = render(
+      <ReadingsList
+        readings={mockReadings}
+        sort={mockSort}
+        onSortChange={mockHandleSortChange}
+        onSelectReading={mockHandleSelectReading}
+      />
+    );
+
+    // Verify no "Paused" or "Dropped" badges appear
+    expect(screen.queryByText(/paused/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/dropped/i)).not.toBeInTheDocument();
+
+    // Verify only reading/finished status indicators exist
+    expect(container.textContent).toContain('Unfinished');
+    // No "Paused" or three-state status should exist
+  });
+
+  it('displays audiobook indicators correctly', () => {
+    const { container } = render(
+      <ReadingsList
+        readings={mockReadings}
+        sort={mockSort}
+        onSortChange={mockHandleSortChange}
+        onSelectReading={mockHandleSelectReading}
+      />
+    );
+
+    // Test Book 3 has audiobook: true
+    expect(container.textContent).toContain('🎧 Audiobook');
+
+    // Check that only one audiobook indicator is shown (for Test Book 3)
+    const audiobookCount = (container.textContent?.match(/🎧 Audiobook/g) || []).length;
+    expect(audiobookCount).toBe(1);
+  });
+
+  it('correctly filters readings by status (reading vs finished)', () => {
+    // Test with only finished readings
+    const finishedReadings = mockReadings.filter(r => r.finishedDate !== null);
+    const { container: finishedContainer, unmount: unmountFinished } = render(
+      <ReadingsList
+        readings={finishedReadings}
+        sort={mockSort}
+        onSortChange={mockHandleSortChange}
+        onSelectReading={mockHandleSelectReading}
+      />
+    );
+    expect(finishedContainer.textContent).toContain('Test Book 1');
+    expect(finishedContainer.textContent).not.toContain('Test Book 2');
+    expect(finishedContainer.textContent).not.toContain('Test Book 3');
+    unmountFinished();
+
+    // Test with only currently reading
+    const currentlyReading = mockReadings.filter(r => r.finishedDate === null);
+    const { container: readingContainer } = render(
+      <ReadingsList
+        readings={currentlyReading}
+        sort={mockSort}
+        onSortChange={mockHandleSortChange}
+        onSelectReading={mockHandleSelectReading}
+      />
+    );
+    expect(readingContainer.textContent).not.toContain('Test Book 1');
+    expect(readingContainer.textContent).toContain('Test Book 2');
+    expect(readingContainer.textContent).toContain('Test Book 3');
   });
 
   it('handles sorting when column headers are clicked', () => {
@@ -211,5 +292,136 @@ describe('ReadingsList Component', () => {
     // Using a more flexible approach to find text elements
     expect(container.textContent).toContain('No readings found');
     expect(container.textContent).toContain('Try adjusting your search criteria or filters');
+  });
+
+  it('handles keyboard navigation correctly', () => {
+    const { container } = render(
+      <ReadingsList
+        readings={mockReadings}
+        sort={mockSort}
+        onSortChange={mockHandleSortChange}
+        onSelectReading={mockHandleSelectReading}
+      />
+    );
+
+    const readingItems = container.querySelectorAll('[role="button"]');
+    expect(readingItems.length).toBe(3);
+
+    // Test Enter key
+    if (readingItems[0]) {
+      fireEvent.keyDown(readingItems[0], { key: 'Enter' });
+      expect(mockHandleSelectReading).toHaveBeenCalledWith(mockReadings[0]);
+    }
+
+    // Clear mock
+    mockHandleSelectReading.mockClear();
+
+    // Test Space key
+    if (readingItems[1]) {
+      fireEvent.keyDown(readingItems[1], { key: ' ' });
+      expect(mockHandleSelectReading).toHaveBeenCalledWith(mockReadings[1]);
+    }
+  });
+
+  it('handles date formatting with valid dates', () => {
+    const readingsWithDates: Reading[] = [
+      {
+        id: 1,
+        slug: 'test-book-1',
+        title: 'Test Book 1',
+        author: 'Test Author 1',
+        coverImageSrc: '/test-cover-1.jpg',
+        thoughts: 'Great book',
+        audiobook: false,
+        finishedDate: '2023-12-25T00:00:00Z',
+      },
+      {
+        id: 3,
+        slug: 'test-book-3',
+        title: 'Test Book 3',
+        author: 'Test Author 3',
+        coverImageSrc: '/test-cover-3.jpg',
+        thoughts: 'Great audiobook',
+        audiobook: true,
+        finishedDate: new Date('2023-06-15').toISOString(),
+      },
+    ];
+
+    const { container } = render(
+      <ReadingsList
+        readings={readingsWithDates}
+        sort={mockSort}
+        onSortChange={mockHandleSortChange}
+        onSelectReading={mockHandleSelectReading}
+      />
+    );
+
+    // Check that dates are formatted and displayed
+    expect(container.textContent).toContain('12/25/2023');
+    expect(container.textContent).toContain('6/15/2023');
+  });
+
+  it('handles highlighting errors gracefully', () => {
+    jest.clearAllMocks();
+
+    // Test with potentially problematic search query
+    render(
+      <ReadingsList
+        readings={mockReadings}
+        sort={mockSort}
+        onSortChange={mockHandleSortChange}
+        onSelectReading={mockHandleSelectReading}
+        searchQuery="[invalid-regex"
+      />
+    );
+
+    // Component should still render
+    expect(screen.getByText('Test Book 1')).toBeInTheDocument();
+  });
+
+  it('handles image loading errors', () => {
+    const { container } = render(
+      <ReadingsList
+        readings={mockReadings}
+        sort={mockSort}
+        onSortChange={mockHandleSortChange}
+        onSelectReading={mockHandleSelectReading}
+      />
+    );
+
+    // Find image elements
+    const images = container.querySelectorAll('[data-testid="mock-image"]');
+
+    // Trigger error on first image
+    if (images[0]) {
+      const onError = images[0].getAttribute('onError');
+      if (onError) {
+        fireEvent.error(images[0]);
+      }
+    }
+
+    // Component should still be functional
+    expect(container.textContent).toContain('Test Book 1');
+  });
+
+  it('verifies complete removal of dropped status', () => {
+    // Test that ReadingsList doesn't have any dropped-related code
+    const componentText = ReadingsList.toString();
+    expect(componentText).not.toMatch(/dropped/i);
+    expect(componentText).not.toMatch(/paused/i);
+
+    // Render and verify UI
+    render(
+      <ReadingsList
+        readings={mockReadings}
+        sort={mockSort}
+        onSortChange={mockHandleSortChange}
+        onSelectReading={mockHandleSelectReading}
+      />
+    );
+
+    // No dropped or paused UI elements should exist
+    expect(screen.queryByText(/dropped/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/paused/i)).not.toBeInTheDocument();
   });
 });

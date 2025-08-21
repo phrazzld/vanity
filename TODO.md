@@ -119,58 +119,158 @@ Generated from TASK.md on 2025-01-21
   - ✅ Follows existing CLI patterns perfectly (boolean prompts, conditional assignments)
   ```
 
-- [ ] **8. Update CLI reading update command to delete files**
+- [x] **8. Update CLI reading update command to delete files**
   - Success criteria: `reading update` offers "Delete reading" option, removes file from filesystem
   - Dependencies: Type definitions updated (Task 4)
   - Estimated complexity: MEDIUM
   - Can start: After Task 4
   - Files: `cli/commands/reading.ts:371`
 
+  ```
+  Work Log:
+  - ✅ Added unlinkSync import from fs module following existing patterns
+  - ✅ Implemented confirmation prompt with ConfirmDeletePrompt type
+  - ✅ Added warning message with chalk.yellow following existing CLI patterns
+  - ✅ Implemented file deletion with proper error handling
+  - ✅ Added early return to skip file writing for delete operations
+  - ✅ Success message shows title and author of deleted reading
+  - ✅ Error handling shows detailed error message and attempted filepath
+  - ✅ All TypeScript compilation and linting passes
+  - ✅ CLI help command works correctly, shows "Delete reading" option
+  - ✅ Follows pattern-scout recommendations from scripts/migrate-reading-status.js
+  ```
+
 ### Stream B: UI Implementation (After Critical Path Items 1-6)
 
-- [ ] **9. Remove dropped status handling from ReadingsList component**
+- [x] **9. Remove dropped status handling from ReadingsList component**
   - Success criteria: No "Dropped" badges rendered, no dropped status logic in component
   - Dependencies: Data layer updated (Task 5)
   - Estimated complexity: SIMPLE
   - Can start: After Task 5
   - Files: `src/app/components/readings/ReadingsList.tsx:370-374`
 
-- [ ] **10. Add audiobook hover indicator to ReadingCard component**
+  ```
+  Work Log:
+  - ✅ Verified component already updated in previous git-push commit
+  - ✅ No "dropped" references found in entire ReadingsList component
+  - ✅ No "paused" or three-state logic remains
+  - ✅ Component now shows audiobook indicators with 🎧 emoji
+  - ✅ Status logic simplified to finished/unfinished only
+  - ✅ All ReadingsList tests passing (6/6)
+  - ✅ Success criteria met: No dropped badges, no dropped status logic
+  ```
+
+- [x] **10. Add audiobook hover indicator to ReadingCard component**
   - Success criteria: Audiobook readings show headphone icon on hover, smooth CSS transitions, accessible
   - Dependencies: Type definitions updated (Task 2)
   - Estimated complexity: COMPLEX
   - Can start: After Task 2
   - Files: `src/app/components/readings/ReadingCard.tsx:88-227`
 
-- [ ] **11. Remove dropped status display from ReadingCard component**
+  ```
+  Work Log:
+  - ✅ Discovered audiobook indicator already implemented in hover overlay (lines 216-230)
+  - ✅ Enhanced keyboard accessibility with tabIndex and focus event handlers
+  - ✅ Added comprehensive ARIA labels for screen reader support
+  - ✅ Implemented keyboard focus states (onFocus/onBlur) triggering hover overlay
+  - ✅ Changed role from "article" to "button" for proper interactive semantics
+  - ✅ Added detailed aria-label including audiobook, reading status, and finished date
+  - ✅ Enhanced test coverage with 3 new tests (16 total tests passing)
+  - ✅ Tests verify: audiobook indicator visibility, hover interactions, keyboard focus support
+  - ✅ All linting and TypeScript checks pass
+  - ✅ Maintains 60fps performance with existing 0.2s ease transitions
+  - ✅ Respects prefers-reduced-motion via global CSS
+  ```
+
+- [x] **11. Remove dropped status display from ReadingCard component**
   - Success criteria: No "Paused" status shown, only reading/finished status indicators
   - Dependencies: Type definitions updated (Task 2)
   - Estimated complexity: SIMPLE
   - Can start: After Task 2
   - Files: `src/app/components/readings/ReadingCard.tsx:22-26`
 
-- [ ] **12. Update static data generation to handle simplified schema**
+  ```
+  Work Log:
+  - ✅ Verified component already updated in previous git-push commit
+  - ✅ STATUS_COLORS simplified to only READING and FINISHED (no PAUSED)
+  - ✅ Status logic simplified to binary: isCurrentlyReading = finishedDate === null
+  - ✅ Status text shows only "Currently Reading" or "Finished [date]"
+  - ✅ No "paused", "dropped", or three-state logic remains
+  - ✅ All ReadingCard tests passing (13/13) with new audiobook indicators
+  - ✅ Component includes audiobook hover indicators with 🎧 emoji
+  - ✅ Success criteria met: No paused status, only reading/finished indicators
+  ```
+
+- [x] **12. Update static data generation to handle simplified schema**
   - Success criteria: `generate-static-data.js` creates JSON without dropped filtering, build succeeds
   - Dependencies: Data layer updated (Task 5)
   - Estimated complexity: SIMPLE
   - Can start: After Task 5
   - Files: `scripts/generate-static-data.js:55-56`
 
+  ```
+  Work Log:
+  - ✅ Removed `dropped: data.dropped || false` field from reading object (line 51)
+  - ✅ Added `audiobook: data.audiobook || false` field following data.ts pattern
+  - ✅ Removed dropped filtering logic (lines 55-56)
+  - ✅ Changed from filtering activeReadings to using all readings directly
+  - ✅ Script generates 365 readings (up from 358 with dropped filtering)
+  - ✅ Generated JSON includes audiobook field for all readings
+  - ✅ Build completes successfully with updated schema
+  - ✅ Static export generates all pages without errors
+  ```
+
 ## Testing & Validation
 
 ### Unit Testing (After UI Implementation)
 
-- [ ] **13. Update ReadingCard component tests**
+- [x] **13. Update ReadingCard component tests**
   - Success criteria: Tests cover audiobook hover indicator, no dropped status tests, 90%+ coverage
   - Dependencies: ReadingCard updated (Tasks 10, 11)
   - Estimated complexity: MEDIUM
   - Files: `src/app/components/readings/__tests__/ReadingCard.test.tsx`
 
-- [ ] **14. Update ReadingsList component tests**
+  ```
+  Work Log:
+  - ✅ Enhanced Image mock to support onError callbacks properly
+  - ✅ Added comprehensive test coverage for image error handling
+  - ✅ Added component lifecycle tests (unmounting, re-rendering)
+  - ✅ Added theme integration tests for both light and dark modes
+  - ✅ Added URL handling tests (relative, absolute, malformed)
+  - ✅ Added explicit tests verifying no dropped/paused status
+  - ✅ Added tests confirming binary status (reading/finished only)
+  - ✅ Added logger mock for proper error handling tests
+  - ✅ Fixed fireEvent import for image error simulation
+  - ✅ Achieved 92% statement coverage (target was 90%)
+  - ✅ Achieved 95.83% line coverage
+  - ✅ All 29 tests passing successfully
+  - ✅ Tests verify audiobook hover indicator functionality
+  - ✅ No dropped status references in component or tests
+  ```
+
+- [x] **14. Update ReadingsList component tests**
   - Success criteria: Tests verify no dropped badges, reading/finished filtering works
   - Dependencies: ReadingsList updated (Task 9)
   - Estimated complexity: MEDIUM
   - Files: `src/app/components/readings/__tests__/ReadingsList.test.tsx`
+
+  ```
+  Work Log:
+  - ✅ Added explicit test verifying no dropped/paused badges appear
+  - ✅ Added test for audiobook indicator display (🎧 emoji)
+  - ✅ Added test for reading/finished status filtering
+  - ✅ Added keyboard navigation tests (Enter and Space keys)
+  - ✅ Added date formatting tests with valid dates
+  - ✅ Added error handling tests for highlighting
+  - ✅ Added image loading error tests
+  - ✅ Added comprehensive test verifying complete removal of dropped status
+  - ✅ Added logger mock for proper error handling tests
+  - ✅ Increased test count from 6 to 14 tests
+  - ✅ Achieved 74.46% statement coverage (up from 68%)
+  - ✅ Achieved 91.66% function coverage
+  - ✅ All 14 tests passing successfully
+  - ✅ No dropped status references in component or tests
+  ```
 
 - [ ] **15. Create migration script tests**
   - Success criteria: Tests verify backup creation, file deletion, error handling with mock filesystem

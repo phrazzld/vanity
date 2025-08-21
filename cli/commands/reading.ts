@@ -1,6 +1,6 @@
 import { writeFile, mkdir, readFile } from 'fs/promises';
 import { join } from 'path';
-import { existsSync, statSync, readdirSync } from 'fs';
+import { existsSync, statSync, readdirSync, unlinkSync } from 'fs';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import slugify from 'slugify';
@@ -21,6 +21,7 @@ import type {
   ContinueWithoutImagePrompt,
   ReadingActionPrompt,
   ReadingFrontmatter,
+  ConfirmDeletePrompt,
 } from '../types';
 
 const READINGS_DIR = join(process.cwd(), 'content', 'readings');
@@ -622,11 +623,40 @@ ${currentThoughts}`;
         console.log(chalk.green('✓ Updated thoughts'));
       }
     } else if (updateAction === 'delete') {
-      // TODO: Task 8 will implement file deletion functionality
-      // Temporarily disabled to fix TypeScript compilation
-      console.log(
-        chalk.yellow('⚠️ Delete functionality temporarily disabled - will be implemented in Task 8')
-      );
+      // Confirm deletion before proceeding
+      const { confirmDelete } = await inquirer.prompt<ConfirmDeletePrompt>([
+        {
+          type: 'confirm',
+          name: 'confirmDelete',
+          message: chalk.yellow(
+            `⚠️  Are you sure you want to delete "${currentReading.title}"? This cannot be undone.`
+          ),
+          default: false,
+        },
+      ]);
+
+      if (!confirmDelete) {
+        console.log(chalk.yellow('✖ Deletion cancelled.'));
+        return;
+      }
+
+      // Delete the file
+      try {
+        unlinkSync(filepath);
+        console.log(
+          chalk.green(
+            `\n✅ Successfully deleted "${currentReading.title}" by ${currentReading.author}`
+          )
+        );
+        return; // Exit early, don't write file
+      } catch (error) {
+        console.error(
+          chalk.red('✖ Failed to delete file:'),
+          error instanceof Error ? error.message : String(error)
+        );
+        console.log(chalk.gray(`  Attempted to delete: ${filepath}`));
+        process.exit(1);
+      }
     }
 
     // Write updated file
