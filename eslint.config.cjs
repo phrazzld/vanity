@@ -169,6 +169,7 @@ module.exports = [
       'src/test-utils/*.{js,jsx,ts,tsx}',
       'src/**/__tests__/*.{js,jsx,ts,tsx}',
       'src/**/__tests__/**/*.{js,jsx,ts,tsx}',
+      'scripts/**/__tests__/*.{js,jsx,ts,tsx}',
       'tests/**/*.{js,jsx,ts,tsx}',
       'jest.setup.js',
     ],

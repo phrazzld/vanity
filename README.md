@@ -27,7 +27,7 @@ A personal website built with Next.js, featuring a collection of readings, trave
 
 ## Features
 
-- **Readings Collection**: Showcase books and readings with cover images, organized by year and category
+- **Readings Collection**: Showcase books and readings with cover images, organized by year with audiobook indicators and simplified reading/finished status
 - **Travel Map**: Interactive map using Leaflet to display travel locations with custom markers and popups
 - **Quote Display**: Animated typewriter effect for displaying quotes with randomization
 - **Content Management**: Custom CLI tools for adding and managing readings and quotes via markdown files
@@ -134,16 +134,23 @@ The quote text goes here.
 # Add a new reading (interactive prompts)
 npm run vanity -- reading add
 
+# Update a reading (mark finished, add thoughts, delete)
+npm run vanity -- reading update
+
 # List recent readings
 npm run vanity -- reading list
+npm run vanity -- reading list -n 5  # Show 5 readings
 ```
 
 Readings support:
 
-- Cover image URLs or local files (auto-optimized to WebP)
-- Finish status and rating
-- Optional thoughts via $EDITOR
-- Saved as `/content/readings/[slug].md`
+- **Two-state system**: Currently reading or finished (simplified from previous three-state system)
+- **Audiobook support**: Mark readings as audiobooks with 🎧 indicators in the UI
+- **Cover images**: URLs or local files (auto-optimized to WebP at 400x600px)
+- **Status management**: Easy updates via CLI to mark books as finished
+- **Optional thoughts**: Add personal notes via $EDITOR
+- **File deletion**: Remove readings entirely through update command
+- **Saved as**: `/content/readings/[slug].md` with YAML frontmatter
 
 ### CLI Configuration
 
@@ -165,6 +172,28 @@ content/
 public/images/readings/
 └── book-title.webp  # Optimized cover images
 ```
+
+### Reading File Format
+
+Readings are stored as markdown files with YAML frontmatter:
+
+```markdown
+---
+title: 'The Pragmatic Programmer'
+author: 'David Thomas and Andrew Hunt'
+finished: 2023-06-15T00:00:00.000Z # null for currently reading
+audiobook: true # Optional, defaults to false
+coverImage: '/images/readings/pragmatic-programmer.webp'
+---
+
+Optional thoughts and notes about the book go here.
+```
+
+**Reading Status:**
+
+- **Currently Reading**: `finished: null`
+- **Finished**: `finished: 2023-06-15T00:00:00.000Z` (ISO date string)
+- **Audiobook**: `audiobook: true` (shows 🎧 indicator in UI)
 
 ### Troubleshooting
 
@@ -204,9 +233,10 @@ public/images/readings/
 ### Content Management
 
 - `npm run vanity -- quote add` - Add new quote interactively
-- `npm run vanity -- quote list` - List recent quotes
-- `npm run vanity -- reading add` - Add new reading interactively
-- `npm run vanity -- reading list` - List recent readings
+- `npm run vanity -- quote list` - List recent quotes (with optional count: `-n 20`)
+- `npm run vanity -- reading add` - Add new reading interactively (includes audiobook prompt)
+- `npm run vanity -- reading update` - Update reading status, add thoughts, or delete reading
+- `npm run vanity -- reading list` - List recent readings (with optional count: `-n 5`)
 - `npm run reading-summary` - Generate reading summary report
 
 ### Storybook
@@ -299,10 +329,11 @@ This project is committed to WCAG 2.1 AA compliance, ensuring the application is
 ### Key Accessibility Features
 
 - Semantic HTML structure with appropriate ARIA attributes
-- Keyboard navigation support throughout the application
-- Color contrast ratios that meet WCAG standards
+- Keyboard navigation support throughout the application (Tab, Shift+Tab, Enter, Space)
+- Color contrast ratios that meet WCAG standards in both light and dark themes
 - Focus management for modals and interactive elements
 - Screen reader compatibility with descriptive alt text and labels
+- Accessible hover interactions with keyboard focus equivalence (audiobook indicators)
 
 ### Keyboard Navigation
 
