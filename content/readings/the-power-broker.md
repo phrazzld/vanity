@@ -2,6 +2,7 @@
 title: The Power Broker
 author: Robert A. Caro
 finished: 2020-06-08T00:00:00.000Z
+audiobook: true
 coverImage: >-
-  https://book-covers.nyc3.digitaloceanspaces.com/readings/the-power-broker-01.jpg
+  https://m.media-amazon.com/images/I/81YeKsMkafL._SL1500_.jpg
 ---

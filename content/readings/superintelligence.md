@@ -1,7 +1,7 @@
 ---
-title: Superintelligence
+title: 'Superintelligence: Paths, Dangers, Strategies'
 author: Nick Bostrom
 finished: 2014-11-10T00:00:00.000Z
 coverImage: >-
-  https://book-covers.nyc3.digitaloceanspaces.com/readings/superintelligence-02.jpg
+  https://m.media-amazon.com/images/I/71UvMcdcE9L._SL1159_.jpg
 ---

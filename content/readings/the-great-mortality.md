@@ -1,7 +1,8 @@
 ---
-title: The Great Mortality
+title: 'The Great Mortality: An Intimate History of the Black Death, the Most Devastating Plague of All Time'
 author: John Kelly
 finished: 2020-05-20T00:00:00.000Z
+audiobook: true
 coverImage: >-
-  https://book-covers.nyc3.digitaloceanspaces.com/readings/the-great-mortality-01.jpg
+  https://m.media-amazon.com/images/I/71oib5leOBL._SL1360_.jpg
 ---

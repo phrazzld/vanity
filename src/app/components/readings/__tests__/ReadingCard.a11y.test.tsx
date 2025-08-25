@@ -28,6 +28,11 @@ jest.mock('@/lib/logger', () => ({
   },
 }));
 
+// Mock the readingUtils to ensure image URLs work in tests
+jest.mock('@/lib/utils/readingUtils', () => ({
+  getFullImageUrl: jest.fn((src: string | null) => src || '/images/projects/book-02.webp'),
+}));
+
 // Mock the getSeededPlaceholderStyles function
 jest.mock('../placeholderUtils', () => ({
   getSeededPlaceholderStyles: jest.fn().mockReturnValue({
@@ -35,7 +40,7 @@ jest.mock('../placeholderUtils', () => ({
   }),
 }));
 
-// Mock Next.js Image component
+// Mock Next.js Image component using div with img role to avoid ESLint warnings
 jest.mock('next/image', () => {
   return function MockImage({ alt, onError, fill, ...props }: any) {
     // Use div with img role to avoid ESLint warnings in tests
@@ -312,7 +317,8 @@ describe('ReadingCard Accessibility Tests', () => {
       renderWithTheme(<ReadingCard {...props} />);
 
       const image = screen.getByRole('img');
-      expect(image).toHaveAttribute('alt', 'The Catcher in the Rye cover');
+      // Next.js Image component uses aria-label for accessibility text
+      expect(image).toHaveAttribute('aria-label', 'The Catcher in the Rye cover');
     });
 
     it('announces reading status changes to screen readers', () => {

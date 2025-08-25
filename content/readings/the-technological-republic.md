@@ -5,5 +5,5 @@ title: >-
 author: Alexander C. Karp and Nicholas W. Zamiska
 finished: 2025-03-13T00:00:00.000Z
 coverImage: >-
-  https://book-covers.nyc3.digitaloceanspaces.com/readings/the-technological-republic-01.jpg
+  https://m.media-amazon.com/images/I/81hq6nFXU+L._SL1500_.jpg
 ---

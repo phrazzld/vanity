@@ -1,6 +1,7 @@
 ---
-title: Washington
+title: 'Washington: A Life'
 author: Ron Chernow
 finished: 2021-05-16T00:00:00.000Z
-coverImage: 'https://book-covers.nyc3.digitaloceanspaces.com/readings/washington-01.jpg'
+audiobook: true
+coverImage: 'https://m.media-amazon.com/images/I/81A169iXn7L._SL1500_.jpg'
 ---

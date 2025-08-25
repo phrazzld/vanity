@@ -3,5 +3,5 @@ title: Extreme Privacy
 author: Michael Bazzell
 finished: 2022-03-12T00:00:00.000Z
 coverImage: >-
-  https://book-covers.nyc3.digitaloceanspaces.com/readings/extreme-privacy-01.jpg
+  https://m.media-amazon.com/images/I/51xwVuDAO8L._SL1293_.jpg
 ---

@@ -3,5 +3,5 @@ title: Facing Violence
 author: Rory Miller
 finished: 2023-12-08T00:00:00.000Z
 coverImage: >-
-  https://book-covers.nyc3.digitaloceanspaces.com/readings/facing-violence-01.jpg
+  https://m.media-amazon.com/images/I/81I6laGrFOL._SL1500_.jpg
 ---

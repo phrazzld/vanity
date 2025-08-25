@@ -1,252 +1,307 @@
 #!/usr/bin/env node
 
 /**
- * Book Cover Recovery System - Task 21: Metadata Extraction & Validation
+ * Simple Book Cover Recovery
  *
- * This script parses all reading markdown files to:
- * 1. Extract book metadata (title, author, cover URL)
- * 2. Identify broken DigitalOcean Spaces URLs
- * 3. Generate a detailed report of books needing cover recovery
+ * Finds books with broken cover URLs and tries to fix them:
+ * 1. Find books with broken DigitalOcean URLs
+ * 2. Get ISBN from Google Books
+ * 3. Get cover from OpenLibrary
+ * 4. Update markdown file if successful
  */
 
 const fs = require('fs');
 const path = require('path');
 const matter = require('gray-matter');
+const { promisify } = require('util');
+
+const sleep = promisify(setTimeout);
 
 // Constants
 const READINGS_DIR = path.join(process.cwd(), 'content/readings');
 const BROKEN_URL_PATTERN = /book-covers\.nyc3\.digitaloceanspaces\.com/;
-const REPORT_DIR = path.join(process.cwd(), 'logs');
-const REPORT_FILE = path.join(REPORT_DIR, 'book-cover-report.json');
+const BACKUP_DIR = path.join(process.cwd(), 'archive/cover-recovery-backup');
+const CACHE_FILE = path.join(process.cwd(), 'logs/google-books-cache.json');
+
+// API Configuration
+const GOOGLE_BOOKS_BASE_URL = 'https://www.googleapis.com/books/v1/volumes';
+const OPENLIBRARY_BASE_URL = 'https://covers.openlibrary.org/b/isbn';
+const API_KEY = process.env.GOOGLE_BOOKS_API_KEY || '';
 
 /**
- * Extract metadata from all reading markdown files
- * @returns {Array} Array of book metadata objects
+ * Find all books with broken cover URLs
  */
-function extractBookMetadata() {
-  // Check if readings directory exists
-  if (!fs.existsSync(READINGS_DIR)) {
-    console.error('❌ Readings directory not found:', READINGS_DIR);
-    process.exit(1);
-  }
-
-  // Get all markdown files
+function findBrokenCovers() {
   const files = fs.readdirSync(READINGS_DIR).filter(file => file.endsWith('.md'));
+  const brokenBooks = [];
 
-  if (files.length === 0) {
-    console.warn('⚠️  No markdown files found in readings directory');
-    return [];
-  }
-
-  console.log(`📚 Found ${files.length} reading files to process...`);
-
-  // Parse each file and extract metadata
-  const metadata = files.map((file, index) => {
+  for (const file of files) {
     const filePath = path.join(READINGS_DIR, file);
-    const slug = file.replace('.md', '');
+    const content = fs.readFileSync(filePath, 'utf8');
+    const { data } = matter(content);
 
-    try {
-      const fileContent = fs.readFileSync(filePath, 'utf8');
-      const { data } = matter(fileContent);
-
-      // Validate required fields
-      const isValid = !!(data.title && data.author);
-
-      // Check if cover URL is broken (DigitalOcean Spaces)
-      const isBroken = data.coverImage ? BROKEN_URL_PATTERN.test(data.coverImage) : false;
-
-      return {
-        id: index + 1,
-        slug,
+    if (data.title && data.author && data.coverImage && BROKEN_URL_PATTERN.test(data.coverImage)) {
+      brokenBooks.push({
+        slug: file.replace('.md', ''),
+        title: data.title,
+        author: data.author,
         filePath,
-        title: data.title || 'Untitled',
-        author: data.author || 'Unknown Author',
-        currentCoverUrl: data.coverImage || null,
-        isBroken,
-        hasCover: !!data.coverImage,
-        isValid,
-        audiobook: data.audiobook || false,
-        finished: data.finished || null,
-        // Additional metadata for error handling
-        errors: []
-          .concat(!data.title ? ['Missing title'] : [])
-          .concat(!data.author ? ['Missing author'] : []),
-      };
-    } catch (error) {
-      console.error(`❌ Error parsing ${file}:`, error.message);
-      return {
-        id: index + 1,
-        slug,
-        filePath,
-        title: 'Error',
-        author: 'Error',
-        currentCoverUrl: null,
-        isBroken: false,
-        hasCover: false,
-        isValid: false,
-        errors: [`Parse error: ${error.message}`],
-      };
-    }
-  });
-
-  return metadata;
-}
-
-/**
- * Generate detailed report of book metadata and broken covers
- * @param {Array} metadata - Array of book metadata objects
- * @returns {Object} Report object with statistics and details
- */
-function generateReport(metadata) {
-  const brokenCovers = metadata.filter(book => book.isBroken);
-  const missingCovers = metadata.filter(book => !book.hasCover);
-  const validBooks = metadata.filter(book => book.isValid);
-  const invalidBooks = metadata.filter(book => !book.isValid);
-
-  const report = {
-    timestamp: new Date().toISOString(),
-    summary: {
-      total: metadata.length,
-      valid: validBooks.length,
-      invalid: invalidBooks.length,
-      withCovers: metadata.filter(book => book.hasCover).length,
-      withoutCovers: missingCovers.length,
-      brokenCovers: brokenCovers.length,
-      digitalOceanUrls: brokenCovers.length,
-      needsRecovery: brokenCovers.length + missingCovers.length,
-    },
-    brokenCovers: brokenCovers.map(book => ({
-      slug: book.slug,
-      title: book.title,
-      author: book.author,
-      currentUrl: book.currentCoverUrl,
-      audiobook: book.audiobook,
-    })),
-    missingCovers: missingCovers.map(book => ({
-      slug: book.slug,
-      title: book.title,
-      author: book.author,
-      audiobook: book.audiobook,
-    })),
-    invalidBooks: invalidBooks.map(book => ({
-      slug: book.slug,
-      errors: book.errors,
-      filePath: book.filePath,
-    })),
-    allBooks: metadata.map(book => ({
-      slug: book.slug,
-      title: book.title,
-      author: book.author,
-      coverStatus: book.isBroken ? 'broken' : book.hasCover ? 'ok' : 'missing',
-      audiobook: book.audiobook,
-    })),
-  };
-
-  return report;
-}
-
-/**
- * Save report to JSON file
- * @param {Object} report - Report object to save
- */
-function saveReport(report) {
-  // Ensure logs directory exists
-  if (!fs.existsSync(REPORT_DIR)) {
-    fs.mkdirSync(REPORT_DIR, { recursive: true });
-  }
-
-  // Save JSON report
-  fs.writeFileSync(REPORT_FILE, JSON.stringify(report, null, 2));
-  console.log(`✅ Report saved to: ${REPORT_FILE}`);
-}
-
-/**
- * Display report summary in console
- * @param {Object} report - Report object to display
- */
-function displaySummary(report) {
-  console.log('\n📊 Book Cover Recovery Report');
-  console.log('─'.repeat(50));
-
-  console.log(`Total books: ${report.summary.total}`);
-  console.log(`✓ Valid books: ${report.summary.valid}`);
-
-  if (report.summary.invalid > 0) {
-    console.log(`✗ Invalid books: ${report.summary.invalid}`);
-  }
-
-  console.log(`📖 Books with covers: ${report.summary.withCovers}`);
-  console.log(`📖 Books without covers: ${report.summary.withoutCovers}`);
-
-  console.log(`\n🔥 Broken DigitalOcean URLs: ${report.summary.brokenCovers}`);
-  console.log(`⚠️  Total needing recovery: ${report.summary.needsRecovery}`);
-
-  // List first 5 broken covers as examples
-  if (report.brokenCovers.length > 0) {
-    console.log('\n📚 Sample books with broken covers:');
-    report.brokenCovers.slice(0, 5).forEach(book => {
-      console.log(`  - ${book.title} by ${book.author}`);
-    });
-
-    if (report.brokenCovers.length > 5) {
-      console.log(`  ... and ${report.brokenCovers.length - 5} more`);
+        currentCoverUrl: data.coverImage,
+      });
     }
   }
 
-  // List invalid books if any
-  if (report.invalidBooks.length > 0) {
-    console.log('\n⚠️  Invalid books (missing metadata)::');
-    report.invalidBooks.forEach(book => {
-      console.log(`  - ${book.slug}: ${book.errors.join(', ')}`);
-    });
+  return brokenBooks;
+}
+
+/**
+ * Load/save simple cache for API calls
+ */
+function loadCache() {
+  try {
+    if (fs.existsSync(CACHE_FILE)) {
+      return JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8'));
+    }
+  } catch (error) {
+    // Ignore cache errors
+  }
+  return {};
+}
+
+function saveCache(cache) {
+  try {
+    const dir = path.dirname(CACHE_FILE);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2));
+  } catch (error) {
+    // Ignore cache errors
   }
 }
 
 /**
- * Main execution function
+ * Try to get ISBN from Google Books
  */
-async function main() {
-  console.log('🚀 Book Cover Recovery System - Metadata Extraction\n');
+async function getISBN(title, author, cache) {
+  // Ensure title and author are strings
+  const safeTitle = (title || '').toString().toLowerCase();
+  const safeAuthor = (author || '').toString().toLowerCase();
+  const cacheKey = `${safeTitle}:${safeAuthor}`;
+
+  if (cache[cacheKey]) {
+    return cache[cacheKey];
+  }
+
+  const query = `intitle:"${safeTitle}"+inauthor:"${safeAuthor}"`;
+  const url = `${GOOGLE_BOOKS_BASE_URL}?q=${encodeURIComponent(query)}&maxResults=5${API_KEY ? `&key=${API_KEY}` : ''}`;
 
   try {
-    // Step 1: Extract metadata from all reading files
-    const metadata = extractBookMetadata();
+    const response = await fetch(url);
 
-    if (metadata.length === 0) {
-      console.log('No books found to process.');
-      return;
+    if (!response.ok) {
+      if (response.status === 429) {
+        // Rate limited, wait and retry once
+        await sleep(2000);
+        const retryResponse = await fetch(url);
+        if (!retryResponse.ok) throw new Error('Rate limited');
+        const retryData = await retryResponse.json();
+        const isbn = extractISBN(retryData);
+        cache[cacheKey] = isbn;
+        return isbn;
+      }
+      throw new Error(`HTTP ${response.status}`);
     }
 
-    // Step 2: Generate detailed report
-    const report = generateReport(metadata);
+    const data = await response.json();
+    const isbn = extractISBN(data);
+    cache[cacheKey] = isbn;
 
-    // Step 3: Save report to file
-    saveReport(report);
+    // Be respectful to the API
+    await sleep(100);
 
-    // Step 4: Display summary
-    displaySummary(report);
-
-    console.log('\n✅ Metadata extraction complete!');
-    console.log(`Check ${REPORT_FILE} for full details`);
-
-    // Exit with appropriate code
-    process.exit(report.summary.brokenCovers > 0 ? 0 : 0);
+    return isbn;
   } catch (error) {
-    console.error('❌ Fatal error:', error.message);
-    console.error(error.stack);
-    process.exit(1);
+    cache[cacheKey] = null;
+    return null;
+  }
+}
+
+/**
+ * Extract ISBN from Google Books response, trying to avoid study guides and summaries
+ */
+function extractISBN(data) {
+  if (!data.items || data.items.length === 0) return null;
+
+  // Try to find the best match (avoid study guides, summaries, etc.)
+  const books = data.items.filter(item => {
+    const title = (item.volumeInfo?.title || '').toLowerCase();
+    const authors = (item.volumeInfo?.authors || []).join(' ').toLowerCase();
+
+    // Skip obvious study guides and summaries
+    const skipPatterns = ['summary', 'study guide', 'sparknotes', 'cliffsnotes', 'analysis'];
+    return !skipPatterns.some(pattern => title.includes(pattern));
+  });
+
+  // Use first filtered result, or fall back to first overall result
+  const book = books.length > 0 ? books[0] : data.items[0];
+  const identifiers = book.volumeInfo?.industryIdentifiers || [];
+
+  // Prefer ISBN-13 over ISBN-10
+  for (const id of identifiers) {
+    if (id.type === 'ISBN_13') return id.identifier;
+  }
+  for (const id of identifiers) {
+    if (id.type === 'ISBN_10') return id.identifier;
+  }
+
+  return null;
+}
+
+/**
+ * Try to get cover from OpenLibrary
+ */
+async function getCover(isbn) {
+  const sizes = ['L', 'M', 'S'];
+
+  for (const size of sizes) {
+    const url = `${OPENLIBRARY_BASE_URL}/${isbn}-${size}.jpg`;
+
+    try {
+      const response = await fetch(url, { method: 'HEAD' });
+
+      if (response.ok) {
+        const contentType = response.headers.get('content-type') || '';
+        const contentLength = parseInt(response.headers.get('content-length') || '0', 10);
+
+        // Valid image should have reasonable size and image content type
+        if (contentType.startsWith('image/') && contentLength > 1000) {
+          return url;
+        }
+      }
+
+      // Small delay between requests
+      await sleep(200);
+    } catch (error) {
+      // Try next size
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Update markdown file with new cover URL
+ */
+function updateCoverImage(book, newCoverUrl) {
+  const backupDir = path.join(BACKUP_DIR, new Date().toISOString().split('T')[0]);
+
+  try {
+    // Create backup directory
+    if (!fs.existsSync(backupDir)) {
+      fs.mkdirSync(backupDir, { recursive: true });
+    }
+
+    // Backup original file
+    const backupPath = path.join(backupDir, path.basename(book.filePath));
+    fs.copyFileSync(book.filePath, backupPath);
+
+    // Read and update file
+    const content = fs.readFileSync(book.filePath, 'utf8');
+    const { data: frontmatter, content: markdownContent } = matter(content);
+
+    frontmatter.coverImage = newCoverUrl;
+    const updatedContent = matter.stringify(markdownContent, frontmatter);
+
+    // Write to temp file, then rename (atomic operation)
+    const tempPath = `${book.filePath}.tmp`;
+    fs.writeFileSync(tempPath, updatedContent, 'utf8');
+    fs.renameSync(tempPath, book.filePath);
+
+    return true;
+  } catch (error) {
+    console.error(`Failed to update ${book.slug}:`, error.message);
+    return false;
+  }
+}
+
+/**
+ * Main execution
+ */
+async function main() {
+  console.log('🔍 Finding books with broken covers...');
+
+  const brokenBooks = findBrokenCovers();
+  if (brokenBooks.length === 0) {
+    console.log('✅ No broken covers found!');
+    return;
+  }
+
+  console.log(`📚 Found ${brokenBooks.length} books needing covers`);
+  console.log('🔄 Processing...\n');
+
+  const cache = loadCache();
+  let fixed = 0;
+  let failed = 0;
+
+  for (let i = 0; i < brokenBooks.length; i++) {
+    const book = brokenBooks[i];
+    const progress = `[${i + 1}/${brokenBooks.length}]`;
+
+    process.stdout.write(`${progress} "${book.title}" by ${book.author} ... `);
+
+    // Try to get ISBN
+    const isbn = await getISBN(book.title, book.author, cache);
+    if (!isbn) {
+      console.log('❌ No ISBN found');
+      failed++;
+      continue;
+    }
+
+    // Try to get cover
+    const coverUrl = await getCover(isbn);
+    if (!coverUrl) {
+      console.log('❌ No cover available');
+      failed++;
+      continue;
+    }
+
+    // Update file
+    const success = updateCoverImage(book, coverUrl);
+    if (success) {
+      console.log('✅ Fixed!');
+      fixed++;
+    } else {
+      console.log('❌ Update failed');
+      failed++;
+    }
+  }
+
+  // Save cache and show results
+  saveCache(cache);
+
+  console.log(`\n📊 Results: ${fixed} fixed, ${failed} failed`);
+  if (fixed > 0) {
+    const backupDate = new Date().toISOString().split('T')[0];
+    console.log(`📁 Backups saved to: archive/cover-recovery-backup/${backupDate}`);
+  }
+
+  if (failed > 0) {
+    console.log(`\n💡 ${failed} books still need manual cover hunting`);
   }
 }
 
 // Run if executed directly
 if (require.main === module) {
-  main();
+  main().catch(error => {
+    console.error('❌ Error:', error.message);
+    process.exit(1);
+  });
 }
 
-// Export for testing or use in other scripts
 module.exports = {
-  extractBookMetadata,
-  generateReport,
-  saveReport,
-  displaySummary,
+  findBrokenCovers,
+  getISBN,
+  getCover,
+  updateCoverImage,
 };

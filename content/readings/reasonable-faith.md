@@ -1,7 +1,7 @@
 ---
-title: Reasonable Faith
+title: 'Reasonable Faith: Christian Truth and Apologetics'
 author: William Lane Craig
 finished: 2024-08-03T00:00:00.000Z
 coverImage: >-
-  https://book-covers.nyc3.digitaloceanspaces.com/readings/reasonable-faith-01.jpg
+  https://m.media-amazon.com/images/I/71x8hHHX35L._SL1500_.jpg
 ---

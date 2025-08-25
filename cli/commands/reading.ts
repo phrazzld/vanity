@@ -476,6 +476,233 @@ export function listReadings(limit: number = 10): void {
 }
 
 /**
+ * Update the cover image for a reading
+ */
+async function updateCoverImage(currentReading: any, updatedFrontmatter: any): Promise<void> {
+  const currentCover = updatedFrontmatter.coverImage || 'None';
+  console.log(chalk.gray(`Current cover: ${currentCover}`));
+
+  const { imageAction } = await inquirer.prompt<{ imageAction: string }>([
+    {
+      type: 'list',
+      name: 'imageAction',
+      message: 'How would you like to update the cover image?',
+      choices: [
+        { name: '🔗 Provide a URL', value: 'url' },
+        { name: '📁 Upload local file', value: 'local' },
+        { name: '🔍 Search online (automatic)', value: 'search' },
+        { name: '🗑️  Remove cover image', value: 'remove' },
+        { name: '❌ Cancel', value: 'cancel' },
+      ],
+    },
+  ]);
+
+  if (imageAction === 'cancel') {
+    return;
+  }
+
+  if (imageAction === 'remove') {
+    delete updatedFrontmatter.coverImage;
+    console.log(chalk.green('✓ Removed cover image'));
+    return;
+  }
+
+  if (imageAction === 'url') {
+    const { imageUrl } = await inquirer.prompt<{ imageUrl: string }>([
+      {
+        type: 'input',
+        name: 'imageUrl',
+        message: 'Image URL:',
+        validate: input => {
+          if (!input.trim()) return 'URL is required';
+          try {
+            new URL(input);
+            return true;
+          } catch {
+            return 'Please enter a valid URL';
+          }
+        },
+      },
+    ]);
+    updatedFrontmatter.coverImage = imageUrl;
+    console.log(chalk.green('✓ Updated cover image URL'));
+  } else if (imageAction === 'local') {
+    const { imagePath } = await inquirer.prompt<ImageFilePrompt>([
+      {
+        type: 'input',
+        name: 'imagePath',
+        message: 'Path to image file:',
+        validate: input => {
+          if (!input.trim()) return 'Path is required';
+          if (!existsSync(input)) return 'File not found';
+
+          const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif'];
+          const ext = input.toLowerCase().match(/\.[^.]+$/)?.[0];
+          if (!ext || !allowedExtensions.includes(ext)) {
+            return `Invalid image format. Allowed: ${allowedExtensions.join(', ')}`;
+          }
+
+          const stats = statSync(input);
+          const fileSizeInMB = stats.size / (1024 * 1024);
+          if (fileSizeInMB > 10) {
+            return `File too large (${fileSizeInMB.toFixed(1)}MB). Maximum size: 10MB`;
+          }
+
+          return true;
+        },
+      },
+    ]);
+
+    // Ensure images directory exists
+    if (!existsSync(IMAGES_DIR)) {
+      await mkdir(IMAGES_DIR, { recursive: true });
+    }
+
+    // Optimize and save image
+    const outputPath = join(IMAGES_DIR, `${currentReading.slug}.webp`);
+    console.log(chalk.gray('Optimizing image...'));
+
+    try {
+      await sharp(imagePath)
+        .resize(400, 600, {
+          fit: 'cover',
+          position: 'center',
+        })
+        .webp({ quality: 80 })
+        .toFile(outputPath);
+
+      updatedFrontmatter.coverImage = `/images/readings/${currentReading.slug}.webp`;
+      console.log(chalk.green('✓ Image optimized and saved'));
+    } catch (imageError) {
+      console.error(chalk.red('✖ Failed to process image:'), imageError);
+    }
+  } else if (imageAction === 'search') {
+    console.log(chalk.cyan('🔍 Searching for book cover online...'));
+    const coverUrl = await searchBookCover(currentReading.title, currentReading.author);
+
+    if (coverUrl) {
+      updatedFrontmatter.coverImage = coverUrl;
+      console.log(chalk.green(`✓ Found and set cover image: ${coverUrl}`));
+    } else {
+      console.log(chalk.yellow('⚠️  No cover image found online'));
+    }
+  }
+}
+
+/**
+ * Update multiple fields at once
+ */
+async function updateMultipleFields(
+  currentReading: any,
+  updatedFrontmatter: any,
+  content: string
+): Promise<string> {
+  const { fieldsToUpdate } = await inquirer.prompt<{ fieldsToUpdate: string[] }>([
+    {
+      type: 'checkbox',
+      name: 'fieldsToUpdate',
+      message: 'Select fields to update:',
+      choices: [
+        { name: 'Title', value: 'title' },
+        { name: 'Author', value: 'author' },
+        { name: 'Cover Image', value: 'cover' },
+        { name: 'Audiobook Status', value: 'audiobook' },
+        { name: 'Finished Date', value: 'finished' },
+        { name: 'Thoughts', value: 'thoughts' },
+      ],
+    },
+  ]);
+
+  let updatedContent = content;
+
+  for (const field of fieldsToUpdate) {
+    if (field === 'title') {
+      const { newTitle } = await inquirer.prompt<{ newTitle: string }>([
+        {
+          type: 'input',
+          name: 'newTitle',
+          message: 'New title:',
+          default: currentReading.title,
+          validate: input => (input.trim() ? true : 'Title is required'),
+        },
+      ]);
+      updatedFrontmatter.title = newTitle.trim();
+    } else if (field === 'author') {
+      const { newAuthor } = await inquirer.prompt<{ newAuthor: string }>([
+        {
+          type: 'input',
+          name: 'newAuthor',
+          message: 'New author:',
+          default: currentReading.author,
+          validate: input => (input.trim() ? true : 'Author is required'),
+        },
+      ]);
+      updatedFrontmatter.author = newAuthor.trim();
+    } else if (field === 'cover') {
+      await updateCoverImage(currentReading, updatedFrontmatter);
+    } else if (field === 'audiobook') {
+      const currentStatus = updatedFrontmatter.audiobook || false;
+      const { isAudiobook } = await inquirer.prompt<{ isAudiobook: boolean }>([
+        {
+          type: 'confirm',
+          name: 'isAudiobook',
+          message: 'Is this an audiobook?',
+          default: currentStatus,
+        },
+      ]);
+      updatedFrontmatter.audiobook = isAudiobook;
+    } else if (field === 'finished') {
+      const { dateInput } = await inquirer.prompt<DateInputPrompt>([
+        {
+          type: 'input',
+          name: 'dateInput',
+          message: 'Finished date (YYYY-MM-DD, or empty for unfinished):',
+          default: currentReading.finishedDate
+            ? new Date(currentReading.finishedDate).toISOString().split('T')[0]
+            : '',
+          validate: input => {
+            if (!input) return true;
+            const date = new Date(input);
+            return !isNaN(date.getTime()) ? true : 'Please enter a valid date';
+          },
+        },
+      ]);
+      updatedFrontmatter.finished = dateInput ? new Date(dateInput).toISOString() : null;
+    } else if (field === 'thoughts') {
+      console.log(chalk.gray('\nOpening editor for your thoughts...'));
+      const currentThoughts = updatedContent.trim();
+      const thoughtsTemplate = `# Your thoughts on "${updatedFrontmatter.title || currentReading.title}" by ${updatedFrontmatter.author || currentReading.author}
+# Lines starting with # will be ignored
+# Current thoughts are shown below. Edit as needed:
+
+${currentThoughts}`;
+
+      const newThoughts = await openEditor(thoughtsTemplate, '.md');
+      if (newThoughts) {
+        updatedContent = newThoughts
+          .split('\n')
+          .filter(line => !line.startsWith('#'))
+          .join('\n')
+          .trim();
+      }
+    }
+  }
+
+  console.log(chalk.green(`✓ Updated ${fieldsToUpdate.length} field(s)`));
+  return updatedContent;
+}
+
+/**
+ * Search for book cover online using APIs
+ */
+async function searchBookCover(_title: string, _author: string): Promise<string | null> {
+  // For now, return null - this will be implemented in Phase 2
+  // Will integrate with Google Books API and OpenLibrary
+  console.log(chalk.gray('(Online search will be implemented in next phase)'));
+  return null;
+}
+
+/**
  * Update an existing reading (mark as finished, update thoughts, etc.)
  */
 export async function updateReading() {
@@ -563,9 +790,14 @@ export async function updateReading() {
                 { name: 'Mark as finished (today)', value: 'finish_today' },
                 { name: 'Mark as finished (custom date)', value: 'finish_custom' },
               ]),
-          { name: 'Update thoughts', value: 'thoughts' },
-          { name: 'Delete reading', value: 'delete' },
-          { name: 'Cancel', value: 'cancel' },
+          { name: '📖 Update title', value: 'title' },
+          { name: '✍️  Update author', value: 'author' },
+          { name: '🖼️  Update cover image', value: 'cover' },
+          { name: '🎧 Toggle audiobook status', value: 'audiobook' },
+          { name: '💭 Update thoughts', value: 'thoughts' },
+          { name: '🔄 Update multiple fields', value: 'multiple' },
+          { name: '🗑️  Delete reading', value: 'delete' },
+          { name: '❌ Cancel', value: 'cancel' },
         ],
       },
     ]);
@@ -604,6 +836,40 @@ export async function updateReading() {
       const date = new Date(dateInput);
       updatedFrontmatter.finished = date.toISOString();
       console.log(chalk.green(`✓ Marked as finished on ${date.toLocaleDateString()}`));
+    } else if (updateAction === 'title') {
+      const { newTitle } = await inquirer.prompt<{ newTitle: string }>([
+        {
+          type: 'input',
+          name: 'newTitle',
+          message: 'New title:',
+          default: currentReading.title,
+          validate: input => (input.trim() ? true : 'Title is required'),
+        },
+      ]);
+      updatedFrontmatter.title = newTitle.trim();
+      console.log(chalk.green(`✓ Updated title to "${newTitle.trim()}"`));
+    } else if (updateAction === 'author') {
+      const { newAuthor } = await inquirer.prompt<{ newAuthor: string }>([
+        {
+          type: 'input',
+          name: 'newAuthor',
+          message: 'New author:',
+          default: currentReading.author,
+          validate: input => (input.trim() ? true : 'Author is required'),
+        },
+      ]);
+      updatedFrontmatter.author = newAuthor.trim();
+      console.log(chalk.green(`✓ Updated author to "${newAuthor.trim()}"`));
+    } else if (updateAction === 'cover') {
+      await updateCoverImage(currentReading, updatedFrontmatter);
+    } else if (updateAction === 'audiobook') {
+      const currentStatus = frontmatter.audiobook || false;
+      updatedFrontmatter.audiobook = !currentStatus;
+      console.log(
+        chalk.green(
+          `✓ ${updatedFrontmatter.audiobook ? 'Marked as audiobook' : 'Removed audiobook status'}`
+        )
+      );
     } else if (updateAction === 'thoughts') {
       console.log(chalk.gray('\nOpening editor for your thoughts...'));
       const currentThoughts = content.trim();
@@ -622,6 +888,8 @@ ${currentThoughts}`;
           .trim();
         console.log(chalk.green('✓ Updated thoughts'));
       }
+    } else if (updateAction === 'multiple') {
+      updatedContent = await updateMultipleFields(currentReading, updatedFrontmatter, content);
     } else if (updateAction === 'delete') {
       // Confirm deletion before proceeding
       const { confirmDelete } = await inquirer.prompt<ConfirmDeletePrompt>([
@@ -659,11 +927,73 @@ ${currentThoughts}`;
       }
     }
 
+    // Show preview of changes if any were made
+    const hasChanges =
+      JSON.stringify(frontmatter) !== JSON.stringify(updatedFrontmatter) ||
+      content !== updatedContent;
+
+    if (hasChanges) {
+      console.log(chalk.cyan('\n📝 Preview of changes:'));
+
+      // Show frontmatter changes
+      const frontmatterChanges = [];
+      if (frontmatter.title !== updatedFrontmatter.title) {
+        frontmatterChanges.push(`  Title: ${frontmatter.title} → ${updatedFrontmatter.title}`);
+      }
+      if (frontmatter.author !== updatedFrontmatter.author) {
+        frontmatterChanges.push(`  Author: ${frontmatter.author} → ${updatedFrontmatter.author}`);
+      }
+      if (frontmatter.coverImage !== updatedFrontmatter.coverImage) {
+        const oldCover = frontmatter.coverImage || 'None';
+        const newCover = updatedFrontmatter.coverImage || 'None';
+        frontmatterChanges.push(`  Cover: ${oldCover} → ${newCover}`);
+      }
+      if (frontmatter.audiobook !== updatedFrontmatter.audiobook) {
+        frontmatterChanges.push(
+          `  Audiobook: ${frontmatter.audiobook || false} → ${updatedFrontmatter.audiobook}`
+        );
+      }
+      if (frontmatter.finished !== updatedFrontmatter.finished) {
+        const oldDate = frontmatter.finished
+          ? new Date(frontmatter.finished).toLocaleDateString()
+          : 'Not finished';
+        const newDate = updatedFrontmatter.finished
+          ? new Date(updatedFrontmatter.finished).toLocaleDateString()
+          : 'Not finished';
+        frontmatterChanges.push(`  Finished: ${oldDate} → ${newDate}`);
+      }
+
+      if (frontmatterChanges.length > 0) {
+        console.log(chalk.gray(frontmatterChanges.join('\n')));
+      }
+
+      if (content !== updatedContent) {
+        console.log(chalk.gray('  Thoughts: Updated'));
+      }
+
+      // Confirm before saving
+      const { confirmSave } = await inquirer.prompt<{ confirmSave: boolean }>([
+        {
+          type: 'confirm',
+          name: 'confirmSave',
+          message: 'Save these changes?',
+          default: true,
+        },
+      ]);
+
+      if (!confirmSave) {
+        console.log(chalk.yellow('✖ Changes discarded.'));
+        return;
+      }
+    }
+
     // Write updated file
     const newContent = matter.stringify(updatedContent, updatedFrontmatter);
     await writeFile(filepath, newContent);
 
-    console.log(chalk.green(`\n✅ Successfully updated "${currentReading.title}"`));
+    console.log(
+      chalk.green(`\n✅ Successfully updated "${updatedFrontmatter.title || currentReading.title}"`)
+    );
   } catch (error) {
     console.error(chalk.red('✖ Error updating reading:'), error);
     process.exit(1);

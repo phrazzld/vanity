@@ -3,5 +3,5 @@ title: One Day in the Life of Ivan Denisovich
 author: Aleksandr Solzhenitsyn
 finished: 2018-05-21T00:00:00.000Z
 coverImage: >-
-  https://book-covers.nyc3.digitaloceanspaces.com/readings/one-day-in-the-life-of-ivan-denisovich-01.jpg
+  https://m.media-amazon.com/images/I/81sgZf7VlEL._SL1500_.jpg
 ---
