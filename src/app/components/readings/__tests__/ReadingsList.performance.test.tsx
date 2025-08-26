@@ -58,13 +58,24 @@ function generateMockReadings(count: number): Reading[] {
 }
 
 describe('ReadingsList Performance Tests', () => {
-  // Store performance baselines
-  const performanceBaselines = {
-    initialRender: 200, // milliseconds
-    reRender: 50, // milliseconds
-    largeDatasetRender: 500, // milliseconds for 365 items
-    sortOperation: 100, // milliseconds
-  };
+  // Detect CI environment for adjusted thresholds
+  const isCI = process.env.CI === 'true';
+
+  // Store performance baselines with CI adjustments
+  // CI environments have limited resources, so we apply a 1.6x multiplier
+  const performanceBaselines = isCI
+    ? {
+        initialRender: 320, // 200ms local -> 320ms CI (1.6x for resource constraints)
+        reRender: 80, // 50ms local -> 80ms CI
+        largeDatasetRender: 800, // 500ms local -> 800ms CI (handles 365 items)
+        sortOperation: 200, // 100ms local -> 200ms CI (complex DOM operations)
+      }
+    : {
+        initialRender: 200, // milliseconds
+        reRender: 50, // milliseconds
+        largeDatasetRender: 500, // milliseconds for 365 items
+        sortOperation: 100, // milliseconds
+      };
 
   // Default props for ReadingsList
   const defaultProps = {

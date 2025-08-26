@@ -53,12 +53,24 @@ function createMockProps(overrides: Partial<ReadingListItem> = {}): ReadingListI
 }
 
 describe('ReadingCard Performance Tests', () => {
-  const performanceBaselines = {
-    singleCardRender: 50, // milliseconds
-    hoverInteraction: 20, // milliseconds
-    batchRender: 200, // milliseconds for 20 cards
-    audiobookOverhead: 5, // milliseconds extra for audiobook indicator
-  };
+  // Detect CI environment for adjusted thresholds
+  const isCI = process.env.CI === 'true';
+
+  // Performance baselines with CI adjustments
+  // CI environments have limited resources, so we apply appropriate multipliers
+  const performanceBaselines = isCI
+    ? {
+        singleCardRender: 80, // 50ms local -> 80ms CI (1.6x for resource constraints)
+        hoverInteraction: 32, // 20ms local -> 32ms CI
+        batchRender: 320, // 200ms local -> 320ms CI for 20 cards
+        audiobookOverhead: 8, // 5ms local -> 8ms CI
+      }
+    : {
+        singleCardRender: 50, // milliseconds
+        hoverInteraction: 20, // milliseconds
+        batchRender: 200, // milliseconds for 20 cards
+        audiobookOverhead: 5, // milliseconds extra for audiobook indicator
+      };
 
   beforeEach(() => {
     jest.clearAllMocks();
