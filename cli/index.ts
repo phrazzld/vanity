@@ -3,7 +3,6 @@
 import { program } from 'commander';
 import { addQuote, listQuotes } from './commands/quote';
 import { addReading, listReadings, updateReading } from './commands/reading';
-import { interactiveCoverSearch, fixBrokenCovers, validateCovers } from './commands/reading-cover';
 import { addProject, listProjects } from './commands/project';
 import { addPlace, listPlaces } from './commands/place';
 
@@ -163,66 +162,6 @@ Common use case:
   )
   .action(async () => {
     await updateReading();
-  });
-
-reading
-  .command('cover <slug>')
-  .description('Search and update cover image for a specific reading')
-  .addHelpText(
-    'after',
-    `
-This command will:
-  1. Search for covers from multiple sources (Google Books, OpenLibrary)
-  2. Show you available covers with confidence scores
-  3. Let you select the best one or enter a URL manually
-  4. Update the reading's markdown file
-
-Examples:
-  $ vanity reading cover the-hobbit     # Update cover for The Hobbit
-  $ vanity reading cover 1984          # Update cover for 1984
-  `
-  )
-  .action(async (slug: string) => {
-    await interactiveCoverSearch(slug);
-  });
-
-reading
-  .command('cover-fix')
-  .description('Automatically fix all broken cover URLs')
-  .addHelpText(
-    'after',
-    `
-This command will:
-  1. Find all readings with broken DigitalOcean URLs
-  2. Search for replacement covers automatically
-  3. Update files with the best match found
-  4. Create backups before making changes
-  5. Report on successes and failures
-
-This is useful after migrating from an old image hosting service.
-  `
-  )
-  .action(async () => {
-    await fixBrokenCovers();
-  });
-
-reading
-  .command('cover-validate')
-  .description('Validate all cover image URLs are working')
-  .addHelpText(
-    'after',
-    `
-This command will:
-  1. Check all readings for cover images
-  2. Validate local images exist
-  3. Check remote URLs are accessible
-  4. Report any broken or missing images
-
-Use this for periodic health checks of your image links.
-  `
-  )
-  .action(async () => {
-    await validateCovers();
   });
 
 // Project commands
