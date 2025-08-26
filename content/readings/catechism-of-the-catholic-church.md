@@ -1,8 +1,8 @@
 ---
 title: Catechism of the Catholic Church
-author: 
+author: Catholic Church
 finished: 2024-11-18T00:00:00.000Z
-coverImage: https://book-covers.nyc3.digitaloceanspaces.com/readings/catechism-of-the-catholic-church-01.jpg
-dropped: false
+audiobook: true
+coverImage: >-
+  https://m.media-amazon.com/images/I/61I7GRTKCkL._SL1500_.jpg
 ---
-

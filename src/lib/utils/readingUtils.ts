@@ -11,20 +11,14 @@ import type { Reading } from '@/types';
  * @returns Object with year keys and arrays of readings as values
  */
 export function groupReadingsByYear(readings: Reading[]): Record<string, Reading[]> {
-  // Initialize with special sections for "Currently Reading" and "Dropped"
+  // Initialize with special section for "Currently Reading"
   const grouped: Record<string, Reading[]> = {
     'Currently Reading': [],
-    Dropped: [],
   };
 
   // First pass: process readings into correct buckets based on status
   readings.forEach(reading => {
     // Handle special categories first
-    if (reading.dropped) {
-      grouped['Dropped']?.push(reading);
-      return;
-    }
-
     if (reading.finishedDate === null) {
       grouped['Currently Reading']?.push(reading);
       return;
@@ -67,9 +61,7 @@ export function getSortedYearKeys(yearGroups: Record<string, Reading[]>): string
   const years = Object.keys(yearGroups);
 
   // Separate special sections and regular years
-  const specialSections = ['Currently Reading', 'Dropped'].filter(section =>
-    years.includes(section)
-  );
+  const specialSections = ['Currently Reading'].filter(section => years.includes(section));
 
   const regularYears = years
     .filter(year => !specialSections.includes(year))
@@ -89,11 +81,6 @@ export function getSortedYearKeys(yearGroups: Record<string, Reading[]>): string
 export function sortReadingsWithinCategory(readings: Reading[], category: string): Reading[] {
   if (category === 'Currently Reading') {
     // Sorting logic for currently reading items (e.g. by title)
-    return [...readings].sort((a, b) => a.title.localeCompare(b.title));
-  }
-
-  if (category === 'Dropped') {
-    // Sort dropped readings by title
     return [...readings].sort((a, b) => a.title.localeCompare(b.title));
   }
 

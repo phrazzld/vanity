@@ -1,8 +1,8 @@
 ---
-title: The House of Morgan
+title: 'The House of Morgan: An American Banking Dynasty and the Rise of Modern Finance'
 author: Ron Chernow
 finished: 2021-09-29T00:00:00.000Z
-coverImage: https://book-covers.nyc3.digitaloceanspaces.com/readings/the-house-of-morgan-01.jpg
-dropped: false
+audiobook: true
+coverImage: >-
+  https://m.media-amazon.com/images/I/81uDoMV0K1L._SL1500_.jpg
 ---
-

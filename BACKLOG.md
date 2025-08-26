@@ -1,7 +1,5 @@
 # BACKLOG
 
-- [ ] remove "dropped" status / handling from readings -- either a book is being read or has been read
-- [ ] add "audiobook" flag for readings, visible in hover state
 - [ ] navbar should have the same width as page content
 - [ ] fonts should be redone, esp on readings page (headings are meh all around, fonts and overall design)
 - [ ] we should have a very simple, clean, fullwidth footer that links to email and github
@@ -64,6 +62,10 @@ _Valuable features, simplifications, documentation, performance with metrics_
 
 - [ ] **[MEDIUM] [FEATURE]** GitHub integration showcase | **Effort: M** | **Value: Auto-sync coding projects** | **Innovation: API integration demonstration**
 
+- [ ] **[MEDIUM] [FEATURE]** Enhanced reading filtering system | **Effort: M** | **Value: Complex queries across reading metadata** | **Innovation: Advanced search with audiobook/status/year filters**
+
+- [ ] **[MEDIUM] [FEATURE]** Reading progress indicators | **Effort: S** | **Value: Page/percentage completion in hover state** | **Innovation: Visual reading progress tracking**
+
 ## Low Priority (LOW)
 
 _Nice-to-have features, minor optimizations, future-proofing_
@@ -71,6 +73,16 @@ _Nice-to-have features, minor optimizations, future-proofing_
 ### UI & Styling
 
 - [ ] **[LOW] [FEATURE]** Smart image optimization pipeline | **Effort: S** | **Note: Cloudinary integration for asset management**
+
+### Reading Features
+
+- [ ] **[LOW] [FEATURE]** Advanced audiobook metadata | **Effort: M** | **Note: Narrator information, playback speed tracking**
+
+- [ ] **[LOW] [FEATURE]** Batch reading operations | **Effort: M** | **Note: CLI commands for bulk reading management**
+
+- [ ] **[LOW] [FEATURE]** Reading list performance optimization | **Effort: M** | **Note: Lazy loading for large reading collections**
+
+- [ ] **[LOW] [FEATURE]** External platform integrations | **Effort: L** | **Note: Goodreads import, audiobook platform sync**
 
 ### Documentation & Monitoring
 

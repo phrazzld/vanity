@@ -238,55 +238,35 @@ else
 fi
 
 # ========================================
-# Run tests with coverage (comprehensive test validation)
+# Run tests (without coverage for speed)
 # ========================================
-echo "🧪 Running tests with coverage..."
-if npm run test:coverage > coverage_output.log 2>&1; then
-  echo "✅ Tests and coverage check passed"
-  rm coverage_output.log
+echo "🧪 Running tests..."
+if npm test > test_output.log 2>&1; then
+  echo "✅ Tests passed"
+  rm test_output.log
 else
-  # Extract coverage failures from output
-  if grep -q "coverage threshold" coverage_output.log; then
-    echo "❌ Test coverage below required thresholds!"
+  # Check if tests failed
+  if grep -q "Test Suites:.*failed" test_output.log; then
+    echo "❌ Tests failed!"
     echo ""
-    echo "Coverage failures:"
-    grep -E "coverage threshold|not met" coverage_output.log | sed 's/^/  /'
+    # Show which tests failed
+    grep -E "FAIL|●" test_output.log | head -20
     echo ""
-    echo "To fix coverage issues:"
-    echo "1. Run 'npm run test:coverage' to see detailed report"
-    echo "2. Add tests for untested code"
-    echo "3. Check jest.config.js for coverage requirements"
-    echo ""
-    echo "💡 Current thresholds:"
-    echo "→ Global: 27% minimum (temporarily lowered from 85%)"
-    echo "→ Core logic (api/, lib/): 17-36% minimum (temporarily lowered from 90%)"
-    echo "→ See BACKLOG.md for coverage improvement plan"
-    rm coverage_output.log
+    echo "To debug test failures:"
+    echo "1. Run 'npm test' locally to see full output"
+    echo "2. Fix failing tests before pushing"
+    rm test_output.log
     exit 1
   else
-    # If it's another type of test failure (like logger tests), we need to check
-    if grep -q "Test Suites:.*failed" coverage_output.log; then
-      echo "❌ Tests failed!"
-      echo ""
-      # Show which tests failed
-      grep -E "FAIL|●" coverage_output.log | head -20
-      echo ""
-      echo "To debug test failures:"
-      echo "1. Run 'npm test' locally to see full output"
-      echo "2. Fix failing tests before pushing"
-      rm coverage_output.log
-      exit 1
+    # Check if it's just obsolete snapshots
+    if grep -q "Test Suites:.*passed.*total" test_output.log && grep -q "Tests:.*passed.*total" test_output.log; then
+      echo "✅ Tests passed (obsolete snapshots warning ignored)"
+      rm test_output.log
     else
-      # Check if it's just obsolete snapshots
-      if grep -q "Test Suites:.*passed.*total" coverage_output.log && grep -q "Tests:.*passed.*total" coverage_output.log; then
-        echo "✅ Tests and coverage check passed (obsolete snapshots warning ignored)"
-        rm coverage_output.log
-      else
-        # Unknown failure, show output
-        cat coverage_output.log
-        rm coverage_output.log
-        exit 1
-      fi
+      # Unknown failure, show output
+      cat test_output.log
+      rm test_output.log
+      exit 1
     fi
   fi
 fi

@@ -2,7 +2,5 @@
 title: Softwar
 author: Jason P. Lowery
 finished: 2023-04-29T00:00:00.000Z
-coverImage: https://book-covers.nyc3.digitaloceanspaces.com/readings/softwar-01.jpg
-dropped: false
+coverImage: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1677483394i/122975497.jpg'
 ---
-

@@ -26,21 +26,22 @@ jest.mock('../ReadingCard', () => {
       slug,
       title,
       author,
-      dropped,
+      audiobook,
       finishedDate,
     }: {
       slug: string;
       title: string;
       author: string;
       coverImageSrc?: string | null;
-      dropped?: boolean;
+      audiobook?: boolean;
       finishedDate?: string | Date | null;
     }) => (
       <div data-testid="reading-card" className="mocked-reading-card">
         <div>{title}</div>
         <div>{author}</div>
         <div>{slug}</div>
-        <div>{dropped ? 'Dropped' : finishedDate ? 'Finished' : 'Reading'}</div>
+        <div>{audiobook ? 'Audiobook' : ''}</div>
+        <div>{finishedDate ? 'Finished' : 'Reading'}</div>
       </div>
     ),
   };
@@ -57,7 +58,7 @@ describe('YearSection Component', () => {
       finishedDate: '2023-01-15',
       coverImageSrc: '/covers/book-one.jpg',
       thoughts: 'Great book',
-      dropped: false,
+      audiobook: false,
     },
     {
       id: 2,
@@ -67,7 +68,7 @@ describe('YearSection Component', () => {
       finishedDate: '2023-03-20',
       coverImageSrc: null,
       thoughts: '',
-      dropped: false,
+      audiobook: true,
     },
   ];
 
@@ -80,19 +81,19 @@ describe('YearSection Component', () => {
     finishedDate: null,
     coverImageSrc: '/covers/book-three.jpg',
     thoughts: 'Reading this now',
-    dropped: false,
+    audiobook: false,
   };
 
-  // Dropped book
-  const droppedBook: Reading = {
+  // Audiobook
+  const audiobookReading: Reading = {
     id: 4,
     slug: 'book-four',
     title: 'Book Four',
     author: 'Author D',
-    finishedDate: null,
+    finishedDate: '2023-05-10',
     coverImageSrc: null,
-    thoughts: 'Not for me',
-    dropped: true,
+    thoughts: 'Great audiobook',
+    audiobook: true,
   };
 
   it('renders year heading correctly', () => {
@@ -125,16 +126,14 @@ describe('YearSection Component', () => {
     expect(section).toHaveAttribute('data-year', 'Currently Reading');
   });
 
-  it('displays "Dropped" section with appropriate styling', () => {
-    render(<YearSection year="Dropped" readings={[droppedBook]} />);
+  it('displays audiobook indicator for audiobooks', () => {
+    render(<YearSection year="2023" readings={[audiobookReading]} />);
 
-    // More specific selection to avoid ambiguity, use h2 tag selector
-    const heading = screen.getByRole('heading', { name: /dropped/i });
+    // Check that the audiobook reading is rendered
+    const heading = screen.getByRole('heading', { name: /2023/i });
     expect(heading).toBeInTheDocument();
-
-    // Find the parent section and check for data attribute
-    const section = heading.closest('section');
-    expect(section).toHaveAttribute('data-year', 'Dropped');
+    expect(screen.getByText('Book Four')).toBeInTheDocument();
+    expect(screen.getByText('Audiobook')).toBeInTheDocument();
   });
 
   it('handles empty reading array gracefully', () => {

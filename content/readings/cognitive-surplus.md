@@ -2,7 +2,6 @@
 title: Cognitive Surplus
 author: Clay Shirky
 finished: 2013-05-22T00:00:00.000Z
-coverImage: https://book-covers.nyc3.digitaloceanspaces.com/readings/cognitive-surplus-01.jpg
-dropped: false
+coverImage: >-
+  https://m.media-amazon.com/images/I/61-4BQQY6wL._SL1200_.jpg
 ---
-

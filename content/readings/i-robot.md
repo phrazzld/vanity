@@ -1,8 +1,6 @@
 ---
-title: I, Robot
+title: 'I, Robot'
 author: Isaac Asimov
 finished: 2012-10-01T00:00:00.000Z
-coverImage: https://book-covers.nyc3.digitaloceanspaces.com/readings/i-robot-01.jpg
-dropped: false
+coverImage: 'https://m.media-amazon.com/images/I/81ZaDgeRX3L._SL1500_.jpg'
 ---
-

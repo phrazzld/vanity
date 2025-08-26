@@ -1,8 +1,6 @@
 ---
-title: Brave New War
+title: 'Brave New War: The Next Stage of Terrorism and the End of Globalization'
 author: John Robb
 finished: 2013-03-01T00:00:00.000Z
-coverImage: https://book-covers.nyc3.digitaloceanspaces.com/readings/brave-new-war-01.jpg
-dropped: false
+coverImage: 'https://m.media-amazon.com/images/I/61dshgdLdvL._SL1082_.jpg'
 ---
-

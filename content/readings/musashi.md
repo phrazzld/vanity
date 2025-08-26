@@ -1,8 +1,6 @@
 ---
 title: Musashi
 author: Eiji Yoshikawa
-finished: 
-coverImage: https://book-covers.nyc3.digitaloceanspaces.com/readings/musashi-01.jpg
-dropped: false
+finished: null
+coverImage: 'https://m.media-amazon.com/images/I/91pcSX96XfL._SL1500_.jpg'
 ---
-

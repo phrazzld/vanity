@@ -1,8 +1,6 @@
 ---
-title: Genome
+title: 'Genome: The Autobiography of a Species in 23 Chapters'
 author: Matt Ridley
 finished: 2012-07-01T00:00:00.000Z
-coverImage: https://book-covers.nyc3.digitaloceanspaces.com/readings/genome-01.jpg
-dropped: false
+coverImage: 'https://m.media-amazon.com/images/I/71a2kLVF2WL._SL1360_.jpg'
 ---
-

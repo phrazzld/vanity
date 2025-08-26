@@ -137,15 +137,19 @@ reading
     'after',
     `
 This command lets you:
+  • Update title, author, or cover image
   • Mark a book as finished (today or custom date)
+  • Toggle audiobook status
   • Update your thoughts about a book
-  • Mark a book as dropped
+  • Update multiple fields at once
+  • Delete a reading from your collection
   
 The update wizard will:
   1. Show currently reading books first
   2. Let you select which book to update
-  3. Present relevant update options
-  4. Save changes to the markdown file
+  3. Present all available update options
+  4. Preview changes before saving
+  5. Save changes to the markdown file
 
 Examples:
   $ vanity reading update     # Interactive update wizard
@@ -153,7 +157,7 @@ Examples:
 Common use case:
   Finishing a book you're currently reading - just run 'update',
   select the book, and choose "Mark as finished (today)".
-  No need to manually edit dates in YAML frontmatter!
+  Need to fix a cover image? Choose "Update cover image".
   `
   )
   .action(async () => {

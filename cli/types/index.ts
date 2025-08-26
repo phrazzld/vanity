@@ -32,6 +32,10 @@ export interface ThoughtsPrompt {
   addThoughts: boolean;
 }
 
+export interface AudiobookPrompt {
+  audiobook: boolean;
+}
+
 export interface ContinueWithoutImagePrompt {
   continueWithoutImage: boolean;
 }
@@ -42,6 +46,10 @@ export interface ReadingActionPrompt {
 
 export interface ConfirmPrompt {
   confirmed: boolean;
+}
+
+export interface ConfirmDeletePrompt {
+  confirmDelete: boolean;
 }
 
 // Project command types
@@ -152,7 +160,7 @@ export interface ReadingFrontmatter {
   author: string;
   finished?: string | null;
   coverImage?: string;
-  dropped: boolean;
+  audiobook?: boolean;
 }
 
 export interface ProjectFrontmatter {

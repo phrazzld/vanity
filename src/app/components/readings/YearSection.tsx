@@ -13,7 +13,7 @@ import ReadingCard from './ReadingCard';
  * Props for the YearSection component
  */
 export interface YearSectionProps {
-  /** Year or category name (e.g., "2023", "Currently Reading", "Dropped") */
+  /** Year or category name (e.g., "2023", "Currently Reading") */
   year: string;
 
   /** Array of readings to display for this year/category */
@@ -44,20 +44,19 @@ export default function YearSection({
   children,
 }: YearSectionProps) {
   // Determine if this is a special section
-  const isSpecialSection = year === 'Currently Reading' || year === 'Dropped';
+  const isSpecialSection = year === 'Currently Reading';
 
   // Background colors for the year heading
   const bgColor = {
     'Currently Reading':
       'bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 border-blue-100 dark:border-blue-800',
-    Dropped:
-      'bg-gray-50 dark:bg-gray-700/30 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700',
     default:
       'bg-gradient-to-r from-gray-50 to-transparent dark:from-gray-800/40 dark:to-transparent text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700',
   };
 
   // Choose the appropriate background color based on section type
-  const headingBgColor = isSpecialSection ? bgColor[year as keyof typeof bgColor] : bgColor.default;
+  const headingBgColor =
+    year === 'Currently Reading' ? bgColor['Currently Reading'] : bgColor.default;
 
   return (
     <section ref={sectionRef} className={`mb-8 ${className}`} data-year={year}>
@@ -100,7 +99,7 @@ export default function YearSection({
               title={reading.title}
               author={reading.author}
               coverImageSrc={reading.coverImageSrc}
-              dropped={reading.dropped}
+              audiobook={reading.audiobook}
               finishedDate={reading.finishedDate}
             />
           ))}

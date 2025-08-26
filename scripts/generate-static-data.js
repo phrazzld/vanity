@@ -48,15 +48,12 @@ function generateReadings() {
       finishedDate: data.finished || null,
       coverImageSrc: data.coverImage || null,
       thoughts: content.trim(),
-      dropped: data.dropped || false,
+      audiobook: data.audiobook || false,
     };
   });
 
-  // Filter out dropped readings
-  const activeReadings = readings.filter(r => !r.dropped);
-
   // Sort by finished date (most recent first)
-  const sortedReadings = activeReadings.sort((a, b) => {
+  const sortedReadings = readings.sort((a, b) => {
     if (!a.finishedDate && !b.finishedDate) return 0;
     if (!a.finishedDate) return 1;
     if (!b.finishedDate) return -1;

@@ -35,7 +35,7 @@ export function getStaticReadings(): { data: Reading[]; totalCount: number; hasM
           finishedDate: '2024-01-01',
           coverImageSrc: null,
           thoughts: 'Test thoughts',
-          dropped: false,
+          audiobook: false,
         },
       ],
       totalCount: 1,

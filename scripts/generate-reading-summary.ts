@@ -11,7 +11,7 @@ interface Reading {
   finishedDate: string | null;
   coverImageSrc: string | null;
   thoughts: string;
-  dropped: boolean;
+  audiobook?: boolean;
 }
 
 function generateReadingSummary() {

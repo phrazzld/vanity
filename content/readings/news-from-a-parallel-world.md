@@ -2,7 +2,6 @@
 title: News From a Parallel World
 author: Richard Raznikov
 finished: 2012-01-01T00:00:00.000Z
-coverImage: https://book-covers.nyc3.digitaloceanspaces.com/readings/news-from-a-parallel-world-01.jpg
-dropped: false
+coverImage: >-
+  https://m.media-amazon.com/images/I/718xc9R7JGL._SL1500_.jpg
 ---
-

@@ -28,12 +28,8 @@ export function getSeededPlaceholderStyles(key: string) {
   ];
   const baseColor = colorPalette[seed % colorPalette.length];
 
-  // optionally pick a second color for a gradient or pattern
-  const secondColor = colorPalette[(seed + 1) % colorPalette.length];
-
-  // create a subtle pattern overlay
-  // for instance, diagonal stripes with a pseudo-element
+  // create a simple solid color background
   return {
-    background: `linear-gradient(135deg, ${baseColor}, ${secondColor})`,
+    backgroundColor: baseColor,
   };
 }
