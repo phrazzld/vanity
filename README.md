@@ -429,6 +429,7 @@ CI runs on each push to main and on pull requests. Check the [.github/workflows]
 - [RESPONSIVE_DESIGN.md](docs/RESPONSIVE_DESIGN.md) - Responsive design approach
 - [KEYBOARD_NAVIGATION.md](docs/KEYBOARD_NAVIGATION.md) - Keyboard navigation utilities
 - [SECURITY_VULNERABILITY_MANAGEMENT.md](docs/SECURITY_VULNERABILITY_MANAGEMENT.md) - Security vulnerability scanning and management
+- [CI_TESTING_STRATEGY.md](docs/CI_TESTING_STRATEGY.md) - CI pipeline and testing strategy
 
 ### Automatically Generated Documentation
 
