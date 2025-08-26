@@ -16,115 +16,84 @@ Current actionable tasks for the vanity project.
 
 ## Active Tasks
 
-### Performance & Quality Validation
-
-- [x] **Verify hover interactions maintain 60fps performance**
-  - Success criteria: CSS hover animations run smoothly, no JavaScript render blocking
-  - Tools: Browser dev tools performance profiling
-  - Priority: Medium
-
-  ```
-  Work Log:
-  - ✅ Created comprehensive hover performance test script (scripts/hover-performance-test.js)
-  - ✅ Documented manual testing procedures (docs/hover-performance-validation.md)
-  - ✅ Analyzed all hover patterns in codebase:
-    * TypewriterQuotes: JavaScript pause on hover - necessary for UX
-    * ReadingCard: Hybrid approach with CSS transitions (opacity, transform) - GPU accelerated
-    * Navigation/Links: Pure CSS transforms - optimal performance
-    * Buttons: Tailwind hover utilities - CSS-only
-  - ✅ Performance characteristics validated:
-    * All transitions use GPU-accelerated properties (transform, opacity)
-    * No layout-triggering properties animated
-    * Proper will-change hints for complex animations
-    * Accessibility focus states match hover states
-  - Result: All hover interactions maintain 60fps - no optimization needed
-  ```
-
-- [x] **Confirm bundle size increase <5KB from audiobook changes**
-  - Success criteria: Bundle analyzer shows minimal size impact from recent changes
-  - Tools: webpack-bundle-analyzer, lighthouse
-  - Priority: Medium
-
-  ```
-  Work Log:
-  - ✅ Created bundle-size-analysis.js script to measure audiobook feature impact
-  - ✅ Analyzed changes from audiobook commits (4ae961e to 53be8b0)
-  - ✅ Measured actual bundle impact:
-    * Type definitions: 50 bytes
-    * UI indicator ("🎧 Audiobook"): 150 bytes
-    * Conditional rendering logic: 200 bytes
-    * Extended aria-labels: 100 bytes
-    * JSON data increase (365 readings × 1 byte): 365 bytes
-    * Total measured impact: 865 bytes (0.84 KB)
-  - ✅ Verified JavaScript bundle sizes:
-    * Main bundles unchanged in size
-    * Total JS bundle: 1.1 MB (no significant increase)
-  - Result: ✅ PASS - Well within 5KB limit (actual: 0.84 KB)
-  ```
-
-- [x] **Validate reading list render time unchanged**
-  - Success criteria: Performance profiling shows no regression in component render time
-  - Tools: React profiler, performance measurements
-  - Priority: Low
-
-  ```
-  Work Log:
-  - ✅ Created comprehensive React performance tests:
-    * ReadingCard.performance.test.tsx - 11 tests all passing
-    * ReadingsList.performance.test.tsx - Full dataset testing
-    * react-performance-validation.js - Validation summary script
-  - ✅ Measured component render times:
-    * Single ReadingCard: 3-5ms average
-    * Batch render (20 cards): <14ms total (<1ms per card)
-    * 365 cards dataset: <500ms (production size)
-    * Hover interactions: Maintained 60fps
-  - ✅ Validated audiobook feature impact:
-    * Render overhead: 3.5% (well within 10% threshold)
-    * No memory leaks detected
-    * Filter/sort operations unchanged (<100ms)
-    * Re-render efficiency preserved
-  - Result: ✅ PASS - No performance regression detected
-  ```
-
----
-
 ## CI Pipeline Simplification (Critical)
 
 ### Remove Flaky Performance Tests
 
 **Problem:** Performance tests measuring jsdom render times are fundamentally flawed - they don't reflect real browser performance, require complex environment detection, and create false positives that block legitimate work. Real performance issues wouldn't be caught by these tests anyway.
 
-- [ ] **Delete all performance test files**
+- [x] **Delete all performance test files**
   - Target files: `src/app/components/readings/__tests__/ReadingCard.performance.test.tsx`
   - Target files: `src/app/components/readings/__tests__/ReadingsList.performance.test.tsx`
   - Target files: Any other `*.performance.test.*` files found via `find . -name "*.performance.test.*"`
   - Success criteria: All performance test files removed from codebase
   - Rationale: jsdom render times ≠ browser performance. These tests provide negative value.
 
-- [ ] **Remove performance test imports and references**
+  ```
+  Work Log:
+  - ✅ Deleted ReadingCard.performance.test.tsx
+  - ✅ Deleted ReadingsList.performance.test.tsx
+  - ✅ No other performance test files found in codebase
+  ```
+
+- [x] **Remove performance test imports and references**
   - Search pattern: `grep -r "performance.test" --include="*.json" --include="*.js" --include="*.ts"`
   - Check jest.config.js for any performance-specific configurations
   - Check package.json scripts for performance-specific test commands
   - Success criteria: No references to performance tests remain in configuration
 
-- [ ] **Simplify pre-push hook to remove coverage overhead**
+  ```
+  Work Log:
+  - ✅ No performance test imports found in configuration files
+  - ✅ jest.config.js has no performance-specific configurations
+  - ✅ package.json has no performance test scripts
+  - Found references in scripts that will be deleted in next task:
+    * scripts/hover-performance-test.js
+    * scripts/react-performance-validation.js
+  - Note: src/lib/__tests__/data.test.ts has misleading test name but is not a performance test
+  ```
+
+- [x] **Simplify pre-push hook to remove coverage overhead**
   - File: `.husky/pre-push`
   - Current issue: Runs `npm run test:coverage` which adds 20-30% overhead
   - Change to: `npm test` (no coverage during pre-push)
   - Keep coverage for CI builds where it matters
   - Success criteria: Pre-push runs tests without coverage collection
 
-- [ ] **Remove performance validation scripts**
+  ```
+  Work Log:
+  - ✅ Changed line 244: 'npm run test:coverage' → 'npm test'
+  - ✅ Updated echo message to reflect no coverage
+  - ✅ Simplified error handling to remove coverage-specific checks
+  - ✅ Tests now run without coverage overhead (20-30% speedup)
+  ```
+
+- [x] **Remove performance validation scripts**
   - Target files: `scripts/hover-performance-test.js`
   - Target files: `scripts/react-performance-validation.js`
   - Target files: `scripts/bundle-size-analysis.js` (keep if it provides value beyond performance)
   - Target docs: `docs/hover-performance-validation.md`
   - Success criteria: All performance-specific validation removed
 
-- [ ] **Clean up performance-related TODO entries**
+  ```
+  Work Log:
+  - ✅ Deleted scripts/hover-performance-test.js
+  - ✅ Deleted scripts/react-performance-validation.js
+  - ✅ Deleted scripts/bundle-size-analysis.js (specific to audiobook analysis, not general)
+  - ✅ Deleted docs/hover-performance-validation.md
+  ```
+
+- [x] **Clean up performance-related TODO entries**
   - Remove completed performance validation tasks from this file
   - Archive work logs that reference performance testing
   - Success criteria: TODO.md reflects current reality without performance test cruft
+
+  ```
+  Work Log:
+  - ✅ Removed entire "Performance & Quality Validation" section (70+ lines)
+  - ✅ All completed performance tasks and work logs removed
+  - ✅ TODO.md now clean and focused on remaining work
+  ```
 
 ### Focus CI on What Matters
 
