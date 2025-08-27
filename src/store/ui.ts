@@ -58,7 +58,8 @@ const createUIStore = () => {
         } else {
           document.documentElement.classList.remove('dark');
         }
-        setTimeout(() => document.documentElement.classList.remove('theme-transitioning'), 350);
+
+        setTimeout(() => document.documentElement.classList.remove('theme-transitioning'), 200);
       }
     },
     setDarkMode: (_isDark: boolean) => {

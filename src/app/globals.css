@@ -15,6 +15,10 @@
     --popover-foreground: #111827; /* gray-900 */
     --border: #e5e7eb; /* gray-200 */
     --input: #e5e7eb; /* gray-200 */
+
+    /* Reading Card Theme Variables */
+    --reading-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --reading-card-bg: #f3f4f6;
     --muted: #f3f4f6; /* gray-100 */
     --muted-foreground: #6b7280; /* gray-500 */
     --accent: #eff6ff; /* blue-50 */
@@ -44,6 +48,10 @@
     --popover-foreground: #f9fafb; /* gray-50 */
     --border: #374151; /* gray-700 */
     --input: #374151; /* gray-700 */
+
+    /* Reading Card Theme Variables - Dark Mode */
+    --reading-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --reading-card-bg: #1f2937;
     --muted: #374151; /* gray-700 */
     --muted-foreground: #9ca3af; /* gray-400 */
     --accent: #1e3a8a; /* blue-900 */
@@ -62,28 +70,49 @@
     --primary-900: #f9fafb; /* gray-50 */
   }
 
-  /* Smooth theme transitions - exclude images and videos to prevent flicker */
-  * {
+  /* Targeted theme transitions - only for elements that need animation */
+  .theme-transition {
     transition-property: background-color, border-color, color, fill, stroke;
-    transition-duration: 300ms;
+    transition-duration: 200ms;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
+
+  /* Apply theme transitions to specific elements */
+  body,
+  header,
+  nav,
+  main,
+  .site-header,
+  .nav-list a,
+  .dark-mode-toggle {
+    @apply theme-transition;
+  }
+
+  /* Exclude media elements from transitions */
   img,
   video,
   svg {
-    transition: none;
+    transition: none !important;
   }
 
   /* Respect user's motion preferences */
   @media (prefers-reduced-motion: reduce) {
-    * {
+    .theme-transition {
       transition-duration: 0.01ms !important;
     }
   }
 
-  /* Performance optimization for theme transitions */
-  .theme-transitioning * {
+  /* Optimized will-change - only for actively transitioning elements */
+  .theme-transitioning .theme-transition {
     will-change: background-color, border-color, color;
+  }
+
+  /* Reading card specific transitions */
+  .reading-card {
+    transition:
+      box-shadow 200ms ease,
+      background-color 200ms ease;
+    contain: layout style paint;
   }
 
   /* Dark mode moon icon glow effect */

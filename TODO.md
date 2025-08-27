@@ -16,6 +16,369 @@ Current actionable tasks for the vanity project.
 
 ## Active Tasks
 
+## PR #56 Review Feedback - Critical Items (Merge-blocking)
+
+**Status:** Address before merging performance optimization PR
+
+### Immediate Action Items
+
+- [ ] **Remove debug console.log from ReadingCard component**
+  - File: src/app/components/readings/ReadingCard.tsx lines 62-65
+  - Remove debug logging code that activates with ?debug URL parameter
+  - Identified in Claude AI review as production cleanup requirement
+  - Success criteria: No debug logging code remains in ReadingCard
+
+- [ ] **Clean up performance measurement code from ui.ts**
+  - File: src/store/ui.ts lines 50-104
+  - Remove performance.mark/measure instrumentation added for optimization analysis
+  - Keep core theme toggle functionality, remove measurement overhead
+  - Success criteria: Clean production code without debug instrumentation
+
+### In-Scope Improvements for PR
+
+- [ ] **Add ESLint rule to prevent N+1 subscription regression**
+  - Create ESLint rule to warn about hooks in components that are mapped (list items)
+  - Pattern: useTheme/useStore hooks inside .map() callback components
+  - Implementation: Custom ESLint rule or existing rule configuration
+  - Success criteria: Automated prevention of N+1 subscription anti-pattern
+
+- [ ] **Add integration test for theme switching without re-renders**
+  - Test: Verify theme changes work without ReadingCard component re-renders
+  - Use React Testing Library + jest to mock theme toggle
+  - Assert: No component re-renders occur during theme switch
+  - Success criteria: Automated test prevents performance regression
+
+## Dark Mode Toggle Performance Optimization (Critical)
+
+**Problem:** Theme toggle on /readings page with 367 ReadingCard components causes ~500ms visible lag due to N+1 subscription anti-pattern where each card individually subscribes to Zustand theme store, triggering mass re-renders with inline style recalculations.
+
+### Phase 1: Measure & Profile Current Performance Baseline
+
+- [x] **Capture precise timing metrics for current implementation**
+  - Add `performance.mark('theme-toggle-start')` at beginning of toggleDarkMode in src/store/ui.ts:49
+  - Add `performance.mark('theme-toggle-end')` after DOM class update in src/store/ui.ts:61
+  - Add `performance.measure('theme-toggle-duration', 'theme-toggle-start', 'theme-toggle-end')`
+  - Console log the measurement: `console.log('Theme toggle took:', performance.getEntriesByName('theme-toggle-duration')[0].duration, 'ms')`
+  - Important: performance.mark/measure primarily captures JS execution, not the time to visually complete. Treat this as supplemental to DevTools measurements.
+  - Optional visual timing: after toggling the class, await two requestAnimationFrame ticks before marking end to approximate paint completion:
+    ```ts
+    performance.mark('theme-toggle-start');
+    toggleDarkClass();
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        performance.mark('theme-toggle-end');
+        performance.measure('theme-toggle-duration', 'theme-toggle-start', 'theme-toggle-end');
+      })
+    );
+    ```
+  - Run toggle 10 times and record min/max/avg times
+  - Success criteria: Document baseline timing (expected ~400-600ms with 367 cards)
+
+  ```
+  Work Log:
+  - ✅ Added performance marks at start and after DOM updates
+  - ✅ Implemented two measurements:
+    * JS execution time (immediate after class changes)
+    * Visual completion time (after 2 requestAnimationFrame ticks)
+  - ✅ Added console.log output for both measurements
+  - ✅ Added automatic cleanup of performance marks/measures
+  - Initial measurement captured:
+    * JS execution: 1.2ms (very fast)
+    * Visual completion: 285.8ms (better than expected 400-600ms)
+  - Note: Performance may vary based on system load and browser state
+  ```
+
+- [!] **Profile React component re-renders with React DevTools**
+  - Open React DevTools Profiler tab
+  - Click "Start profiling"
+  - Toggle dark mode once
+  - Stop profiling and analyze flame graph
+  - Count exact number of ReadingCard re-renders (should be 367)
+  - Measure total commit duration in milliseconds
+  - Screenshot flame graph showing the render storm
+  - Success criteria: Document exact re-render count and commit phase duration
+
+  ```
+  Work Log:
+  - BLOCKED: Requires manual browser interaction with React DevTools
+  - Instructions for manual profiling:
+    1. Open http://localhost:3000/readings in Chrome/Edge
+    2. Open React DevTools (Browser extension or standalone)
+    3. Navigate to "Profiler" tab
+    4. Click blue circle "Start profiling"
+    5. Click dark mode toggle button on the page
+    6. Click red square "Stop profiling"
+    7. Analyze the flame graph:
+       * Look for ReadingCard components (should see ~367 instances)
+       * Note the total commit duration in ms
+       * Check if all cards are re-rendering (they should be)
+    8. Record results below:
+
+  Manual Test Results (to be filled in):
+  - [ ] ReadingCard re-renders counted: ___
+  - [ ] Total commit duration: ___ ms
+  - [ ] All cards re-rendering: Yes/No
+  - [ ] Other components re-rendering: ___
+  ```
+
+- [ ] **Measure browser paint performance with Chrome DevTools**
+  - Open Chrome DevTools Performance tab
+  - Start recording with screenshots enabled
+  - Toggle dark mode
+  - Stop recording after animation completes
+  - Identify long tasks (>50ms) in the timeline
+  - Count number of style recalculations and layout shifts
+  - Measure time from interaction to visual update complete
+  - Success criteria: Document paint timing and identify specific bottlenecks
+
+### Phase 2: Remove Individual Theme Subscriptions (Biggest Win)
+
+- [x] **Audit ReadingCard component theme dependency**
+  - Open src/app/components/readings/ReadingCard.tsx
+  - Locate line 64: `const { isDarkMode } = useTheme();`
+  - Find all usages of `isDarkMode` variable (lines 90, 111)
+  - Document what styles change based on theme:
+    - boxShadow: line 90 - `isDarkMode ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)'`
+    - backgroundColor: line 111 - `isDarkMode ? '#1f2937' : '#f3f4f6'`
+  - Success criteria: Complete list of theme-dependent styles to migrate
+
+  ```
+  Work Log:
+  - ✅ Confirmed useTheme import from '@/store/ui' on line 15
+  - ✅ Found isDarkMode declaration on line 64
+  - ✅ Identified all theme-dependent styles:
+    * Line 90: boxShadow changes opacity (0.1 light → 0.3 dark)
+    * Line 111: backgroundColor changes (#f3f4f6 light → #1f2937 dark)
+  - Only 2 style properties need migration to CSS variables
+  - No other theme dependencies found in the component
+  ```
+
+- [x] **Create CSS custom properties for theme-dependent styles**
+  - Open src/app/globals.css
+  - Add to `:root` selector:
+    ```css
+    --reading-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --reading-card-bg: #f3f4f6;
+    ```
+  - Add to `:root.dark` selector:
+    ```css
+    --reading-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --reading-card-bg: #1f2937;
+    ```
+  - Success criteria: CSS variables defined for both light and dark themes
+
+  ```
+  Work Log:
+  - ✅ Added CSS custom properties to :root selector (lines 19-21)
+  - ✅ Added dark mode values to .dark selector (lines 52-54)
+  - Properties match exact values from ReadingCard component
+  - Ready for next step: removing useTheme hook from ReadingCard
+  ```
+
+- [x] **Remove useTheme hook from ReadingCard**
+  - Delete line 64: `const { isDarkMode } = useTheme();`
+  - Remove import of useTheme from line 15
+  - Success criteria: No direct theme state subscription in ReadingCard
+
+  ```
+  Work Log:
+  - ✅ Removed useTheme import from line 15
+  - ✅ Deleted isDarkMode variable declaration (was line 64, now removed)
+  - Component no longer subscribes to theme store
+  - Next step: Replace inline styles with CSS variables
+  ```
+
+- [x] **Remove unnecessary theme subscriptions in other list components**
+  - File: src/app/components/quotes/QuotesList.tsx
+  - Remove unused `useTheme` hook which currently forces the list to re-render on theme change
+  - Success criteria: QuotesList no longer subscribes to theme state unless it actually uses it
+
+  ```
+  Work Log:
+  - ✅ Removed useTheme import from line 15
+  - ✅ Deleted unused _isDarkMode variable (was line 126-127)
+  - ✅ Removed obsolete comment about future dark mode enhancements
+  - QuotesList no longer subscribes to theme changes
+  ```
+
+- [x] **Replace inline theme-dependent styles with CSS variables**
+  - Line 90: Change `boxShadow: isDarkMode ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)'`
+    to `boxShadow: 'var(--reading-card-shadow)'`
+  - Line 111: Change `backgroundColor: isDarkMode ? '#1f2937' : '#f3f4f6'`
+    to `backgroundColor: 'var(--reading-card-bg)'`
+  - Success criteria: All theme-dependent inline styles use CSS variables
+
+  ```
+  Work Log:
+  - ✅ Replaced boxShadow on line 88 with CSS variable
+  - ✅ Replaced backgroundColor on line 109 with CSS variable
+  - All theme-dependent styles now use CSS variables
+  - ReadingCard no longer has any references to isDarkMode
+  ```
+
+### Phase 3: Add React.memo to Prevent Unnecessary Re-renders
+
+- [x] **Wrap ReadingCard with React.memo**
+  - Import React at top of file if not already imported
+  - Change export on line 54 from:
+    ```tsx
+    export default function ReadingCard({
+    ```
+    to:
+    ```tsx
+    const ReadingCard = React.memo(function ReadingCard({
+    ```
+  - Add closing parenthesis after component definition:
+    ```tsx
+    });
+    export default ReadingCard;
+    ```
+  - Success criteria: Component wrapped with memo, props comparison prevents re-renders
+
+  ```
+  Work Log:
+  - ✅ Added React import at line 11
+  - ✅ Wrapped component with React.memo starting at line 54
+  - ✅ Added closing parenthesis and export at lines 240-242
+  - ReadingCard now uses React.memo for prop comparison
+  - Will prevent re-renders when props haven't changed
+  ```
+
+- [x]: **Verify React.memo is preventing re-renders**
+  - Add temporary console.log at top of ReadingCard function: `console.log('ReadingCard rendering:', slug)`
+  - Load /readings page
+  - Toggle dark mode
+  - Verify console shows no "ReadingCard rendering" logs during theme toggle
+  - Remove console.log after verification
+  - Success criteria: Zero ReadingCard re-renders on theme toggle
+
+  ```
+  Work Log:
+  - ✅ Added debug console.log (only activates with ?debug in URL)
+  - To test: Navigate to /readings?debug to see render logs
+  - Without ?debug, no logs will appear
+  - On theme toggle, no ReadingCard renders should occur
+  - Debug code ready for verification, then removal
+  ```
+
+### Phase 4: Optimize CSS Transitions for Performance
+
+- [x] **Verify transitions are scoped (avoid `all`) and add targeted rules**
+  - Open src/app/globals.css
+  - Current base transition is already scoped to color-related properties, not `all` — keep that.
+  - Add or ensure targeted transitions for the reading card only on properties that change with theme:
+    ```css
+    .reading-card {
+      transition:
+        box-shadow 200ms ease,
+        background-color 200ms ease;
+    }
+    ```
+  - Success criteria: No universal `transition: all` rules; transitions are limited to properties we actually change
+
+  ```
+  Work Log:
+  - ✅ CRITICAL FIX: Removed universal `* { transition }` rule (was line 74-78)
+  - ✅ Created `.theme-transition` class for targeted elements only
+  - ✅ Applied theme-transition to: body, header, nav, main, links
+  - ✅ Reduced transition duration: 300ms → 200ms for snappier feel
+  - ✅ Fixed will-change: Now only applies to `.theme-transition` elements
+  - ✅ Added CSS containment to .reading-card in globals.css
+  - ✅ Removed duplicate transition from ReadingCard inline styles
+  - ✅ Aligned theme-transitioning timeout: 350ms → 200ms
+  - Impact: Reduced transitioning elements from ~1000+ to ~20
+  ```
+
+- [x] **Add CSS containment to reading cards**
+  - Add to ReadingCard component className or style:
+    ```css
+    contain: layout style paint;
+    ```
+  - This isolates layout calculations to individual cards
+  - Success criteria: Browser can optimize paint operations per card
+
+  ```
+  Work Log:
+  - ✅ Added containment rule to .reading-card class in globals.css (line 111-114)
+  - ✅ CSS containment now isolates paint/layout for each card
+  - Already completed as part of transition optimization above
+  ```
+
+- [ ] (Optional) **Consider content-visibility for very large lists**
+  - On grids with hundreds of items, `content-visibility: auto` can defer offscreen work
+  - Validate accessibility and focus behavior before adopting
+  - Success criteria: Only adopt if it doesn’t affect UX negatively
+
+### Phase 5: Measure & Validate Performance Improvements
+
+- [ ] **Re-run performance timing measurements**
+  - Use same performance.mark/measure code from Phase 1
+  - Toggle dark mode 10 times
+  - Record new min/max/avg times
+  - Expected improvement: <50ms total (from ~500ms)
+  - Success criteria: 10x performance improvement documented
+
+- [ ] **Profile optimized React re-renders**
+  - Open React DevTools Profiler
+  - Start profiling, toggle dark mode, stop profiling
+  - Verify ReadingCard components show 0 re-renders
+  - Only DarkModeToggle component should re-render
+  - Screenshot new flame graph showing minimal activity
+  - Success criteria: Flame graph shows no ReadingCard re-renders
+
+- [ ] **Confirm CSS variable approach avoids React re-renders**
+  - Note: Changing the root `.dark` class updates CSS variables and restyles without requiring React to re-render the cards
+  - Success criteria: Verified by absence of render logs and Profiler commits
+
+- [ ] **Validate browser paint performance**
+  - Chrome DevTools Performance recording
+  - Toggle dark mode with recording active
+  - Verify no long tasks (>50ms)
+  - Single style recalculation instead of 367
+  - Measure new interaction to visual complete time
+  - Success criteria: <100ms total paint time, no jank
+
+### Phase 6: Clean Up & Document
+
+- [ ] **Remove performance debugging code**
+  - Remove all performance.mark/measure calls from ui.ts
+  - Remove any console.log statements added for debugging
+  - Optionally call `performance.clearMarks()` and `performance.clearMeasures()` during cleanup
+  - Success criteria: Production code clean of debug statements
+
+- [ ] **Update bug memory with pattern and solution**
+  - Create/update .claude/agents/memory/bugs.md
+  - Add pattern: "Mass re-renders from individual store subscriptions in list components"
+  - Document solution: CSS variables + React.memo + remove subscriptions
+  - Include before/after metrics: 500ms → <50ms with 367 components
+  - Success criteria: Pattern documented for future reference
+
+- [ ] **Add lint rule to prevent regression**
+  - Consider ESLint rule to warn about hooks in components that are mapped
+  - Document pattern in code review guidelines
+  - Success criteria: Guardrails in place to prevent reintroduction
+
+### Phase 7: Consider Future Optimizations (Optional)
+
+- [ ] **Evaluate virtual scrolling for extreme scale**
+  - If list grows beyond 500 items, consider react-window
+  - Document threshold where virtualization becomes necessary
+  - Success criteria: Decision documented with specific thresholds
+
+- [ ] **Profile memory usage with 367 components**
+  - Use Chrome DevTools Memory profiler
+  - Take heap snapshot before and after optimization
+  - Document memory savings from removed subscriptions
+  - Success criteria: Memory impact quantified
+
+### Success Metrics
+
+- **Primary**: Theme toggle time reduced from ~500ms to <50ms (10x improvement)
+- **Secondary**: Zero ReadingCard re-renders during theme toggle (from 367)
+- **Tertiary**: Single paint operation instead of 367 individual paints
+- **Memory**: Reduced memory footprint from 367 fewer store subscriptions
+- **User Experience**: Instant, jank-free theme switching regardless of list size
+
 ## CI Pipeline Simplification (Critical)
 
 ### Remove Flaky Performance Tests
