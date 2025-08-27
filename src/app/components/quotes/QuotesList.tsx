@@ -12,7 +12,6 @@
 
 import { useCallback } from 'react';
 import type { Quote } from '@/types';
-import { useTheme } from '@/store/ui';
 import { logger } from '@/lib/logger';
 
 // Sort option interface
@@ -123,9 +122,6 @@ export default function QuotesList({
   selectedQuote,
   className = '',
 }: QuotesListProps) {
-  // Using theme context for future dark mode styling enhancements
-  const { isDarkMode: _isDarkMode } = useTheme();
-
   // Function to handle sort column click
   const handleSortClick = useCallback(
     (_field: string) => {

@@ -8,11 +8,11 @@
  * without overwhelming visual effects.
  */
 
+import React from 'react';
 import Image from 'next/image';
 import { useState } from 'react';
 import type { ReadingListItem } from '@/types';
 import { getSeededPlaceholderStyles } from './placeholderUtils';
-import { useTheme } from '@/store/ui';
 import { getFullImageUrl } from '@/lib/utils/readingUtils';
 import { logger } from '@/lib/logger';
 
@@ -51,7 +51,7 @@ function formatDate(date: Date | string | null): string {
  * - Performant with minimal animations
  * - Mobile-friendly with no complex hover states
  */
-export default function ReadingCard({
+const ReadingCard = React.memo(function ReadingCard({
   slug,
   title,
   author,
@@ -59,9 +59,13 @@ export default function ReadingCard({
   audiobook,
   finishedDate,
 }: ReadingCardProps) {
+  // Temporary: Verify React.memo prevents re-renders on theme toggle
+  if (typeof window !== 'undefined' && window.location.search.includes('debug')) {
+    console.log('ReadingCard rendering:', slug);
+  }
+
   const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const { isDarkMode } = useTheme();
 
   // Generate placeholder styles if no cover image
   const placeholderStyles = !coverImageSrc || imageError ? getSeededPlaceholderStyles(slug) : {};
@@ -87,8 +91,7 @@ export default function ReadingCard({
         aspectRatio: '2 / 3',
         borderRadius: '8px',
         overflow: 'hidden',
-        boxShadow: isDarkMode ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
-        transition: 'box-shadow 0.2s ease',
+        boxShadow: 'var(--reading-card-shadow)',
         cursor: 'pointer',
         minHeight: '240px',
         maxHeight: '400px',
@@ -108,7 +111,7 @@ export default function ReadingCard({
           position: 'relative',
           width: '100%',
           height: '100%',
-          backgroundColor: isDarkMode ? '#1f2937' : '#f3f4f6',
+          backgroundColor: 'var(--reading-card-bg)',
           ...placeholderStyles,
         }}
       >
@@ -238,4 +241,6 @@ export default function ReadingCard({
       </div>
     </div>
   );
-}
+});
+
+export default ReadingCard;

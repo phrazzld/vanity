@@ -47,6 +47,11 @@ const createUIStore = () => {
     // Theme state with localStorage persistence
     isDarkMode: false, // Will be initialized from localStorage/system preference
     toggleDarkMode: () => {
+      // Start performance measurement
+      if (typeof window !== 'undefined') {
+        window.performance.mark('theme-toggle-start');
+      }
+
       const newValue = !get().isDarkMode;
       set({ isDarkMode: newValue });
 
@@ -58,7 +63,45 @@ const createUIStore = () => {
         } else {
           document.documentElement.classList.remove('dark');
         }
-        setTimeout(() => document.documentElement.classList.remove('theme-transitioning'), 350);
+
+        // Measure JS execution time
+        window.performance.mark('theme-toggle-js-end');
+        window.performance.measure(
+          'theme-toggle-js-duration',
+          'theme-toggle-start',
+          'theme-toggle-js-end'
+        );
+        console.log(
+          'Theme toggle JS execution:',
+          window.performance.getEntriesByName('theme-toggle-js-duration')[0]?.duration,
+          'ms'
+        );
+
+        // Measure visual completion with requestAnimationFrame
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => {
+            window.performance.mark('theme-toggle-visual-end');
+            window.performance.measure(
+              'theme-toggle-visual-duration',
+              'theme-toggle-start',
+              'theme-toggle-visual-end'
+            );
+            console.log(
+              'Theme toggle visual completion:',
+              window.performance.getEntriesByName('theme-toggle-visual-duration')[0]?.duration,
+              'ms'
+            );
+
+            // Clean up performance marks
+            window.performance.clearMarks('theme-toggle-start');
+            window.performance.clearMarks('theme-toggle-js-end');
+            window.performance.clearMarks('theme-toggle-visual-end');
+            window.performance.clearMeasures('theme-toggle-js-duration');
+            window.performance.clearMeasures('theme-toggle-visual-duration');
+          });
+        });
+
+        setTimeout(() => document.documentElement.classList.remove('theme-transitioning'), 200);
       }
     },
     setDarkMode: (_isDark: boolean) => {
