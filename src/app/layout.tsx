@@ -58,7 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Suspense fallback={<div>Loading...</div>}>
           <Header />
         </Suspense>
-        <main className="bg-white dark:bg-gray-900 flex-grow">{children}</main>
+        <main className="bg-white dark:bg-gray-900 flex-grow pb-[49px]">{children}</main>
         <Footer />
       </body>
     </html>
