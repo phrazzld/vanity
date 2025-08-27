@@ -171,7 +171,7 @@
 @layer components {
   /* Site Header */
   .site-header {
-    @apply border-b border-border sticky top-0 z-10 backdrop-blur-sm bg-background;
+    @apply border-b border-border backdrop-blur-sm bg-background;
     background-color: rgba(var(--background-rgb), 0.95);
   }
 

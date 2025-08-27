@@ -56,7 +56,7 @@ export default function YearSection({
               ? 'bg-white dark:bg-gray-900 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800'
               : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700'
           } 
-          sticky top-[4.25rem] z-10 uppercase backdrop-blur-sm`}
+          sticky top-[4.5rem] z-10 uppercase backdrop-blur-sm`}
       >
         {year}
         {readings.length > 0 && (
