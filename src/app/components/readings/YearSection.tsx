@@ -62,11 +62,11 @@ export default function YearSection({
     <section ref={sectionRef} className={`mb-8 ${className}`} data-year={year}>
       {/* Year heading */}
       <h2
-        className={`text-lg font-medium py-2 px-4 mb-4 border-b ${headingBgColor} sticky top-0 z-10`}
+        className={`text-2xl md:text-3xl font-space-grotesk font-bold tracking-tight py-3 px-4 mb-6 border-b-2 ${headingBgColor} sticky top-[4.5rem] z-10`}
       >
         {year}
         {readings.length > 0 && (
-          <span className="ml-2 text-sm font-normal text-gray-500 dark:text-gray-400">
+          <span className="ml-3 text-base md:text-lg font-normal text-gray-500 dark:text-gray-400">
             ({readings.length} {readings.length === 1 ? 'book' : 'books'})
           </span>
         )}

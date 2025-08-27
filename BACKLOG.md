@@ -1,9 +1,5 @@
 # BACKLOG
 
-- [ ] navbar should have the same width as page content
-- [ ] fonts should be redone, esp on readings page (headings are meh all around, fonts and overall design)
-- [ ] we should have a very simple, clean, fullwidth footer that links to email and github
-- [x] ~~light/dark mode toggle creates a sort of flicker of page content~~ | **✅ FIXED in PR #56 - 35% performance improvement**
 - [ ] redesign projects section to be more single column, only refer to projects that are actually deployed and live
 
 ## Critical Priority (CRITICAL)

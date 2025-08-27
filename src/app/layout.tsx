@@ -1,4 +1,5 @@
 import DarkModeToggle from '@/app/components/DarkModeToggle';
+import Footer from '@/app/components/Footer';
 import ThemeInitializer from '@/app/components/ThemeInitializer';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -14,31 +15,33 @@ export const metadata: Metadata = {
 function Header() {
   return (
     <header className="site-header bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
-      <nav>
-        <ul className="nav-list">
-          <li>
-            <Link href="/" className="text-gray-900 dark:text-gray-100">
-              home
-            </Link>
-          </li>
-          <li>
-            <Link href="/projects" className="text-gray-900 dark:text-gray-100">
-              projects
-            </Link>
-          </li>
-          <li>
-            <Link href="/readings" className="text-gray-900 dark:text-gray-100">
-              readings
-            </Link>
-          </li>
-          <li>
-            <Link href="/map" className="text-gray-900 dark:text-gray-100">
-              travels
-            </Link>
-          </li>
-        </ul>
-      </nav>
-      <DarkModeToggle />
+      <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
+        <nav>
+          <ul className="nav-list">
+            <li>
+              <Link href="/" className="text-gray-900 dark:text-gray-100">
+                home
+              </Link>
+            </li>
+            <li>
+              <Link href="/projects" className="text-gray-900 dark:text-gray-100">
+                projects
+              </Link>
+            </li>
+            <li>
+              <Link href="/readings" className="text-gray-900 dark:text-gray-100">
+                readings
+              </Link>
+            </li>
+            <li>
+              <Link href="/map" className="text-gray-900 dark:text-gray-100">
+                travels
+              </Link>
+            </li>
+          </ul>
+        </nav>
+        <DarkModeToggle />
+      </div>
     </header>
   );
 }
@@ -50,12 +53,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
       className={`${inter.variable} ${spaceGrotesk.variable}`}
     >
-      <body className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
+      <body className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex flex-col">
         <ThemeInitializer />
         <Suspense fallback={<div>Loading...</div>}>
           <Header />
         </Suspense>
-        <main className="bg-white dark:bg-gray-900">{children}</main>
+        <main className="bg-white dark:bg-gray-900 flex-grow">{children}</main>
+        <Footer />
       </body>
     </html>
   );

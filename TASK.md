@@ -1,5 +1,6 @@
-- [ ] remove "dropped" status / handling from readings -- either a book is being read or has been read
-- [ ] add "audiobook" flag for readings, visible in hover state
+- [x] navbar should have the same width as page content
+- [x] fonts should be redone, esp on readings page (headings are meh all around, fonts and overall design)
+- [x] we should have a very simple, clean, fullwidth footer that links to email and github
 
 ---
 
@@ -9,218 +10,254 @@
 
 ### Industry Best Practices
 
-**Status Simplification Trend**: Research shows successful reading apps (Oku, StoryGraph) benefit from simplified status systems. Three-status systems map to temporal states (future/present/past) reducing cognitive load by 23% compared to complex custom shelving systems like Goodreads.
-
-**Audiobook Integration Standard**: Universal pattern across all major platforms uses headphone icon overlay with hover-revealed metadata. 95%+ user recognition rate for headphone icons as audiobook indicators.
+- **Navbar alignment**: Max-width container pattern (`max-w-7xl mx-auto`) is the 2025 standard for content-navbar alignment
+- **Typography trends**: 18px base font size for reading-focused sites, 1.5x line height, maximum 70ch line length
+- **Sticky footer pattern**: Flexbox with `min-h-screen` and `mt-auto` for reliable sticky positioning
+- **Font loading**: Next.js `next/font` with variable fonts provides zero layout shift and optimal performance
 
 ### Technology Analysis
 
-**Optimal React Stack for Implementation**:
-
-- **Hover Interactions**: CSS `:hover` outperforms JavaScript event handlers by 40% in performance benchmarks
-- **State Management**: Existing Zustand + file-based content approach is optimal for personal tracker scale
-- **Icons**: Lucide React provides comprehensive audiobook/media icons with tree-shakeable imports
-- **Animations**: CSS transitions (200-350ms) provide optimal perceived responsiveness
-- **Accessibility**: React Aria patterns ensure WCAG 2.1 compliance for hover interactions
+- **Existing setup**: Next.js 15.3.4 with Tailwind CSS 3.4.1 already provides all necessary capabilities
+- **Typography enhancement**: @tailwindcss/typography plugin (8kb) offers prose classes for better reading experience
+- **Font system**: Current Inter + Space Grotesk combination is solid, needs weight and size adjustments
+- **No new dependencies required** for navbar and footer improvements
 
 ### Codebase Integration
 
-**Existing Patterns Identified** (Confidence: 95%):
-
-- Reading status logic in `src/lib/data.ts:34-35` and `src/lib/utils/readingUtils.ts:70`
-- Hover state management in `src/app/components/readings/ReadingCard.tsx:88-227`
-- CLI form handling in `cli/commands/reading.ts:102-407` with inquirer.js prompts
-- Badge/indicator styling in `src/app/components/readings/ReadingsList.tsx:370-374`
-- Testing patterns in `src/app/components/readings/__tests__/ReadingCard.test.tsx`
+- **Navbar pattern exists** at `src/app/layout.tsx:14-44` but lacks container wrapper
+- **Typography system** established at `src/app/globals.css:136-159` with comprehensive scale
+- **Design tokens** fully implemented with CSS variables for consistent theming
+- **No footer exists**, clear opportunity for implementation
 
 ## Detailed Requirements
 
 ### Functional Requirements
 
-- **REQ-001**: Remove three-state status system (reading/finished/dropped) in favor of two-state (reading/finished)
-  - Acceptance: No dropped status in type definitions, UI, or CLI
-  - Acceptance: Existing dropped reading files are deleted during migration
-- **REQ-002**: Add per-reading audiobook flag with hover-based visibility
-  - Acceptance: Boolean `audiobook` field in reading type (defaults to false)
-  - Acceptance: Subtle visual indicator visible only on hover over reading card
-  - Acceptance: CLI prompts for audiobook status during reading creation
-- **REQ-003**: Update CLI reading management to delete files instead of marking dropped
-  - Acceptance: `reading update` command offers file deletion for abandoned readings
-  - Acceptance: Deleted readings are removed from filesystem, not marked with flags
+- **REQ-001**: Navbar inner content must align exactly with page content width (max-w-7xl)
+  - Acceptance: Pixel-perfect alignment between navbar items and page content edges
+  - Full-width background color preserved for visual continuity
+- **REQ-002**: Typography hierarchy on readings page must be visually distinct and readable
+  - Acceptance: "Currently Reading", "2025", "2024" headers are prominent and well-styled
+  - Clear visual hierarchy between section headers, book titles, and metadata
+- **REQ-003**: Sticky footer with email and GitHub links
+  - Acceptance: Footer always visible at bottom of viewport or after content (whichever is lower)
+  - Links are accessible, properly styled, and open in appropriate targets
+- **REQ-004**: Remove email/GitHub links from home page after footer implementation
+  - Acceptance: No duplicate links between home page content and footer
 
 ### Non-Functional Requirements
 
-- **Performance**: Hover interactions must use CSS `:hover` for 60fps smooth transitions
-- **Security**: Reading metadata validation using existing patterns, no new attack vectors
-- **Scalability**: File-based architecture scales to 1000+ readings without performance degradation
-- **Accessibility**: Hover content must be accessible via keyboard focus with ARIA attributes
+- **Performance**: Bundle size increase < 10kb total
+- **Accessibility**: WCAG AAA for typography (7:1 contrast ratio)
+- **Responsive**: Consistent behavior across all breakpoints
+- **Dark mode**: Full compatibility with existing theme system
 
 ## Architecture Decisions
 
-### Technology Stack
+### ADR-001: Container Alignment Strategy
 
-- **Frontend**: Existing React/Next.js with CSS hover interactions (performance optimized)
-- **State Management**: Continue with Zustand + file-based static generation (proven pattern)
-- **Forms**: Existing CLI inquirer.js patterns extended with audiobook prompts
-- **Icons**: Leverage existing Lucide React icons for audiobook indicators
+**Decision**: Use consistent max-width wrapper pattern
 
-### Design Patterns
+**Options considered**:
 
-- **Status Architecture**: Binary file-existence model (file exists = reading/finished, no file = dropped)
-- **Data Flow**: Maintain existing static data generation with simplified filtering logic
-- **UI Interaction**: CSS-only hover states following existing ReadingCard patterns
+1. Container queries with dynamic sizing
+2. Fixed pixel widths
+3. **Max-width with auto margins** ✓
 
-### Architecture Decision Record
+**Rationale**:
 
-**ADR-001: Reading Status Model Simplification and Audiobook Enhancement**
+- Zero performance overhead (pure CSS)
+- Guaranteed pixel alignment
+- Industry standard pattern
+- Already partially implemented in codebase
 
-**Context**: Current three-state status system creates unnecessary complexity. Missing audiobook format distinction reduces utility for modern reading habits.
+### ADR-002: Typography Enhancement Approach
 
-**Decisions**:
+**Decision**: Adjust existing font system rather than replace
 
-1. **Status Simplification**: Migrate to binary reading/finished model with file deletion for dropped readings
-2. **Audiobook Integration**: Per-reading boolean flag with hover-based UI indicators
-3. **Migration Strategy**: One-time direct migration without transitional period
-4. **UI Pattern**: CSS hover interactions for performance and accessibility
+**Options considered**:
 
-**Rationale**: Reduces cognitive load, eliminates data complexity, follows industry best practices, and maintains clean UI aesthetics while adding essential functionality.
+1. Add serif font for body text
+2. Replace entire font stack
+3. **Enhance current Inter + Space Grotesk** ✓
+
+**Rationale**:
+
+- Maintains design consistency
+- Minimal bundle impact
+- Inter variable font provides weight flexibility
+- Space Grotesk excellent for headings
+
+### ADR-003: Footer Implementation Pattern
+
+**Decision**: Flexbox sticky footer with semantic HTML
+
+**Options considered**:
+
+1. CSS Grid with template areas
+2. **Flexbox with min-height and auto margins** ✓
+3. Position fixed footer
+
+**Rationale**:
+
+- Most reliable cross-browser support
+- Semantic and accessible
+- Works with existing layout structure
+- No JavaScript required
 
 ## Implementation Strategy
 
 ### Development Approach
 
-**Phase 1: Data Model & Migration (2-3 hours)**
-
-1. Update TypeScript interfaces to remove `dropped` field and add `audiobook` field
-2. Create migration script to delete dropped reading files and clean remaining frontmatter
-3. Update static data generation to handle simplified schema
-
-**Phase 2: CLI Enhancement (1-2 hours)**
-
-1. Add audiobook prompt to `reading add` command
-2. Update `reading update` command to delete files instead of marking dropped
-3. Maintain reading/finished filtering in CLI commands
-
-**Phase 3: UI Implementation (2-3 hours)**
-
-1. Update ReadingCard hover state to display audiobook indicator
-2. Remove dropped status handling from all React components
-3. Implement CSS hover transitions for audiobook badges
+Sequential implementation with immediate visual validation
 
 ### MVP Definition
 
-1. **Core Feature 1**: Simplified reading/finished status system with no dropped state
-2. **Core Feature 2**: Audiobook flag visible on reading card hover
-3. **Core Feature 3**: CLI reading management with file deletion for drops
+1. **Phase 1**: Navbar width alignment (15 minutes)
+   - Add container wrapper to Header component
+   - Verify alignment with page content
+2. **Phase 2**: Typography improvements (30 minutes)
+   - Enhance YearSection heading styles
+   - Adjust reading page header hierarchy
+   - Optional: Add @tailwindcss/typography for prose content
+3. **Phase 3**: Footer implementation (20 minutes)
+   - Create Footer component with sticky positioning
+   - Add email and GitHub links
+   - Remove duplicate links from home page
 
-### Technical Risks
+### Technical Implementation Details
 
-- **Risk 1**: Data loss from deleted dropped files → Mitigation: One-time backup before migration
-- **Risk 2**: Hover accessibility on mobile devices → Mitigation: Focus-based fallback with touch events
-- **Risk 3**: Migration script failures → Mitigation: Dry-run validation with rollback capability
+#### 1. Navbar Container Fix
 
-## Integration Requirements
+```tsx
+// src/app/layout.tsx
+<header className="site-header bg-white dark:bg-gray-900 border-b">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="flex items-center justify-between py-8">{/* existing nav content */}</nav>
+  </div>
+</header>
+```
 
-### Existing System Impact
+#### 2. Typography Enhancements
 
-**Files Modified**:
+```css
+/* Enhance YearSection headers */
+.year-section-header {
+  @apply text-2xl md:text-3xl font-space-grotesk font-bold 
+         tracking-tight text-gray-900 dark:text-gray-100
+         border-b-2 border-gray-200 dark:border-gray-700
+         py-4 mb-6;
+}
 
-- `src/types/reading.ts` - Remove dropped field, add audiobook field
-- `cli/commands/reading.ts` - Add audiobook prompt, update drop behavior
-- `src/app/components/readings/ReadingCard.tsx` - Add audiobook hover indicator
-- `src/lib/data.ts` - Remove dropped filtering logic
-- `scripts/generate-static-data.js` - Update filtering for simplified schema
+/* Status headers (Currently Reading, etc.) */
+.status-header {
+  @apply text-xl md:text-2xl font-space-grotesk font-semibold
+         uppercase tracking-wide text-gray-700 dark:text-gray-300
+         mb-4;
+}
+```
 
-### Data Migration
+#### 3. Sticky Footer Component
 
-**Migration Script Requirements**:
+```tsx
+// src/app/components/Footer.tsx
+export default function Footer() {
+  return (
+    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 mt-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex justify-center gap-8">
+          <a href="mailto:your-email" className="footer-link">
+            Email
+          </a>
+          <a href="https://github.com/phrazzld" className="footer-link">
+            GitHub
+          </a>
+        </div>
+      </div>
+    </footer>
+  );
+}
 
-1. Scan `/content/readings/` directory for markdown files with `dropped: true`
-2. Delete identified dropped reading files (estimated 7 files)
-3. Remove `dropped` field from all remaining reading frontmatter
-4. Validate schema compliance post-migration
-
-### API Design
-
-**No External APIs**: Maintains existing file-based content architecture with enhanced metadata structure.
+// Update layout.tsx to include min-height
+<body className="min-h-screen flex flex-col">
+  <Header />
+  <main className="flex-grow">{children}</main>
+  <Footer />
+</body>;
+```
 
 ## Testing Strategy
 
-### Unit Testing
+### Visual Regression Testing
 
-**Coverage Requirements**: Extend existing test patterns in `ReadingCard.test.tsx`
+- Screenshot comparisons before/after changes
+- Verify alignment at multiple breakpoints (mobile, tablet, desktop)
+- Dark mode visual validation
 
-- Test audiobook flag rendering in hover state
-- Test status filtering with simplified reading/finished states
-- Validate migration script behavior with mock file operations
+### Accessibility Testing
 
-### Integration Testing
+- Keyboard navigation through footer links
+- Screen reader announcement verification
+- Color contrast validation (use Chrome DevTools)
 
-**CLI Testing**: Validate inquirer.js prompt flows for audiobook selection and file deletion
-**Component Testing**: Test hover interaction accessibility across devices and input methods
+### Cross-browser Testing
 
-### End-to-End Testing
-
-**User Workflow Validation**:
-
-1. Add new reading via CLI with audiobook flag
-2. Update reading status and verify file operations
-3. Confirm hover interactions work across viewport sizes
+- Chrome, Safari, Firefox on desktop
+- iOS Safari, Chrome on mobile
+- Verify sticky footer behavior
 
 ## Deployment Considerations
 
-### Environment Requirements
+### Build Verification
 
-**No Infrastructure Changes**: Maintains existing static site generation with enhanced content schema
+```bash
+npm run build
+npm run lint
+```
 
-### Rollout Strategy
+### Bundle Size Check
 
-**Single Deployment**: All changes deployed together after migration script execution
-
-- Pre-deployment: Run migration script against content directory
-- Deployment: Standard Next.js build with updated components
-- Post-deployment: Verify reading list displays and interactions
-
-### Monitoring & Observability
-
-**Validation Metrics**:
-
-- Confirm all reading cards render without dropped status
-- Verify audiobook hover indicators appear correctly
-- Test CLI command completion rates for audiobook workflows
+- Baseline: Current bundle size
+- Target: < 10kb increase
+- Measure: Use `npm run build` output
 
 ## Success Criteria
 
 ### Acceptance Criteria
 
-- ✅ No dropped status visible in UI or available in CLI commands
-- ✅ Audiobook flag prompts appear in CLI reading creation workflow
-- ✅ Hover interactions reveal audiobook indicators with smooth transitions
-- ✅ All existing reading/finished functionality preserved
-- ✅ Migration completes without data corruption
+- [ ] Navbar content aligns pixel-perfect with page content at all breakpoints
+- [ ] Reading page headers are visually prominent and well-hierarchized
+- [ ] Footer sticks to viewport bottom when content is short
+- [ ] Footer appears after content when content is long
+- [ ] Email and GitHub links in footer are functional and accessible
+- [ ] Home page no longer contains duplicate email/GitHub links
+- [ ] Dark mode maintains full visual consistency
+- [ ] Bundle size increase < 10kb
 
 ### Performance Metrics
 
-- ✅ Hover interactions maintain 60fps animation performance
-- ✅ Bundle size increase <5KB from hover interaction enhancements
-- ✅ Reading list render time unchanged with simplified status logic
+- Lighthouse score maintained at 95+
+- No layout shift from typography changes
+- Zero JavaScript required for layout features
 
 ### User Experience Goals
 
-- ✅ Reduced cognitive load from simplified status system
-- ✅ Clear audiobook format distinction without UI clutter
-- ✅ Seamless transition from existing workflows
+- Improved visual hierarchy on readings page
+- Consistent layout alignment across all pages
+- Persistent access to contact links via footer
 
 ## Future Enhancements
 
 ### Post-MVP Features
 
-- **Advanced Audiobook Metadata**: Narrator information, playback speed tracking
-- **Reading Progress Indicators**: Page/percentage completion in hover state
-- **Batch Status Operations**: CLI commands for bulk reading management
+- Animate footer link hover states
+- Add copyright notice with dynamic year
+- Implement breadcrumb navigation
+- Enhanced mobile navigation menu
 
 ### Scalability Roadmap
 
-- **Performance Optimization**: Lazy loading for large reading collections
-- **Enhanced Filtering**: Complex queries across reading metadata
-- **Integration Opportunities**: Goodreads import, audiobook platform sync
+- Component library for consistent patterns
+- Advanced typography system with fluid scaling
+- Internationalization support
+- Performance monitoring dashboard
