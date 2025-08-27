@@ -7,7 +7,7 @@ export default function Footer() {
             href="mailto:phaedrus.raznikov@pm.me"
             className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors duration-200"
           >
-            Email
+            email
           </a>
           <a
             href="https://github.com/phrazzld"
@@ -15,7 +15,7 @@ export default function Footer() {
             rel="noopener noreferrer"
             className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors duration-200"
           >
-            GitHub
+            github
           </a>
         </div>
       </div>
