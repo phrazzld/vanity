@@ -16,6 +16,38 @@ Current actionable tasks for the vanity project.
 
 ## Active Tasks
 
+## PR #56 Review Feedback - Critical Items (Merge-blocking)
+
+**Status:** Address before merging performance optimization PR
+
+### Immediate Action Items
+
+- [ ] **Remove debug console.log from ReadingCard component**
+  - File: src/app/components/readings/ReadingCard.tsx lines 62-65
+  - Remove debug logging code that activates with ?debug URL parameter
+  - Identified in Claude AI review as production cleanup requirement
+  - Success criteria: No debug logging code remains in ReadingCard
+
+- [ ] **Clean up performance measurement code from ui.ts**
+  - File: src/store/ui.ts lines 50-104
+  - Remove performance.mark/measure instrumentation added for optimization analysis
+  - Keep core theme toggle functionality, remove measurement overhead
+  - Success criteria: Clean production code without debug instrumentation
+
+### In-Scope Improvements for PR
+
+- [ ] **Add ESLint rule to prevent N+1 subscription regression**
+  - Create ESLint rule to warn about hooks in components that are mapped (list items)
+  - Pattern: useTheme/useStore hooks inside .map() callback components
+  - Implementation: Custom ESLint rule or existing rule configuration
+  - Success criteria: Automated prevention of N+1 subscription anti-pattern
+
+- [ ] **Add integration test for theme switching without re-renders**
+  - Test: Verify theme changes work without ReadingCard component re-renders
+  - Use React Testing Library + jest to mock theme toggle
+  - Assert: No component re-renders occur during theme switch
+  - Success criteria: Automated test prevents performance regression
+
 ## Dark Mode Toggle Performance Optimization (Critical)
 
 **Problem:** Theme toggle on /readings page with 367 ReadingCard components causes ~500ms visible lag due to N+1 subscription anti-pattern where each card individually subscribes to Zustand theme store, triggering mass re-renders with inline style recalculations.

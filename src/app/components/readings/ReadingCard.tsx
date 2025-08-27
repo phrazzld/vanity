@@ -59,11 +59,6 @@ const ReadingCard = React.memo(function ReadingCard({
   audiobook,
   finishedDate,
 }: ReadingCardProps) {
-  // Temporary: Verify React.memo prevents re-renders on theme toggle
-  if (typeof window !== 'undefined' && window.location.search.includes('debug')) {
-    console.log('ReadingCard rendering:', slug);
-  }
-
   const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 

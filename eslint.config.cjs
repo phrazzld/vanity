@@ -397,6 +397,27 @@ module.exports = [
     },
   },
 
+  // Performance: Prevent N+1 subscription pattern in list components
+  {
+    files: ['**/*Card.tsx', '**/*Item.tsx', '**/*List*.tsx'],
+    rules: {
+      // Custom pattern to warn about store hooks in components likely to be mapped
+      'no-restricted-imports': [
+        'warn',
+        {
+          paths: [
+            {
+              name: '@/store/ui',
+              importNames: ['useTheme'],
+              message:
+                'Avoid useTheme hook in list/card components. Use CSS variables instead to prevent N+1 subscription pattern. See PR #56 for performance optimization approach.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
   // Prettier compatibility (must come last to override style rules)
   prettier,
 ];

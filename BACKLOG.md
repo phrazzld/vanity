@@ -3,7 +3,7 @@
 - [ ] navbar should have the same width as page content
 - [ ] fonts should be redone, esp on readings page (headings are meh all around, fonts and overall design)
 - [ ] we should have a very simple, clean, fullwidth footer that links to email and github
-- [ ] light/dark mode toggle creates a sort of flicker of page content -- it should not
+- [x] ~~light/dark mode toggle creates a sort of flicker of page content~~ | **✅ FIXED in PR #56 - 35% performance improvement**
 - [ ] redesign projects section to be more single column, only refer to projects that are actually deployed and live
 
 ## Critical Priority (CRITICAL)
@@ -25,6 +25,14 @@ _Code health issues, DX blockers, architecture debt, philosophy violations_
 - [ ] **[HIGH] [DX]** Implement smart test execution with incremental coverage | **Effort: M** | **Time saved: 8-12 hrs/week** | **Quality: Maintains standards while accelerating cycles**
 
 - [ ] **[HIGH] [DX]** Parallel quality gates with early termination | **Effort: M** | **Time saved: 6-10 hrs/week** | **Quality: 5-10s feedback vs 15-30s**
+
+### Performance & Testing (Post-PR #56)
+
+- [ ] **[HIGH] [TEST]** Performance regression testing automation | **Effort: M** | **Source: Claude AI PR review** | **Target: Automated detection of N+1 subscription patterns in list components**
+
+- [ ] **[HIGH] [TEST]** Visual regression testing for theme switching | **Effort: M** | **Source: Claude AI PR review** | **Target: Prevent theme switching correctness regressions**
+
+- [ ] **[HIGH] [DX]** Code review guidelines for performance patterns | **Effort: S** | **Source: Claude AI PR review** | **Target: Document N+1 subscription prevention and CSS performance patterns**
 
 ### Features & Innovation
 
