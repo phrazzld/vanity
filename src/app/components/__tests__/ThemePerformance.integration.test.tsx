@@ -78,8 +78,6 @@ const sampleReading: ReadingListItem = {
   slug: 'test-book',
   title: 'Test Book',
   author: 'Test Author',
-  year: 2024,
-  status: 'finished' as const,
   coverImageSrc: null,
   audiobook: false,
   finishedDate: '2024-01-01',
