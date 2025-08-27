@@ -58,7 +58,7 @@ export default function ReadingsPage() {
   }, [readings]);
 
   return (
-    <section className="max-w-7xl mx-auto px-4 py-8">
+    <section>
       {/* Loading state */}
       {isLoading && (
         <div className="flex justify-center items-center py-16">

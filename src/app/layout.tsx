@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 function Header() {
   return (
     <header className="site-header bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 fixed top-0 left-0 right-0 z-20">
-      <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         <nav>
           <ul className="nav-list">
             <li>
@@ -58,7 +58,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Suspense fallback={<div>Loading...</div>}>
           <Header />
         </Suspense>
-        <main className="bg-white dark:bg-gray-900 flex-grow pb-[49px]">{children}</main>
+        <main className="bg-white dark:bg-gray-900 flex-grow pb-[49px]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">{children}</div>
+        </main>
         <Footer />
       </body>
     </html>
