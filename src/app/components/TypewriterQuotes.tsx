@@ -11,125 +11,57 @@ import { logger } from '@/lib/logger';
 import { getStaticQuotes } from '@/lib/static-data';
 
 /**
- * Represents the current animation phase of the typewriter effect
- *
- * @typedef {'typingQuote' | 'pauseAfterQuote' | 'typingAuthor' | 'pauseAfterAuthor' | 'erasingAuthor' | 'erasingQuote' | 'loading'} Phase
+ * Animation phases for the typewriter effect
  *
  * The phases are:
  * - loading: Initial state while quotes are being fetched
- * - typingQuote: Typing the quote text character by character
- * - pauseAfterQuote: Brief pause after quote is fully typed
- * - typingAuthor: Typing the author name character by character
- * - pauseAfterAuthor: Longer pause after author is fully typed
- * - erasingAuthor: Erasing the author name character by character
- * - erasingQuote: Erasing the quote text character by character
+ * - typing-quote: Typing the quote text character by character
+ * - showing-author: Typing the author text character by character
+ * - waiting: Brief pause before cycling to next quote
+ * - erasing-author: Erasing the author text character by character
+ * - erasing-quote: Erasing the quote text character by character
  */
 type Phase =
-  | 'typingQuote'
-  | 'pauseAfterQuote'
-  | 'typingAuthor'
-  | 'pauseAfterAuthor'
-  | 'erasingAuthor'
-  | 'erasingQuote'
-  | 'loading';
+  | 'loading'
+  | 'typing-quote'
+  | 'showing-author'
+  | 'waiting'
+  | 'erasing-author'
+  | 'erasing-quote';
 
-/**
- * Animation timing constants (in milliseconds)
- */
-// Speed for typing characters (lower = faster)
-const TYPING_SPEED = 25;
-// Speed for erasing characters (lower = faster)
-const ERASE_SPEED = 15;
-// Time to pause after quote is fully typed
-const PAUSE_AFTER_QUOTE = 1000;
-// Time to pause after author is fully typed
-const PAUSE_AFTER_AUTHOR = 2000;
-// How fast the cursor blinks
-const CURSOR_BLINK_INTERVAL = 500;
-
-/**
- * Performance tracking for frame time analysis
- */
-let lastFrameTime = 0;
-let frameCount = 0;
-const FRAME_BUDGET = 17; // 60fps = 16.67ms per frame, allow 0.33ms tolerance
-
-/**
- * Track frame performance and log warnings for long tasks
- */
-function trackFramePerformance(phase: string, detail?: string) {
-  const now = typeof window !== 'undefined' ? window.performance.now() : Date.now();
-  if (lastFrameTime > 0) {
-    const delta = now - lastFrameTime;
-    frameCount++;
-
-    // Log warning for frames that exceed budget (potential stutter)
-    if (delta > FRAME_BUDGET) {
-      logger.warn(`[TypewriterQuotes] Long frame detected`, {
-        phase,
-        detail: detail || '',
-        delta: Math.round(delta * 100) / 100,
-        frameCount,
-        exceedsBy: Math.round((delta - FRAME_BUDGET) * 100) / 100,
-      });
-    }
-
-    // Log periodic frame time stats (every 100 frames)
-    if (frameCount % 100 === 0) {
-      logger.debug(`[TypewriterQuotes] Frame timing checkpoint`, {
-        phase,
-        avgDelta: Math.round(delta * 100) / 100,
-        frameCount,
-      });
-    }
-  }
-  lastFrameTime = now;
-}
-
-/**
- * TypewriterQuotes component
- *
- * Displays random quotes from the database with a typewriter animation effect.
- * The component cycles through quotes in these steps:
- * 1. Type the quote text character by character
- * 2. Type the author's name
- * 3. Pause to allow reading
- * 4. Erase the author and quote
- * 5. Select a new random quote and repeat
- *
- * @returns {JSX.Element} The animated quotes component
- */
 function TypewriterQuotes() {
   // Store fetched quotes from the API
   const [quotes, setQuotes] = useState<Quote[]>([]);
-  // Current animation phase (needed for re-renders)
-  const [phase, setPhase] = useState<Phase>('loading');
-  // Current displayed text (needed for re-renders)
-  const [displayedQuote, setDisplayedQuote] = useState('');
-  const [displayedAuthor, setDisplayedAuthor] = useState('');
-  // Controls the blinking cursor appearance (needed for re-renders)
-  const [cursorVisible, setCursorVisible] = useState(true);
 
-  // Use refs for values that don't need to trigger re-renders
-  const quoteIndexRef = useRef(0);
-  const pausedRef = useRef(false);
-  const quotesRef = useRef<Quote[]>([]);
-  const rawQuoteRef = useRef('');
-  const rawAuthorRef = useRef('');
+  // Minimal state structure for simplified animation
+  const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
+  const [phase, setPhase] = useState<Phase>('loading');
+
+  // Character indices for robust animation without effect thrashing
+  const [quoteCharIndex, setQuoteCharIndex] = useState(0);
+  const [authorCharIndex, setAuthorCharIndex] = useState(0);
+
+  // Cursor blink state
+  const [cursorVisible, setCursorVisible] = useState(true);
+  const cursorIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Single RAF-driven loop for animation
+  const rafIdRef = useRef<number | null>(null);
+  const lastTsRef = useRef<number | null>(null);
+  const pauseUntilRef = useRef<number | null>(null);
+
+  // Animation speeds and pauses
+  const TYPING_DELAY = 12; // ms per character
+  // Deletion should be 67% faster than typing => lower delay (higher speed)
+  const ERASE_DELAY = Math.max(1, Math.round(TYPING_DELAY / 1.67));
+  const PAUSE_AFTER_QUOTE = 1300; // ms
+  const PAUSE_AFTER_AUTHOR = 2000; // ms
+  const PAUSE_BEFORE_ERASE = 500; // ms
 
   /**
    * Load quotes from static data when the component mounts
-   *
-   * This effect:
-   * 1. Loads quotes from pre-generated static JSON
-   * 2. Updates the quotes state
-   * 3. Randomly selects the first quote to display
-   * 4. Provides a fallback quote if loading fails
    */
   useEffect(() => {
-    /**
-     * Loads quotes from static data
-     */
     const loadQuotes = () => {
       try {
         logger.info('Loading quotes for typewriter animation');
@@ -138,7 +70,6 @@ function TypewriterQuotes() {
 
         logger.debug(`Quotes loaded from static data: ${staticQuotes.length} quotes`);
 
-        // Validate the loaded data
         if (!Array.isArray(staticQuotes)) {
           throw new Error('Invalid quotes data format: expected an array');
         }
@@ -151,211 +82,151 @@ function TypewriterQuotes() {
 
         setQuotes(staticQuotes);
 
-        // Initialize with a random quote after loading
         const randomIndex = Math.floor(Math.random() * staticQuotes.length);
-        quoteIndexRef.current = randomIndex;
-        quotesRef.current = staticQuotes;
-        setPhase('typingQuote');
+        setCurrentQuoteIndex(randomIndex);
+        setPhase('typing-quote');
       } catch (error) {
         logger.error(
           `Error loading quotes: ${error instanceof Error ? error.message : String(error)}`
         );
-        // Fallback to a default quote if loading fails
-        // Use a properly typed fallback quote
         const fallbackQuote: Quote = {
           id: 0,
           text: 'Error loading quotes. Please check console for details.',
           author: 'System',
         };
         setQuotes([fallbackQuote]);
-        setPhase('typingQuote');
+        setPhase('typing-quote');
       }
     };
 
     loadQuotes();
   }, []);
 
-  // Update refs whenever quotes or index changes
+  // Phase-based animation controller (single RAF loop)
   useEffect(() => {
-    quotesRef.current = quotes;
-  }, [quotes]);
+    if (phase === 'loading' || quotes.length === 0) return;
 
-  // Update raw quote/author refs whenever index changes
-  useEffect(() => {
-    const currentQuote = quotesRef.current[quoteIndexRef.current];
-    rawQuoteRef.current = currentQuote ? currentQuote.text.replace(/\\n/g, '\n') : '';
-    rawAuthorRef.current =
-      currentQuote && currentQuote.author ? currentQuote.author.replace(/\\n/g, '\n') : '';
-  }, [phase]); // Update when phase changes (includes quote transitions)
+    const current = quotes[currentQuoteIndex];
+    if (!current) return;
 
-  /**
-   * Cursor blinking effect
-   *
-   * Sets up an interval to toggle cursor visibility state
-   * for the blinking text cursor animation
-   */
-  useEffect(() => {
-    // Setup blinking interval
-    // Use ReturnType<typeof globalThis.setInterval> for proper type safety
-    const blink: ReturnType<typeof globalThis.setInterval> = globalThis.setInterval(() => {
-      setCursorVisible(v => !v);
-    }, CURSOR_BLINK_INTERVAL);
+    const quoteLen = current.text?.length ?? 0;
+    const authorLen = (current.author ?? '').length;
 
-    // Clean up interval on unmount
-    return () => {
-      // clearInterval is safe to call even with invalid IDs
-      if (typeof globalThis !== 'undefined' && globalThis.clearInterval) {
-        globalThis.clearInterval(blink);
-      }
-    };
-  }, []);
-
-  /**
-   * Keyboard event handler for pause/resume control
-   *
-   * Listens for Space key press to toggle pause state
-   */
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.code === 'Space' && event.target === document.body) {
-        event.preventDefault();
-        pausedRef.current = !pausedRef.current;
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  /**
-   * Main typewriter animation effect using requestAnimationFrame
-   *
-   * Uses frame-based timing for smooth 60fps animation:
-   * - Tracks elapsed time to determine when to perform actions
-   * - Types/erases characters at consistent intervals
-   * - Manages pauses between phases
-   * - Eliminates setTimeout from the hot path
-   */
-  useEffect(() => {
-    // Skip if still loading, no quotes available, or animation is paused
-    if (phase === 'loading' || quotesRef.current.length === 0 || pausedRef.current) {
-      return;
-    }
-
-    let animationFrameId: number;
-    let lastTime = 0;
-    let accumulator = 0;
-
-    const animate = (timestamp: number) => {
-      // Initialize lastTime on first frame
-      if (lastTime === 0) {
-        lastTime = timestamp;
-      }
-
-      const deltaTime = timestamp - lastTime;
-      lastTime = timestamp;
-      accumulator += deltaTime;
-
-      trackFramePerformance(phase, `acc: ${Math.round(accumulator)}ms`);
-
-      let shouldContinue = true;
+    const tick = (ts: number) => {
+      if (lastTsRef.current == null) lastTsRef.current = ts;
+      const dt = ts - lastTsRef.current;
+      lastTsRef.current = ts;
 
       switch (phase) {
-        case 'typingQuote':
-          if (displayedQuote.length < rawQuoteRef.current.length) {
-            if (accumulator >= TYPING_SPEED) {
-              setDisplayedQuote(rawQuoteRef.current.slice(0, displayedQuote.length + 1));
-              accumulator = 0;
-            }
-          } else {
-            if (accumulator >= PAUSE_AFTER_QUOTE) {
-              setPhase('pauseAfterQuote');
-              accumulator = 0;
-            }
+        case 'typing-quote': {
+          const steps = Math.floor(dt / TYPING_DELAY);
+          if (steps > 0 && quoteCharIndex < quoteLen) {
+            setQuoteCharIndex(i => Math.min(i + steps, quoteLen));
           }
-          break;
-
-        case 'pauseAfterQuote':
-          if (accumulator >= 300) {
-            setPhase('typingAuthor');
-            accumulator = 0;
-          }
-          break;
-
-        case 'typingAuthor':
-          if (displayedAuthor.length < rawAuthorRef.current.length) {
-            if (accumulator >= TYPING_SPEED) {
-              setDisplayedAuthor(rawAuthorRef.current.slice(0, displayedAuthor.length + 1));
-              accumulator = 0;
-            }
-          } else {
-            if (accumulator >= PAUSE_AFTER_AUTHOR) {
-              setPhase('pauseAfterAuthor');
-              accumulator = 0;
+          if (quoteCharIndex >= quoteLen) {
+            if (pauseUntilRef.current == null) pauseUntilRef.current = ts + PAUSE_AFTER_QUOTE;
+            if (ts >= pauseUntilRef.current) {
+              pauseUntilRef.current = null;
+              setPhase('showing-author');
             }
           }
           break;
-
-        case 'pauseAfterAuthor':
-          if (accumulator >= 500) {
-            setPhase('erasingAuthor');
-            accumulator = 0;
-          }
-          break;
-
-        case 'erasingAuthor':
-          if (displayedAuthor.length > 0) {
-            if (accumulator >= ERASE_SPEED) {
-              setDisplayedAuthor(displayedAuthor.slice(0, -1));
-              accumulator = 0;
+        }
+        case 'showing-author': {
+          if (authorLen === 0) {
+            if (pauseUntilRef.current == null) pauseUntilRef.current = ts + PAUSE_AFTER_AUTHOR;
+            if (ts >= pauseUntilRef.current) {
+              pauseUntilRef.current = null;
+              setPhase('waiting');
             }
-          } else {
-            setPhase('erasingQuote');
-            accumulator = 0;
+            break;
           }
-          break;
-
-        case 'erasingQuote':
-          if (displayedQuote.length > 0) {
-            if (accumulator >= ERASE_SPEED) {
-              setDisplayedQuote(displayedQuote.slice(0, -1));
-              accumulator = 0;
+          const steps = Math.floor(dt / TYPING_DELAY);
+          if (steps > 0 && authorCharIndex < authorLen) {
+            setAuthorCharIndex(i => Math.min(i + steps, authorLen));
+          }
+          if (authorCharIndex >= authorLen) {
+            if (pauseUntilRef.current == null) pauseUntilRef.current = ts + PAUSE_AFTER_AUTHOR;
+            if (ts >= pauseUntilRef.current) {
+              pauseUntilRef.current = null;
+              setPhase('waiting');
             }
-          } else {
-            const nextIndex = Math.floor(Math.random() * quotesRef.current.length);
-            quoteIndexRef.current = nextIndex;
-            setPhase('typingQuote');
-            accumulator = 0;
           }
           break;
-
-        default:
-          shouldContinue = false;
+        }
+        case 'waiting': {
+          if (pauseUntilRef.current == null) pauseUntilRef.current = ts + PAUSE_BEFORE_ERASE;
+          if (ts >= pauseUntilRef.current) {
+            pauseUntilRef.current = null;
+            setPhase('erasing-author');
+          }
+          break;
+        }
+        case 'erasing-author': {
+          const steps = Math.floor(dt / ERASE_DELAY);
+          if (steps > 0 && authorCharIndex > 0) {
+            setAuthorCharIndex(i => Math.max(i - steps, 0));
+          }
+          if (authorCharIndex <= 0) {
+            setPhase('erasing-quote');
+          }
+          break;
+        }
+        case 'erasing-quote': {
+          const steps = Math.floor(dt / ERASE_DELAY);
+          if (steps > 0 && quoteCharIndex > 0) {
+            setQuoteCharIndex(i => Math.max(i - steps, 0));
+          }
+          if (quoteCharIndex <= 0) {
+            setCurrentQuoteIndex(i => (i + 1) % quotes.length);
+            setAuthorCharIndex(0);
+            setQuoteCharIndex(0);
+            setPhase('typing-quote');
+          }
+          break;
+        }
       }
 
-      if (shouldContinue && !pausedRef.current) {
-        animationFrameId = window.requestAnimationFrame(animate);
-      }
+      rafIdRef.current = window.requestAnimationFrame(tick);
     };
 
-    // Start the animation loop
-    animationFrameId = window.requestAnimationFrame(animate);
+    // Start RAF loop
+    rafIdRef.current = window.requestAnimationFrame(tick);
 
-    // Cleanup
     return () => {
-      if (animationFrameId) {
-        window.cancelAnimationFrame(animationFrameId);
+      if (rafIdRef.current != null) {
+        window.cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
+      lastTsRef.current = null;
+      pauseUntilRef.current = null;
+    };
+  }, [phase, quotes, currentQuoteIndex, quoteCharIndex, authorCharIndex]);
+
+  // Cursor blink interval
+  useEffect(() => {
+    cursorIntervalRef.current = setInterval(() => setCursorVisible(v => !v), 500);
+    return () => {
+      if (cursorIntervalRef.current) {
+        clearInterval(cursorIntervalRef.current);
+        cursorIntervalRef.current = null;
       }
     };
-  }, [phase, displayedQuote, displayedAuthor]); // Much smaller dependency array!
+  }, []);
 
-  /**
-   * Determine which element should display the cursor
-   *
-   * Based on current animation phase, determine whether the
-   * cursor should be shown in the quote or author element
-   */
-  const isQuoteActive = ['typingQuote', 'pauseAfterQuote', 'erasingQuote'].includes(phase);
+  // Clear any active timers/raf on unmount (safety)
+  useEffect(() => {
+    return () => {
+      if (rafIdRef.current != null) {
+        window.cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
+      if (cursorIntervalRef.current) {
+        clearInterval(cursorIntervalRef.current);
+        cursorIntervalRef.current = null;
+      }
+    };
+  }, []);
 
   /**
    * Show loading state while quotes are being fetched
@@ -377,62 +248,36 @@ function TypewriterQuotes() {
 
   /**
    * Render the quote and author with typewriter animation
-   *
-   * @returns {JSX.Element} The rendered component with quote and author text
+   * Clean phase-based rendering with conditional display
    */
+  const current = quotes[currentQuoteIndex];
+  const displayedQuoteText = current?.text?.slice(0, quoteCharIndex) ?? '';
+  const displayedAuthorText = (current?.author ?? '').slice(0, authorCharIndex);
   return (
-    <div
-      aria-live="polite"
-      onMouseEnter={() => {
-        pausedRef.current = true;
-      }}
-      onMouseLeave={() => {
-        pausedRef.current = false;
-      }}
-      style={{
-        // Align with page content - no centering margins or width constraints
-        minHeight: '15rem', // Consistent height for all quote sizes
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-      }}
-    >
-      {/* Quote text element with blinking cursor when active */}
+    <div className="min-h-[15rem] flex flex-col justify-start" aria-live="polite">
+      {/* Quote text - always shown (loading state handled above) */}
       <div
+        className="text-xl font-medium text-gray-900 dark:text-gray-100"
         data-testid="quote-text"
-        style={{
-          fontSize: '1.25rem',
-          fontWeight: 500, // Original font weight
-          lineHeight: 1.6, // Comfortable reading for multi-line quotes
-          whiteSpace: 'pre-wrap', // Preserve actual line breaks in text
-          marginBottom: '0.75rem',
-          fontFamily: 'Inter, sans-serif',
-        }}
       >
-        {displayedQuote}
-        {/* Show cursor in quote element when quote is being manipulated */}
-        {isQuoteActive && cursorVisible && (
-          <span style={{ borderRight: '2px solid #444', marginLeft: '2px' }} />
+        {displayedQuoteText}
+        {(phase === 'typing-quote' || phase === 'erasing-quote') && (
+          <span className={cursorVisible ? '' : 'opacity-0'}>|</span>
         )}
       </div>
 
-      {/* Author attribution with blinking cursor when active */}
-      <div
-        style={{
-          fontSize: '1rem',
-          fontWeight: 400,
-          color: '#666',
-          lineHeight: 1.4,
-          whiteSpace: 'pre-wrap',
-          fontFamily: 'Inter, sans-serif',
-        }}
-      >
-        {displayedAuthor}
-        {/* Show cursor in author element when author is being manipulated */}
-        {!isQuoteActive && cursorVisible && (
-          <span style={{ borderRight: '2px solid #444', marginLeft: '2px' }} />
-        )}
-      </div>
+      {/* Author text - shown after quote is typed and during erasing */}
+      {(phase === 'showing-author' ||
+        phase === 'waiting' ||
+        phase === 'erasing-author' ||
+        phase === 'erasing-quote') && (
+        <div className="text-base font-normal text-gray-600 dark:text-gray-400 mt-2">
+          {displayedAuthorText}
+          {(phase === 'showing-author' || phase === 'erasing-author') && (
+            <span className={cursorVisible ? '' : 'opacity-0'}>|</span>
+          )}
+        </div>
+      )}
     </div>
   );
 }

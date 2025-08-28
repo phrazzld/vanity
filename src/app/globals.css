@@ -333,6 +333,23 @@
   }
 }
 
+/* Typewriter cursor blinking animation */
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.typewriter-cursor {
+  animation: blink 1s infinite;
+  color: currentColor;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .nav-list {
