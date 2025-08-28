@@ -5,7 +5,7 @@
  * @module components/TypewriterQuotes
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, memo } from 'react';
 import type { Quote } from '@/types';
 import { logger } from '@/lib/logger';
 import { getStaticQuotes } from '@/lib/static-data';
@@ -48,6 +48,45 @@ const PAUSE_AFTER_AUTHOR = 2000;
 const CURSOR_BLINK_INTERVAL = 500;
 
 /**
+ * Performance tracking for frame time analysis
+ */
+let lastFrameTime = 0;
+let frameCount = 0;
+const FRAME_BUDGET = 17; // 60fps = 16.67ms per frame, allow 0.33ms tolerance
+
+/**
+ * Track frame performance and log warnings for long tasks
+ */
+function trackFramePerformance(phase: string, detail?: string) {
+  const now = typeof window !== 'undefined' ? window.performance.now() : Date.now();
+  if (lastFrameTime > 0) {
+    const delta = now - lastFrameTime;
+    frameCount++;
+
+    // Log warning for frames that exceed budget (potential stutter)
+    if (delta > FRAME_BUDGET) {
+      logger.warn(`[TypewriterQuotes] Long frame detected`, {
+        phase,
+        detail: detail || '',
+        delta: Math.round(delta * 100) / 100,
+        frameCount,
+        exceedsBy: Math.round((delta - FRAME_BUDGET) * 100) / 100,
+      });
+    }
+
+    // Log periodic frame time stats (every 100 frames)
+    if (frameCount % 100 === 0) {
+      logger.debug(`[TypewriterQuotes] Frame timing checkpoint`, {
+        phase,
+        avgDelta: Math.round(delta * 100) / 100,
+        frameCount,
+      });
+    }
+  }
+  lastFrameTime = now;
+}
+
+/**
  * TypewriterQuotes component
  *
  * Displays random quotes from the database with a typewriter animation effect.
@@ -60,21 +99,23 @@ const CURSOR_BLINK_INTERVAL = 500;
  *
  * @returns {JSX.Element} The animated quotes component
  */
-export default function TypewriterQuotes() {
+function TypewriterQuotes() {
   // Store fetched quotes from the API
   const [quotes, setQuotes] = useState<Quote[]>([]);
-  // Index of the currently displayed quote
-  const [quoteIndex, setQuoteIndex] = useState(0);
-  // Current animation phase
+  // Current animation phase (needed for re-renders)
   const [phase, setPhase] = useState<Phase>('loading');
-
-  // Current displayed text (partial strings that grow/shrink during animation)
+  // Current displayed text (needed for re-renders)
   const [displayedQuote, setDisplayedQuote] = useState('');
   const [displayedAuthor, setDisplayedAuthor] = useState('');
-  // Controls the blinking cursor appearance
+  // Controls the blinking cursor appearance (needed for re-renders)
   const [cursorVisible, setCursorVisible] = useState(true);
-  // Controls whether the animation is paused
-  const [paused, setPaused] = useState(false);
+
+  // Use refs for values that don't need to trigger re-renders
+  const quoteIndexRef = useRef(0);
+  const pausedRef = useRef(false);
+  const quotesRef = useRef<Quote[]>([]);
+  const rawQuoteRef = useRef('');
+  const rawAuthorRef = useRef('');
 
   /**
    * Load quotes from static data when the component mounts
@@ -112,7 +153,8 @@ export default function TypewriterQuotes() {
 
         // Initialize with a random quote after loading
         const randomIndex = Math.floor(Math.random() * staticQuotes.length);
-        setQuoteIndex(randomIndex);
+        quoteIndexRef.current = randomIndex;
+        quotesRef.current = staticQuotes;
         setPhase('typingQuote');
       } catch (error) {
         logger.error(
@@ -133,14 +175,18 @@ export default function TypewriterQuotes() {
     loadQuotes();
   }, []);
 
-  /**
-   * Get the current quote and prepare it for display
-   * Safely handles empty states and replaces escape sequences with proper line breaks
-   */
-  const currentQuote = quotes[quoteIndex];
-  const rawQuote = currentQuote ? currentQuote.text.replace(/\\n/g, '\n') : '';
-  const rawAuthor =
-    currentQuote && currentQuote.author ? currentQuote.author.replace(/\\n/g, '\n') : '';
+  // Update refs whenever quotes or index changes
+  useEffect(() => {
+    quotesRef.current = quotes;
+  }, [quotes]);
+
+  // Update raw quote/author refs whenever index changes
+  useEffect(() => {
+    const currentQuote = quotesRef.current[quoteIndexRef.current];
+    rawQuoteRef.current = currentQuote ? currentQuote.text.replace(/\\n/g, '\n') : '';
+    rawAuthorRef.current =
+      currentQuote && currentQuote.author ? currentQuote.author.replace(/\\n/g, '\n') : '';
+  }, [phase]); // Update when phase changes (includes quote transitions)
 
   /**
    * Cursor blinking effect
@@ -157,12 +203,9 @@ export default function TypewriterQuotes() {
 
     // Clean up interval on unmount
     return () => {
-      try {
-        // Use globalThis which is more reliable in both browser and test environments
+      // clearInterval is safe to call even with invalid IDs
+      if (typeof globalThis !== 'undefined' && globalThis.clearInterval) {
         globalThis.clearInterval(blink);
-      } catch {
-        // Silently fail in test environments where this might not be available
-        logger.warn('Failed to clear animation interval');
       }
     };
   }, []);
@@ -176,7 +219,7 @@ export default function TypewriterQuotes() {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.code === 'Space' && event.target === document.body) {
         event.preventDefault();
-        setPaused(prev => !prev);
+        pausedRef.current = !pausedRef.current;
       }
     };
 
@@ -185,113 +228,126 @@ export default function TypewriterQuotes() {
   }, []);
 
   /**
-   * Main typewriter animation effect
+   * Main typewriter animation effect using requestAnimationFrame
    *
-   * Handles the core logic for the typewriter animation:
-   * - Types characters one by one for quote and author
+   * Uses frame-based timing for smooth 60fps animation:
+   * - Tracks elapsed time to determine when to perform actions
+   * - Types/erases characters at consistent intervals
    * - Manages pauses between phases
-   * - Erases text before moving to next quote
-   * - Selects a new random quote when cycle completes
-   *
-   * The effect runs whenever any of its dependencies change,
-   * primarily when the phase or displayed text changes.
+   * - Eliminates setTimeout from the hot path
    */
   useEffect(() => {
     // Skip if still loading, no quotes available, or animation is paused
-    if (phase === 'loading' || quotes.length === 0 || paused) {
-      return; // Don't run typewriter logic until quotes are loaded and not paused
+    if (phase === 'loading' || quotesRef.current.length === 0 || pausedRef.current) {
+      return;
     }
 
-    // Use ReturnType<typeof globalThis.setTimeout> to handle both browser and Node environments
-    let timer: ReturnType<typeof globalThis.setTimeout>;
+    let animationFrameId: number;
+    let lastTime = 0;
+    let accumulator = 0;
 
-    switch (phase) {
-      case 'typingQuote':
-        if (displayedQuote.length < rawQuote.length) {
-          // Add one character at a time to the displayed quote
-          timer = globalThis.setTimeout(() => {
-            setDisplayedQuote(rawQuote.slice(0, displayedQuote.length + 1));
-          }, TYPING_SPEED);
-        } else {
-          // Quote is fully typed, pause before showing the author
-          timer = globalThis.setTimeout(() => {
-            setPhase('pauseAfterQuote');
-          }, PAUSE_AFTER_QUOTE);
-        }
-        break;
+    const animate = (timestamp: number) => {
+      // Initialize lastTime on first frame
+      if (lastTime === 0) {
+        lastTime = timestamp;
+      }
 
-      case 'pauseAfterQuote':
-        // Brief pause after quote is displayed, then begin typing author
-        timer = globalThis.setTimeout(() => {
-          setPhase('typingAuthor');
-        }, 300);
-        break;
+      const deltaTime = timestamp - lastTime;
+      lastTime = timestamp;
+      accumulator += deltaTime;
 
-      case 'typingAuthor':
-        if (displayedAuthor.length < rawAuthor.length) {
-          // Add one character at a time to the displayed author
-          timer = globalThis.setTimeout(() => {
-            setDisplayedAuthor(rawAuthor.slice(0, displayedAuthor.length + 1));
-          }, TYPING_SPEED);
-        } else {
-          // Author is fully typed, pause for reading
-          timer = globalThis.setTimeout(() => {
-            setPhase('pauseAfterAuthor');
-          }, PAUSE_AFTER_AUTHOR);
-        }
-        break;
+      trackFramePerformance(phase, `acc: ${Math.round(accumulator)}ms`);
 
-      case 'pauseAfterAuthor':
-        // Longer pause after author is displayed, then begin erasing
-        timer = globalThis.setTimeout(() => {
-          setPhase('erasingAuthor');
-        }, 500);
-        break;
+      let shouldContinue = true;
 
-      case 'erasingAuthor':
-        if (displayedAuthor.length > 0) {
-          // Erase author one character at a time from end
-          timer = globalThis.setTimeout(() => {
-            setDisplayedAuthor(displayedAuthor.slice(0, -1));
-          }, ERASE_SPEED);
-        } else {
-          // Author is fully erased, begin erasing the quote
-          timer = globalThis.setTimeout(() => {
+      switch (phase) {
+        case 'typingQuote':
+          if (displayedQuote.length < rawQuoteRef.current.length) {
+            if (accumulator >= TYPING_SPEED) {
+              setDisplayedQuote(rawQuoteRef.current.slice(0, displayedQuote.length + 1));
+              accumulator = 0;
+            }
+          } else {
+            if (accumulator >= PAUSE_AFTER_QUOTE) {
+              setPhase('pauseAfterQuote');
+              accumulator = 0;
+            }
+          }
+          break;
+
+        case 'pauseAfterQuote':
+          if (accumulator >= 300) {
+            setPhase('typingAuthor');
+            accumulator = 0;
+          }
+          break;
+
+        case 'typingAuthor':
+          if (displayedAuthor.length < rawAuthorRef.current.length) {
+            if (accumulator >= TYPING_SPEED) {
+              setDisplayedAuthor(rawAuthorRef.current.slice(0, displayedAuthor.length + 1));
+              accumulator = 0;
+            }
+          } else {
+            if (accumulator >= PAUSE_AFTER_AUTHOR) {
+              setPhase('pauseAfterAuthor');
+              accumulator = 0;
+            }
+          }
+          break;
+
+        case 'pauseAfterAuthor':
+          if (accumulator >= 500) {
+            setPhase('erasingAuthor');
+            accumulator = 0;
+          }
+          break;
+
+        case 'erasingAuthor':
+          if (displayedAuthor.length > 0) {
+            if (accumulator >= ERASE_SPEED) {
+              setDisplayedAuthor(displayedAuthor.slice(0, -1));
+              accumulator = 0;
+            }
+          } else {
             setPhase('erasingQuote');
-          }, 0);
-        }
-        break;
+            accumulator = 0;
+          }
+          break;
 
-      case 'erasingQuote':
-        if (displayedQuote.length > 0) {
-          // Erase quote one character at a time from end
-          timer = globalThis.setTimeout(() => {
-            setDisplayedQuote(displayedQuote.slice(0, -1));
-          }, ERASE_SPEED);
-        } else {
-          // Quote is fully erased, select a new random quote and start over
-          timer = globalThis.setTimeout(() => {
-            const nextIndex = Math.floor(Math.random() * quotes.length);
-            setQuoteIndex(nextIndex);
+        case 'erasingQuote':
+          if (displayedQuote.length > 0) {
+            if (accumulator >= ERASE_SPEED) {
+              setDisplayedQuote(displayedQuote.slice(0, -1));
+              accumulator = 0;
+            }
+          } else {
+            const nextIndex = Math.floor(Math.random() * quotesRef.current.length);
+            quoteIndexRef.current = nextIndex;
             setPhase('typingQuote');
-          }, 0);
-        }
-        break;
-    }
+            accumulator = 0;
+          }
+          break;
 
-    // Clean up timer on unmount or when dependencies change
-    return () => {
-      if (timer) {
-        try {
-          // Use globalThis which is more reliable in both browser and test environments
-          globalThis.clearTimeout(timer);
-        } catch {
-          // Silently fail in test environments where this might not be available
-          logger.warn('Failed to clear animation timeout');
-        }
+        default:
+          shouldContinue = false;
+      }
+
+      if (shouldContinue && !pausedRef.current) {
+        animationFrameId = window.requestAnimationFrame(animate);
       }
     };
-  }, [phase, displayedQuote, displayedAuthor, rawQuote, rawAuthor, quoteIndex, quotes, paused]);
+
+    // Start the animation loop
+    animationFrameId = window.requestAnimationFrame(animate);
+
+    // Cleanup
+    return () => {
+      if (animationFrameId) {
+        window.cancelAnimationFrame(animationFrameId);
+      }
+    };
+  }, [phase, displayedQuote, displayedAuthor]); // Much smaller dependency array!
 
   /**
    * Determine which element should display the cursor
@@ -330,8 +386,12 @@ export default function TypewriterQuotes() {
   return (
     <div
       aria-live="polite"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
+      onMouseEnter={() => {
+        pausedRef.current = true;
+      }}
+      onMouseLeave={() => {
+        pausedRef.current = false;
+      }}
       style={{
         // Fixed container size ensures quotes don't shift page layout
         margin: '2rem auto 0 auto',
@@ -382,3 +442,7 @@ export default function TypewriterQuotes() {
     </div>
   );
 }
+
+// Wrap in React.memo to prevent re-renders when parent changes
+// Since TypewriterQuotes has no props, it should never re-render from parent updates
+export default memo(TypewriterQuotes);
