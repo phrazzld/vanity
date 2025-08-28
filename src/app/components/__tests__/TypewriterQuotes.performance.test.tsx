@@ -172,7 +172,7 @@ describe('TypewriterQuotes Performance Verification', () => {
       const intervalsCleared = clearIntervalSpy.mock.calls.length;
 
       // Should clean up all created intervals
-      expect(intervalsCleared).toBe(intervalsCreated);
+      expect(intervalsCreated).toBe(intervalsCleared);
 
       setIntervalSpy.mockRestore();
       clearIntervalSpy.mockRestore();

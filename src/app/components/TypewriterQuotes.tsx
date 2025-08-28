@@ -364,13 +364,10 @@ function TypewriterQuotes() {
     return (
       <div
         style={{
-          margin: '2rem auto 0 auto',
-          width: '90%',
-          maxWidth: '700px',
           minHeight: '15rem',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
+          justifyContent: 'flex-start',
         }}
       >
         Loading quotes...
@@ -393,10 +390,7 @@ function TypewriterQuotes() {
         pausedRef.current = false;
       }}
       style={{
-        // Fixed container size ensures quotes don't shift page layout
-        margin: '2rem auto 0 auto',
-        width: '90%',
-        maxWidth: '700px',
+        // Align with page content - no centering margins or width constraints
         minHeight: '15rem', // Consistent height for all quote sizes
         display: 'flex',
         flexDirection: 'column',
