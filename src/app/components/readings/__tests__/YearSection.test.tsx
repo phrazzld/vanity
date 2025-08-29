@@ -101,14 +101,14 @@ describe('YearSection Component', () => {
 
     // Use more specific query with role
     expect(screen.getByRole('heading', { name: /2023/ })).toBeInTheDocument();
-    expect(screen.getByText(/2 books/)).toBeInTheDocument();
+    expect(screen.getByText('(2)')).toBeInTheDocument();
   });
 
   it('renders correct count with singular form', () => {
     const reading = sampleReadings[0];
     if (reading) {
       render(<YearSection year="2022" readings={[reading]} />);
-      expect(screen.getByText(/1 book/)).toBeInTheDocument();
+      expect(screen.getByText('(1)')).toBeInTheDocument();
     } else {
       throw new Error('Sample reading not found, but was expected');
     }

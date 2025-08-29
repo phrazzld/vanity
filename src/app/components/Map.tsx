@@ -21,42 +21,46 @@ export default function WhereIveBeenMap({ places }: MapProps) {
   const centerPosition: [number, number] = [40, -20];
 
   return (
-    <div
-      style={{
-        width: '100%',
-        height: '90vh',
-        border: '2px solid hotpink',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-      }}
-    >
-      <MapContainer
-        center={centerPosition}
-        zoom={3}
-        style={{ width: '100%', height: '100%' }}
-        scrollWheelZoom={true}
-        maxBounds={[
-          [-85, -180],
-          [85, 180],
-        ]} // near full world
-        maxBoundsViscosity={1.0} // fully “locks” the user from panning beyond
+    <>
+      <style>{`
+        .leaflet-control-zoom {
+          margin-left: 10px !important;
+          margin-top: 10px !important;
+        }
+      `}</style>
+      <div
+        style={{
+          width: '100%',
+          height: '100%', // Parent layout handles the positioning
+        }}
       >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          noWrap={true}
-          attribution='&copy; <a href="http://openstreetmap.org">openstreetmap</a> contributors'
-        />
-        {places.map(place => (
-          <Marker key={place.id} position={[place.lat, place.lng]}>
-            <Popup>
-              <strong>{place.name}</strong>
-              <br />
-              {place.note ? place.note : 'no note'}
-            </Popup>
-          </Marker>
-        ))}
-      </MapContainer>
-    </div>
+        <MapContainer
+          center={centerPosition}
+          zoom={3}
+          style={{ width: '100%', height: '100%' }}
+          scrollWheelZoom={true}
+          maxBounds={[
+            [-85, -180],
+            [85, 180],
+          ]} // near full world
+          maxBoundsViscosity={1.0} // fully “locks” the user from panning beyond
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            noWrap={true}
+            attribution='&copy; <a href="http://openstreetmap.org">openstreetmap</a> contributors'
+          />
+          {places.map(place => (
+            <Marker key={place.id} position={[place.lat, place.lng]}>
+              <Popup>
+                <strong>{place.name}</strong>
+                <br />
+                {place.note ? place.note : 'no note'}
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+      </div>
+    </>
   );
 }

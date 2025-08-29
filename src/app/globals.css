@@ -171,8 +171,12 @@
 @layer components {
   /* Site Header */
   .site-header {
-    @apply flex items-center justify-between p-8 border-b border-border sticky top-0 z-10 backdrop-blur-sm bg-background;
+    @apply border-b border-border backdrop-blur-sm bg-background;
     background-color: rgba(var(--background-rgb), 0.95);
+  }
+
+  .site-header > div {
+    @apply py-8;
   }
 
   /* Navigation */
@@ -327,6 +331,23 @@
     transform: scale(1);
     opacity: 1;
   }
+}
+
+/* Typewriter cursor blinking animation */
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.typewriter-cursor {
+  animation: blink 1s infinite;
+  color: currentColor;
 }
 
 /* Responsive adjustments */

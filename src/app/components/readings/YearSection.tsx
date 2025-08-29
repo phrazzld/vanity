@@ -46,29 +46,21 @@ export default function YearSection({
   // Determine if this is a special section
   const isSpecialSection = year === 'Currently Reading';
 
-  // Background colors for the year heading
-  const bgColor = {
-    'Currently Reading':
-      'bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 border-blue-100 dark:border-blue-800',
-    default:
-      'bg-gradient-to-r from-gray-50 to-transparent dark:from-gray-800/40 dark:to-transparent text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700',
-  };
-
-  // Choose the appropriate background color based on section type
-  const headingBgColor =
-    year === 'Currently Reading' ? bgColor['Currently Reading'] : bgColor.default;
-
   return (
     <section ref={sectionRef} className={`mb-8 ${className}`} data-year={year}>
       {/* Year heading */}
       <h2
-        className={`text-lg font-medium py-2 px-4 mb-4 border-b ${headingBgColor} sticky top-0 z-10`}
+        className={`text-sm font-inter font-medium tracking-wide py-2 px-4 mb-4 border-b 
+          ${
+            isSpecialSection
+              ? 'bg-white dark:bg-gray-900 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800'
+              : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700'
+          } 
+          sticky top-[4.5rem] z-10 uppercase backdrop-blur-sm`}
       >
         {year}
         {readings.length > 0 && (
-          <span className="ml-2 text-sm font-normal text-gray-500 dark:text-gray-400">
-            ({readings.length} {readings.length === 1 ? 'book' : 'books'})
-          </span>
+          <span className="ml-2 text-xs font-normal opacity-60">({readings.length})</span>
         )}
       </h2>
 
