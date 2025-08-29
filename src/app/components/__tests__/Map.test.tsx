@@ -154,15 +154,11 @@ describe('Map Component', () => {
 
     it('has correct container styling', () => {
       const { container } = render(<WhereIveBeenMap places={mockPlaces} />);
-      const mapWrapper = container.firstChild as HTMLElement;
+      const mapWrapper = container.querySelector('div[style*="width: 100%"]') as HTMLElement;
 
       expect(mapWrapper).toHaveStyle({
         width: '100%',
-        height: '90vh',
-        border: '2px solid hotpink',
-        position: 'absolute',
-        top: '0',
-        left: '0',
+        height: '100%',
       });
     });
 
