@@ -5,6 +5,12 @@
 @layer base {
   /* Design tokens as CSS variables */
   :root {
+    /* Container Layout System */
+    --container-max-width: 80rem; /* 1280px = max-w-7xl */
+    --container-padding-xs: 1rem; /* 16px for mobile */
+    --container-padding-sm: 1.5rem; /* 24px for tablet */
+    --container-padding-lg: 2rem; /* 32px for desktop */
+
     /* Base Color Tokens - Light Mode */
     --background: #ffffff;
     --background-rgb: 255, 255, 255;
@@ -169,6 +175,30 @@
 }
 
 @layer components {
+  /* Container System - Unified alignment across all sections */
+  .container-content {
+    width: 100%;
+    max-width: var(--container-max-width);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--container-padding-xs);
+    padding-right: var(--container-padding-xs);
+  }
+
+  @media (min-width: 640px) {
+    .container-content {
+      padding-left: var(--container-padding-sm);
+      padding-right: var(--container-padding-sm);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-content {
+      padding-left: var(--container-padding-lg);
+      padding-right: var(--container-padding-lg);
+    }
+  }
+
   /* Site Header */
   .site-header {
     @apply border-b border-border backdrop-blur-sm bg-background;
@@ -198,7 +228,7 @@
 
   /* Main content */
   main {
-    @apply p-8 relative;
+    @apply relative;
   }
 
   /* Heading styles */
