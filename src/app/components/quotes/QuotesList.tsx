@@ -108,9 +108,11 @@ const highlightSearchTerm = (text: string, searchTerm: string) => {
 /**
  * Utility function to truncate text to a maximum length
  */
-const truncateText = (text: string, maxLength = 60) => {
+const truncateText = (text: string, maxLength = 150) => {
   if (text.length <= maxLength) return text;
-  return text.substring(0, maxLength) + '...';
+  // Replace line breaks with spaces for truncated view
+  const singleLine = text.replace(/\n+/g, ' ');
+  return singleLine.substring(0, maxLength) + '...';
 };
 
 export default function QuotesList({
@@ -239,7 +241,7 @@ export default function QuotesList({
               </svg>
 
               {/* Quote text with search highlighting */}
-              <p className="text-sm font-medium text-gray-900 dark:text-white leading-5">
+              <p className="text-sm font-medium text-gray-900 dark:text-white leading-5 quote-text-truncated">
                 {shouldHighlightText ? (
                   <>&ldquo;{highlightSearchTerm(truncateText(quote.text), searchQuery)}&rdquo;</>
                 ) : (

@@ -291,7 +291,7 @@ function TypewriterQuotes() {
     <div className="min-h-[15rem] flex flex-col justify-start" aria-live="polite">
       {/* Quote text - always shown (loading state handled above) */}
       <div
-        className="text-xl font-medium text-gray-900 dark:text-gray-100"
+        className="text-xl font-medium text-gray-900 dark:text-gray-100 quote-text-display"
         data-testid="quote-text"
       >
         {displayedQuoteText}
