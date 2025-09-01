@@ -71,10 +71,14 @@ const ReadingCard = React.memo(function ReadingCard({
   // Simple status colors
   const statusColor = isCurrentlyReading ? STATUS_COLORS.READING : STATUS_COLORS.FINISHED;
 
-  // Status text
+  // Status text with format-aware language
   const statusText = isCurrentlyReading
-    ? 'Currently Reading'
-    : `Finished ${formatDate(finishedDate)}`;
+    ? audiobook
+      ? 'Currently Listening'
+      : 'Currently Reading'
+    : audiobook
+      ? `Finished Listening ${formatDate(finishedDate)}`
+      : `Finished ${formatDate(finishedDate)}`;
 
   return (
     <div
@@ -98,7 +102,7 @@ const ReadingCard = React.memo(function ReadingCard({
       title={`${title} by ${author}`}
       tabIndex={0}
       role="button"
-      aria-label={`${title} by ${author}${audiobook ? ', Audiobook' : ''}${isCurrentlyReading ? ', Currently Reading' : finishedDate ? `, Finished ${formatDate(finishedDate)}` : ''}`}
+      aria-label={`${title} by ${author}, ${statusText}`}
     >
       {/* Book cover image */}
       <div
@@ -215,22 +219,6 @@ const ReadingCard = React.memo(function ReadingCard({
             >
               {statusText}
             </span>
-            {/* Audiobook indicator */}
-            {audiobook && (
-              <span
-                style={{
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  fontSize: '10px',
-                  fontWeight: 400,
-                  marginLeft: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '2px',
-                }}
-              >
-                🎧 Audiobook
-              </span>
-            )}
           </div>
         </div>
       </div>

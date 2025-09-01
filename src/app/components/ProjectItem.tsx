@@ -27,12 +27,12 @@ export default function ProjectItem({
       <div className="project-links">
         {siteUrl && (
           <a href={siteUrl} target="_blank" rel="noopener noreferrer" className="project-link">
-            live demo
+            try it out
           </a>
         )}
         {codeUrl && (
           <a href={codeUrl} target="_blank" rel="noopener noreferrer" className="project-link">
-            view code
+            see the code
           </a>
         )}
       </div>
