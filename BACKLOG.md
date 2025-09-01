@@ -1,7 +1,5 @@
 # BACKLOG
 
-- [ ] redesign projects section to be more single column, only refer to projects that are actually deployed and live
-
 ## Critical Priority (CRITICAL)
 
 _ACTUAL critical issues that affect the live site_

@@ -41,6 +41,10 @@ function TypewriterQuotes() {
   const [quoteCharIndex, setQuoteCharIndex] = useState(0);
   const [authorCharIndex, setAuthorCharIndex] = useState(0);
 
+  // Refs for animation logic to avoid stale closures while keeping stable dependencies
+  const quoteCharIndexRef = useRef(0);
+  const authorCharIndexRef = useRef(0);
+
   // Cursor blink state
   const [cursorVisible, setCursorVisible] = useState(true);
   const cursorIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -51,9 +55,9 @@ function TypewriterQuotes() {
   const pauseUntilRef = useRef<number | null>(null);
 
   // Animation speeds and pauses
-  const TYPING_DELAY = 12; // ms per character
-  // Deletion should be 67% faster than typing => lower delay (higher speed)
-  const ERASE_DELAY = Math.max(1, Math.round(TYPING_DELAY / 1.67));
+  const TYPING_DELAY = Math.round(16);
+  // Keep original erase speed independent of typing speed
+  const ERASE_DELAY = Math.max(1, Math.round(12 / 1.67));
   const PAUSE_AFTER_QUOTE = 1300; // ms
   const PAUSE_AFTER_AUTHOR = 2000; // ms
   const PAUSE_BEFORE_ERASE = 500; // ms
@@ -84,6 +88,10 @@ function TypewriterQuotes() {
 
         const randomIndex = Math.floor(Math.random() * staticQuotes.length);
         setCurrentQuoteIndex(randomIndex);
+
+        // Reset refs when starting animation
+        quoteCharIndexRef.current = 0;
+        authorCharIndexRef.current = 0;
         setPhase('typing-quote');
       } catch (error) {
         logger.error(
@@ -95,6 +103,10 @@ function TypewriterQuotes() {
           author: 'System',
         };
         setQuotes([fallbackQuote]);
+
+        // Reset refs when starting with fallback quote
+        quoteCharIndexRef.current = 0;
+        authorCharIndexRef.current = 0;
         setPhase('typing-quote');
       }
     };
@@ -120,10 +132,12 @@ function TypewriterQuotes() {
       switch (phase) {
         case 'typing-quote': {
           const steps = Math.floor(dt / TYPING_DELAY);
-          if (steps > 0 && quoteCharIndex < quoteLen) {
-            setQuoteCharIndex(i => Math.min(i + steps, quoteLen));
+          if (steps > 0 && quoteCharIndexRef.current < quoteLen) {
+            const newIndex = Math.min(quoteCharIndexRef.current + steps, quoteLen);
+            quoteCharIndexRef.current = newIndex;
+            setQuoteCharIndex(newIndex);
           }
-          if (quoteCharIndex >= quoteLen) {
+          if (quoteCharIndexRef.current >= quoteLen) {
             if (pauseUntilRef.current == null) pauseUntilRef.current = ts + PAUSE_AFTER_QUOTE;
             if (ts >= pauseUntilRef.current) {
               pauseUntilRef.current = null;
@@ -142,10 +156,12 @@ function TypewriterQuotes() {
             break;
           }
           const steps = Math.floor(dt / TYPING_DELAY);
-          if (steps > 0 && authorCharIndex < authorLen) {
-            setAuthorCharIndex(i => Math.min(i + steps, authorLen));
+          if (steps > 0 && authorCharIndexRef.current < authorLen) {
+            const newIndex = Math.min(authorCharIndexRef.current + steps, authorLen);
+            authorCharIndexRef.current = newIndex;
+            setAuthorCharIndex(newIndex);
           }
-          if (authorCharIndex >= authorLen) {
+          if (authorCharIndexRef.current >= authorLen) {
             if (pauseUntilRef.current == null) pauseUntilRef.current = ts + PAUSE_AFTER_AUTHOR;
             if (ts >= pauseUntilRef.current) {
               pauseUntilRef.current = null;
@@ -164,21 +180,38 @@ function TypewriterQuotes() {
         }
         case 'erasing-author': {
           const steps = Math.floor(dt / ERASE_DELAY);
-          if (steps > 0 && authorCharIndex > 0) {
-            setAuthorCharIndex(i => Math.max(i - steps, 0));
+          if (steps > 0 && authorCharIndexRef.current > 0) {
+            const newIndex = Math.max(authorCharIndexRef.current - steps, 0);
+            authorCharIndexRef.current = newIndex;
+            setAuthorCharIndex(newIndex);
           }
-          if (authorCharIndex <= 0) {
+          if (authorCharIndexRef.current <= 0) {
             setPhase('erasing-quote');
           }
           break;
         }
         case 'erasing-quote': {
           const steps = Math.floor(dt / ERASE_DELAY);
-          if (steps > 0 && quoteCharIndex > 0) {
-            setQuoteCharIndex(i => Math.max(i - steps, 0));
+          if (steps > 0 && quoteCharIndexRef.current > 0) {
+            const newIndex = Math.max(quoteCharIndexRef.current - steps, 0);
+            quoteCharIndexRef.current = newIndex;
+            setQuoteCharIndex(newIndex);
           }
-          if (quoteCharIndex <= 0) {
-            setCurrentQuoteIndex(i => (i + 1) % quotes.length);
+          if (quoteCharIndexRef.current <= 0) {
+            // Select random quote avoiding immediate repetition
+            setCurrentQuoteIndex(prevIndex => {
+              if (quotes.length <= 1) return prevIndex;
+
+              let newIndex;
+              do {
+                newIndex = Math.floor(Math.random() * quotes.length);
+              } while (newIndex === prevIndex);
+
+              return newIndex;
+            });
+            // Reset both refs and state for next quote
+            quoteCharIndexRef.current = 0;
+            authorCharIndexRef.current = 0;
             setAuthorCharIndex(0);
             setQuoteCharIndex(0);
             setPhase('typing-quote');
@@ -201,7 +234,7 @@ function TypewriterQuotes() {
       lastTsRef.current = null;
       pauseUntilRef.current = null;
     };
-  }, [phase, quotes, currentQuoteIndex, quoteCharIndex, authorCharIndex]);
+  }, [phase, quotes, currentQuoteIndex]); // FIXED: Removed changing character indices from dependencies
 
   // Cursor blink interval
   useEffect(() => {
@@ -231,28 +264,29 @@ function TypewriterQuotes() {
   /**
    * Show loading state while quotes are being fetched
    */
-  if (phase === 'loading') {
-    return (
-      <div
-        style={{
-          minHeight: '15rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-        }}
-      >
-        Loading quotes...
-      </div>
-    );
+  if (quotes.length === 0) {
+    return <div className="min-h-[15rem] flex items-center justify-start">Loading quotes...</div>;
   }
+
+  // Get current quote for rendering
+  const current = quotes[currentQuoteIndex];
+  if (!current) {
+    return <div className="min-h-[15rem] flex items-center justify-start">No quotes available</div>;
+  }
+
+  // Compute display text based on current animation state
+  const displayedQuoteText = current.text?.slice(0, quoteCharIndex) ?? '';
+  const displayedAuthorText = (current.author ?? '').slice(0, authorCharIndex);
+
+  // Determine cursor visibility for different phases
+  const showQuoteCursor = phase === 'typing-quote' || phase === 'erasing-quote';
+  const showAuthorCursor = phase === 'showing-author' || phase === 'erasing-author';
+  const showAuthor =
+    phase === 'showing-author' || phase === 'waiting' || phase === 'erasing-author';
 
   /**
    * Render the quote and author with typewriter animation
-   * Clean phase-based rendering with conditional display
    */
-  const current = quotes[currentQuoteIndex];
-  const displayedQuoteText = current?.text?.slice(0, quoteCharIndex) ?? '';
-  const displayedAuthorText = (current?.author ?? '').slice(0, authorCharIndex);
   return (
     <div className="min-h-[15rem] flex flex-col justify-start" aria-live="polite">
       {/* Quote text - always shown (loading state handled above) */}
@@ -261,21 +295,14 @@ function TypewriterQuotes() {
         data-testid="quote-text"
       >
         {displayedQuoteText}
-        {(phase === 'typing-quote' || phase === 'erasing-quote') && (
-          <span className={cursorVisible ? '' : 'opacity-0'}>|</span>
-        )}
+        {showQuoteCursor && <span className={cursorVisible ? '' : 'opacity-0'}>|</span>}
       </div>
 
-      {/* Author text - shown after quote is typed and during erasing */}
-      {(phase === 'showing-author' ||
-        phase === 'waiting' ||
-        phase === 'erasing-author' ||
-        phase === 'erasing-quote') && (
+      {/* Author text - shown when animation state indicates */}
+      {showAuthor && (
         <div className="text-base font-normal text-gray-600 dark:text-gray-400 mt-2">
           {displayedAuthorText}
-          {(phase === 'showing-author' || phase === 'erasing-author') && (
-            <span className={cursorVisible ? '' : 'opacity-0'}>|</span>
-          )}
+          {showAuthorCursor && <span className={cursorVisible ? '' : 'opacity-0'}>|</span>}
         </div>
       )}
     </div>

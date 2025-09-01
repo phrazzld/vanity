@@ -6,7 +6,4 @@ techStack:
   - chrome api
 siteUrl: https://chromewebstore.google.com/detail/time-is-money/ooppbnomdcjmoepangldchpmjhkeendl?hl=en
 codeUrl: https://github.com/phrazzld/timeismoney
-imageSrc: /images/projects/clock-01.webp
-altText: time is money extension screenshot
-order: 2
 ---

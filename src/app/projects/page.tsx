@@ -1,4 +1,4 @@
-import ProjectCard from '@/app/components/ProjectCard';
+import ProjectItem from '@/app/components/ProjectItem';
 import { getProjects } from '@/lib/data';
 
 export default function ProjectsPage() {
@@ -7,9 +7,9 @@ export default function ProjectsPage() {
   return (
     <section>
       <h1 className="medium-heading">projects</h1>
-      <div className="projects-grid">
+      <div className="projects-list">
         {projects.map(project => (
-          <ProjectCard key={project.title} {...project} />
+          <ProjectItem key={project.title} {...project} />
         ))}
       </div>
     </section>

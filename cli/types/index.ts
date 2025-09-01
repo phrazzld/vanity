@@ -169,9 +169,8 @@ export interface ProjectFrontmatter {
   techStack: string[];
   siteUrl?: string;
   codeUrl?: string;
-  imageSrc: string;
-  altText: string;
-  order: number;
+  imageSrc?: string; // Made optional during transition
+  altText?: string; // Made optional during transition
 }
 
 export interface PlaceFrontmatter {

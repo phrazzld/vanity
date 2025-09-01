@@ -7,7 +7,4 @@ techStack:
   - elevenlabs
 siteUrl: https://www.superwire.app/
 codeUrl: https://github.com/phrazzld/super-wire
-imageSrc: /images/projects/headphones-02.webp
-altText: superwire project screenshot
-order: 7
 ---

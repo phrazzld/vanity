@@ -8,8 +8,8 @@ interface ProjectCardProps {
   techStack: string[];
   siteUrl?: string;
   codeUrl?: string;
-  imageSrc: string;
-  altText: string;
+  imageSrc?: string; // Made optional during transition
+  altText?: string; // Made optional during transition
 }
 
 export default function ProjectCard({
@@ -23,17 +23,19 @@ export default function ProjectCard({
 }: ProjectCardProps) {
   return (
     <article className="project-card">
-      <div className="project-image-container">
-        <Image
-          src={imageSrc}
-          alt={altText}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          priority={false}
-          loading="lazy"
-          style={{ objectFit: 'cover' }}
-        />
-      </div>
+      {imageSrc && (
+        <div className="project-image-container">
+          <Image
+            src={imageSrc}
+            alt={altText || title}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority={false}
+            loading="lazy"
+            style={{ objectFit: 'cover' }}
+          />
+        </div>
+      )}
       <div className="project-content">
         <div>
           <h2>{title}</h2>

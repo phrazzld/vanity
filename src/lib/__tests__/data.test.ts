@@ -265,7 +265,11 @@ describe('Data Layer', () => {
 
   describe('getProjects', () => {
     it('should parse projects from markdown files correctly', () => {
-      mockFs.readdirSync.mockReturnValue(['project1.md', 'project2.md'] as any);
+      // Clear all previous mocks
+      jest.clearAllMocks();
+      mockPath.join.mockImplementation((...args) => args.join('/'));
+
+      mockFs.readdirSync.mockReturnValue(['anyzine.md', 'whetstone.md'] as any);
       mockFs.readFileSync
         .mockReturnValueOnce('mock content 1')
         .mockReturnValueOnce('mock content 2');
@@ -273,81 +277,83 @@ describe('Data Layer', () => {
       mockMatter
         .mockReturnValueOnce({
           data: {
-            title: 'Project One',
-            description: 'Description one',
-            techStack: ['React', 'TypeScript'],
-            siteUrl: 'https://project1.com',
-            codeUrl: 'https://github.com/user/project1',
-            imageSrc: 'project1.jpg',
-            altText: 'Project one screenshot',
-            order: 2,
+            title: 'anyzine',
+            description: 'A magic zine machine',
+            techStack: ['Node.js', 'Express'],
+            siteUrl: 'https://anyzine.xyz',
+            codeUrl: 'https://github.com/user/anyzine',
           },
           content: 'Project content',
         } as any)
         .mockReturnValueOnce({
           data: {
-            title: 'Project Two',
-            description: 'Description two',
-            techStack: ['Vue', 'JavaScript'],
+            title: 'whetstone',
+            description: 'Task management app',
+            techStack: ['React', 'TypeScript'],
             siteUrl: undefined,
-            codeUrl: 'https://github.com/user/project2',
-            imageSrc: 'project2.jpg',
-            altText: 'Project two screenshot',
-            order: 1,
+            codeUrl: 'https://github.com/user/whetstone',
           },
           content: 'Project content',
         } as any);
 
       const projects = getProjects();
 
+      // Should be sorted alphabetically by title
       expect(projects).toEqual([
         {
-          title: 'Project Two',
-          description: 'Description two',
-          techStack: ['Vue', 'JavaScript'],
-          siteUrl: undefined,
-          codeUrl: 'https://github.com/user/project2',
-          imageSrc: 'project2.jpg',
-          altText: 'Project two screenshot',
-          order: 1,
+          title: 'anyzine',
+          description: 'A magic zine machine',
+          techStack: ['Node.js', 'Express'],
+          siteUrl: 'https://anyzine.xyz',
+          codeUrl: 'https://github.com/user/anyzine',
         },
         {
-          title: 'Project One',
-          description: 'Description one',
+          title: 'whetstone',
+          description: 'Task management app',
           techStack: ['React', 'TypeScript'],
-          siteUrl: 'https://project1.com',
-          codeUrl: 'https://github.com/user/project1',
-          imageSrc: 'project1.jpg',
-          altText: 'Project one screenshot',
-          order: 2,
+          siteUrl: undefined,
+          codeUrl: 'https://github.com/user/whetstone',
         },
       ]);
     });
 
-    it('should handle missing order field with default value', () => {
-      mockFs.readdirSync.mockReturnValue(['no-order.md'] as any);
+    it('should handle optional fields properly', () => {
+      // Clear all previous mocks
+      jest.clearAllMocks();
+      mockPath.join.mockImplementation((...args) => args.join('/'));
+
+      mockFs.readdirSync.mockReturnValue(['superwire.md'] as any);
       mockFs.readFileSync.mockReturnValue('mock content');
 
       mockMatter.mockReturnValue({
         data: {
-          title: 'No Order Project',
-          description: 'Description',
+          title: 'superwire',
+          description: 'Minimal project description',
           techStack: ['React'],
-          imageSrc: 'image.jpg',
-          altText: 'Alt text',
-          // order field missing
+          codeUrl: 'https://github.com/user/superwire',
+          // siteUrl is optional and missing
         },
         content: 'Project content',
       } as any);
 
       const projects = getProjects();
 
-      expect(projects[0]!.order).toBe(999);
+      expect(projects[0]).toEqual({
+        title: 'superwire',
+        description: 'Minimal project description',
+        techStack: ['React'],
+        siteUrl: undefined,
+        codeUrl: 'https://github.com/user/superwire',
+      });
     });
   });
 
   describe('getPlaces', () => {
     it('should parse places from markdown files correctly', () => {
+      // Clear all previous mocks
+      jest.clearAllMocks();
+      mockPath.join.mockImplementation((...args) => args.join('/'));
+
       mockFs.readdirSync.mockReturnValue(['place1.md', 'place2.md'] as any);
       mockFs.readFileSync
         .mockReturnValueOnce('mock content 1')
@@ -425,6 +431,10 @@ describe('Data Layer', () => {
 
   describe('Error Handling Edge Cases', () => {
     it('should handle gray-matter parsing errors', () => {
+      // Clear all previous mocks
+      jest.clearAllMocks();
+      mockPath.join.mockImplementation((...args) => args.join('/'));
+
       mockFs.readdirSync.mockReturnValue(['corrupted.md'] as any);
       mockFs.readFileSync.mockReturnValue('corrupted content');
       mockMatter.mockImplementation(() => {
@@ -435,6 +445,10 @@ describe('Data Layer', () => {
     });
 
     it('should handle binary or non-text files', () => {
+      // Clear all previous mocks
+      jest.clearAllMocks();
+      mockPath.join.mockImplementation((...args) => args.join('/'));
+
       mockFs.readdirSync.mockReturnValue(['image.md'] as any);
       mockFs.readFileSync.mockReturnValue(Buffer.from([0xff, 0xd8, 0xff, 0xe0]));
 
