@@ -127,17 +127,17 @@ describe('ReadingCard Component', () => {
       expect(screen.queryByTestId('mock-image')).not.toBeInTheDocument();
     });
 
-    it('shows "Audiobook" indicator when audiobook=true', () => {
+    it('shows "Listening" status when audiobook=true', () => {
       const props = createMockProps({ audiobook: true });
       renderWithTheme(<ReadingCard {...props} />);
 
-      // Audiobook indicator should be present (though may need hover to be visible)
+      // Audiobook format should be reflected in the status text
       const card = screen.getByTitle('Test Book by Test Author');
       expect(card).toBeInTheDocument();
 
-      // Check for the audiobook indicator text in the hover overlay
-      const audiobookText = screen.getByText('🎧 Audiobook');
-      expect(audiobookText).toBeInTheDocument();
+      // Check for the status text that includes listening
+      const statusText = screen.getByText('Finished Listening Dec 2022');
+      expect(statusText).toBeInTheDocument();
     });
 
     it('shows "Currently Reading" status when finishedDate=null', () => {
@@ -158,16 +158,16 @@ describe('ReadingCard Component', () => {
   });
 
   describe('Animation and Interaction', () => {
-    it('shows audiobook indicator in overlay when hovered on audiobook', async () => {
+    it('shows listening status in overlay when hovered on audiobook', async () => {
       const user = setupUser();
       const props = createMockProps({ audiobook: true });
       renderWithTheme(<ReadingCard {...props} />);
 
       const card = screen.getByTitle('Test Book by Test Author');
 
-      // Get the audiobook indicator
-      const audiobookIndicator = screen.getByText('🎧 Audiobook');
-      const overlayContent = audiobookIndicator.closest('.hover-overlay');
+      // Get the status text that includes listening
+      const statusText = screen.getByText('Finished Listening Dec 2022');
+      const overlayContent = statusText.closest('.hover-overlay');
 
       // Initially overlay should be hidden (opacity: 0)
       expect(overlayContent).toHaveStyle({ opacity: '0' });
@@ -178,8 +178,8 @@ describe('ReadingCard Component', () => {
       // After hover, overlay should be visible (opacity: 1)
       expect(overlayContent).toHaveStyle({ opacity: '1' });
 
-      // Audiobook indicator should be visible
-      expect(audiobookIndicator).toBeVisible();
+      // Status text should be visible
+      expect(statusText).toBeVisible();
     });
 
     it('shows overlay content when hovered', async () => {
@@ -242,23 +242,23 @@ describe('ReadingCard Component', () => {
       expect(statusDot).toHaveStyle({ backgroundColor: '#10b981' });
     });
 
-    it('shows audiobook indicator for audiobooks', () => {
+    it('shows listening status for audiobooks', () => {
       const props = createMockProps({ audiobook: true });
       renderWithTheme(<ReadingCard {...props} />);
 
-      // Check that audiobook indicator is present in the card
+      // Check that audiobook is indicated through status text
       const card = screen.getByTitle('Test Book by Test Author');
       expect(card).toBeInTheDocument();
 
-      // Verify the audiobook indicator emoji and text are present
-      const audiobookIndicator = screen.getByText('🎧 Audiobook');
-      expect(audiobookIndicator).toBeInTheDocument();
+      // Verify the status text includes "Listening"
+      const statusText = screen.getByText('Finished Listening Dec 2022');
+      expect(statusText).toBeInTheDocument();
 
-      // Check that the indicator has proper styling
-      expect(audiobookIndicator).toHaveStyle({
-        color: 'rgba(255, 255, 255, 0.7)',
-        fontSize: '10px',
-        marginLeft: '8px',
+      // Check that the status has proper styling
+      expect(statusText).toHaveStyle({
+        color: 'rgba(255, 255, 255, 0.9)',
+        fontSize: '11px',
+        fontWeight: '500',
       });
     });
   });
@@ -277,9 +277,9 @@ describe('ReadingCard Component', () => {
       // Card should have focus-visible styles when focused via keyboard
       expect(document.activeElement).toBe(card);
 
-      // Verify audiobook indicator is accessible
-      const audiobookIndicator = screen.getByText('🎧 Audiobook');
-      expect(audiobookIndicator).toBeInTheDocument();
+      // Verify audiobook information is accessible through status text
+      const statusText = screen.getByText('Finished Listening Dec 2022');
+      expect(statusText).toBeInTheDocument();
     });
 
     it('has appropriate ARIA attributes for screen readers', () => {
@@ -291,9 +291,9 @@ describe('ReadingCard Component', () => {
       // Card should have descriptive title for screen readers
       expect(card).toHaveAttribute('title', 'Test Book by Test Author');
 
-      // Audiobook indicator should be present for screen readers
-      const audiobookIndicator = screen.getByText('🎧 Audiobook');
-      expect(audiobookIndicator).toBeInTheDocument();
+      // Audiobook information should be present for screen readers in status text
+      const statusText = screen.getByText('Finished Listening Dec 2022');
+      expect(statusText).toBeInTheDocument();
     });
   });
 

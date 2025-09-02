@@ -152,18 +152,20 @@ describe('ReadingCard Accessibility Tests', () => {
       const props = createMockProps({ audiobook: true });
       renderWithTheme(<ReadingCard {...props} />);
 
-      const card = screen.getByRole('button', { name: /test book by test author.*audiobook/i });
+      const card = screen.getByRole('button', {
+        name: /test book by test author.*currently listening/i,
+      });
 
       // Tab to focus the card
       await user.tab();
       expect(document.activeElement).toBe(card);
 
-      // Audiobook indicator should be visible (checking for the specific text)
-      const audiobookIndicator = screen.getByText('🎧 Audiobook');
-      expect(audiobookIndicator).toBeInTheDocument();
+      // Audiobook information should be visible in status text
+      const statusText = screen.getByText('Currently Listening');
+      expect(statusText).toBeInTheDocument();
 
       // Check that the hover overlay is active by examining parent opacity
-      const overlayContent = audiobookIndicator.closest('[style*="opacity"]');
+      const overlayContent = statusText.closest('[style*="opacity"]');
       expect(overlayContent).toBeInTheDocument();
     });
 
@@ -213,7 +215,9 @@ describe('ReadingCard Accessibility Tests', () => {
         </div>
       );
 
-      const card = screen.getByRole('button', { name: /test book by test author.*audiobook/i });
+      const card = screen.getByRole('button', {
+        name: /test book by test author.*currently listening/i,
+      });
       const otherElement = screen.getByTestId('other');
 
       // Tab to focus the card
@@ -225,8 +229,8 @@ describe('ReadingCard Accessibility Tests', () => {
       expect(document.activeElement).toBe(otherElement);
 
       // Hover overlay should be hidden (opacity 0)
-      const audiobookIndicator = screen.getByText('🎧 Audiobook');
-      const overlayContent = audiobookIndicator.closest('[style*="opacity"]');
+      const statusText = screen.getByText('Currently Listening');
+      const overlayContent = statusText.closest('[style*="opacity"]');
       expect(overlayContent).toHaveStyle({ opacity: '0' });
     });
   });
@@ -265,10 +269,7 @@ describe('ReadingCard Accessibility Tests', () => {
       renderWithTheme(<ReadingCard {...props} />);
 
       const card = screen.getByRole('button');
-      expect(card).toHaveAttribute(
-        'aria-label',
-        'Dune by Frank Herbert, Audiobook, Currently Reading'
-      );
+      expect(card).toHaveAttribute('aria-label', 'Dune by Frank Herbert, Currently Listening');
     });
 
     it('has descriptive aria-label for finished audiobook', () => {
@@ -283,7 +284,7 @@ describe('ReadingCard Accessibility Tests', () => {
       const card = screen.getByRole('button');
       expect(card).toHaveAttribute(
         'aria-label',
-        '1984 by George Orwell, Audiobook, Finished Jun 2023'
+        '1984 by George Orwell, Finished Listening Jun 2023'
       );
     });
 
@@ -366,9 +367,9 @@ describe('ReadingCard Accessibility Tests', () => {
       // Focus to trigger hover overlay
       await user.tab();
 
-      // Audiobook indicator should be announced correctly
-      const audiobookText = screen.getByText('🎧 Audiobook');
-      expect(audiobookText).toBeInTheDocument();
+      // Audiobook information should be announced correctly in status text
+      const statusText = screen.getByText('Currently Listening');
+      expect(statusText).toBeInTheDocument();
     });
   });
 
@@ -475,8 +476,8 @@ describe('ReadingCard Accessibility Tests', () => {
 
       // Test mouse hover
       await user.hover(card);
-      const hoveredAudiobookIndicator = screen.getByText('🎧 Audiobook');
-      expect(hoveredAudiobookIndicator).toBeInTheDocument();
+      const hoveredStatusText = screen.getByText('Currently Listening');
+      expect(hoveredStatusText).toBeInTheDocument();
 
       // Unhover
       await user.unhover(card);
@@ -484,8 +485,8 @@ describe('ReadingCard Accessibility Tests', () => {
       // Test keyboard focus
       await user.tab();
       expect(document.activeElement).toBe(card);
-      const focusedAudiobookIndicator = screen.getByText('🎧 Audiobook');
-      expect(focusedAudiobookIndicator).toBeInTheDocument();
+      const focusedStatusText = screen.getByText('Currently Listening');
+      expect(focusedStatusText).toBeInTheDocument();
     });
 
     it('provides same functionality via keyboard as mouse', async () => {

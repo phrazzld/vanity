@@ -1,13 +1,12 @@
 ---
 title: superwire
-description: fully generated podcasts on just what you're interested in
+description: ai-generated news podcasts with real-time headlines - personalized daily briefings created entirely by artificial intelligence
 techStack:
   - next.js
   - openai
   - elevenlabs
+  - news api
+  - tailwindcss
 siteUrl: https://www.superwire.app/
 codeUrl: https://github.com/phrazzld/super-wire
-imageSrc: /images/projects/headphones-02.webp
-altText: superwire project screenshot
-order: 7
 ---

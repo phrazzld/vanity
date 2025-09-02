@@ -150,16 +150,7 @@ export async function addProject(): Promise<void> {
     // Alt text for image
     const altText = `${basicInfo.title} screenshot`;
 
-    // Get next order number
-    let order = 1;
-    try {
-      const projects = getProjects();
-      if (projects.length > 0) {
-        order = Math.max(...projects.map(p => p.order || 0)) + 1;
-      }
-    } catch {
-      // If no projects exist yet, start at 1
-    }
+    // No longer using order field - projects are sorted alphabetically
 
     // Show preview
     console.log('\n' + chalk.cyan('📋 Project Preview:'));
@@ -169,7 +160,6 @@ export async function addProject(): Promise<void> {
     console.log(chalk.gray('Tech: ') + techStack.join(', '));
     if (siteUrl) console.log(chalk.gray('Site: ') + siteUrl);
     if (codeUrl) console.log(chalk.gray('Code: ') + codeUrl);
-    console.log(chalk.gray('Order: ') + order);
     console.log(chalk.gray('─'.repeat(40)) + '\n');
 
     // Confirm save
@@ -216,7 +206,6 @@ export async function addProject(): Promise<void> {
       techStack,
       imageSrc,
       altText,
-      order,
     };
 
     if (siteUrl) {
@@ -243,7 +232,6 @@ export async function addProject(): Promise<void> {
     try {
       await writeFile(filepath, fileContent);
       console.log(chalk.green(`\n✅ Project "${basicInfo.title}" saved to ${filename}`));
-      console.log(chalk.gray(`   Order: ${order}`));
     } catch (writeError) {
       console.error(chalk.red('✖ Failed to save project file:'), writeError);
       console.log(chalk.gray(`  Attempted to write to: ${filepath}`));

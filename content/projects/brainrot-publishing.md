@@ -1,13 +1,13 @@
 ---
 title: brainrot publishing
-description: a playful reimagining of canonical texts through the lens of contemporary internet vernacular
+description: gen z translations of classic literature with synchronized audio - shakespeare meets tiktok in a full reading platform
 techStack:
-  - react
   - next.js
+  - react
   - tailwindcss
+  - wavesurfer.js
+  - vercel blob
+  - turborepo
 siteUrl: https://brainrotpublishing.com
-codeUrl: https://github.com/phrazzld/brainrot-publishing-house
-imageSrc: /images/projects/books-01.webp
-altText: brainrot publishing screenshot
-order: 1
+codeUrl: https://github.com/phrazzld/brainrot
 ---

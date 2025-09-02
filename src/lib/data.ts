@@ -44,22 +44,33 @@ export function getReadings() {
 export function getProjects() {
   const dir = path.join(process.cwd(), 'content/projects');
   const files = fs.readdirSync(dir);
-  const projects = files.map(file => {
-    const { data } = matter(fs.readFileSync(path.join(dir, file), 'utf8'));
-    return {
-      title: data.title as string,
-      description: data.description as string,
-      techStack: data.techStack as string[],
-      siteUrl: data.siteUrl as string | undefined,
-      codeUrl: data.codeUrl as string | undefined,
-      imageSrc: data.imageSrc as string,
-      altText: data.altText as string,
-      order: (data.order as number) || 999,
-    };
-  });
 
-  // Sort by order field
-  return projects.sort((a, b) => a.order - b.order);
+  // Filter to only deployed/live projects (7 projects have markdown files)
+  const allowedSlugs = [
+    'anyzine',
+    'brainrot-publishing',
+    'scry',
+    'superwire',
+    'time-is-money',
+    'whetstone',
+    'wrap-it-up',
+  ];
+
+  const projects = files
+    .filter(file => allowedSlugs.includes(file.replace('.md', '')))
+    .map(file => {
+      const { data } = matter(fs.readFileSync(path.join(dir, file), 'utf8'));
+      return {
+        title: data.title as string,
+        description: data.description as string,
+        techStack: data.techStack as string[],
+        siteUrl: data.siteUrl as string | undefined,
+        codeUrl: data.codeUrl as string | undefined,
+      };
+    });
+
+  // Sort alphabetically by title
+  return projects.sort((a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase()));
 }
 
 export function getPlaces() {

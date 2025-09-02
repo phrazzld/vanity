@@ -218,12 +218,23 @@
     @apply relative no-underline text-foreground font-semibold transition-colors duration-200 hover:text-foreground focus-visible:outline-offset-4;
   }
 
+  /* Hover animation for all links */
   .nav-list a::after {
     @apply content-[''] absolute left-0 -bottom-2.5 h-0.5 w-full bg-foreground scale-x-0 origin-left transition-transform duration-200 ease-elegant-entrance;
   }
 
   .nav-list a:hover::after {
     @apply scale-x-100;
+  }
+
+  /* Active page indicator - subtle persistent underline */
+  .nav-list a[data-active='true']::before {
+    @apply content-[''] absolute left-0 -bottom-2.5 h-px w-full bg-foreground opacity-60;
+  }
+
+  /* Active page hover - underline becomes fuller */
+  .nav-list a[data-active='true']:hover::before {
+    @apply h-0.5 opacity-100 transition-all duration-200;
   }
 
   /* Main content */
@@ -238,6 +249,12 @@
 
   .medium-heading {
     @apply text-2xl md:text-3xl font-semibold mb-8 tracking-tight;
+  }
+
+  /* Section heading for better hierarchy */
+  .section-heading {
+    @apply text-3xl md:text-4xl font-bold mb-12 tracking-tight;
+    @apply uppercase text-xs md:text-sm font-semibold tracking-[0.1em] opacity-80;
   }
 
   /* Link styles */
@@ -296,10 +313,6 @@
   }
 
   /* Project cards */
-  .projects-grid {
-    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8;
-  }
-
   .project-card {
     @apply border border-border relative overflow-hidden flex flex-col transition-all duration-300 
     animate-fade-in opacity-0 translate-y-2.5 hover:shadow-card-hover dark:hover:shadow-card-hover-dark hover:scale-[1.01] 
@@ -315,15 +328,84 @@
   }
 
   .project-links {
-    @apply mt-4 flex gap-4;
+    @apply mt-4 flex gap-6 items-center;
+  }
+
+  /* Clean project link style with animated underline matching navbar */
+  .project-link {
+    @apply relative text-sm lowercase font-medium text-foreground;
+    @apply no-underline transition-colors duration-200;
+    @apply border-b border-dotted border-gray-400 dark:border-gray-600 pb-0.5;
+  }
+
+  .project-link::after {
+    @apply content-[''] absolute left-0 -bottom-0.5 h-px w-full bg-foreground;
+    @apply scale-x-0 origin-left transition-transform duration-200 ease-elegant-entrance;
+  }
+
+  .project-link:hover::after {
+    @apply scale-x-100;
+  }
+
+  .project-link:hover {
+    @apply border-transparent;
+  }
+
+  .projects-list {
+    @apply flex flex-col gap-12 md:gap-16;
+  }
+
+  .project-item {
+    @apply relative border-none bg-transparent w-full;
+    @apply transition-all duration-200;
+    @apply hover:bg-gray-50 dark:hover:bg-gray-900/30;
+    @apply -mx-4 px-4 py-4 rounded-lg;
+  }
+
+  /* Subtle left accent on hover */
+  .project-item::before {
+    @apply content-[''] absolute left-0 top-0 h-full w-1 bg-primary-600;
+    @apply scale-x-0 origin-left transition-transform duration-200;
+  }
+
+  .project-item:hover::before {
+    @apply scale-x-100;
+  }
+
+  /* Project title styling */
+  .project-title {
+    @apply text-xl md:text-2xl font-bold mb-2 tracking-tight;
+  }
+
+  /* Project description with better hierarchy */
+  .project-description {
+    @apply text-base leading-relaxed mb-3 text-gray-700 dark:text-gray-300;
+    @apply text-balance;
   }
 
   .tech-stack {
-    @apply list-none flex flex-wrap gap-2 mt-2 p-0;
+    @apply flex flex-wrap gap-2 mt-2 mb-4;
+  }
+
+  /* Tech stack badges */
+  .tech-badge {
+    @apply text-xs px-2 py-1 rounded-md;
+    @apply bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300;
+    @apply font-medium tracking-wide;
   }
 
   .tech-stack li {
     @apply bg-muted dark:bg-muted text-muted-foreground py-1 px-2 rounded-md text-xs;
+  }
+
+  /* Quote text display - preserves line breaks for poetry, verses, etc. */
+  .quote-text-display {
+    white-space: pre-line;
+  }
+
+  /* For truncated quotes in lists - single line with ellipsis */
+  .quote-text-truncated {
+    @apply whitespace-nowrap overflow-hidden text-ellipsis;
   }
 
   /* About section */

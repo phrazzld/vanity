@@ -1,12 +1,11 @@
 ---
 title: time is money
-description: a chrome extension that translates price tags into hours of your labor, so you see exactly how long you'd need to work to buy that coffee
+description: chrome extension that converts prices to hours of work - see the true time cost of purchases across 150+ currencies
 techStack:
   - javascript
-  - chrome api
+  - chrome extension api
+  - microsoft recognizers
+  - money.js
 siteUrl: https://chromewebstore.google.com/detail/time-is-money/ooppbnomdcjmoepangldchpmjhkeendl?hl=en
 codeUrl: https://github.com/phrazzld/timeismoney
-imageSrc: /images/projects/clock-01.webp
-altText: time is money extension screenshot
-order: 2
 ---
