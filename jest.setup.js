@@ -267,5 +267,5 @@ beforeEach(() => {
 });
 
 // Mock environment variables
-process.env.NEXT_PUBLIC_SPACES_BASE_URL = 'https://test-space.com';
+// NEXT_PUBLIC_SPACES_BASE_URL removed - no longer used
 process.env.NODE_ENV = 'test';

@@ -6,8 +6,7 @@
   "installCommand": "npm ci",
   "env": {
     "NODE_VERSION": "20",
-    "SKIP_STORYBOOK": "true",
-    "NEXT_PUBLIC_SPACES_BASE_URL": "https://book-covers.nyc3.digitaloceanspaces.com"
+    "SKIP_STORYBOOK": "true"
   },
   "github": {
     "silent": false

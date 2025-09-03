@@ -72,7 +72,6 @@ The project uses Husky for Git hooks, which should be set up automatically durin
 The project has the following Git hooks in place:
 
 1. **Pre-commit Hook**: Runs automatically before each commit to:
-
    - Format code using Prettier
    - Run ESLint to check for code quality issues
    - Check for large files (>5MB) and suggest using Git LFS
@@ -82,7 +81,6 @@ The project has the following Git hooks in place:
 2. **Commit-msg Hook**: Validates commit messages against the Conventional Commits format
 
 3. **Pre-push Hook**: Runs before pushing to remote to:
-
    - Enforce branch naming conventions
    - Run the complete test suite
    - Prevent pushing if tests fail
@@ -186,39 +184,7 @@ chmod +x .husky/*
 
 ## Environment Configuration
 
-### 1. Create Environment Files
-
-Create a `.env.local` file in the project root for local development based on the provided `.env.example`:
-
-```bash
-cp .env.example .env.local
-```
-
-### 2. Configure Environment Variables
-
-Open `.env.local` and update the following variables:
-
-```
-# For local development with Docker
-DATABASE_URL="postgres://postgres:postgres@localhost:5432/vanity"
-
-# Base URL for cover images
-NEXT_PUBLIC_SPACES_BASE_URL="https://your-image-host.com"
-
-# Admin authentication credentials
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=your_secure_password_here
-
-# NextAuth configuration (required for authentication)
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="your_generated_secret_here" # Generate a secure random string
-```
-
-For `NEXTAUTH_SECRET`, you can generate a secure random string using:
-
-```bash
-openssl rand -base64 32
-```
+No environment variables are required for this project. All content is managed through markdown files in the `/content` directory, and external image URLs are stored directly in the content files.
 
 ## Database Setup
 
@@ -686,7 +652,6 @@ npm run security:scan
    **Error**: `tsc` fails with module resolution errors
 
    **Solutions**:
-
    - Verify `tsconfig.scripts.json` exists and is properly configured
    - Check that all import paths in `scripts/audit-filter.ts` are correct
    - Ensure dependencies in `src/lib/audit-filter/` compile successfully
@@ -697,7 +662,6 @@ npm run security:scan
    **Error**: `dist/scripts/audit-filter.js` not created after build
 
    **Solutions**:
-
    - Check TypeScript configuration `outDir` setting
    - Verify `scripts/audit-filter.ts` is included in compilation
    - Look for silent compilation failures in build output
@@ -708,7 +672,6 @@ npm run security:scan
    **Error**: Module resolution failures when executing compiled script
 
    **Solutions**:
-
    - Verify all dependencies are properly resolved in `tsconfig.scripts.json`
    - Check that relative imports use correct paths
    - Ensure `src/lib/audit-filter/core.ts` and dependencies compile correctly
@@ -719,7 +682,6 @@ npm run security:scan
 1. **Build Verification Failures**
 
    CI includes dedicated verification steps that check:
-
    - Compiled script exists at expected path
    - Script is executable and runs without errors
    - All dependencies are properly resolved
@@ -746,7 +708,6 @@ npm run security:scan
    **Error**: Allowlist file parsing fails
 
    **Solutions**:
-
    - Validate `.audit-allowlist.json` syntax
    - Check for trailing commas, missing quotes
    - Test: `cat .audit-allowlist.json | jq .`
@@ -756,7 +717,6 @@ npm run security:scan
    **Error**: Allowlist entries don't match required schema
 
    **Solutions**:
-
    - Ensure all entries have required fields: `id`, `package`, `reason`, `expires`
    - Use ISO 8601 date format for `expires` field
    - Check expiration dates are not in the past
@@ -853,12 +813,10 @@ This multi-layered approach ensures security vulnerabilities are caught early an
 #### Local vs CI Environment Differences
 
 1. **Environment Variables**:
-
    - CI doesn't have `.env.local` - uses GitHub secrets
    - Check which variables are required for build
 
 2. **Node.js Version**:
-
    - Ensure local version matches CI (v20)
    - Use `nvm use` to switch to correct version
 
@@ -870,7 +828,6 @@ This multi-layered approach ensures security vulnerabilities are caught early an
 #### Debugging CI Failures
 
 1. **Check CI Logs**:
-
    - Each step provides detailed error messages
    - Look for the specific command that failed
 

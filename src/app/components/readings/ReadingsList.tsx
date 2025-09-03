@@ -287,10 +287,10 @@ export default function ReadingsList({
                   {/* Book Cover Image or Placeholder */}
                   {reading.coverImageSrc ? (
                     <div className="h-14 w-10 flex-shrink-0 rounded overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 group-hover:shadow-sm">
-                      {/* Use client-side environment variable */}
-                      {typeof window !== 'undefined' && window.ENV_NEXT_PUBLIC_SPACES_BASE_URL ? (
+                      {/* External image URLs are handled by Next.js Image component */}
+                      {reading.coverImageSrc ? (
                         <Image
-                          src={`${window.ENV_NEXT_PUBLIC_SPACES_BASE_URL}${reading.coverImageSrc}`}
+                          src={reading.coverImageSrc}
                           alt={`Cover for ${reading.title}`}
                           width={40}
                           height={56}

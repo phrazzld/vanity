@@ -89,9 +89,10 @@ UPDATE_SNAPSHOTS=true npm test  # Update snapshots
 
 ## Environment Variables
 
+No environment variables are required for the application. The only optional environment variable is:
+
 ```bash
-NEXT_PUBLIC_SPACES_BASE_URL  # Optional: Image hosting URL
-EDITOR or VISUAL             # CLI editor (default: vi)
+EDITOR or VISUAL             # CLI editor preference (default: vi)
 ```
 
 ## CI/CD Workflow
