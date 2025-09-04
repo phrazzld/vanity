@@ -330,10 +330,20 @@ Generated from TASK.md on 2025-01-05
 
 ### Security Validation
 
-- [ ] **Test SSRF protection manually** - Verify internal IPs blocked
+- [!] **Test SSRF protection manually** - Verify internal IPs blocked
   - Success criteria: `/_next/image?url=http://169.254.169.254/` returns 400
   - Dependencies: Security fix deployed to preview
   - Estimated complexity: SIMPLE
+
+  ```
+  Work Log:
+  - ✅ Created PR #60: https://github.com/phrazzld/vanity/pull/60
+  - ✅ Vercel deployment completed successfully
+  - ✅ Preview URL found: https://vanity-git-fix-next-js-ssrf-vulnerability-moomooskycow.vercel.app
+  - ❌ BLOCKED: Preview deployment is password protected (401 Unauthorized)
+  - Cannot test SSRF protection endpoints due to authentication requirement
+  - May need to check Vercel project settings or deploy to a public preview
+  ```
 
 - [ ] **Test allowed domains** - Verify book covers load
   - Success criteria: Images from 5 allowed domains load correctly
@@ -404,11 +414,27 @@ Generated from TASK.md on 2025-01-05
 
 ### Preview Deployment
 
-- [~] **Push to feature branch** - Deploy to Vercel preview
+- [x] **Push to feature branch** - Deploy to Vercel preview
   - Success criteria: Preview deployment successful
   - Dependencies: All critical path items complete
   - Estimated complexity: SIMPLE
   - Command: `git push origin security/next-js-ssrf-fix`
+
+  ```
+  Work Log:
+  - ✅ Branch successfully pushed: fix/next-js-ssrf-vulnerability
+  - ✅ All pre-push checks passed:
+    * Branch naming convention ✓
+    * ESLint check ✓
+    * TypeScript type check ✓
+    * Build verification ✓
+    * Security vulnerability scan ✓
+    * Edge Runtime compatibility ✓
+    * All 337 tests passing ✓
+  - ✅ Committed documentation changes (ADR-002 and rollback procedures)
+  - Branch pushed to GitHub, Vercel preview deployment triggered
+  - Note: GitHub reports 1 moderate vulnerability (dependabot/13) - unrelated to SSRF fix
+  ```
 
 - [ ] **Validate preview deployment** - Test all functionality
   - Success criteria: All images load, no console errors, security fixed
@@ -417,10 +443,24 @@ Generated from TASK.md on 2025-01-05
 
 ### Production Deployment
 
-- [ ] **Create pull request** - Document changes
+- [x] **Create pull request** - Document changes
   - Success criteria: PR created with security fix description
   - Dependencies: Preview validated
   - Estimated complexity: SIMPLE
+
+  ```
+  Work Log:
+  - ✅ Created PR #60: https://github.com/phrazzld/vanity/pull/60
+  - ✅ Comprehensive PR description with:
+    * Security fixes summary (SSRF protection, domain allowlist)
+    * Environment cleanup details
+    * Technical improvements list
+    * Test plan checklist
+    * Documentation updates
+  - ✅ GitHub Actions checks initiated (Build and Test, Claude Review, Size)
+  - ✅ Vercel preview deployment completed
+  - Note: Preview is password protected, limiting manual testing capability
+  ```
 
 - [ ] **Merge to main** - Deploy to production
   - Success criteria: Production deployment successful
