@@ -65,7 +65,7 @@ jest.mock('next/image', () => ({
 }));
 
 // Mock environment variables
-process.env.NEXT_PUBLIC_SPACES_BASE_URL = 'https://test-space.com';
+// NEXT_PUBLIC_SPACES_BASE_URL removed - no longer used
 
 // Sample test data with fixed date for consistent testing
 const TEST_DATE = '2022-12-15';
@@ -99,7 +99,7 @@ describe('ReadingCard Component', () => {
       // Check for image element
       const image = screen.getByTestId('mock-image');
       expect(image).toBeInTheDocument();
-      expect(image).toHaveAttribute('src', 'https://test-space.com/covers/test-book.jpg');
+      expect(image).toHaveAttribute('src', '/covers/test-book.jpg');
       expect(image).toHaveAttribute('alt', 'Test Book cover');
     });
 
@@ -492,7 +492,7 @@ describe('ReadingCard Component', () => {
       renderWithTheme(<ReadingCard {...props} />);
 
       const image = screen.getByTestId('mock-image');
-      expect(image).toHaveAttribute('src', 'https://test-space.com/images/book.jpg');
+      expect(image).toHaveAttribute('src', '/images/book.jpg');
     });
 
     it('handles absolute image URLs correctly', () => {

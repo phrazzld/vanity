@@ -274,6 +274,38 @@ interface Project {
 }
 ```
 
+**[Next.js Image Security Domain Audit]**: Two-phase grep pattern to discover all external image domains in content
+
+```bash
+# Single-line YAML format
+grep -r "coverImage: 'https" ./content
+
+# Multi-line YAML format
+grep -A1 "coverImage: >-" ./content
+```
+
+- Both patterns needed to capture different YAML formatting styles
+- Extract domains from URLs for specific allowlist
+- Pattern discovers: m.media-amazon.com, images-na.ssl-images-amazon.com, i.pinimg.com, cdn11.bigcommerce.com, resizing.flixster.com
+- Critical for preventing SSRF vulnerabilities in Next.js image optimization
+
+**[Next.js HTTPS-Only Image Patterns]**: Enforce HTTPS protocol in image domain allowlists
+
+```typescript
+// Secure pattern: HTTPS-only with specific domains
+remotePatterns: [
+  {
+    protocol: 'https',
+    hostname: 'm.media-amazon.com',
+    port: '',
+    pathname: '/**',
+    search: '',
+  },
+];
+
+// Avoid: Mixed protocol or wildcard hostnames
+```
+
 ## Bugs & Fixes
 
 **[Hardcoded Lists Out of Sync]**: Hardcoded arrays can reference non-existent files → Always verify filesystem before implementing hardcoded filters
@@ -306,6 +338,28 @@ interface Project {
 - Problem: Mapping tech stack with ul/li and custom bullet characters creates key issues
 - Solution: Use div/span structure with conditional separators for cleaner implementation
 - Pattern: `{index < array.length - 1 && ' • '}` for custom separators
+
+**[Next.js SSRF Vulnerability]**: Wildcard hostname patterns allow server-side request forgery attacks
+
+- Problem: `hostname: '**'` in Next.js image config allows attackers to proxy requests through your server
+- Solution: Replace wildcards with specific domain allowlist after content audit
+- Pattern: Audit content with dual grep approach, extract unique domains, create explicit allowlist
+- Impact: Critical security vulnerability → Secure domain-specific image loading
+- Files: /Users/phaedrus/Development/vanity/next.config.ts remotePatterns configuration
+
+**[Validation Function Return Type Mismatch]**: Security functions may return objects instead of direct boolean values
+
+- Problem: validateImageUrl returned `{isValid: boolean, error?: string}` but tests expected direct boolean
+- Solution: Check function signature and adapt test expectations accordingly
+- Pattern: Always verify return type of validation functions - complex objects are common for detailed error reporting
+- Impact: Initial test failures until return type properly handled in assertions
+
+**[URL Constructor Default Port Handling]**: Default ports (80, 443) not captured by parsed.port property
+
+- Problem: `new URL('https://example.com').port` returns empty string, not '443'
+- Solution: Handle defaults explicitly: `parsed.port || (parsed.protocol === 'https:' ? '443' : '80')`
+- Pattern: URL parsing edge case affects security validation - explicit port detection needed
+- Impact: Port-based security restrictions can be bypassed without proper default handling
 
 ## Decisions
 
@@ -341,6 +395,13 @@ interface Project {
 - Typography and link hierarchy naturally work together
 - Look for shared components or CSS files that serve both requirements
 - Can reduce total execution time by 50% or more
+
+**[Security-First Image Configuration]**: Choose explicit domain allowlists over convenience wildcards
+
+- HTTPS-only protocols prevent mixed content issues
+- Specific hostnames prevent SSRF attack vectors
+- Trade-off: Requires content audit but provides critical security hardening
+- Rationale: Static site security posture more important than configuration flexibility
 
 ## Type Organization Insights
 
@@ -385,3 +446,66 @@ interface Project {
 - Pattern recognition key: Typography and link hierarchy are natural pairs
 - Look for shared files (globals.css) that serve multiple requirements
 - Accurate time estimation when leveraging existing comprehensive systems
+
+**[Security Fix Simplicity]**: Domain-specific security fixes are often straightforward once audit is complete
+
+- SIMPLE complexity estimate was accurate for SSRF vulnerability fix
+- 2-minute execution time: 30 seconds audit + 90 seconds config replacement
+- Pattern: Security improvements with known solutions rarely require debugging
+- Domain audit critical step but follows predictable grep patterns
+
+**[Security Implementation Complexity]**: SSRF protection implementation accurately estimated as MEDIUM complexity
+
+- 25-minute execution time matched MEDIUM estimate (15-30 minutes)
+- Multi-layered security requires both comprehensive testing AND actual implementation
+- Pattern: Security tasks requiring new validation logic are inherently MEDIUM complexity
+- Time breakdown: 40% test creation, 40% security logic implementation, 20% debugging edge cases
+
+**[Test-First Security Accuracy]**: Using existing test templates makes security test creation highly predictable
+
+- Pattern-scout template identification eliminates discovery time
+- ReadingCard.test.tsx provided perfect structure template
+- 23 test cases including bypass techniques completed without time overrun
+- Pattern: Security testing follows established patterns when good templates exist
+
+**[Security Test-First Implementation]**: Security vulnerabilities often require both comprehensive tests AND actual security logic implementation
+
+- Pattern: Use pattern-scout to find similar test files (ReadingCard.test.tsx worked as template)
+- Write comprehensive test suite first to expose security gaps
+- Implement actual security logic, not just test stubs
+- Test bypass techniques, not just basic cases
+- Time savings: 23 passing tests prevent regression issues
+
+**[SSRF Protection Implementation]**: Comprehensive Server-Side Request Forgery protection requires multiple validation layers
+
+```typescript
+// Complete SSRF protection pattern
+const validateImageUrl = (url: string): ValidationResult => {
+  // 1. Protocol validation
+  if (!url.startsWith('https://')) return { isValid: false, error: 'Only HTTPS URLs allowed' };
+
+  // 2. URL parsing validation
+  const parsed = new URL(url);
+
+  // 3. Domain allowlist check
+  if (!ALLOWED_DOMAINS.includes(parsed.hostname))
+    return { isValid: false, error: 'Domain not allowed' };
+
+  // 4. IP address blocking (prevents internal network access)
+  if (parsed.hostname.match(IP_PATTERN))
+    return { isValid: false, error: 'IP addresses not allowed' };
+
+  // 5. Port restrictions (handle default ports correctly)
+  const port = parsed.port || (parsed.protocol === 'https:' ? '443' : '80');
+  if (!['80', '443'].includes(port)) return { isValid: false, error: 'Invalid port' };
+
+  return { isValid: true };
+};
+```
+
+**[URL Parsing Port Behavior]**: Default HTTPS/HTTP ports are handled differently by URL constructor
+
+- parsed.port returns empty string for default ports (443 for HTTPS, 80 for HTTP)
+- Must explicitly check: `const port = parsed.port || (parsed.protocol === 'https:' ? '443' : '80')`
+- Edge case: Explicit :443 vs implicit default port behave differently
+- Security impact: Port-based restrictions can be bypassed without proper handling

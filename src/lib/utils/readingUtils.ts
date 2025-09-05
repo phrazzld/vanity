@@ -99,10 +99,8 @@ export function getFullImageUrl(src: string | null): string {
   // Local images (created by CLI tool) should be served directly from public directory
   if (src.startsWith('/images/readings/')) return src;
 
-  // Legacy relative paths get prefixed with DigitalOcean Spaces URL
-  const baseUrl =
-    typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_SPACES_BASE_URL || '' : '';
-  return `${baseUrl}${src}`;
+  // Legacy relative paths - return as-is (should be updated in content)
+  return src;
 }
 
 /**
@@ -125,12 +123,89 @@ export function validateImageUrl(url: string): { isValid: boolean; error?: strin
   try {
     const parsed = new URL(url);
 
-    // Only allow http and https protocols
-    if (!['http:', 'https:'].includes(parsed.protocol)) {
-      return { isValid: false, error: 'Only HTTP and HTTPS URLs are allowed' };
+    // Only allow HTTPS protocol for external URLs (security requirement)
+    if (parsed.protocol !== 'https:') {
+      return { isValid: false, error: 'Only HTTPS URLs are allowed for external images' };
     }
 
-    // Valid URL - no domain restrictions
+    // SSRF Protection: Block internal/private IP addresses
+    const hostname = parsed.hostname.toLowerCase();
+
+    // Block localhost variations
+    if (hostname === 'localhost' || hostname === '0.0.0.0') {
+      return { isValid: false, error: 'Internal hostnames are blocked for security' };
+    }
+
+    // Block IPv4 private/internal ranges
+    const ipv4Regex = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
+    const ipv4Match = hostname.match(ipv4Regex);
+
+    if (ipv4Match) {
+      const a = Number(ipv4Match[1]);
+      const b = Number(ipv4Match[2]);
+      const c = Number(ipv4Match[3]);
+      const d = Number(ipv4Match[4]);
+
+      // Validate each octet is 0-255
+      if (
+        isNaN(a) ||
+        isNaN(b) ||
+        isNaN(c) ||
+        isNaN(d) ||
+        a > 255 ||
+        b > 255 ||
+        c > 255 ||
+        d > 255
+      ) {
+        return { isValid: false, error: 'Invalid IP address format' };
+      }
+
+      // Block private and internal IP ranges
+      if (
+        a === 127 || // 127.0.0.0/8 - loopback
+        (a === 169 && b === 254) || // 169.254.0.0/16 - link-local
+        a === 10 || // 10.0.0.0/8 - private
+        (a === 172 && b >= 16 && b <= 31) || // 172.16.0.0/12 - private
+        (a === 192 && b === 168) // 192.168.0.0/16 - private
+      ) {
+        return { isValid: false, error: 'Private/internal IP addresses are blocked for security' };
+      }
+    }
+
+    // Block IPv6 localhost and link-local
+    if (
+      hostname === '::1' ||
+      hostname.startsWith('fe80:') ||
+      hostname.startsWith('[::1]') ||
+      hostname.startsWith('[fe80:')
+    ) {
+      return { isValid: false, error: 'IPv6 internal addresses are blocked for security' };
+    }
+
+    // Block port specifications for security (including explicit default ports)
+    const hasExplicitPort = /:\d+\//.test(url);
+    if (parsed.port || hasExplicitPort) {
+      return { isValid: false, error: 'Port specifications are not allowed' };
+    }
+
+    // Domain allowlist - only approved CDN domains
+    const allowedDomains = [
+      'm.media-amazon.com',
+      'images-na.ssl-images-amazon.com',
+      'cdn11.bigcommerce.com',
+      'i.pinimg.com',
+      'resizing.flixster.com',
+    ];
+
+    if (!allowedDomains.includes(hostname)) {
+      return { isValid: false, error: 'Domain not in allowlist' };
+    }
+
+    // Block excessively long URLs (potential attack vector)
+    if (url.length > 1000) {
+      return { isValid: false, error: 'URL too long' };
+    }
+
     return { isValid: true };
   } catch {
     return { isValid: false, error: 'Invalid URL format' };

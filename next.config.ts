@@ -10,20 +10,41 @@ const nextConfig: NextConfig = {
   images: {
     // Required for static export
     unoptimized: true,
-    // Allow images from any external domain (personal project)
+    // Allow images from specific external domains only (security hardening)
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**',
+        hostname: 'm.media-amazon.com',
         port: '',
-        pathname: '**',
+        pathname: '/**',
         search: '',
       },
       {
-        protocol: 'http',
-        hostname: '**',
+        protocol: 'https',
+        hostname: 'images-na.ssl-images-amazon.com',
         port: '',
-        pathname: '**',
+        pathname: '/**',
+        search: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn11.bigcommerce.com',
+        port: '',
+        pathname: '/**',
+        search: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.pinimg.com',
+        port: '',
+        pathname: '/**',
+        search: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'resizing.flixster.com',
+        port: '',
+        pathname: '/**',
         search: '',
       },
     ],

@@ -87,14 +87,7 @@ A personal website built with Next.js, featuring a collection of readings, trave
    npm install
    ```
 
-3. Set up environment variables (optional)
-
-   ```bash
-   # Create a .env file with:
-   NEXT_PUBLIC_SPACES_BASE_URL="your_image_hosting_url"  # For reading cover images
-   ```
-
-4. Start the development server
+3. Start the development server
 
    ```bash
    npm run dev
@@ -199,7 +192,7 @@ Optional thoughts and notes about the book go here.
 
 - **Build Errors**: Check for TypeScript errors with `npm run typecheck`.
 - **Missing Content**: Ensure content directories exist: `/content/quotes/` and `/content/readings/`.
-- **Image Issues**: Check that NEXT_PUBLIC_SPACES_BASE_URL is set for reading cover images.
+- **Image Issues**: Ensure cover image URLs in markdown content are valid HTTPS URLs from approved CDN domains.
 
 ## Development Scripts
 
@@ -281,7 +274,7 @@ Optional thoughts and notes about the book go here.
 │   ├── store/               # Zustand store definitions
 │   └── types/               # TypeScript type definitions
 ├── docs/                    # Documentation files
-├── .env.example             # Example environment variables
+├── .env.example             # No environment variables needed
 ├── next.config.ts           # Next.js configuration
 ├── tailwind.config.ts       # Tailwind CSS configuration
 └── tsconfig.json            # TypeScript configuration

@@ -1,137 +1,163 @@
 # BACKLOG
 
-## Critical Priority (CRITICAL)
+## 🎯 NEXT SPRINT (Top 5 Focus Items)
 
-_ACTUAL critical issues that affect the live site_
+## HIGH Priority
 
-- [ ] **[CRITICAL] [PERF]** Bundle size optimization | **Effort: M** | **Current: 2MB, Target: <1MB** | **Impact: 50% faster initial load**
+_Significant improvements to code quality, performance, or user experience_
 
-## High Priority (HIGH)
+### Code Quality & Testing
 
-_Code health issues, DX blockers, architecture debt, philosophy violations_
+- [ ] **[QUALITY]** Comprehensive test coverage improvement | **Effort: L** | **Current: 36% → Target: 80%**
+  - Focus: lib/utils (13%), store (17%), keyboard navigation (0-47%)
+  - Add integration tests for core workflows (quotes, readings, theme)
+  - Implement snapshot tests for UI components
+
+### Performance
+
+- [ ] **[PERF]** Bundle size optimization | **Effort: M** | **Current: 2MB → Target: <1MB**
+  - Implement code splitting and dynamic imports
+  - Lazy load Map component (saves 166kB)
+  - Optimize image loading with responsive sizes
+  - Tree-shake unused dependencies
+
+### Architecture
+
+- [ ] **[REFACTOR]** Split oversized components | **Effort: M**
+  - TypewriterQuotes (314 lines) → animation engine + data fetcher + presentation
+  - ReadingsList (394 lines) → separate formatting, search, and display logic
+
+### Developer Experience
+
+- [ ] **[DX]** Implement CI/CD improvements | **Effort: M** | **Time saved: 10+ hrs/week**
+  - Parallel test execution with caching
+  - Build caching (60% faster CI builds)
+  - Early termination on failure
+
+## MEDIUM Priority
+
+_Valuable improvements and new features_
 
 ### Security & Infrastructure
 
-- [ ] **[HIGH] [SECURITY]** Upgrade to Snyk integration with automated vulnerability scanning | **Effort: S** | **Quality: 10/10** | **Target: Zero CVEs, automated PR creation for patches**
+- [ ] **[SECURITY]** Security hardening | **Effort: M**
+  - Add input validation for CLI file operations
+  - Replace innerHTML in DarkModeToggle with safe DOM methods
+  - Implement CSP nonce support for inline scripts
+  - Add pre-commit secret scanning
 
-### Developer Experience
+### Quality Automation
 
-- [ ] **[HIGH] [DX]** Implement smart test execution with incremental coverage | **Effort: M** | **Time saved: 8-12 hrs/week** | **Quality: Maintains standards while accelerating cycles**
+- [ ] **[QUALITY]** Implement quality gates | **Effort: S**
+  - Pre-commit: coverage checks, ESLint max-lines (400)
+  - CI/CD: Block PRs below 80% coverage for new code
+  - Add complexity limits and dead code detection
 
-- [ ] **[HIGH] [DX]** Parallel quality gates with early termination | **Effort: M** | **Time saved: 6-10 hrs/week** | **Quality: 5-10s feedback vs 15-30s**
+### Features
 
-### Performance & Testing (Post-PR #56)
+- [ ] **[FEATURE]** Content validation pipeline | **Effort: M** | Build-time validation and auto-formatting
+- [ ] **[FEATURE]** Smart content recommendations | **Effort: L** | Local analysis without external APIs
+- [ ] **[FEATURE]** Progressive content loading | **Effort: M** | Service worker + intelligent prefetch
+- [ ] **[FEATURE]** Interactive reading timeline | **Effort: M** | Visual journey with progress tracking
 
-- [ ] **[HIGH] [TEST]** Performance regression testing automation | **Effort: M** | **Source: Claude AI PR review** | **Target: Automated detection of N+1 subscription patterns in list components**
+### Documentation
 
-- [ ] **[HIGH] [TEST]** Visual regression testing for theme switching | **Effort: M** | **Source: Claude AI PR review** | **Target: Prevent theme switching correctness regressions**
+- [ ] **[DOCS]** Add comprehensive JSDoc | **Effort: M** | Target: 90% coverage for exported functions
+- [ ] **[DOCS]** Create architectural decision records | **Effort: S** | Document key technical decisions
 
-- [ ] **[HIGH] [DX]** Code review guidelines for performance patterns | **Effort: S** | **Source: Claude AI PR review** | **Target: Document N+1 subscription prevention and CSS performance patterns**
+## LOW Priority
 
-### Features & Innovation
-
-- [ ] **[HIGH] [FEATURE]** Smart content pipeline with AI assistance | **Effort: M** | **Quality: 9/10** | **Innovation: Auto-generate summaries while maintaining personal touch**
-
-- [ ] **[HIGH] [FEATURE]** Interactive reading journey visualization | **Effort: M** | **Quality: 9/10** | **Innovation: Replace static lists with timeline/network graphs**
-
-- [ ] **[HIGH] [FEATURE]** PWA with offline reading notes | **Effort: M** | **Quality: 9/10** | **Innovation: Modern web capabilities demonstration**
-
-## Medium Priority (MEDIUM)
-
-_Valuable features, simplifications, documentation, performance with metrics_
-
-### Testing & Documentation
-
-- [ ] **[MEDIUM] [MAINTAIN]** Add comprehensive API route testing | **Effort: M** | **Value: 90%+ API coverage with error scenarios** | **Automation: OpenAPI validation**
-
-- [ ] **[MEDIUM] [MAINTAIN]** Create architectural decision records (ADRs) | **Effort: S** | **Value: 10+ ADRs documenting choices** | **Automation: Template-based generation**
-
-- [ ] **[MEDIUM] [FEATURE]** Visual regression testing automation | **Effort: S** | **Value: Catch UI regressions during style overhaul** | **Innovation: Extend snapshot testing**
-
-### Developer Experience
-
-- [ ] **[MEDIUM] [DX]** Contextual error recovery assistant | **Effort: L** | **Time saved: 4-6 hrs/week** | **Quality: Auto-repair with learning opportunities**
-
-- [ ] **[MEDIUM] [DX]** Development environment health monitoring | **Effort: S** | **Time saved: 3-5 hrs/week** | **Quality: Proactive issue prevention**
-
-### Performance & Features
-
-- [ ] **[MEDIUM] [PERF]** Implement code splitting and dynamic imports | **Effort: M** | **Value: 40% bundle size reduction (2MB→1.2MB)** | **Measurement: webpack-bundle-analyzer**
-
-- [ ] **[MEDIUM] [PERF]** Optimize image loading with responsive sizes | **Effort: S** | **Value: 60% image payload reduction, 25% better LCP** | **Measurement: Core Web Vitals**
-
-- [ ] **[MEDIUM] [FEATURE]** Context-aware quote display | **Effort: S** | **Value: Seasonal/time-based variations** | **Innovation: Intelligent context without complexity**
-
-- [ ] **[MEDIUM] [FEATURE]** GitHub integration showcase | **Effort: M** | **Value: Auto-sync coding projects** | **Innovation: API integration demonstration**
-
-- [ ] **[MEDIUM] [FEATURE]** Enhanced reading filtering system | **Effort: M** | **Value: Complex queries across reading metadata** | **Innovation: Advanced search with audiobook/status/year filters**
-
-- [ ] **[MEDIUM] [FEATURE]** Reading progress indicators | **Effort: S** | **Value: Page/percentage completion in hover state** | **Innovation: Visual reading progress tracking**
-
-## Low Priority (LOW)
-
-_Nice-to-have features, minor optimizations, future-proofing_
-
-### UI & Styling
-
-- [ ] **[LOW] [FEATURE]** Smart image optimization pipeline | **Effort: S** | **Note: Cloudinary integration for asset management**
-
-### Reading Features
-
-- [ ] **[LOW] [FEATURE]** Advanced audiobook metadata | **Effort: M** | **Note: Narrator information, playback speed tracking**
-
-- [ ] **[LOW] [FEATURE]** Batch reading operations | **Effort: M** | **Note: CLI commands for bulk reading management**
-
-- [ ] **[LOW] [FEATURE]** Reading list performance optimization | **Effort: M** | **Note: Lazy loading for large reading collections**
-
-- [ ] **[LOW] [FEATURE]** External platform integrations | **Effort: L** | **Note: Goodreads import, audiobook platform sync**
-
-### Documentation & Monitoring
-
-- [ ] **[LOW] [MAINTAIN]** Add comprehensive JSDoc coverage | **Effort: S** | **Note: 90%+ coverage for lib/ and utils/**
-
-- [ ] **[LOW] [MAINTAIN]** Implement structured logging analytics | **Effort: S** | **Note: Log aggregation with error pattern search**
-
-- [ ] **[LOW] [MAINTAIN]** Add visual regression testing for all components | **Effort: L** | **Note: Percy/Chromatic integration**
-
-### Developer Experience
-
-- [ ] **[LOW] [DX]** Quality metrics dashboard with trends | **Effort: L** | **Time saved: 2-4 hrs/week** | **Note: Real-time quality visibility**
+_Nice-to-have improvements and future considerations_
 
 ### Cleanup
 
-- [ ] **[LOW] [PERF]** Memoize components and implement virtual scrolling | **Effort: M** | **Note: 50% rendering time reduction for large lists**
+- [ ] **[CLEANUP]** Remove all unused .env.production variables | **Effort: S** | Including obsolete NEXT_PUBLIC_SPACES_BASE_URL
+- [ ] **[CLEANUP]** Unify logging approach | **Effort: S** | Standardize on single logging method
 
-## Quality Gates & Automation
+### Optimizations
 
-_Dedicated enforcement mechanisms to maintain code quality_
+- [ ] **[PERF]** Implement component memoization | **Effort: M** | For large list rendering
+- [ ] **[PERF]** Add virtual scrolling | **Effort: M** | For reading lists > 100 items
 
-### Pre-commit Hooks
+### Future Features
 
-- [ ] Enforce ESLint max-lines (400) and max-lines-per-function (50)
-- [ ] Run incremental test coverage checks on modified code
-- [ ] Validate JSDoc for exported functions
-- [ ] Check for duplicate code patterns
+- [ ] **[FEATURE]** Reading metadata enhancements | **Effort: M** | Narrator info, playback speed
+- [ ] **[FEATURE]** External platform integrations | **Effort: L** | Goodreads import, audiobook sync
+- [ ] **[FEATURE]** GitHub project showcase | **Effort: M** | Auto-sync coding projects
 
-### CI/CD Pipeline
+---
 
-- [ ] Block PRs below 36% coverage threshold (incremental to 85%)
-- [ ] Automated security vulnerability scanning
-- [ ] Performance budget enforcement (<100ms API responses)
-- [ ] Visual regression testing for UI changes
-- [ ] Dead code elimination analysis
+## 🔄 Quality Gates (To Implement)
 
-### Monitoring & Alerts
+### Phase 1: Pre-commit Hooks
 
-- [ ] Error rate monitoring (<0.1% threshold)
-- [ ] Performance degradation alerts
-- [ ] Security header compliance checks
-- [ ] Dependency update notifications
+- [ ] ESLint max-lines enforcement
+- [ ] Incremental coverage checks
+- [ ] Secret scanning
+- [ ] Duplicate code detection
 
-## Radical Simplification Options
+### Phase 2: CI/CD Pipeline
 
-_Gordian cuts that challenge fundamental assumptions - consider for v2.0_
+- [ ] Coverage thresholds (80% new code)
+- [ ] Performance budgets (<100ms API)
+- [ ] Visual regression testing
+- [ ] Security vulnerability scanning
 
-- [x] **[GORDIAN] [COMPLETED]** ~~Eliminate database + admin → static JSON/Markdown files~~ | **✅ DONE in commit 08e6620**
-- [ ] **[GORDIAN]** Delete interactive map feature entirely | **Impact: Remove leaflet dependencies, 521-line places data**
-- [ ] **[GORDIAN]** Replace enterprise logging with dev-only console | **Impact: Remove Winston, correlation IDs, log rotation**
+### Phase 3: Monitoring
+
+- [ ] Error rate alerts (<0.1%)
+- [ ] Performance degradation detection
+- [ ] Dependency update automation
+
+---
+
+## ⚡ RADICAL SIMPLIFICATION OPTIONS (v2.0)
+
+_Alternative approach: Dramatically simplify instead of improving. Choose this OR the improvements above, not both._
+
+### Completed Simplifications
+
+- [x] ~~Eliminate database + admin → static Markdown~~ | **✅ DONE** | Saved $228/year, removed 2300 lines
+
+### Potential Future Simplifications
+
+Consider these if complexity becomes unmanageable:
+
+- [ ] **[GORDIAN]** Replace interactive map with static image | **Code reduction: 18%** | Removes Leaflet dependencies
+- [ ] **[GORDIAN]** Replace Zustand with localStorage | **Code reduction: 15%** | For simple theme toggle
+- [ ] **[GORDIAN]** Remove CLI tool entirely | **Code reduction: 12%** | Just edit markdown directly
+- [ ] **[GORDIAN]** Simplify Tailwind to basic utilities | **Code reduction: 20%** | Remove design system complexity
+
+**Note:** These simplifications would eliminate many of the improvements listed above. Choose one path:
+
+1. **Improve** - Implement the backlog items above
+2. **Simplify** - Remove features and complexity entirely
+
+---
+
+## 📋 Recently Completed
+
+- [x] Distill CLAUDE.md to repository-specific guidance | **2025-01-02**
+- [x] Database elimination and static file migration | **2024-12**
+
+---
+
+## 📊 Grooming Metadata
+
+**Last Updated:** 2025-01-02
+**Total Items:** 35 (down from 60+)
+**Next Review:** 2025-01-09
+
+### Key Metrics
+
+- **Current Test Coverage:** 36%
+- **Target Test Coverage:** 80%
+- **Current Bundle Size:** 2MB
+- **Target Bundle Size:** <1MB
+- **Identified Security Issues:** 1 CVE (critical)
+
+### Dependencies
+
+- Bundle optimization may require code splitting implementation first
+- Test improvements should happen before major refactoring
+- Quality gates need CI/CD improvements first
