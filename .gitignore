@@ -74,3 +74,4 @@ READING_SUMMARY.md
 /public/data/
 quotes.json
 readings.json
+.DS_Store

@@ -478,7 +478,18 @@ export function listReadings(limit: number = 10): void {
 /**
  * Update the cover image for a reading
  */
-async function updateCoverImage(currentReading: any, updatedFrontmatter: any): Promise<void> {
+async function updateCoverImage(
+  currentReading: {
+    slug: string;
+    title: string;
+    author: string;
+    finishedDate: string | null;
+    coverImageSrc: string | null;
+    thoughts: string;
+    audiobook: boolean;
+  },
+  updatedFrontmatter: ReadingFrontmatter
+): Promise<void> {
   const currentCover = updatedFrontmatter.coverImage || 'None';
   console.log(chalk.gray(`Current cover: ${currentCover}`));
 
@@ -593,8 +604,16 @@ async function updateCoverImage(currentReading: any, updatedFrontmatter: any): P
  * Update multiple fields at once
  */
 async function updateMultipleFields(
-  currentReading: any,
-  updatedFrontmatter: any,
+  currentReading: {
+    slug: string;
+    title: string;
+    author: string;
+    finishedDate: string | null;
+    coverImageSrc: string | null;
+    thoughts: string;
+    audiobook: boolean;
+  },
+  updatedFrontmatter: ReadingFrontmatter,
   content: string
 ): Promise<string> {
   const { fieldsToUpdate } = await inquirer.prompt<{ fieldsToUpdate: string[] }>([
@@ -622,7 +641,7 @@ async function updateMultipleFields(
           type: 'input',
           name: 'newTitle',
           message: 'New title:',
-          default: currentReading.title,
+          default: currentReading.title ?? '',
           validate: input => (input.trim() ? true : 'Title is required'),
         },
       ]);
@@ -633,7 +652,7 @@ async function updateMultipleFields(
           type: 'input',
           name: 'newAuthor',
           message: 'New author:',
-          default: currentReading.author,
+          default: currentReading.author ?? '',
           validate: input => (input.trim() ? true : 'Author is required'),
         },
       ]);
@@ -756,6 +775,8 @@ export async function updateReading() {
     // Read current content
     const fileContent = await readFile(filepath, 'utf-8');
     const { data: frontmatter, content } = matter(fileContent);
+    // Type assertion for frontmatter from gray-matter
+    const typedFrontmatter = frontmatter as ReadingFrontmatter;
     const currentReading = readings.find(r => r.slug === selectedSlug);
 
     if (!currentReading) {
@@ -807,7 +828,7 @@ export async function updateReading() {
       return;
     }
 
-    let updatedFrontmatter = { ...frontmatter };
+    let updatedFrontmatter = { ...typedFrontmatter };
     let updatedContent = content;
 
     // Handle different update actions
@@ -842,7 +863,7 @@ export async function updateReading() {
           type: 'input',
           name: 'newTitle',
           message: 'New title:',
-          default: currentReading.title,
+          default: currentReading.title ?? '',
           validate: input => (input.trim() ? true : 'Title is required'),
         },
       ]);
@@ -854,7 +875,7 @@ export async function updateReading() {
           type: 'input',
           name: 'newAuthor',
           message: 'New author:',
-          default: currentReading.author,
+          default: currentReading.author ?? '',
           validate: input => (input.trim() ? true : 'Author is required'),
         },
       ]);
@@ -863,7 +884,7 @@ export async function updateReading() {
     } else if (updateAction === 'cover') {
       await updateCoverImage(currentReading, updatedFrontmatter);
     } else if (updateAction === 'audiobook') {
-      const currentStatus = frontmatter.audiobook || false;
+      const currentStatus = typedFrontmatter.audiobook || false;
       updatedFrontmatter.audiobook = !currentStatus;
       console.log(
         chalk.green(
@@ -929,7 +950,7 @@ ${currentThoughts}`;
 
     // Show preview of changes if any were made
     const hasChanges =
-      JSON.stringify(frontmatter) !== JSON.stringify(updatedFrontmatter) ||
+      JSON.stringify(typedFrontmatter) !== JSON.stringify(updatedFrontmatter) ||
       content !== updatedContent;
 
     if (hasChanges) {
@@ -937,25 +958,27 @@ ${currentThoughts}`;
 
       // Show frontmatter changes
       const frontmatterChanges = [];
-      if (frontmatter.title !== updatedFrontmatter.title) {
-        frontmatterChanges.push(`  Title: ${frontmatter.title} → ${updatedFrontmatter.title}`);
+      if (typedFrontmatter.title !== updatedFrontmatter.title) {
+        frontmatterChanges.push(`  Title: ${typedFrontmatter.title} → ${updatedFrontmatter.title}`);
       }
-      if (frontmatter.author !== updatedFrontmatter.author) {
-        frontmatterChanges.push(`  Author: ${frontmatter.author} → ${updatedFrontmatter.author}`);
+      if (typedFrontmatter.author !== updatedFrontmatter.author) {
+        frontmatterChanges.push(
+          `  Author: ${typedFrontmatter.author} → ${updatedFrontmatter.author}`
+        );
       }
-      if (frontmatter.coverImage !== updatedFrontmatter.coverImage) {
-        const oldCover = frontmatter.coverImage || 'None';
+      if (typedFrontmatter.coverImage !== updatedFrontmatter.coverImage) {
+        const oldCover = typedFrontmatter.coverImage || 'None';
         const newCover = updatedFrontmatter.coverImage || 'None';
         frontmatterChanges.push(`  Cover: ${oldCover} → ${newCover}`);
       }
-      if (frontmatter.audiobook !== updatedFrontmatter.audiobook) {
+      if (typedFrontmatter.audiobook !== updatedFrontmatter.audiobook) {
         frontmatterChanges.push(
-          `  Audiobook: ${frontmatter.audiobook || false} → ${updatedFrontmatter.audiobook}`
+          `  Audiobook: ${typedFrontmatter.audiobook || false} → ${updatedFrontmatter.audiobook}`
         );
       }
-      if (frontmatter.finished !== updatedFrontmatter.finished) {
-        const oldDate = frontmatter.finished
-          ? new Date(frontmatter.finished).toLocaleDateString()
+      if (typedFrontmatter.finished !== updatedFrontmatter.finished) {
+        const oldDate = typedFrontmatter.finished
+          ? new Date(typedFrontmatter.finished).toLocaleDateString()
           : 'Not finished';
         const newDate = updatedFrontmatter.finished
           ? new Date(updatedFrontmatter.finished).toLocaleDateString()
