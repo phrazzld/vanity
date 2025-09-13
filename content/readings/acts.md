@@ -1,6 +1,6 @@
 ---
 title: Acts
 author: Luke
-finished: false
+finished: '2025-09-13T01:46:34.887Z'
 coverImage: /images/readings/acts.webp
 ---
