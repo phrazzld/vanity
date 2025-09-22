@@ -269,7 +269,7 @@ describe('Data Layer', () => {
       jest.clearAllMocks();
       mockPath.join.mockImplementation((...args) => args.join('/'));
 
-      mockFs.readdirSync.mockReturnValue(['anyzine.md', 'whetstone.md'] as any);
+      mockFs.readdirSync.mockReturnValue(['scry.md', 'whetstone.md'] as any);
       mockFs.readFileSync
         .mockReturnValueOnce('mock content 1')
         .mockReturnValueOnce('mock content 2');
@@ -277,11 +277,11 @@ describe('Data Layer', () => {
       mockMatter
         .mockReturnValueOnce({
           data: {
-            title: 'anyzine',
-            description: 'A magic zine machine',
-            techStack: ['Node.js', 'Express'],
-            siteUrl: 'https://anyzine.xyz',
-            codeUrl: 'https://github.com/user/anyzine',
+            title: 'scry',
+            description: 'A study companion app',
+            techStack: ['React', 'TypeScript'],
+            siteUrl: 'https://www.scry.study',
+            codeUrl: 'https://github.com/user/scry',
           },
           content: 'Project content',
         } as any)
@@ -301,11 +301,11 @@ describe('Data Layer', () => {
       // Should be sorted alphabetically by title
       expect(projects).toEqual([
         {
-          title: 'anyzine',
-          description: 'A magic zine machine',
-          techStack: ['Node.js', 'Express'],
-          siteUrl: 'https://anyzine.xyz',
-          codeUrl: 'https://github.com/user/anyzine',
+          title: 'scry',
+          description: 'A study companion app',
+          techStack: ['React', 'TypeScript'],
+          siteUrl: 'https://www.scry.study',
+          codeUrl: 'https://github.com/user/scry',
         },
         {
           title: 'whetstone',
@@ -322,15 +322,15 @@ describe('Data Layer', () => {
       jest.clearAllMocks();
       mockPath.join.mockImplementation((...args) => args.join('/'));
 
-      mockFs.readdirSync.mockReturnValue(['superwire.md'] as any);
+      mockFs.readdirSync.mockReturnValue(['time-is-money.md'] as any);
       mockFs.readFileSync.mockReturnValue('mock content');
 
       mockMatter.mockReturnValue({
         data: {
-          title: 'superwire',
+          title: 'time-is-money',
           description: 'Minimal project description',
           techStack: ['React'],
-          codeUrl: 'https://github.com/user/superwire',
+          codeUrl: 'https://github.com/user/time-is-money',
           // siteUrl is optional and missing
         },
         content: 'Project content',
@@ -339,11 +339,11 @@ describe('Data Layer', () => {
       const projects = getProjects();
 
       expect(projects[0]).toEqual({
-        title: 'superwire',
+        title: 'time-is-money',
         description: 'Minimal project description',
         techStack: ['React'],
         siteUrl: undefined,
-        codeUrl: 'https://github.com/user/superwire',
+        codeUrl: 'https://github.com/user/time-is-money',
       });
     });
   });
@@ -362,21 +362,21 @@ describe('Data Layer', () => {
       mockMatter
         .mockReturnValueOnce({
           data: {
-            id: '2',
-            name: 'Place Two',
-            lat: 40.7128,
-            lng: -74.006,
-            note: 'New York City',
-          },
-          content: 'Place content',
-        } as any)
-        .mockReturnValueOnce({
-          data: {
             id: '1',
             name: 'Place One',
             lat: 37.7749,
             lng: -122.4194,
             note: undefined,
+          },
+          content: 'Place content',
+        } as any)
+        .mockReturnValueOnce({
+          data: {
+            id: '2',
+            name: 'Place Two',
+            lat: 40.7128,
+            lng: -74.006,
+            note: 'New York City',
           },
           content: 'Place content',
         } as any);

@@ -45,16 +45,8 @@ export function getProjects() {
   const dir = path.join(process.cwd(), 'content/projects');
   const files = fs.readdirSync(dir);
 
-  // Filter to only deployed/live projects (7 projects have markdown files)
-  const allowedSlugs = [
-    'anyzine',
-    'brainrot-publishing',
-    'scry',
-    'superwire',
-    'time-is-money',
-    'whetstone',
-    'wrap-it-up',
-  ];
+  // Filter to only deployed/live projects (5 projects have markdown files)
+  const allowedSlugs = ['brainrot-publishing', 'scry', 'time-is-money', 'whetstone', 'wrap-it-up'];
 
   const projects = files
     .filter(file => allowedSlugs.includes(file.replace('.md', '')))
