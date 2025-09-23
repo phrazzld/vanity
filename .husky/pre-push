@@ -165,6 +165,17 @@ else
 fi
 
 # ========================================
+# Generate reading summary
+# ========================================
+echo "📚 Regenerating READING_SUMMARY.md..."
+if npm run reading-summary > /dev/null 2>&1; then
+  echo "✅ Reading summary regenerated"
+else
+  echo "❌ Failed to generate reading summary"
+  exit 1
+fi
+
+# ========================================
 # Check Edge Runtime compatibility
 # ========================================
 echo "🌐 Checking Edge Runtime compatibility..."
