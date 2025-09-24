@@ -123,8 +123,8 @@ describe('ReadingsList Component', () => {
     expect(container.textContent).toContain('Test Author 2');
     expect(container.textContent).toContain('Test Author 3');
 
-    // Check if status indicators are rendered
-    expect(container.textContent).toContain('🎧 Audiobook');
+    // Check if status indicators are rendered (no emoji, just text)
+    expect(container.textContent).toContain('Audiobook');
     expect(container.textContent).toContain('Unfinished');
   });
 
@@ -157,12 +157,16 @@ describe('ReadingsList Component', () => {
       />
     );
 
-    // Test Book 3 has audiobook: true
-    expect(container.textContent).toContain('🎧 Audiobook');
+    // Test Book 3 has audiobook: true - should show "Audiobook" text (no emoji)
+    expect(container.textContent).toContain('Audiobook');
 
-    // Check that only one audiobook indicator is shown (for Test Book 3)
-    const audiobookCount = (container.textContent?.match(/🎧 Audiobook/g) || []).length;
-    expect(audiobookCount).toBe(1);
+    // Check that the audiobook badge exists
+    const audiobookBadge = screen.getByText('Audiobook');
+    expect(audiobookBadge).toBeInTheDocument();
+
+    // Check that it's part of a badge with the icon
+    const badgeElement = audiobookBadge.closest('span');
+    expect(badgeElement).toHaveClass('inline-flex', 'items-center');
   });
 
   it('correctly filters readings by status (reading vs finished)', () => {

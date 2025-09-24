@@ -147,26 +147,30 @@ describe('ReadingCard Accessibility Tests', () => {
       expect(document.activeElement).toBe(card);
     });
 
-    it('activates hover state on keyboard focus', async () => {
+    it('shows audiobook badge on keyboard focus', async () => {
       const user = setupUser();
       const props = createMockProps({ audiobook: true });
       renderWithTheme(<ReadingCard {...props} />);
 
       const card = screen.getByRole('button', {
-        name: /test book by test author.*currently listening/i,
+        name: /test book by test author.*currently reading.*audiobook/i,
       });
+
+      // Audiobook badge should not be visible without focus (overlay has opacity 0)
+      const overlayDiv = card.querySelector('.hover-overlay');
+      expect(overlayDiv).toHaveStyle({ opacity: '0' });
 
       // Tab to focus the card
       await user.tab();
       expect(document.activeElement).toBe(card);
 
-      // Audiobook information should be visible in status text
-      const statusText = screen.getByText('Currently Listening');
-      expect(statusText).toBeInTheDocument();
+      // Badge should be visible on focus
+      const audiobookBadge = screen.getByLabelText('Audiobook');
+      expect(audiobookBadge).toBeInTheDocument();
 
-      // Check that the hover overlay is active by examining parent opacity
-      const overlayContent = statusText.closest('[style*="opacity"]');
-      expect(overlayContent).toBeInTheDocument();
+      // Status text appears on focus
+      const statusText = screen.getByText('Currently Reading');
+      expect(statusText).toBeInTheDocument();
     });
 
     it('maintains focus on Enter key press', async () => {
@@ -205,7 +209,7 @@ describe('ReadingCard Accessibility Tests', () => {
       expect(document.activeElement).toBe(card);
     });
 
-    it('removes hover state when focus is lost', async () => {
+    it('audiobook badge disappears when focus is lost', async () => {
       const user = setupUser();
       const props = createMockProps({ audiobook: true });
       renderWithTheme(
@@ -216,22 +220,28 @@ describe('ReadingCard Accessibility Tests', () => {
       );
 
       const card = screen.getByRole('button', {
-        name: /test book by test author.*currently listening/i,
+        name: /test book by test author.*currently reading.*audiobook/i,
       });
       const otherElement = screen.getByTestId('other');
+
+      // Audiobook badge not visible before focus (overlay has opacity 0)
+      const overlayDiv = card.querySelector('.hover-overlay');
+      expect(overlayDiv).toHaveStyle({ opacity: '0' });
 
       // Tab to focus the card
       await user.tab();
       expect(document.activeElement).toBe(card);
 
+      // Badge visible on focus
+      const audiobookBadge = screen.getByLabelText('Audiobook');
+      expect(audiobookBadge).toBeInTheDocument();
+
       // Tab to move focus away
       await user.tab();
       expect(document.activeElement).toBe(otherElement);
 
-      // Hover overlay should be hidden (opacity 0)
-      const statusText = screen.getByText('Currently Listening');
-      const overlayContent = statusText.closest('[style*="opacity"]');
-      expect(overlayContent).toHaveStyle({ opacity: '0' });
+      // Badge should disappear without focus (overlay opacity back to 0)
+      expect(overlayDiv).toHaveStyle({ opacity: '0' });
     });
   });
 
@@ -269,7 +279,10 @@ describe('ReadingCard Accessibility Tests', () => {
       renderWithTheme(<ReadingCard {...props} />);
 
       const card = screen.getByRole('button');
-      expect(card).toHaveAttribute('aria-label', 'Dune by Frank Herbert, Currently Listening');
+      expect(card).toHaveAttribute(
+        'aria-label',
+        'Dune by Frank Herbert, Currently Reading, Audiobook'
+      );
     });
 
     it('has descriptive aria-label for finished audiobook', () => {
@@ -284,7 +297,7 @@ describe('ReadingCard Accessibility Tests', () => {
       const card = screen.getByRole('button');
       expect(card).toHaveAttribute(
         'aria-label',
-        '1984 by George Orwell, Finished Listening Jun 2023'
+        '1984 by George Orwell, Finished Jun 2023, Audiobook'
       );
     });
 
@@ -359,17 +372,25 @@ describe('ReadingCard Accessibility Tests', () => {
       expect(titleHeading).toHaveTextContent('Test Book');
     });
 
-    it('audiobook indicator has appropriate semantic meaning', async () => {
+    it('audiobook badge has appropriate semantic meaning on hover', async () => {
       const user = setupUser();
       const props = createMockProps({ audiobook: true });
       renderWithTheme(<ReadingCard {...props} />);
 
-      // Focus to trigger hover overlay
-      await user.tab();
+      // Hover to show the badge
+      const card = screen.getByRole('button');
+      await user.hover(card);
 
-      // Audiobook information should be announced correctly in status text
-      const statusText = screen.getByText('Currently Listening');
-      expect(statusText).toBeInTheDocument();
+      // Audiobook badge should be accessible when visible
+      const audiobookBadge = screen.getByLabelText('Audiobook');
+      expect(audiobookBadge).toBeInTheDocument();
+
+      // Verify it has proper positioning for visual prominence
+      expect(audiobookBadge).toHaveStyle({
+        position: 'absolute',
+        top: '8px',
+        right: '8px',
+      });
     });
   });
 
@@ -467,25 +488,35 @@ describe('ReadingCard Accessibility Tests', () => {
   });
 
   describe('Mouse and Touch Interaction Equivalence (WCAG 2.1.1)', () => {
-    it('keyboard focus provides same information as mouse hover', async () => {
+    it('audiobook badge appears on hover and focus', async () => {
       const user = setupUser();
       const props = createMockProps({ audiobook: true });
       renderWithTheme(<ReadingCard {...props} />);
 
       const card = screen.getByRole('button');
 
+      // Badge not visible without interaction (overlay has opacity 0)
+      const overlayDiv = card.querySelector('.hover-overlay');
+      expect(overlayDiv).toHaveStyle({ opacity: '0' });
+
       // Test mouse hover
       await user.hover(card);
-      const hoveredStatusText = screen.getByText('Currently Listening');
+      let audiobookBadge = screen.getByLabelText('Audiobook');
+      expect(audiobookBadge).toBeInTheDocument();
+      const hoveredStatusText = screen.getByText('Currently Reading');
       expect(hoveredStatusText).toBeInTheDocument();
 
-      // Unhover
+      // Unhover - badge disappears (overlay opacity back to 0)
       await user.unhover(card);
+      const overlayAfterUnhover = card.querySelector('.hover-overlay');
+      expect(overlayAfterUnhover).toHaveStyle({ opacity: '0' });
 
       // Test keyboard focus
       await user.tab();
       expect(document.activeElement).toBe(card);
-      const focusedStatusText = screen.getByText('Currently Listening');
+      audiobookBadge = screen.getByLabelText('Audiobook');
+      expect(audiobookBadge).toBeInTheDocument();
+      const focusedStatusText = screen.getByText('Currently Reading');
       expect(focusedStatusText).toBeInTheDocument();
     });
 

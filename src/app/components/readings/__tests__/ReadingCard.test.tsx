@@ -127,17 +127,32 @@ describe('ReadingCard Component', () => {
       expect(screen.queryByTestId('mock-image')).not.toBeInTheDocument();
     });
 
-    it('shows "Listening" status when audiobook=true', () => {
+    it('shows audiobook badge only on hover when audiobook=true', async () => {
+      const user = setupUser();
       const props = createMockProps({ audiobook: true });
       renderWithTheme(<ReadingCard {...props} />);
 
-      // Audiobook format should be reflected in the status text
+      // Audiobook format should be reflected with a badge
       const card = screen.getByTitle('Test Book by Test Author');
       expect(card).toBeInTheDocument();
 
-      // Check for the status text that includes listening
-      const statusText = screen.getByText('Finished Listening Dec 2022');
-      expect(statusText).toBeInTheDocument();
+      // Badge should not be visible initially (overlay has opacity 0)
+      const overlayDiv = card.querySelector('.hover-overlay');
+      expect(overlayDiv).toHaveStyle({ opacity: '0' });
+
+      // Hover to show the badge
+      await user.hover(card);
+
+      // Check for the audiobook badge
+      const audiobookBadge = screen.getByLabelText('Audiobook');
+      expect(audiobookBadge).toBeInTheDocument();
+
+      // Verify badge is positioned in upper right
+      expect(audiobookBadge).toHaveStyle({
+        position: 'absolute',
+        top: '8px',
+        right: '8px',
+      });
     });
 
     it('shows "Currently Reading" status when finishedDate=null', () => {
@@ -158,28 +173,36 @@ describe('ReadingCard Component', () => {
   });
 
   describe('Animation and Interaction', () => {
-    it('shows listening status in overlay when hovered on audiobook', async () => {
+    it('shows audiobook badge only during hover', async () => {
       const user = setupUser();
       const props = createMockProps({ audiobook: true });
       renderWithTheme(<ReadingCard {...props} />);
 
       const card = screen.getByTitle('Test Book by Test Author');
 
-      // Get the status text that includes listening
-      const statusText = screen.getByText('Finished Listening Dec 2022');
-      const overlayContent = statusText.closest('.hover-overlay');
-
-      // Initially overlay should be hidden (opacity: 0)
-      expect(overlayContent).toHaveStyle({ opacity: '0' });
+      // Audiobook badge should not be visible without hover (overlay has opacity 0)
+      const overlayDiv = card.querySelector('.hover-overlay');
+      expect(overlayDiv).toHaveStyle({ opacity: '0' });
 
       // Hover over the card
       await user.hover(card);
 
+      // Badge should be visible during hover
+      const audiobookBadge = screen.getByLabelText('Audiobook');
+      expect(audiobookBadge).toBeInTheDocument();
+
+      // Get the status text for hover testing
+      const statusText = screen.getByText('Finished Dec 2022');
+      const overlayContent = statusText.closest('.hover-overlay');
+
       // After hover, overlay should be visible (opacity: 1)
       expect(overlayContent).toHaveStyle({ opacity: '1' });
 
-      // Status text should be visible
-      expect(statusText).toBeVisible();
+      // Unhover the card
+      await user.unhover(card);
+
+      // Badge should disappear after unhover (overlay opacity back to 0)
+      expect(overlayContent).toHaveStyle({ opacity: '0' });
     });
 
     it('shows overlay content when hovered', async () => {
@@ -242,24 +265,33 @@ describe('ReadingCard Component', () => {
       expect(statusDot).toHaveStyle({ backgroundColor: '#10b981' });
     });
 
-    it('shows listening status for audiobooks', () => {
+    it('displays audiobook badge with proper styling on hover', async () => {
+      const user = setupUser();
       const props = createMockProps({ audiobook: true });
       renderWithTheme(<ReadingCard {...props} />);
 
-      // Check that audiobook is indicated through status text
+      // Check that audiobook is indicated through badge
       const card = screen.getByTitle('Test Book by Test Author');
       expect(card).toBeInTheDocument();
 
-      // Verify the status text includes "Listening"
-      const statusText = screen.getByText('Finished Listening Dec 2022');
-      expect(statusText).toBeInTheDocument();
+      // Hover to show the badge
+      await user.hover(card);
 
-      // Check that the status has proper styling
-      expect(statusText).toHaveStyle({
-        color: 'rgba(255, 255, 255, 0.9)',
-        fontSize: '11px',
-        fontWeight: '500',
+      // Check for audiobook badge
+      const audiobookBadge = screen.getByLabelText('Audiobook');
+      expect(audiobookBadge).toBeInTheDocument();
+
+      // Verify badge has circular styling
+      expect(audiobookBadge).toHaveStyle({
+        position: 'absolute',
+        width: '28px',
+        height: '28px',
+        borderRadius: '50%',
       });
+
+      // Verify the status text is standard (no "Listening")
+      const statusText = screen.getByText('Finished Dec 2022');
+      expect(statusText).toBeInTheDocument();
     });
   });
 
@@ -277,9 +309,11 @@ describe('ReadingCard Component', () => {
       // Card should have focus-visible styles when focused via keyboard
       expect(document.activeElement).toBe(card);
 
-      // Verify audiobook information is accessible through status text
-      const statusText = screen.getByText('Finished Listening Dec 2022');
+      // Verify audiobook information is accessible
+      const statusText = screen.getByText('Finished Dec 2022');
       expect(statusText).toBeInTheDocument();
+      const audiobookIcon = screen.getByLabelText('Audiobook');
+      expect(audiobookIcon).toBeInTheDocument();
     });
 
     it('has appropriate ARIA attributes for screen readers', () => {
@@ -291,9 +325,11 @@ describe('ReadingCard Component', () => {
       // Card should have descriptive title for screen readers
       expect(card).toHaveAttribute('title', 'Test Book by Test Author');
 
-      // Audiobook information should be present for screen readers in status text
-      const statusText = screen.getByText('Finished Listening Dec 2022');
+      // Audiobook information should be present for screen readers
+      const statusText = screen.getByText('Finished Dec 2022');
       expect(statusText).toBeInTheDocument();
+      const audiobookIcon = screen.getByLabelText('Audiobook');
+      expect(audiobookIcon).toBeInTheDocument();
     });
   });
 

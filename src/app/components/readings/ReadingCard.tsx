@@ -71,14 +71,10 @@ const ReadingCard = React.memo(function ReadingCard({
   // Simple status colors
   const statusColor = isCurrentlyReading ? STATUS_COLORS.READING : STATUS_COLORS.FINISHED;
 
-  // Status text with format-aware language
+  // Status text - simplified to not mention format
   const statusText = isCurrentlyReading
-    ? audiobook
-      ? 'Currently Listening'
-      : 'Currently Reading'
-    : audiobook
-      ? `Finished Listening ${formatDate(finishedDate)}`
-      : `Finished ${formatDate(finishedDate)}`;
+    ? 'Currently Reading'
+    : `Finished ${formatDate(finishedDate)}`;
 
   return (
     <div
@@ -102,7 +98,7 @@ const ReadingCard = React.memo(function ReadingCard({
       title={`${title} by ${author}`}
       tabIndex={0}
       role="button"
-      aria-label={`${title} by ${author}, ${statusText}`}
+      aria-label={`${title} by ${author}, ${statusText}${audiobook ? ', Audiobook' : ''}`}
     >
       {/* Book cover image */}
       <div
@@ -148,6 +144,44 @@ const ReadingCard = React.memo(function ReadingCard({
           pointerEvents: isHovered ? 'auto' : 'none',
         }}
       >
+        {/* Audiobook badge - only visible on hover */}
+        {audiobook && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '8px',
+              right: '8px',
+              width: '28px',
+              height: '28px',
+              borderRadius: '50%',
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            aria-label="Audiobook"
+          >
+            <svg
+              style={{
+                width: '16px',
+                height: '16px',
+                color: 'rgba(255, 255, 255, 0.9)',
+              }}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+              />
+            </svg>
+          </div>
+        )}
         {/* Book information */}
         <div
           style={{
