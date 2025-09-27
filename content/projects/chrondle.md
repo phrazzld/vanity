@@ -3,7 +3,6 @@ title: chrondle
 description: daily history puzzle game - guess the year from six historical events
 techStack:
   - next.js
-  - react
   - typescript
   - tailwind css
   - convex
