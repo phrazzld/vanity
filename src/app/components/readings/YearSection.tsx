@@ -81,7 +81,7 @@ export default function YearSection({
         <div
           className="grid gap-4"
           style={{
-            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
           }}
         >
           {readings.map(reading => (
