@@ -35,9 +35,11 @@ describe('TypewriterQuotes', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Mock global fetch
+    // Mock global fetch with proper Response interface
     global.fetch = jest.fn(() =>
       Promise.resolve({
+        ok: true,
+        status: 200,
         json: () => Promise.resolve(mockQuotes),
       })
     ) as jest.Mock;

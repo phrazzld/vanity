@@ -17,7 +17,12 @@ function TypewriterQuotes() {
   // Load quotes once
   useEffect(() => {
     fetch('/data/quotes.json')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
       .then((data: Quote[]) => {
         setQuotes(data);
         setCurrentIndex(Math.floor(Math.random() * data.length));
