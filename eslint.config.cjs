@@ -251,6 +251,8 @@ module.exports = [
       '@typescript-eslint/no-unsafe-assignment': 'warn',
       '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
+      // Disable base rule for TypeScript files - use @typescript-eslint/no-unused-vars instead
+      'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': [
         'warn',
         {
