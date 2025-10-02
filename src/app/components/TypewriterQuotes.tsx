@@ -97,12 +97,18 @@ function TypewriterQuotes() {
       `}</style>
       <div className="min-h-[200px] flex flex-col justify-start">
         <div className="max-w-4xl w-full">
-          <p className="text-base md:text-lg text-gray-800 dark:text-gray-200 mb-2 font-light">
+          <p
+            className="text-base md:text-lg text-gray-800 dark:text-gray-200 mb-2 font-light"
+            data-testid="quote-text"
+          >
             {displayText}
             {!isTypingAuthor && <span className="cursor-blink">|</span>}
           </p>
           {displayAuthor && (
-            <p className="text-sm md:text-base text-gray-500 dark:text-gray-500">
+            <p
+              className="text-sm md:text-base text-gray-500 dark:text-gray-500"
+              data-testid="author-text"
+            >
               {displayAuthor}
               <span className="cursor-blink">|</span>
             </p>

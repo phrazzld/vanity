@@ -19,14 +19,6 @@ import { renderWithTheme, screen, waitFor } from '@/test-utils';
 import TypewriterQuotes from '../TypewriterQuotes';
 import type { Quote } from '@/types';
 
-// Mock the static data module
-jest.mock('@/lib/static-data', () => ({
-  getStaticQuotes: jest.fn(),
-}));
-
-// Import mocked module
-import { getStaticQuotes } from '@/lib/static-data';
-
 // Sample quotes for testing
 const mockQuotes: Quote[] = [
   { id: 1, text: 'Test quote 1', author: 'Author 1' },
@@ -43,8 +35,12 @@ describe('TypewriterQuotes', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Setup default static data mock
-    (getStaticQuotes as jest.Mock).mockReturnValue(mockQuotes);
+    // Mock global fetch
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        json: () => Promise.resolve(mockQuotes),
+      })
+    ) as jest.Mock;
   });
 
   describe('Initial Rendering and Data Fetching', () => {
@@ -56,16 +52,16 @@ describe('TypewriterQuotes', () => {
       const quoteContainer = await screen.findByTestId('quote-text');
       expect(quoteContainer).toBeInTheDocument();
 
-      // Verify static data was loaded
-      expect(getStaticQuotes).toHaveBeenCalled();
+      // Verify fetch was called
+      expect(global.fetch).toHaveBeenCalledWith('/data/quotes.json');
     });
 
     it('loads quotes from static data on mount', async () => {
       // Act
       renderWithTheme(<TypewriterQuotes />);
 
-      // Assert - verify static data function was called
-      expect(getStaticQuotes).toHaveBeenCalled();
+      // Assert - verify fetch was called
+      expect(global.fetch).toHaveBeenCalledWith('/data/quotes.json');
 
       // Wait for quote container to be displayed
       const quoteContainer = await screen.findByTestId('quote-text');
@@ -86,20 +82,18 @@ describe('TypewriterQuotes', () => {
 
   describe('Error Handling', () => {
     it('handles data loading failures appropriately', async () => {
-      // Arrange - mock a failed data load
-      (getStaticQuotes as jest.Mock).mockImplementation(() => {
-        throw new Error('Failed to load quotes');
-      });
+      // Arrange - mock a failed fetch
+      global.fetch = jest.fn(() => Promise.reject(new Error('Failed to load quotes'))) as jest.Mock;
 
       // Act
       renderWithTheme(<TypewriterQuotes />);
 
-      // Assert - wait for fallback to render
-      const quoteContainer = await screen.findByTestId('quote-text');
-      expect(quoteContainer).toBeInTheDocument();
+      // Assert - wait for loading state to persist (quotes won't load)
+      await waitFor(() => {
+        expect(screen.getByText('Loading quotes...')).toBeInTheDocument();
+      });
 
-      // The component should still render with fallback quote
-      // (it doesn't show error text to users, just uses fallback)
+      // The component shows loading state when fetch fails
     });
   });
 
