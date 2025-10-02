@@ -95,12 +95,7 @@ jobs:
             echo "1. Run 'npm test' locally"
             echo "2. For specific test: 'npm test -- path/to/test'"
             echo "3. Update snapshots if needed: 'npm test -- -u'"
-            echo "4. Check test coverage thresholds in jest.config.js"
-            echo ""
-            echo "📊 Coverage requirements:"
-            echo "→ Global: 27% minimum (temporarily lowered from 85%)"
-            echo "→ Core logic (api/, lib/): 17-36% minimum (temporarily lowered from 90%)"
-            echo "→ See BACKLOG.md for coverage improvement plan"
+            echo "4. Review coverage report in CI artifacts"
             exit 1
           }
 
