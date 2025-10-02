@@ -280,22 +280,33 @@ module.exports = [
     },
   },
 
-  // File length rules
+  // File length rules - enforce reasonable limits to prevent unmaintainable files
+  // Limits set pragmatically: strict enough to prevent new extremes, lenient enough
+  // to not block existing code. Gradual improvement through refactoring (see BACKLOG.md)
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
+    ignores: [
+      // Test files with extensive test cases - refactoring tracked in BACKLOG.md
+      '**/__tests__/**',
+      // CLI commands need splitting - tracked in BACKLOG.md
+      'cli/commands/**',
+      // Large components scheduled for refactoring - see BACKLOG.md
+      'src/app/components/TypewriterQuotes.tsx',
+      'src/app/components/readings/ReadingsList.tsx',
+    ],
     rules: {
-      // React functional components can be longer
+      // Catch extremely long functions (was 1000 - meaningless)
       'max-lines-per-function': [
-        'warn',
+        'error',
         {
-          max: 1000,
+          max: 200,
           skipBlankLines: true,
           skipComments: true,
         },
       ],
-      // Warning at 500 lines
+      // Catch oversized files (was 1000 - meaningless)
       'max-lines': [
-        'warn',
+        'error',
         {
           max: 500,
           skipBlankLines: true,
@@ -308,21 +319,6 @@ module.exports = [
         {
           argsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
-        },
-      ],
-    },
-  },
-
-  // Error at 1000 lines
-  {
-    files: ['**/*.{js,jsx,ts,tsx}'],
-    rules: {
-      'max-lines': [
-        'error',
-        {
-          max: 1000,
-          skipBlankLines: true,
-          skipComments: true,
         },
       ],
     },

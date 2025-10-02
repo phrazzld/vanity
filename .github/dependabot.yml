@@ -30,6 +30,13 @@ updates:
     commit-message:
       prefix: 'chore'
       include: 'scope'
+    # Request review from repo owner
+    reviewers:
+      - 'phaedrus'
+    # Add security label for vulnerability patches
+    labels:
+      - 'dependencies'
+      - 'security'
 
   # Enable version updates for GitHub Actions
   - package-ecosystem: 'github-actions'
@@ -45,8 +52,7 @@ updates:
       include: 'scope'
     # Actions are generally safer to update
     open-pull-requests-limit: 3
-
-# Labels to add to Dependabot PRs
-labels:
-  - 'dependencies'
-  - 'automated'
+    # Add labels for GitHub Actions updates
+    labels:
+      - 'dependencies'
+      - 'ci'
