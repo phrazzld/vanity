@@ -34,6 +34,17 @@ _Significant improvements to code quality, performance, or user experience_
   - Build caching (60% faster CI builds)
   - Early termination on failure
 
+### Quality Infrastructure (from /gates audit)
+
+- [ ] **[QUALITY]** Consolidate bundle-size workflow into main CI | **Effort: S** | **Impact: Simpler pipeline**
+  - Merge bundle-size.yml checks into ci.yml to reduce workflow complexity
+  - Single workflow easier to maintain and debug
+
+- [ ] **[TESTING]** Add mutation testing for lib/ directory | **Effort: M** | **Impact: Verify test quality**
+  - Use Stryker Mutator to test if tests actually catch bugs
+  - Target: >60% mutation score for core logic
+  - Reveals if 27% coverage is effective or just theater
+
 ## MEDIUM Priority
 
 _Valuable improvements and new features_
