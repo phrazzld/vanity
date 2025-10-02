@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import type { Quote } from '@/types';
 
 function TypewriterQuotes() {
@@ -10,6 +10,9 @@ function TypewriterQuotes() {
   const [displayAuthor, setDisplayAuthor] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [isTypingAuthor, setIsTypingAuthor] = useState(false);
+
+  // Track nested timers for cleanup
+  const pauseTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Load quotes once
   useEffect(() => {
@@ -39,14 +42,14 @@ function TypewriterQuotes() {
           if (displayText.length < fullText.length) {
             setDisplayText(fullText.slice(0, displayText.length + 1));
           } else {
-            setTimeout(() => setIsTypingAuthor(true), 1500);
+            pauseTimerRef.current = setTimeout(() => setIsTypingAuthor(true), 1500);
           }
         } else if (isTypingAuthor && !isDeleting) {
           // Typing author
           if (displayAuthor.length < fullAuthor.length) {
             setDisplayAuthor(fullAuthor.slice(0, displayAuthor.length + 1));
           } else {
-            setTimeout(() => setIsDeleting(true), 2500);
+            pauseTimerRef.current = setTimeout(() => setIsDeleting(true), 2500);
           }
         } else if (isDeleting) {
           // Erasing
@@ -71,7 +74,12 @@ function TypewriterQuotes() {
       isDeleting ? 8 : isTypingAuthor ? 30 : 30
     );
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      if (pauseTimerRef.current) {
+        clearTimeout(pauseTimerRef.current);
+      }
+    };
   }, [quotes, currentIndex, displayText, displayAuthor, isDeleting, isTypingAuthor]);
 
   if (quotes.length === 0) {
