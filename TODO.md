@@ -86,7 +86,7 @@
 
 ## 📊 Medium Priority (This Month)
 
-- [ ] Share build artifacts between CI workflows to eliminate duplicate builds
+- [x] Share build artifacts between CI workflows to eliminate duplicate builds
   - **Files**: `.github/workflows/ci.yml`, `.github/workflows/bundle-size.yml`
   - **Current**: Main CI builds, then bundle-size builds again from scratch
   - **Implementation**:
@@ -96,8 +96,9 @@
     4. Skip build step in bundle-size if artifact exists
   - **Impact**: Saves 60s per PR (eliminates second build)
   - **Success criteria**: Bundle-size workflow reuses CI build artifact
+  - **Result**: Bundle-size now triggers after CI completes, downloads artifact, skips rebuild
 
-- [ ] Cache generate-static-data.js output based on content/ directory hash
+- [x] Cache generate-static-data.js output based on content/ directory hash
   - **File**: `scripts/generate-static-data.js`
   - **Current**: Parses all markdown files on every build
   - **Implementation**:
@@ -107,12 +108,14 @@
     4. Regenerate if hash differs or public/data missing
   - **Impact**: Saves 5-10s on builds when content unchanged
   - **Success criteria**: Builds skip data generation when content/ unchanged
+  - **Result**: SHA-256 hash-based caching, <100ms on cache hit vs ~2s regeneration
 
-- [ ] Enable GitHub Security Advisories
+- [x] Enable GitHub Security Advisories
   - **Action**: Enable in repository settings → Security tab → "Dependabot alerts"
   - **Benefit**: Earlier notification than npm audit, better signal-to-noise
   - **Impact**: 2 minutes to enable, catches vulnerabilities proactively
   - **Success criteria**: Security tab shows active monitoring
+  - **Result**: Enabled via gh CLI - vulnerability alerts + Dependabot security updates active
 
 ## 🔮 Low Priority (Future / YAGNI)
 
@@ -151,11 +154,9 @@
 - CI: ~4min (down from 5min) ⚡ **20% faster**
 - **Total: ~2min saved per development cycle**
 
-**Remaining Work (3 medium-priority tasks):**
+**Remaining Work (0 medium-priority tasks):**
 
-- Share build artifacts between CI workflows (60s savings)
-- Cache generate-static-data.js (5-10s savings)
-- Enable GitHub Security Advisories (2min setup)
+All medium-priority optimization tasks completed! ✅
 
 ---
 
