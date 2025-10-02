@@ -75,3 +75,6 @@ READING_SUMMARY.md
 quotes.json
 readings.json
 .DS_Store
+
+# MCP (Model Context Protocol) configuration - user-specific
+.mcp.json
