@@ -132,7 +132,7 @@ jobs:
   security_scan:
     name: Security Vulnerability Scan
     runs-on: ubuntu-latest
-    needs: build-and-test
+    # Runs in parallel with build-and-test for faster feedback
 
     steps:
       - name: Checkout code
