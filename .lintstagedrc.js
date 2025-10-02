@@ -28,9 +28,7 @@ module.exports = {
 
     const commands = [
       `prettier --write ${nonSymlinks.join(' ')}`,
-      // First check for lint errors (will fail commit if errors found)
-      `eslint --config eslint.config.cjs ${nonSymlinks.join(' ')}`,
-      // Then fix what can be fixed
+      // ESLint with --fix will auto-fix and still error on unfixable issues
       `eslint --config eslint.config.cjs --fix ${nonSymlinks.join(' ')}`,
     ];
 

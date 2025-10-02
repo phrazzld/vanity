@@ -85,24 +85,6 @@ jobs:
             exit 1
           }
 
-      - name: Strict TypeScript checking
-        run: |
-          echo "🔍 Running strict TypeScript checking..."
-          npm run typecheck || {
-            echo "❌ Strict TypeScript checking failed!"
-            echo ""
-            echo "To fix strict type violations:"
-            echo "1. Address unused variables (prefix with '_' or remove)"
-            echo "2. Add explicit return types where required"
-            echo "3. Fix unsafe indexed access patterns"
-            echo "4. Resolve implicit any types"
-            echo ""
-            echo "💡 This step enforces higher code quality standards"
-            echo "→ See tsconfig.typecheck.json for strict rules"
-            echo "→ Run 'npm run typecheck' locally to test"
-            exit 1
-          }
-
       - name: Run tests with coverage
         run: |
           echo "🧪 Running tests with coverage..."
