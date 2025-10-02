@@ -353,7 +353,7 @@ module.exports = [
       '**/src/lib/logger.ts',
       '**/src/lib/prisma.ts',
       '**/src/middleware/logging.ts',
-      '**/src/app/api/auth/**/*.ts',
+      '**/src/app/api/**/*.ts',
       '**/src/auth.ts',
     ],
     languageOptions: {
