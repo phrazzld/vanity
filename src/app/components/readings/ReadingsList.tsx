@@ -97,13 +97,13 @@ export interface ReadingsListProps {
   sort: ListSortOption;
 
   /** Function to call when a column header is clicked for sorting */
-  onSortChange: (_field: string) => void;
+  onSortChange: (field: string) => void;
 
   /** Current search query for highlighting */
   searchQuery?: string;
 
   /** Function to call when a reading item is selected */
-  onSelectReading: (_reading: Reading) => void;
+  onSelectReading: (reading: Reading) => void;
 
   /** Currently selected reading (if any) */
   selectedReading?: Reading | null;

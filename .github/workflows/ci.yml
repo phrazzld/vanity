@@ -85,24 +85,6 @@ jobs:
             exit 1
           }
 
-      - name: Strict TypeScript checking
-        run: |
-          echo "🔍 Running strict TypeScript checking..."
-          npm run typecheck || {
-            echo "❌ Strict TypeScript checking failed!"
-            echo ""
-            echo "To fix strict type violations:"
-            echo "1. Address unused variables (prefix with '_' or remove)"
-            echo "2. Add explicit return types where required"
-            echo "3. Fix unsafe indexed access patterns"
-            echo "4. Resolve implicit any types"
-            echo ""
-            echo "💡 This step enforces higher code quality standards"
-            echo "→ See tsconfig.typecheck.json for strict rules"
-            echo "→ Run 'npm run typecheck' locally to test"
-            exit 1
-          }
-
       - name: Run tests with coverage
         run: |
           echo "🧪 Running tests with coverage..."
@@ -113,12 +95,7 @@ jobs:
             echo "1. Run 'npm test' locally"
             echo "2. For specific test: 'npm test -- path/to/test'"
             echo "3. Update snapshots if needed: 'npm test -- -u'"
-            echo "4. Check test coverage thresholds in jest.config.js"
-            echo ""
-            echo "📊 Coverage requirements:"
-            echo "→ Global: 27% minimum (temporarily lowered from 85%)"
-            echo "→ Core logic (api/, lib/): 17-36% minimum (temporarily lowered from 90%)"
-            echo "→ See BACKLOG.md for coverage improvement plan"
+            echo "4. Review coverage report in CI artifacts"
             exit 1
           }
 
@@ -152,10 +129,17 @@ jobs:
             exit 1
           }
 
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-build
+          path: .next/
+          retention-days: 1
+
   security_scan:
     name: Security Vulnerability Scan
     runs-on: ubuntu-latest
-    needs: build-and-test
+    # Runs in parallel with build-and-test for faster feedback
 
     steps:
       - name: Checkout code

@@ -36,6 +36,17 @@ const mockProject = {
 };
 
 describe('Accessibility Tests for All Components', () => {
+  beforeEach(() => {
+    // Mock global fetch for TypewriterQuotes with proper Response interface
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve(mockQuotes),
+      })
+    ) as jest.Mock;
+  });
+
   describe('QuotesList', () => {
     const mockProps = {
       quotes: mockQuotes,

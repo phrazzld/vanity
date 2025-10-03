@@ -589,7 +589,7 @@ async function updateCoverImage(
     }
   } else if (imageAction === 'search') {
     console.log(chalk.cyan('🔍 Searching for book cover online...'));
-    const coverUrl = await searchBookCover(currentReading.title, currentReading.author);
+    const coverUrl = await searchBookCover();
 
     if (coverUrl) {
       updatedFrontmatter.coverImage = coverUrl;
@@ -714,7 +714,7 @@ ${currentThoughts}`;
 /**
  * Search for book cover online using APIs
  */
-async function searchBookCover(_title: string, _author: string): Promise<string | null> {
+async function searchBookCover(): Promise<string | null> {
   // For now, return null - this will be implemented in Phase 2
   // Will integrate with Google Books API and OpenLibrary
   console.log(chalk.gray('(Online search will be implemented in next phase)'));
