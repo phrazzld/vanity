@@ -24,7 +24,7 @@ jobs:
 
       # Download build artifact from completed CI workflow
       - name: Download build artifacts from CI
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v6
         with:
           workflow: ci.yml
           workflow_conclusion: success
