@@ -7,6 +7,7 @@ techStack:
   - tailwind css
   - convex
   - clerk
+siteUrl: https://volume.fitness/
 codeUrl: https://github.com/phrazzld/volume
 imageSrc: /images/projects/waves-01.webp
 altText: volume screenshot
