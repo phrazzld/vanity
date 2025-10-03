@@ -45,13 +45,14 @@ export function getProjects() {
   const dir = path.join(process.cwd(), 'content/projects');
   const files = fs.readdirSync(dir);
 
-  // Filter to only deployed/live projects (7 projects have markdown files)
+  // Filter to only deployed/live projects (8 projects have markdown files)
   const allowedSlugs = [
     'brainrot-publishing',
     'chrondle',
     'scry',
     'sploot',
     'time-is-money',
+    'volume',
     'whetstone',
     'wrap-it-up',
   ];
