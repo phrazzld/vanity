@@ -4,11 +4,11 @@
 # 1. Running the complete test suite
 # 2. Enforcing branch naming conventions
 
-echo "🚀 Running pre-push checks..."
+echo "Running pre-push checks..."
 
 # Get the current branch name
 BRANCH_NAME=$(git symbolic-ref --short HEAD)
-echo "🌿 Current branch: $BRANCH_NAME"
+echo "Current branch: $BRANCH_NAME"
 
 # ========================================
 # Branch naming convention check
@@ -27,17 +27,17 @@ ISSUE_PATTERN="^[0-9]+[-][a-z0-9]+([-][a-z0-9]+)*$"  # Support GitHub issue-base
 
 # Check if branch name follows the conventions
 case "$BRANCH_NAME" in
-  main|master) echo "✅ Branch naming convention check passed" ;;
-  feature/*) echo "✅ Branch naming convention check passed" ;;
-  fix/*) echo "✅ Branch naming convention check passed" ;;
-  docs/*) echo "✅ Branch naming convention check passed" ;;
-  refactor/*) echo "✅ Branch naming convention check passed" ;;
-  release/v*) echo "✅ Branch naming convention check passed" ;;
-  dev|develop) echo "✅ Branch naming convention check passed" ;;
-  plan/*) echo "✅ Branch naming convention check passed" ;;
-  [0-9]*-*) echo "✅ Branch naming convention check passed (GitHub issue branch)" ;;
+  main|master) echo "Branch naming convention check passed" ;;
+  feature/*) echo "Branch naming convention check passed" ;;
+  fix/*) echo "Branch naming convention check passed" ;;
+  docs/*) echo "Branch naming convention check passed" ;;
+  refactor/*) echo "Branch naming convention check passed" ;;
+  release/v*) echo "Branch naming convention check passed" ;;
+  dev|develop) echo "Branch naming convention check passed" ;;
+  plan/*) echo "Branch naming convention check passed" ;;
+  [0-9]*-*) echo "Branch naming convention check passed (GitHub issue branch)" ;;
   *)
-    echo "❌ ERROR: Branch naming convention check failed"
+    echo "ERROR: Branch naming convention check failed"
     echo "Branch names must follow one of these patterns:"
     echo "  • main, master (for main branches)"
     echo "  • feature/feature-name (for new features)"
@@ -60,21 +60,21 @@ esac
 # ========================================
 # Check ESLint
 # ========================================
-echo "🔍 Running ESLint check..."
+echo "Running ESLint check..."
 if npm run lint > lint_output.log 2>&1; then
-  echo "✅ ESLint check passed"
+  echo "ESLint check passed"
   rm lint_output.log
 else
   # Check if only warnings (no errors)
   if grep -q "0 errors" lint_output.log && grep -q "warning" lint_output.log; then
-    echo "⚠️  ESLint check passed with warnings"
+    echo "ESLint check passed with warnings"
     cat lint_output.log | grep -E "(warning|problems)"
     rm lint_output.log
   else
     cat lint_output.log
     rm lint_output.log
     echo ""
-    echo "❌ ESLint check failed!"
+    echo "ERROR: ESLint check failed!"
     echo ""
     echo "To fix linting issues:"
     echo "1. Review the errors above"
@@ -82,10 +82,10 @@ else
     echo "3. Manually fix remaining issues"
     echo "4. Commit and push your changes"
     echo ""
-    echo "📚 Common issues:"
-    echo "→ Unused variables: prefix with '_' or remove"
-    echo "→ Missing return types: add explicit TypeScript types"
-    echo "→ Import order: let ESLint auto-fix handle this"
+    echo "Common issues:"
+    echo "- Unused variables: prefix with '_' or remove"
+    echo "- Missing return types: add explicit TypeScript types"
+    echo "- Import order: let ESLint auto-fix handle this"
     exit 1
   fi
 fi
@@ -93,15 +93,15 @@ fi
 # ========================================
 # Check TypeScript types
 # ========================================
-echo "📝 Running TypeScript type check..."
+echo "Running TypeScript type check..."
 if npm run typecheck > typecheck_output.log 2>&1; then
-  echo "✅ TypeScript type check passed"
+  echo "TypeScript type check passed"
   rm typecheck_output.log
 else
   cat typecheck_output.log
   rm typecheck_output.log
   echo ""
-  echo "❌ TypeScript type check failed!"
+  echo "ERROR: TypeScript type check failed!"
   echo ""
   echo "To fix type errors:"
   echo "1. Review the errors above"
@@ -109,10 +109,10 @@ else
   echo "3. Fix type mismatches"
   echo "4. Avoid using 'any' type"
   echo ""
-  echo "💡 Tips:"
-  echo "→ Enable strict mode in tsconfig.json"
-  echo "→ Use VS Code for real-time type checking"
-  echo "→ Check DEVELOPMENT_PHILOSOPHY_APPENDIX_TYPESCRIPT.md"
+  echo "Tips:"
+  echo "- Enable strict mode in tsconfig.json"
+  echo "- Use VS Code for real-time type checking"
+  echo "- Check DEVELOPMENT_PHILOSOPHY_APPENDIX_TYPESCRIPT.md"
   exit 1
 fi
 
@@ -123,9 +123,9 @@ fi
 # ========================================
 # Security vulnerability scan
 # ========================================
-echo "🔒 Running security vulnerability scan..."
+echo "Running security vulnerability scan..."
 if .husky/pre-push-security; then
-  echo "✅ Security scan passed"
+  echo "Security scan passed"
 else
   exit 1
 fi
@@ -133,18 +133,18 @@ fi
 # ========================================
 # Generate reading summary
 # ========================================
-echo "📚 Regenerating READING_SUMMARY.md..."
+echo "Regenerating READING_SUMMARY.md..."
 if npm run reading-summary > /dev/null 2>&1; then
-  echo "✅ Reading summary regenerated"
+  echo "Reading summary regenerated"
 else
-  echo "❌ Failed to generate reading summary"
+  echo "ERROR: Failed to generate reading summary"
   exit 1
 fi
 
 # ========================================
 # Check Edge Runtime compatibility
 # ========================================
-echo "🌐 Checking Edge Runtime compatibility..."
+echo "Checking Edge Runtime compatibility..."
 
 # Create the edge compatibility check script
 cat > check-edge-compat.js << 'EOF'
@@ -179,7 +179,7 @@ clientFiles.forEach(file => {
     edgeIncompatiblePkgs.forEach(pkg => {
       const importPattern = new RegExp(`from\\s+['"\`](.*/)?${pkg}['"\`]|require\\s*\\(['"\`](.*/)?${pkg}['"\`]\\)`);
       if (importPattern.test(content)) {
-        console.error(`❌ Edge Runtime incompatible: ${file} imports '${pkg}'`);
+        console.error(`ERROR: Edge Runtime incompatible: ${file} imports '${pkg}'`);
         hasIssues = true;
       }
     });
@@ -187,12 +187,12 @@ clientFiles.forEach(file => {
 });
 
 if (hasIssues) {
-  console.error('\n🚨 Edge Runtime compatibility issues found!');
-  console.error('→ Client components cannot use Node.js APIs');
-  console.error('→ Use runtime checks or Edge-compatible alternatives');
+  console.error('\nERROR: Edge Runtime compatibility issues found!');
+  console.error('- Client components cannot use Node.js APIs');
+  console.error('- Use runtime checks or Edge-compatible alternatives');
   process.exit(1);
 } else {
-  console.log('✅ All client components are Edge Runtime compatible');
+  console.log('All client components are Edge Runtime compatible');
 }
 EOF
 
@@ -207,24 +207,24 @@ else
   echo "2. Use runtime checks for Node.js APIs"
   echo "3. Create Edge-compatible alternatives"
   echo ""
-  echo "💡 Common solutions:"
-  echo "→ Use dynamic imports with runtime checks"
-  echo "→ Create separate Edge-compatible modules"
-  echo "→ Move Node.js logic to API routes"
+  echo "Common solutions:"
+  echo "- Use dynamic imports with runtime checks"
+  echo "- Create separate Edge-compatible modules"
+  echo "- Move Node.js logic to API routes"
   exit 1
 fi
 
 # ========================================
 # Run tests (without coverage for speed)
 # ========================================
-echo "🧪 Running tests..."
+echo "Running tests..."
 if npm test > test_output.log 2>&1; then
-  echo "✅ Tests passed"
+  echo "Tests passed"
   rm test_output.log
 else
   # Check if tests failed
   if grep -q "Test Suites:.*failed" test_output.log; then
-    echo "❌ Tests failed!"
+    echo "ERROR: Tests failed!"
     echo ""
     # Show which tests failed
     grep -E "FAIL|●" test_output.log | head -20
@@ -237,7 +237,7 @@ else
   else
     # Check if it's just obsolete snapshots
     if grep -q "Test Suites:.*passed.*total" test_output.log && grep -q "Tests:.*passed.*total" test_output.log; then
-      echo "✅ Tests passed (obsolete snapshots warning ignored)"
+      echo "Tests passed (obsolete snapshots warning ignored)"
       rm test_output.log
     else
       # Unknown failure, show output
@@ -248,4 +248,4 @@ else
   fi
 fi
 
-echo "✅ All pre-push checks completed successfully!"
+echo "All pre-push checks completed successfully!"

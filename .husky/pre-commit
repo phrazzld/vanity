@@ -1,7 +1,7 @@
 #\!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-echo "🔍 Running pre-commit checks..."
+echo "Running pre-commit checks..."
 
 # Run lint-staged for formatting and linting
 echo "Checking code formatting and linting..."
@@ -12,7 +12,7 @@ echo "Checking for ESLint suppressions..."
 SUPPRESSION_COUNT=$(grep -r "eslint-disable\|@ts-ignore\|@ts-nocheck" src/ --include="*.ts" --include="*.tsx" --exclude-dir="__mocks__" 2>/dev/null | wc -l | tr -d ' ')
 MAX_SUPPRESSIONS=1  # Allow 1 legitimate suppression in Map.a11y.test.tsx
 if [ "$SUPPRESSION_COUNT" -gt "$MAX_SUPPRESSIONS" ]; then
-  echo "❌ Too many ESLint suppressions detected! Found: $SUPPRESSION_COUNT (Maximum allowed: $MAX_SUPPRESSIONS)"
+  echo "ERROR: Too many ESLint suppressions detected! Found: $SUPPRESSION_COUNT (Maximum allowed: $MAX_SUPPRESSIONS)"
   echo ""
   echo "   Suppressions found in:"
   grep -r "eslint-disable\|@ts-ignore\|@ts-nocheck" src/ --include="*.ts" --include="*.tsx" --exclude-dir="__mocks__" 2>/dev/null | head -5 | sed 's/^/   /'
@@ -22,7 +22,7 @@ if [ "$SUPPRESSION_COUNT" -gt "$MAX_SUPPRESSIONS" ]; then
   echo "   Note: Mock files in __mocks__ directories are excluded from this check."
   exit 1
 fi
-echo "✅ ESLint suppressions within limit ($SUPPRESSION_COUNT/$MAX_SUPPRESSIONS)"
+echo "ESLint suppressions within limit ($SUPPRESSION_COUNT/$MAX_SUPPRESSIONS)"
 
 # Check for sensitive data and large files
 echo "Checking for sensitive data and large files..."
@@ -63,7 +63,7 @@ node -e "
     
     // Report large files
     if (largeFiles.length > 0) {
-      console.error('🚨 Files exceeding size limit (5MB) detected:');
+      console.error('ERROR: Files exceeding size limit (5MB) detected:');
       largeFiles.forEach(file => console.error(\`  - \${file}\`));
       console.error('\\nPlease remove large files before committing or use Git LFS.');
       process.exit(1);
@@ -82,4 +82,4 @@ node -e "
 # Note: Test coverage checking moved to pre-push hook for faster commits
 # Running full test suite with coverage was taking 20-40s per commit
 
-echo "✅ Pre-commit checks completed successfully!"
+echo "Pre-commit checks completed successfully!"
