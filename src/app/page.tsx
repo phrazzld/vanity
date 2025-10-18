@@ -10,7 +10,8 @@ export default function HomePage() {
           minHeight: '50vh',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center',
+          justifyContent: 'flex-start',
+          paddingTop: '3rem',
         }}
       >
         <TypewriterQuotes />

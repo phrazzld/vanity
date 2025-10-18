@@ -111,7 +111,7 @@ function TypewriterQuotes() {
       <div className="min-h-[200px] flex flex-col justify-start">
         <div className="max-w-4xl w-full">
           <p
-            className="text-base md:text-lg text-gray-800 dark:text-gray-200 mb-2 font-light"
+            className="text-base md:text-lg text-gray-800 dark:text-gray-200 mb-2 font-light whitespace-pre-line"
             data-testid="quote-text"
           >
             {displayText}
