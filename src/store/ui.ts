@@ -19,6 +19,7 @@ import type { StateCreator } from 'zustand';
 interface UIState {
   // Theme state
   isDarkMode: boolean;
+  hasExplicitThemePreference: boolean; // Track if user explicitly chose a theme
   toggleDarkMode: () => void;
   setDarkMode: (_isDark: boolean) => void;
   initializeTheme: () => void;
@@ -46,9 +47,10 @@ const createUIStore = () => {
   const storeCreator: StateCreator<UIState> = (set, get) => ({
     // Theme state with localStorage persistence
     isDarkMode: false, // Will be initialized from localStorage/system preference
+    hasExplicitThemePreference: false, // Will be set to true when user toggles
     toggleDarkMode: () => {
       const newValue = !get().isDarkMode;
-      set({ isDarkMode: newValue });
+      set({ isDarkMode: newValue, hasExplicitThemePreference: true });
 
       // Apply dark mode class and transition animation
       if (typeof window !== 'undefined') {
@@ -63,7 +65,7 @@ const createUIStore = () => {
       }
     },
     setDarkMode: (_isDark: boolean) => {
-      set({ isDarkMode: _isDark });
+      set({ isDarkMode: _isDark, hasExplicitThemePreference: true });
 
       // Apply dark mode class
       if (typeof window !== 'undefined') {
@@ -77,49 +79,40 @@ const createUIStore = () => {
     initializeTheme: () => {
       if (typeof window === 'undefined') return;
 
-      // Check system preference if no stored value
-      const storedTheme = localStorage.getItem('ui-store');
-      if (!storedTheme) {
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (get().isDarkMode !== prefersDark) {
-          set({ isDarkMode: prefersDark });
-        }
-        if (prefersDark) {
+      // Sync state with DOM (blocking script may have set dark class)
+      const isDarkFromDOM = document.documentElement.classList.contains('dark');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      // Check if user has explicitly set a preference (not just system default)
+      const hasExplicitPreference = get().hasExplicitThemePreference;
+
+      if (!hasExplicitPreference) {
+        // No explicit preference - use system preference
+        set({ isDarkMode: prefersDark, hasExplicitThemePreference: false });
+
+        // Ensure DOM matches system preference
+        if (prefersDark && !isDarkFromDOM) {
           document.documentElement.classList.add('dark');
+        } else if (!prefersDark && isDarkFromDOM) {
+          document.documentElement.classList.remove('dark');
         }
       } else {
-        // Apply stored theme immediately
-        const parsed = JSON.parse(storedTheme) as { state: { isDarkMode?: boolean } };
-        if (parsed.state.isDarkMode) {
-          document.documentElement.classList.add('dark');
+        // User has explicit preference - ensure store state matches DOM
+        if (get().isDarkMode !== isDarkFromDOM) {
+          set({ isDarkMode: isDarkFromDOM });
         }
       }
 
       // Listen for system preference changes
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       const handleChange = (e: MediaQueryListEvent) => {
-        // Only update if the user hasn't explicitly set a preference
-        const stored = localStorage.getItem('ui-store');
-        if (!stored) {
-          if (get().isDarkMode !== e.matches) {
-            set({ isDarkMode: e.matches });
-          }
+        // Only update from system changes if user hasn't explicitly set a preference
+        if (!get().hasExplicitThemePreference) {
+          set({ isDarkMode: e.matches });
           if (e.matches) {
             document.documentElement.classList.add('dark');
           } else {
             document.documentElement.classList.remove('dark');
-          }
-        } else {
-          const parsed = JSON.parse(stored) as { state: { isDarkMode?: boolean } };
-          if (!Object.prototype.hasOwnProperty.call(parsed.state, 'isDarkMode')) {
-            if (get().isDarkMode !== e.matches) {
-              set({ isDarkMode: e.matches });
-            }
-            if (e.matches) {
-              document.documentElement.classList.add('dark');
-            } else {
-              document.documentElement.classList.remove('dark');
-            }
           }
         }
       };
@@ -151,7 +144,10 @@ const createUIStore = () => {
 
   const persistedStore = persist(storeCreator, {
     name: 'ui-store',
-    partialize: (state: UIState) => ({ isDarkMode: state.isDarkMode }),
+    partialize: (state: UIState) => ({
+      isDarkMode: state.isDarkMode,
+      hasExplicitThemePreference: state.hasExplicitThemePreference,
+    }),
   });
 
   // Apply devtools only in development
