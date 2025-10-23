@@ -40,8 +40,10 @@ SECRET_PATTERNS=(
   "bearer [a-zA-Z0-9]{10,}"
 )
 
-# Get changed files
-FILES_TO_CHECK=$(git diff --name-only $(git merge-base @{u} HEAD)..HEAD)
+# Get changed files (with fallback for branches without upstream)
+UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || echo "origin/main")
+BASE_REF=$(git merge-base "$UPSTREAM" HEAD 2>/dev/null || echo "HEAD~1")
+FILES_TO_CHECK=$(git diff --name-only "$BASE_REF..HEAD")
 
 # Check the files
 for FILE in $FILES_TO_CHECK; do
