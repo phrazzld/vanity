@@ -12,6 +12,19 @@ _Significant improvements to code quality, performance, or user experience_
   - Focus: lib/utils (13%), store (17%), keyboard navigation (0-47%)
   - Add integration tests for core workflows (quotes, readings, theme)
   - Implement snapshot tests for UI components
+  - **[PR #70 feedback]** Add UI store unit tests for theme logic:
+    - Create `src/store/__tests__/ui.test.ts` covering:
+      - `initializeTheme()` behavior with/without localStorage
+      - `hasExplicitThemePreference` state management
+      - Media query event handling and cleanup
+      - Race conditions between user toggles and system changes
+      - localStorage corruption/unavailability handling
+    - Test scenarios:
+      - First mount with no saved preference → uses system
+      - First mount with explicit preference → respects saved choice
+      - System preference change with/without explicit preference
+      - Concurrent user toggle + system change → user wins
+      - Media query listener cleanup on unmount
 
 ### Performance
 
@@ -55,6 +68,16 @@ _Significant improvements to code quality, performance, or user experience_
 ## MEDIUM Priority
 
 _Valuable improvements and new features_
+
+### Code Quality
+
+- [ ] **[REFACTOR]** Refine hydration warning suppression | **Effort: S** | **Impact: Better DX**
+  - **[PR #70 feedback]** `src/app/layout.tsx:18` uses broad `suppressHydrationWarning`
+  - Current: Masks all hydration warnings on `<html>` element
+  - Goal: More targeted suppression for theme-related hydration only
+  - **Note:** May become non-issue after fixing critical hydration race (TODO.md #1)
+  - Investigation needed: React 18+ hydration boundaries, `useId()` patterns
+  - **Deferred rationale:** Wait for critical hydration fix completion to assess if still needed
 
 ### Security & Infrastructure
 
