@@ -17,7 +17,11 @@ import { useUIStore } from '@/store/ui';
  */
 export default function ThemeInitializer() {
   useEffect(() => {
-    useUIStore.getState().initializeTheme();
+    // Initialize theme and get cleanup function
+    const cleanup = useUIStore.getState().initializeTheme();
+
+    // Return cleanup to remove media query listener on unmount
+    return cleanup;
   }, []);
 
   return null;

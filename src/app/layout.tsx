@@ -18,6 +18,45 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
       className={`${inter.variable} ${spaceGrotesk.variable}`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var stored = localStorage.getItem('ui-store');
+                  var darkMode = false;
+
+                  if (stored) {
+                    var parsed = JSON.parse(stored);
+                    // Check if user has explicitly set a preference
+                    if (parsed.state && parsed.state.hasExplicitThemePreference === true) {
+                      // New format - explicit flag present
+                      darkMode = parsed.state.isDarkMode === true;
+                    } else if (parsed.state && parsed.state.isDarkMode !== undefined) {
+                      // Legacy format - isDarkMode exists but no explicit flag
+                      // Infer explicit preference for backward compatibility
+                      darkMode = parsed.state.isDarkMode === true;
+                    } else {
+                      // No stored preference, use system preference
+                      darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    }
+                  } else {
+                    // No stored data, use system preference
+                    darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  }
+
+                  if (darkMode) {
+                    document.documentElement.classList.add('dark');
+                  }
+                } catch (e) {
+                  // Fail silently
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex flex-col pt-[4.5rem]">
         <ThemeInitializer />
         <Suspense fallback={<div>Loading...</div>}>
