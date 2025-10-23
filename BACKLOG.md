@@ -72,12 +72,14 @@ _Valuable improvements and new features_
 ### Code Quality
 
 - [ ] **[REFACTOR]** Refine hydration warning suppression | **Effort: S** | **Impact: Better DX**
-  - **[PR #70 feedback]** `src/app/layout.tsx:18` uses broad `suppressHydrationWarning`
+  - **[PR #70 feedback - Issue #3]** `src/app/layout.tsx:18` uses broad `suppressHydrationWarning`
+  - **Identified by**: Claude Review #1, #3 (2025-10-23)
   - Current: Masks all hydration warnings on `<html>` element
   - Goal: More targeted suppression for theme-related hydration only
   - **Note:** May become non-issue after fixing critical hydration race (TODO.md #1)
   - Investigation needed: React 18+ hydration boundaries, `useId()` patterns
-  - **Deferred rationale:** Wait for critical hydration fix completion to assess if still needed
+  - **Deferred rationale:** Wait for critical hydration fix completion (TODO.md Issue #1) to assess if still needed
+  - **Decision**: Assess after TODO.md Issue #1 fix is merged and deployed
 
 ### Security & Infrastructure
 
