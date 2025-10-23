@@ -20,6 +20,7 @@ interface UIState {
   // Theme state
   isDarkMode: boolean;
   hasExplicitThemePreference: boolean; // Track if user explicitly chose a theme
+  lastUserThemeInteraction: number; // Timestamp of last user theme toggle (for race protection)
   toggleDarkMode: () => void;
   setDarkMode: (_isDark: boolean) => void;
   initializeTheme: () => (() => void) | undefined;
@@ -48,9 +49,15 @@ const createUIStore = () => {
     // Theme state with localStorage persistence
     isDarkMode: false, // Will be initialized from localStorage/system preference
     hasExplicitThemePreference: false, // Will be set to true when user toggles
+    lastUserThemeInteraction: 0, // Timestamp for race condition protection
     toggleDarkMode: () => {
       const newValue = !get().isDarkMode;
-      set({ isDarkMode: newValue, hasExplicitThemePreference: true });
+      const now = Date.now();
+      set({
+        isDarkMode: newValue,
+        hasExplicitThemePreference: true,
+        lastUserThemeInteraction: now,
+      });
 
       // Apply dark mode class and transition animation
       if (typeof window !== 'undefined') {
@@ -65,7 +72,12 @@ const createUIStore = () => {
       }
     },
     setDarkMode: (_isDark: boolean) => {
-      set({ isDarkMode: _isDark, hasExplicitThemePreference: true });
+      const now = Date.now();
+      set({
+        isDarkMode: _isDark,
+        hasExplicitThemePreference: true,
+        lastUserThemeInteraction: now,
+      });
 
       // Apply dark mode class
       if (typeof window !== 'undefined') {
@@ -130,8 +142,16 @@ const createUIStore = () => {
       // Listen for system preference changes
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       const handleChange = (e: MediaQueryListEvent) => {
-        // Only update from system changes if user hasn't explicitly set a preference
-        if (!get().hasExplicitThemePreference) {
+        const timeSinceLastUserInteraction = Date.now() - get().lastUserThemeInteraction;
+        const USER_INTERACTION_GRACE_PERIOD = 1000; // 1 second
+
+        // Only update from system changes if:
+        // 1. User hasn't set explicit preference AND
+        // 2. No recent user interaction (prevent race conditions)
+        if (
+          !get().hasExplicitThemePreference &&
+          timeSinceLastUserInteraction > USER_INTERACTION_GRACE_PERIOD
+        ) {
           set({ isDarkMode: e.matches });
           if (e.matches) {
             document.documentElement.classList.add('dark');
