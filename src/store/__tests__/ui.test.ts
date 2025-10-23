@@ -10,7 +10,7 @@
  * Target: >80% coverage for src/store/ui.ts
  */
 
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 
 // Mock logger
 jest.mock('@/lib/logger', () => ({
