@@ -104,6 +104,12 @@ const createUIStore = () => {
             state?: { hasExplicitThemePreference?: boolean; isDarkMode?: boolean };
           };
           if (parsed.state?.hasExplicitThemePreference === true) {
+            // New format - explicit flag present
+            hasExplicitPreference = true;
+            storedDarkMode = parsed.state.isDarkMode === true;
+          } else if (parsed.state?.isDarkMode !== undefined) {
+            // Legacy format - isDarkMode exists but no explicit flag
+            // Infer explicit preference for backward compatibility
             hasExplicitPreference = true;
             storedDarkMode = parsed.state.isDarkMode === true;
           }

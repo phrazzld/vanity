@@ -31,10 +31,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     var parsed = JSON.parse(stored);
                     // Check if user has explicitly set a preference
                     if (parsed.state && parsed.state.hasExplicitThemePreference === true) {
-                      // Use explicit preference
+                      // New format - explicit flag present
+                      darkMode = parsed.state.isDarkMode === true;
+                    } else if (parsed.state && parsed.state.isDarkMode !== undefined) {
+                      // Legacy format - isDarkMode exists but no explicit flag
+                      // Infer explicit preference for backward compatibility
                       darkMode = parsed.state.isDarkMode === true;
                     } else {
-                      // No explicit preference, use system preference
+                      // No stored preference, use system preference
                       darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
                     }
                   } else {
