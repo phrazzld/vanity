@@ -22,7 +22,7 @@ interface UIState {
   hasExplicitThemePreference: boolean; // Track if user explicitly chose a theme
   toggleDarkMode: () => void;
   setDarkMode: (_isDark: boolean) => void;
-  initializeTheme: () => void;
+  initializeTheme: () => (() => void) | undefined;
 
   // Sidebar state
   isSidebarOpen: boolean;
@@ -141,6 +141,11 @@ const createUIStore = () => {
         }
       };
       mediaQuery.addEventListener('change', handleChange);
+
+      // Return cleanup function to remove listener
+      return () => {
+        mediaQuery.removeEventListener('change', handleChange);
+      };
     },
 
     // Sidebar state
