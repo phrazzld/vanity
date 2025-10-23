@@ -79,27 +79,51 @@ const createUIStore = () => {
     initializeTheme: () => {
       if (typeof window === 'undefined') return;
 
-      // Sync state with DOM (blocking script may have set dark class)
+      // Read directly from localStorage to avoid hydration race condition
+      // Zustand persistence middleware hydrates asynchronously, so we can't trust
+      // get().hasExplicitThemePreference on first mount - it will always be false
+      let hasExplicitPreference = false;
+      let storedDarkMode = false;
+
+      try {
+        const stored = localStorage.getItem('ui-store');
+        if (stored) {
+          const parsed = JSON.parse(stored) as {
+            state?: { hasExplicitThemePreference?: boolean; isDarkMode?: boolean };
+          };
+          if (parsed.state?.hasExplicitThemePreference === true) {
+            hasExplicitPreference = true;
+            storedDarkMode = parsed.state.isDarkMode === true;
+          }
+        }
+      } catch {
+        // localStorage unavailable or corrupt, fall through to system preference
+      }
+
       const isDarkFromDOM = document.documentElement.classList.contains('dark');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-      // Check if user has explicitly set a preference (not just system default)
-      const hasExplicitPreference = get().hasExplicitThemePreference;
-
       if (!hasExplicitPreference) {
-        // No explicit preference - use system preference
+        // No saved preference - use system preference
         set({ isDarkMode: prefersDark, hasExplicitThemePreference: false });
 
-        // Ensure DOM matches system preference
+        // Sync DOM with system preference
         if (prefersDark && !isDarkFromDOM) {
           document.documentElement.classList.add('dark');
         } else if (!prefersDark && isDarkFromDOM) {
           document.documentElement.classList.remove('dark');
         }
       } else {
-        // User has explicit preference - ensure store state matches DOM
-        if (get().isDarkMode !== isDarkFromDOM) {
-          set({ isDarkMode: isDarkFromDOM });
+        // User has explicit preference - ensure store matches saved value
+        set({ isDarkMode: storedDarkMode, hasExplicitThemePreference: true });
+
+        // Sync DOM with stored preference
+        if (storedDarkMode !== isDarkFromDOM) {
+          if (storedDarkMode) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
         }
       }
 
