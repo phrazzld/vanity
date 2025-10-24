@@ -438,4 +438,36 @@ describe('UI Store - Theme Logic', () => {
       expect(document.documentElement.classList.contains('dark')).toBe(true);
     });
   });
+
+  describe('State Isolation', () => {
+    it('should start with fresh state (test 1)', () => {
+      // This test modifies state
+      const { result } = renderHook(() => ({
+        setDarkMode: useUIStore(state => state.setDarkMode),
+        isDarkMode: useUIStore(state => state.isDarkMode),
+      }));
+
+      // Verify initial state is fresh
+      expect(result.current.isDarkMode).toBe(false);
+
+      // Modify state
+      act(() => {
+        result.current.setDarkMode(true);
+      });
+
+      expect(result.current.isDarkMode).toBe(true);
+      // State modified - afterEach will reset before next test
+    });
+
+    it('should start with fresh state (test 2)', () => {
+      // This test runs AFTER the previous test
+      // If mock is working, state should be reset to initial (false)
+      // If mock not working, state would still be true from previous test
+      const { result } = renderHook(() => ({
+        isDarkMode: useUIStore(state => state.isDarkMode),
+      }));
+
+      expect(result.current.isDarkMode).toBe(false);
+    });
+  });
 });

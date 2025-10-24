@@ -184,6 +184,15 @@ global.ResizeObserver = class ResizeObserver {
 // This enables testing the real store implementation with automatic state reset
 // See: src/__mocks__/zustand.ts for the official Zustand testing pattern
 
+// =============================================================================
+// Zustand Manual Mock Activation
+// =============================================================================
+
+// Activate manual mock from src/__mocks__/zustand.ts
+// Jest requires explicit mock() call for manual mocks to load
+// Without this, tests import real Zustand and state bleeds between tests
+jest.mock('zustand');
+
 // Mock Next.js router
 jest.mock('next/router', () => ({
   useRouter: () => ({
