@@ -1,5 +1,4 @@
 /* eslint-env jest */
-/* global jest */
 
 /**
  * Mock implementation of react-leaflet for Jest testing environment

@@ -1,222 +1,251 @@
-# TODO: Fix Zustand Theme Store Test Isolation
+# TODO: Fix Zustand Mock Activation (P1 Critical)
 
 ## Context
 
-**Problem**: 13 of 14 theme tests skipped due to Zustand persist middleware causing state bleeding between tests. Core theme functionality (150+ lines) has ZERO effective test coverage.
+**Critical Issue Discovered**: The Zustand manual mock at `src/__mocks__/zustand.ts` is **never actually loaded** because Jest requires an explicit `jest.mock('zustand')` call to activate manual mocks. Without this, all tests import the real Zustand implementation, and the state reset logic never executes.
 
-**Root Cause**:
+**Impact**: Test isolation claimed by PR #71 is not actually achieved. Tests pass only because selector pattern fixes prevented infinite loops, not because of proper state isolation.
 
-- Global mock in `jest.setup.js:183-205` prevents real store from being tested
-- Zustand v5 persist middleware doesn't reset between tests without proper setup
-- Store state accumulates across test runs causing cascading failures
+**Root Cause**: Jest auto-loads mocks from `__mocks__/` directories **only for node_modules** when explicitly mocked. Our mock at `src/__mocks__/zustand.ts` requires manual activation.
 
-**Approach**: Official Zustand testing pattern from https://zustand.docs.pmnd.rs/guides/testing
-
-1. Create `__mocks__/zustand.ts` with store reset tracking
-2. Remove global store mock from `jest.setup.js`
-3. Re-enable all 13 skipped tests
-
-**Key Files**:
-
-- `src/store/__tests__/ui.test.ts` - 13 skipped tests (lines 94-469)
-- `src/store/ui.ts` - Store implementation (232 lines, 150+ untested)
-- `jest.setup.js` - Global mock blocking real store (lines 183-205)
-
-**Patterns to Follow**:
-
-- Official Zustand mock pattern (tracks initial state, resets after each test)
-- Existing test structure in `ui.test.ts` (comprehensive, well-organized)
+**Evidence**: PR review comment from Codex - https://github.com/phrazzld/vanity/pull/71
 
 ## Implementation Tasks
 
-- [ ] Create Zustand mock with automatic state reset
+- [x] Add jest.mock('zustand') to activate manual mock
 
   ```
-  Files: src/__mocks__/zustand.ts (new file)
-  Approach: Follow official Zustand testing docs pattern
-  - Track all store instances via storeResetFns Set
-  - Capture initial state on create()
-  - Reset all stores in afterEach hook
-  - Support both create() and createStore() APIs
-  Success: Mock exports create function that tracks reset functions
-  Test: Import in ui.test.ts runs without errors
-  Module: Thin wrapper around real Zustand, adds reset capability
-  Time: 30min
-  ```
+  File: jest.setup.js:181-186 (after browser API mocks section)
+  Approach: Add jest.mock('zustand') call immediately after browser mocks
+  Location: After IntersectionObserver/ResizeObserver mocks, before store comment
+  Code to add:
+    // =============================================================================
+    // Zustand Manual Mock Activation
+    // =============================================================================
 
-- [ ] Remove global Zustand store mock from jest.setup.js
+    // Activate manual mock from src/__mocks__/zustand.ts
+    // Jest requires explicit mock() call for manual mocks to load
+    // Without this, tests import real Zustand and state bleeds between tests
+    jest.mock('zustand');
 
-  ```
-  Files: jest.setup.js:183-205
-  Approach: Delete lines 183-205 (jest.mock('@/store/ui', ...))
-  - Remove entire mock block
-  - Keep other mocks (Next.js router, next/image, etc.)
-  - Document removal reason in comment
-  Success: Global mock removed, other setup unchanged
-  Test: npm test runs (will fail on skipped tests until re-enabled)
-  Module: Test setup - cleaner boundary between mocks and real code
+  Why needed: Jest only auto-loads __mocks__ for node_modules; manual activation required
+  Success criteria: Mock loads, storeResetFns populates, afterEach executes
+  Test: Run ui.test.ts - should see mock being used (verify with debug logging)
   Time: 5min
+  Work Log:
+  - Added jest.mock('zustand') in jest.setup.js at line 194
+  - Fixed circular dependency by updating mock imports
+  - Changed from 'export * from zustand' to direct import
+  - Mock now loads successfully without infinite loop
+  Commit: 3662439
   ```
 
-- [ ] Re-enable all 13 skipped tests in ui.test.ts
+- [x] Add test case to verify store state isolation actually works
 
   ```
-  Files: src/store/__tests__/ui.test.ts:94-469
-  Approach: Change it.skip back to it for lines:
-  - 95: should toggle theme on and off
-  - 113: should add dark class to document when toggling to dark mode
-  - 141: should set hasExplicitThemePreference when toggling
-  - 156: should update lastUserThemeInteraction timestamp on toggle
-  - 178: should respect legacy isDarkMode without explicit flag
-  - 205: should respect legacy light mode preference
-  - 234: should respect explicit preference flag
-  - 258: should use system preference when no stored data
-  - 328: should handle corrupted localStorage data
-  - 365: should listen for system preference changes
-  - 383: should cleanup listener on unmount
-  - 404: should add dark class when initializing with dark preference
-  - 427: should remove dark class when initializing with light preference
-  - 452: should set explicit preference when calling setDarkMode
-  - Remove TODO comments (line 94)
-  Success: All it.skip changed to it, TODO comment removed
-  Test: Tests can run (may fail until mock is correct)
-  Module: Test restoration
-  Time: 10min
-  ```
+  File: src/store/__tests__/ui.test.ts:470+ (end of test suite)
+  Approach: Add new test that would fail without proper state isolation
+  Test logic:
+    describe('State Isolation', () => {
+      it('should reset store state between tests', () => {
+        // Set state in first "test"
+        const { result: result1 } = renderHook(() => useUIStore(state => ({
+          setDarkMode: state.setDarkMode,
+          isDarkMode: state.isDarkMode,
+        })));
 
-- [ ] Fix store import to use real store in ui.test.ts
+        act(() => {
+          result1.current.setDarkMode(true);
+        });
 
-  ```
-  Files: src/store/__tests__/ui.test.ts:26
-  Approach: Ensure import uses real store (via __mocks__/zustand.ts)
-  - Verify no jest.mock() calls in test file
-  - Import should be: import { useUIStore, useTheme } from '../ui'
-  - Mock is applied via __mocks__/zustand.ts automatically
-  Success: Import unchanged but uses mocked Zustand create
-  Test: Store functions work in tests
-  Module: Test wiring
-  Time: 5min
-  ```
+        expect(result1.current.isDarkMode).toBe(true);
 
-- [ ] Verify all tests pass with proper state isolation
+        // Simulate test boundary - mock should reset state
+        // In real scenario, afterEach would run here
 
-  ```
-  Files: Entire test suite
-  Approach: Run npm test -- ui.test.ts
-  - All 14 tests should pass (2 already passing + 13 re-enabled)
-  - No state bleeding between tests
-  - Each test starts with fresh store
-  Success: All 14 tests pass, coverage >80% on src/store/ui.ts
-  Test: npm test -- ui.test.ts --verbose
-  Module: Validation
+        // In second "test", verify state is reset
+        const { result: result2 } = renderHook(() => useUIStore(state => ({
+          isDarkMode: state.isDarkMode,
+        })));
+
+        // If mock is working, state should be reset to initial (false)
+        // If mock not working, state would still be true from previous test
+        expect(result2.current.isDarkMode).toBe(false);
+      });
+    });
+
+  Why needed: Explicitly verifies state isolation instead of assuming it works
+  Success criteria: Test passes, proves mock resets state between test boundaries
+  Note: This test documents the expected behavior for future developers
   Time: 15min
+  Work Log:
+  - Added two tests in 'State Isolation' describe block
+  - Test 1 modifies state, Test 2 verifies it resets
+  - Initial attempt used single test with two hooks (failed - state persists within test)
+  - Corrected to two separate tests to verify afterEach reset
+  - All 18 tests now pass (16 original + 2 new)
+  Commit: 3662439
   ```
 
-- [ ] Run full test suite to ensure no regressions
+- [x] Add debug logging to verify mock loading (temporary)
+
   ```
-  Files: All test files
-  Approach: npm test
-  - Verify all existing tests still pass
-  - Check for any tests affected by removing global mock
-  Success: All tests pass (or same failures as before if any)
-  Test: npm test
-  Module: Regression check
+  File: src/__mocks__/zustand.ts:1 (top of file, after imports)
+  Approach: Add console.log at module load and in afterEach
+  Code to add:
+    // TEMPORARY DEBUG: Verify mock is loading
+    console.log('[ZUSTAND MOCK] Manual mock loaded from src/__mocks__/zustand.ts');
+
+    // ... existing code ...
+
+    // In afterEach block, update to:
+    afterEach(() => {
+      console.log(`[ZUSTAND MOCK] Resetting ${storeResetFns.size} store(s)`);
+      act(() => {
+        storeResetFns.forEach(resetFn => {
+          resetFn();
+        });
+      });
+    });
+
+  Why needed: Empirical verification that mock is actually loading and executing
+  Success criteria: Console output appears during test runs
+  Test: npm test -- ui.test.ts | grep "ZUSTAND MOCK"
+  Note: Remove after verification (next task)
+  Time: 3min
+  Work Log:
+  - Added console.log at module load and in afterEach
+  - Verified mock loads: "[ZUSTAND MOCK] Manual mock loaded..."
+  - Verified resets run: "[ZUSTAND MOCK] Resetting 1 store(s)"
+  - Confirmed afterEach executes after each test
+  Commit: 3662439
+  ```
+
+- [x] Remove debug logging after verification
+
+  ```
+  File: src/__mocks__/zustand.ts
+  Approach: Remove console.log statements added in previous task
+  Code to remove:
+    - console.log('[ZUSTAND MOCK] Manual mock loaded...')
+    - console.log(`[ZUSTAND MOCK] Resetting ${storeResetFns.size} store(s)`)
+
+  Why needed: Clean code without debug noise
+  Success criteria: No console.log statements in mock, tests still pass
+  Time: 2min
+  Work Log:
+  - Removed console.log from module load
+  - Removed console.log from afterEach
+  - Added timing documentation to afterEach comment
+  - All 345 tests still pass
+  Commit: 3662439
+  ```
+
+- [x] Update PR #71 technical documentation
+
+  ```
+  File: src/__mocks__/zustand.ts:1-12 (header comment)
+  Approach: Add note about manual activation requirement
+  Update comment to include:
+    /**
+     * Zustand Mock for Jest Testing
+     *
+     * Provides automatic state reset between tests to prevent state bleeding.
+     * Based on official Zustand testing guide: https://zustand.docs.pmnd.rs/guides/testing
+     *
+     * IMPORTANT: This manual mock must be explicitly activated in jest.setup.js
+     * with jest.mock('zustand'). Jest does NOT auto-load manual mocks from
+     * src/__mocks__/ - they require explicit activation.
+     *
+     * Usage:
+     * - jest.setup.js contains jest.mock('zustand') to activate this mock
+     * - Jest automatically uses this mock when tests import from 'zustand'
+     * - All stores created during tests will be reset after each test
+     */
+
+  Why needed: Prevent future confusion about mock activation requirements
+  Success criteria: Clear documentation of Jest manual mock behavior
   Time: 5min
+  Work Log:
+  - Updated header comment with IMPORTANT section
+  - Explained jest.mock('zustand') activation requirement
+  - Added usage instructions pointing to jest.setup.js
+  - Documented timing of afterEach reset
+  Commit: 3662439
   ```
-
-## Design Iteration
-
-After Phase 1 (Mock creation):
-
-- Verify mock correctly resets state
-- Test with simple store before ui.ts complexity
-
-After Phase 2 (Test re-enabling):
-
-- Review test organization
-- Consider splitting into multiple describe blocks if patterns emerge
 
 ## Success Criteria
 
-**Binary Pass/Fail**:
+**Core Fix Verified**:
 
-- ✅ All 14 theme tests enabled and passing
-- ✅ No state bleeding between tests (run tests 3x to verify)
-- ✅ Coverage on src/store/ui.ts >80% (currently ~10%)
-- ✅ Full test suite passes (npm test)
-- ✅ No global store mock in jest.setup.js
+- ✅ jest.mock('zustand') added to jest.setup.js (line 194)
+- ✅ Mock loads during test runs (verified via debug output)
+- ✅ afterEach reset logic executes (verified via debug output)
+- ✅ storeResetFns Set populates with store instances
+- ✅ New test case proves state isolation works (2 tests added)
+- ✅ All 16 existing tests still pass
+- ✅ Documentation updated to prevent future confusion
 
 **Quality Gates**:
 
-- Tests run independently (can run single test with --testNamePattern)
-- Store initializes fresh for each test
-- localStorage mock resets properly
-- Media query listeners clean up
+- ✅ Full test suite passes (345 tests - up from 343)
+- ✅ No regressions from adding mock activation
+- ✅ State isolation proven empirically, not assumed
+- ✅ Future developers understand activation requirement
+
+**All tasks completed successfully in commit 3662439**
 
 ## Module Boundaries
 
-**New Module**: `__mocks__/zustand.ts`
-
-- **Owns**: Store instance tracking, state reset coordination
-- **Hides**: Reset mechanism implementation, Set management
-- **Interface**: Standard Zustand create() and createStore() APIs
-- **Coupling**: Minimal - only wraps real Zustand
-- **Value**: Module Value = (Store testing capability + State isolation) - (Zero interface change) = HIGH
-
 **Modified Module**: `jest.setup.js`
 
-- **Change**: Remove 23 lines of global mock
-- **Improvement**: Cleaner separation of concerns (global vs local mocks)
+- **Change**: Add single line jest.mock('zustand')
+- **Impact**: Activates manual mock, enables state isolation
+- **Risk**: Low - activating intended behavior
 
-**Tested Module**: `src/store/ui.ts`
+**Enhanced Module**: `src/__mocks__/zustand.ts`
 
-- **Coverage**: 150+ lines of theme logic currently untested
-- **Risk**: Theme bugs won't be caught (localStorage, media queries, race conditions)
+- **Change**: Updated documentation only
+- **Impact**: Clearer understanding of activation requirements
+- **Value**: Prevents future confusion about Jest manual mocks
+
+**New Test**: State isolation verification
+
+- **Ownership**: Proves mock works correctly
+- **Value**: Empirical evidence vs assumption
 
 ## Time Estimate
 
-Total: 4-6 hours
+Total: 30 minutes
 
-- Investigation: 1h (DONE - reading Zustand docs, understanding current state)
-- Implementation: 1-1.5h (mock creation + test fixes)
-- Debugging: 1-2h (inevitable issues with persist middleware)
-- Verification: 30min (full test suite, coverage reports)
-- Buffer: 30-60min (edge cases, documentation)
-
-## Automation Opportunities
-
-After completion:
-
-- Add pre-commit hook to prevent `it.skip` in test files
-- Add coverage threshold for store tests (enforce >80%)
-- Consider adding store test template for future stores
+- Mock activation: 5min
+- State isolation test: 15min
+- Debug logging add/remove: 5min
+- Documentation: 5min
 
 ## References
 
-- [Zustand Official Testing Guide](https://zustand.docs.pmnd.rs/guides/testing)
-- [GitHub Issue #242 - Reset zustand state between tests](https://github.com/pmndrs/zustand/issues/242)
-- Commit 678e393 - Context for why tests were skipped
-- TASK.md - Original specification
-- BACKLOG.md - [CRITICAL TEST GAP] entry
+- [Jest Manual Mocks Documentation](https://jestjs.io/docs/manual-mocks)
+- [Zustand Testing Guide](https://zustand.docs.pmnd.rs/guides/testing)
+- [PR #71 Codex Review Comment](https://github.com/phrazzld/vanity/pull/71)
 
 ## Notes
 
 **Why This Matters**:
 
-- Theme system is CORE functionality (every page, every user)
-- 150+ lines of complex logic (localStorage, media queries, race protection)
-- Currently ZERO confidence in theme changes
-- Blocks future theme refactoring (can't refactor what you can't test)
+- Without activation, entire PR #71 premise is invalid
+- Tests pass for wrong reason (selector fix, not state isolation)
+- Future store tests would have same hidden issue
+- This is P1 merge-blocking - cannot merge without this fix
 
 **What We're NOT Doing**:
 
-- Rewriting tests (existing tests are good)
-- Changing store implementation (code is correct, tests are broken)
-- Adding new features (pure test infrastructure fix)
-- Refactoring store (future work, see BACKLOG.md)
+- Moving mock to root `__mocks__/` (works fine in src/ with activation)
+- Rewriting tests (they're correct, just need proven isolation)
+- Changing mock implementation (implementation is correct)
 
-**Trade-offs**:
+**Learning**:
 
-- Global mock removal may affect other tests → Full test run required
-- Zustand mock adds dependency on internal APIs → Follow official pattern
-- More test setup complexity → Necessary for proper isolation
+- Jest manual mocks require explicit jest.mock() call
+- `__mocks__/` auto-loading only works for node_modules
+- Always verify mocks load, don't assume
