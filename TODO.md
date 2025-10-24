@@ -49,7 +49,7 @@
   Commit: 29037b1
   ```
 
-- [~] Remove global Zustand store mock from jest.setup.js
+- [x] Remove global Zustand store mock from jest.setup.js
 
   ```
   Files: jest.setup.js:183-205
@@ -61,9 +61,14 @@
   Test: npm test runs (will fail on skipped tests until re-enabled)
   Module: Test setup - cleaner boundary between mocks and real code
   Time: 5min
+  Work Log:
+  - Removed 23 lines of global mock from jest.setup.js
+  - Added comment documenting removal and pointing to __mocks__/zustand.ts
+  - Tests now use real store via Zustand mock
+  Commit: ba6ac2c
   ```
 
-- [ ] Re-enable all 13 skipped tests in ui.test.ts
+- [x] Re-enable all 13 skipped tests in ui.test.ts
 
   ```
   Files: src/store/__tests__/ui.test.ts:94-469
@@ -87,9 +92,16 @@
   Test: Tests can run (may fail until mock is correct)
   Module: Test restoration
   Time: 10min
+  Work Log:
+  - Changed all it.skip → it (13 tests)
+  - Removed TODO comment about state isolation
+  - Fixed selector patterns: individual useUIStore calls instead of object selectors
+  - Pattern: ({prop: useUIStore(state => state.prop)}) avoids infinite re-renders
+  - All 16 tests now passing
+  Commit: 9257b9e
   ```
 
-- [ ] Fix store import to use real store in ui.test.ts
+- [x] Fix store import to use real store in ui.test.ts
 
   ```
   Files: src/store/__tests__/ui.test.ts:26
@@ -101,9 +113,14 @@
   Test: Store functions work in tests
   Module: Test wiring
   Time: 5min
+  Work Log:
+  - Import already correct: import { useUIStore, useTheme } from '../ui'
+  - No jest.mock() calls needed - __mocks__/zustand.ts handles it
+  - Real store used with automatic state reset
+  Included in: 9257b9e
   ```
 
-- [ ] Verify all tests pass with proper state isolation
+- [x] Verify all tests pass with proper state isolation
 
   ```
   Files: Entire test suite
@@ -115,9 +132,15 @@
   Test: npm test -- ui.test.ts --verbose
   Module: Validation
   Time: 15min
+  Work Log:
+  - All 16 tests passing (2 original + 13 re-enabled + 1 error handling)
+  - Coverage: 75.6% on src/store/ui.ts (up from ~10%)
+  - No state bleeding verified
+  - Zustand mock properly resets between tests
+  Verified in: 9257b9e
   ```
 
-- [ ] Run full test suite to ensure no regressions
+- [x] Run full test suite to ensure no regressions
   ```
   Files: All test files
   Approach: npm test
@@ -127,6 +150,11 @@
   Test: npm test
   Module: Regression check
   Time: 5min
+  Work Log:
+  - Full test suite: 343 tests passing across 24 test suites
+  - No regressions detected
+  - Pre-existing warnings in TypewriterQuotes (unrelated)
+  Verified in: f4fb8ff
   ```
 
 ## Design Iteration
