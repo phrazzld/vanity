@@ -179,30 +179,10 @@ global.ResizeObserver = class ResizeObserver {
 // Next.js and App Mocks
 // =============================================================================
 
-// Mock the Zustand UI Store
-jest.mock('@/store/ui', () => ({
-  useUIStore: jest.fn(() => ({
-    isDarkMode: false,
-    toggleDarkMode: jest.fn(),
-    setDarkMode: jest.fn(),
-    initializeTheme: jest.fn(),
-    isSidebarOpen: false,
-    openSidebar: jest.fn(),
-    closeSidebar: jest.fn(),
-    toggleSidebar: jest.fn(),
-    activeModal: null,
-    openModal: jest.fn(),
-    closeModal: jest.fn(),
-    globalSearchQuery: '',
-    setGlobalSearchQuery: jest.fn(),
-    isSearchActive: false,
-    setSearchActive: jest.fn(),
-  })),
-  useTheme: () => ({
-    isDarkMode: false,
-    toggleDarkMode: jest.fn(),
-  }),
-}));
+// NOTE: Zustand UI Store mock removed (2024-10-23)
+// Now using __mocks__/zustand.ts for proper state isolation between tests
+// This enables testing the real store implementation with automatic state reset
+// See: src/__mocks__/zustand.ts for the official Zustand testing pattern
 
 // Mock Next.js router
 jest.mock('next/router', () => ({
