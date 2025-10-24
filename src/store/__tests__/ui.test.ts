@@ -91,8 +91,7 @@ describe('UI Store - Theme Logic', () => {
       expect(typeof result.current.toggleDarkMode).toBe('function');
     });
 
-    // TODO: Fix Zustand state isolation - these tests fail due to store state bleeding between tests
-    it.skip('should toggle theme on and off', () => {
+    it('should toggle theme on and off', () => {
       const { result } = renderHook(() => useTheme());
 
       const initialState = result.current.isDarkMode;
@@ -110,15 +109,13 @@ describe('UI Store - Theme Logic', () => {
       expect(result.current.isDarkMode).toBe(initialState);
     });
 
-    it.skip('should add dark class to document when toggling to dark mode', () => {
+    it('should add dark class to document when toggling to dark mode', () => {
       jest.useFakeTimers();
 
-      const { result } = renderHook(() =>
-        useUIStore(state => ({
-          isDarkMode: state.isDarkMode,
-          toggleDarkMode: state.toggleDarkMode,
-        }))
-      );
+      const { result } = renderHook(() => ({
+        isDarkMode: useUIStore(state => state.isDarkMode),
+        toggleDarkMode: useUIStore(state => state.toggleDarkMode),
+      }));
 
       // Ensure starting from light mode
       if (result.current.isDarkMode) {
@@ -138,13 +135,11 @@ describe('UI Store - Theme Logic', () => {
       jest.useRealTimers();
     });
 
-    it.skip('should set hasExplicitThemePreference when toggling', () => {
-      const { result } = renderHook(() =>
-        useUIStore(state => ({
-          toggleDarkMode: state.toggleDarkMode,
-          hasExplicitThemePreference: state.hasExplicitThemePreference,
-        }))
-      );
+    it('should set hasExplicitThemePreference when toggling', () => {
+      const { result } = renderHook(() => ({
+        toggleDarkMode: useUIStore(state => state.toggleDarkMode),
+        hasExplicitThemePreference: useUIStore(state => state.hasExplicitThemePreference),
+      }));
 
       act(() => {
         result.current.toggleDarkMode();
@@ -153,13 +148,11 @@ describe('UI Store - Theme Logic', () => {
       expect(result.current.hasExplicitThemePreference).toBe(true);
     });
 
-    it.skip('should update lastUserThemeInteraction timestamp on toggle', () => {
-      const { result } = renderHook(() =>
-        useUIStore(state => ({
-          toggleDarkMode: state.toggleDarkMode,
-          lastUserThemeInteraction: state.lastUserThemeInteraction,
-        }))
-      );
+    it('should update lastUserThemeInteraction timestamp on toggle', () => {
+      const { result } = renderHook(() => ({
+        toggleDarkMode: useUIStore(state => state.toggleDarkMode),
+        lastUserThemeInteraction: useUIStore(state => state.lastUserThemeInteraction),
+      }));
 
       const before = Date.now();
 
@@ -175,19 +168,17 @@ describe('UI Store - Theme Logic', () => {
   });
 
   describe('initializeTheme() - backward compatibility', () => {
-    it.skip('should respect legacy isDarkMode without explicit flag', () => {
+    it('should respect legacy isDarkMode without explicit flag', () => {
       // Set legacy format in localStorage
       localStorageMock['ui-store'] = JSON.stringify({
         state: { isDarkMode: true },
       });
 
-      const { result } = renderHook(() =>
-        useUIStore(state => ({
-          initializeTheme: state.initializeTheme,
-          isDarkMode: state.isDarkMode,
-          hasExplicitThemePreference: state.hasExplicitThemePreference,
-        }))
-      );
+      const { result } = renderHook(() => ({
+        initializeTheme: useUIStore(state => state.initializeTheme),
+        isDarkMode: useUIStore(state => state.isDarkMode),
+        hasExplicitThemePreference: useUIStore(state => state.hasExplicitThemePreference),
+      }));
 
       let cleanup: (() => void) | undefined;
       act(() => {
@@ -202,20 +193,18 @@ describe('UI Store - Theme Logic', () => {
       cleanup?.();
     });
 
-    it.skip('should respect legacy light mode preference', () => {
+    it('should respect legacy light mode preference', () => {
       localStorageMock['ui-store'] = JSON.stringify({
         state: { isDarkMode: false },
       });
 
       document.documentElement.classList.add('dark');
 
-      const { result } = renderHook(() =>
-        useUIStore(state => ({
-          initializeTheme: state.initializeTheme,
-          isDarkMode: state.isDarkMode,
-          hasExplicitThemePreference: state.hasExplicitThemePreference,
-        }))
-      );
+      const { result } = renderHook(() => ({
+        initializeTheme: useUIStore(state => state.initializeTheme),
+        isDarkMode: useUIStore(state => state.isDarkMode),
+        hasExplicitThemePreference: useUIStore(state => state.hasExplicitThemePreference),
+      }));
 
       let cleanup: (() => void) | undefined;
       act(() => {
@@ -231,18 +220,16 @@ describe('UI Store - Theme Logic', () => {
   });
 
   describe('initializeTheme() - new format', () => {
-    it.skip('should respect explicit preference flag', () => {
+    it('should respect explicit preference flag', () => {
       localStorageMock['ui-store'] = JSON.stringify({
         state: { isDarkMode: true, hasExplicitThemePreference: true },
       });
 
-      const { result } = renderHook(() =>
-        useUIStore(state => ({
-          initializeTheme: state.initializeTheme,
-          isDarkMode: state.isDarkMode,
-          hasExplicitThemePreference: state.hasExplicitThemePreference,
-        }))
-      );
+      const { result } = renderHook(() => ({
+        initializeTheme: useUIStore(state => state.initializeTheme),
+        isDarkMode: useUIStore(state => state.isDarkMode),
+        hasExplicitThemePreference: useUIStore(state => state.hasExplicitThemePreference),
+      }));
 
       let cleanup: (() => void) | undefined;
       act(() => {
@@ -255,7 +242,7 @@ describe('UI Store - Theme Logic', () => {
       cleanup?.();
     });
 
-    it.skip('should use system preference when no stored data', () => {
+    it('should use system preference when no stored data', () => {
       mockMatchMedia.mockReturnValue({
         matches: true, // System prefers dark
         media: '(prefers-color-scheme: dark)',
@@ -267,13 +254,11 @@ describe('UI Store - Theme Logic', () => {
         dispatchEvent: jest.fn(),
       });
 
-      const { result } = renderHook(() =>
-        useUIStore(state => ({
-          initializeTheme: state.initializeTheme,
-          isDarkMode: state.isDarkMode,
-          hasExplicitThemePreference: state.hasExplicitThemePreference,
-        }))
-      );
+      const { result } = renderHook(() => ({
+        initializeTheme: useUIStore(state => state.initializeTheme),
+        isDarkMode: useUIStore(state => state.isDarkMode),
+        hasExplicitThemePreference: useUIStore(state => state.hasExplicitThemePreference),
+      }));
 
       let cleanup: (() => void) | undefined;
       act(() => {
@@ -304,12 +289,10 @@ describe('UI Store - Theme Logic', () => {
         dispatchEvent: jest.fn(),
       });
 
-      const { result } = renderHook(() =>
-        useUIStore(state => ({
-          initializeTheme: state.initializeTheme,
-          isDarkMode: state.isDarkMode,
-        }))
-      );
+      const { result } = renderHook(() => ({
+        initializeTheme: useUIStore(state => state.initializeTheme),
+        isDarkMode: useUIStore(state => state.isDarkMode),
+      }));
 
       let cleanup: (() => void) | undefined;
 
@@ -325,7 +308,7 @@ describe('UI Store - Theme Logic', () => {
       cleanup?.();
     });
 
-    it.skip('should handle corrupted localStorage data', () => {
+    it('should handle corrupted localStorage data', () => {
       (localStorage.getItem as jest.Mock).mockReturnValue('invalid json{}}');
 
       mockMatchMedia.mockReturnValue({
@@ -339,12 +322,10 @@ describe('UI Store - Theme Logic', () => {
         dispatchEvent: jest.fn(),
       });
 
-      const { result } = renderHook(() =>
-        useUIStore(state => ({
-          initializeTheme: state.initializeTheme,
-          isDarkMode: state.isDarkMode,
-        }))
-      );
+      const { result } = renderHook(() => ({
+        initializeTheme: useUIStore(state => state.initializeTheme),
+        isDarkMode: useUIStore(state => state.isDarkMode),
+      }));
 
       let cleanup: (() => void) | undefined;
 
@@ -362,12 +343,10 @@ describe('UI Store - Theme Logic', () => {
   });
 
   describe('media query handling', () => {
-    it.skip('should listen for system preference changes', () => {
-      const { result } = renderHook(() =>
-        useUIStore(state => ({
-          initializeTheme: state.initializeTheme,
-        }))
-      );
+    it('should listen for system preference changes', () => {
+      const { result } = renderHook(() => ({
+        initializeTheme: useUIStore(state => state.initializeTheme),
+      }));
 
       let cleanup: (() => void) | undefined;
       act(() => {
@@ -380,12 +359,10 @@ describe('UI Store - Theme Logic', () => {
       cleanup?.();
     });
 
-    it.skip('should cleanup listener on unmount', () => {
-      const { result } = renderHook(() =>
-        useUIStore(state => ({
-          initializeTheme: state.initializeTheme,
-        }))
-      );
+    it('should cleanup listener on unmount', () => {
+      const { result } = renderHook(() => ({
+        initializeTheme: useUIStore(state => state.initializeTheme),
+      }));
 
       let cleanup: (() => void) | undefined;
       act(() => {
@@ -401,18 +378,16 @@ describe('UI Store - Theme Logic', () => {
   });
 
   describe('DOM synchronization', () => {
-    it.skip('should add dark class when initializing with dark preference', () => {
+    it('should add dark class when initializing with dark preference', () => {
       localStorageMock['ui-store'] = JSON.stringify({
         state: { isDarkMode: true, hasExplicitThemePreference: true },
       });
 
       document.documentElement.classList.remove('dark');
 
-      const { result } = renderHook(() =>
-        useUIStore(state => ({
-          initializeTheme: state.initializeTheme,
-        }))
-      );
+      const { result } = renderHook(() => ({
+        initializeTheme: useUIStore(state => state.initializeTheme),
+      }));
 
       let cleanup: (() => void) | undefined;
       act(() => {
@@ -424,18 +399,16 @@ describe('UI Store - Theme Logic', () => {
       cleanup?.();
     });
 
-    it.skip('should remove dark class when initializing with light preference', () => {
+    it('should remove dark class when initializing with light preference', () => {
       localStorageMock['ui-store'] = JSON.stringify({
         state: { isDarkMode: false, hasExplicitThemePreference: true },
       });
 
       document.documentElement.classList.add('dark');
 
-      const { result } = renderHook(() =>
-        useUIStore(state => ({
-          initializeTheme: state.initializeTheme,
-        }))
-      );
+      const { result } = renderHook(() => ({
+        initializeTheme: useUIStore(state => state.initializeTheme),
+      }));
 
       let cleanup: (() => void) | undefined;
       act(() => {
@@ -449,14 +422,12 @@ describe('UI Store - Theme Logic', () => {
   });
 
   describe('setDarkMode', () => {
-    it.skip('should set explicit preference when calling setDarkMode', () => {
-      const { result } = renderHook(() =>
-        useUIStore(state => ({
-          setDarkMode: state.setDarkMode,
-          isDarkMode: state.isDarkMode,
-          hasExplicitThemePreference: state.hasExplicitThemePreference,
-        }))
-      );
+    it('should set explicit preference when calling setDarkMode', () => {
+      const { result } = renderHook(() => ({
+        setDarkMode: useUIStore(state => state.setDarkMode),
+        isDarkMode: useUIStore(state => state.isDarkMode),
+        hasExplicitThemePreference: useUIStore(state => state.hasExplicitThemePreference),
+      }));
 
       act(() => {
         result.current.setDarkMode(true);
