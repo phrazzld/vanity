@@ -41,7 +41,7 @@ jobs:
           # model: "claude-opus-4-1-20250805"
 
           # Allow Dependabot to trigger reviews (fixes "non-human actor" errors)
-          allowed_bots: 'dependabot'
+          allowed_bots: 'dependabot[bot]'
 
           # Direct prompt for automated review (no @claude mention needed)
           direct_prompt: |
