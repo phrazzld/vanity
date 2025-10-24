@@ -5,6 +5,17 @@ Analyzed by: 7 specialized perspectives (complexity-archaeologist, architecture-
 
 ---
 
+## Recently Completed
+
+### ✅ [TEST] Fix Zustand Theme Store Test Isolation (PR #71)
+
+**Completed**: 2025-10-24
+**Impact**: Re-enabled 13 skipped theme tests, increased coverage from ~10% to 75.6%
+**Critical Fix Required**: Mock activation issue discovered in review - jest.mock('zustand') missing
+**Status**: Fixing mock activation in TODO.md before final merge
+
+---
+
 ## Now (Sprint-Ready, <2 weeks)
 
 ### [SECURITY] CLI Command Injection in Editor Spawn
@@ -82,6 +93,57 @@ const sanitizeEditor = (editor: string): string => {
 ---
 
 ## Next (This Quarter, <3 months)
+
+### [TESTING] Enhance Zustand Mock Documentation
+
+**File**: src/**mocks**/zustand.ts
+**From**: PR #71 Codex review feedback
+**Why**: Mock implementation is excellent but lifecycle timing could be clearer
+**Enhancement**:
+
+```typescript
+/**
+ * Reset all stores after each test
+ * Wrapped in act() to handle React state updates properly
+ *
+ * TIMING: Runs after test cleanup but before next test setup
+ * This ensures each test starts with a fresh store state
+ */
+afterEach(() => {
+  act(() => {
+    storeResetFns.forEach(resetFn => resetFn());
+  });
+});
+```
+
+**Effort**: 5min | **Impact**: LOW - Documentation clarity only
+**Value**: Helps future developers understand mock lifecycle
+
+### [REFACTOR] Organize UI Store Tests with Nested Describes
+
+**File**: src/store/**tests**/ui.test.ts:85-470
+**From**: PR #71 Codex review feedback
+**Why**: With 16 tests now passing, logical grouping would improve readability
+**Current**: Flat test structure within single describe blocks
+**Proposed**:
+
+```typescript
+describe('Theme Management', () => {
+  describe('User Interactions', () => {
+    // toggle, setDarkMode tests
+  });
+  describe('Initialization', () => {
+    // initializeTheme, backward compatibility tests
+  });
+  describe('System Integration', () => {
+    // media query, DOM sync tests
+  });
+});
+```
+
+**Effort**: 15min | **Impact**: LOW - Organization only
+**Value**: Easier to navigate test suite, clearer test categorization
+**Note**: No functional changes, pure refactoring
 
 ### [ARCHITECTURE] Split God Object: store/ui.ts → Focused Stores
 
