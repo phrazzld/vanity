@@ -11,7 +11,7 @@
  * - Responsive design
  */
 
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import Image from 'next/image';
 import type { Reading } from '@/types';
 import { logger } from '@/lib/logger';
@@ -160,6 +160,14 @@ export default function ReadingsList({
   // Theme context is not currently used in this component but may be used in future updates
   // const { isDarkMode } = useTheme();
 
+  // Favorites filter state
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+
+  // Filter readings by favorites if enabled
+  const filteredReadings = showOnlyFavorites
+    ? readings.filter(reading => reading.favorite)
+    : readings;
+
   // Function to handle sort column click
   const handleSortClick = useCallback(
     (field: string) => {
@@ -170,6 +178,32 @@ export default function ReadingsList({
 
   return (
     <div className={`w-full ${className}`}>
+      {/* Favorites Filter Toggle */}
+      <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'flex-end' }}>
+        <button
+          onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
+          style={{
+            padding: '8px 16px',
+            borderRadius: '8px',
+            border: '1px solid var(--border-color)',
+            backgroundColor: showOnlyFavorites ? 'var(--primary-color)' : 'transparent',
+            color: showOnlyFavorites ? 'white' : 'var(--text-color)',
+            cursor: 'pointer',
+            fontSize: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            transition: 'all 0.2s ease',
+          }}
+          aria-label={showOnlyFavorites ? 'Show all readings' : 'Show only favorites'}
+        >
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>
+          {showOnlyFavorites ? 'Show All' : 'Favorites Only'}
+        </button>
+      </div>
+
       {/* Column Headers with Enhanced Sort Indicators */}
       <div className="border-b border-gray-200 dark:border-gray-700" role="grid">
         <div
@@ -242,7 +276,7 @@ export default function ReadingsList({
       </div>
 
       {/* Readings List Items */}
-      {readings.length === 0 ? (
+      {filteredReadings.length === 0 ? (
         <div className="p-8 text-center text-gray-500 dark:text-gray-400">
           <div className="w-16 h-16 mx-auto bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mb-3">
             <svg
@@ -268,7 +302,7 @@ export default function ReadingsList({
         </div>
       ) : (
         <ul className="item-list-body" aria-label="Readings list">
-          {readings.map(reading => (
+          {filteredReadings.map(reading => (
             <li key={reading.slug} className="list-none">
               <div
                 className={`item-list-item group ${selectedReading?.slug === reading.slug ? 'item-list-item-selected' : ''} hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150`}
@@ -386,15 +420,6 @@ export default function ReadingsList({
                           Audiobook
                         </span>
                       )}
-
-                      {/* Add this to show when content search matches */}
-                      {searchQuery &&
-                        reading.thoughts &&
-                        reading.thoughts.toLowerCase().includes(searchQuery.toLowerCase()) && (
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300">
-                            Match in content
-                          </span>
-                        )}
                     </div>
                   </div>
                 </div>
