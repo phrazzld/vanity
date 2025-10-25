@@ -33,6 +33,9 @@ export interface Reading {
 
   /** Indicates if this reading is an audiobook */
   audiobook?: boolean;
+
+  /** Indicates if this reading is marked as a favorite */
+  favorite?: boolean;
 }
 
 /**
@@ -48,6 +51,7 @@ export interface ReadingInput {
   finishedDate?: Date | string | null;
   coverImageSrc?: string | null;
   audiobook?: boolean;
+  favorite?: boolean;
 }
 
 /**
@@ -63,4 +67,5 @@ export interface ReadingListItem {
   finishedDate: Date | string | null;
   coverImageSrc: string | null;
   audiobook?: boolean;
+  favorite?: boolean;
 }
