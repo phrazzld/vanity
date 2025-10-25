@@ -169,7 +169,7 @@
     "commander": "^14.0.0",
     "eslint": "^9.22.0",
     "eslint-config-next": "^15.2.2",
-    "eslint-config-prettier": "^10.1.2",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "execa": "^9.6.0",
     "gray-matter": "^4.0.3",
