@@ -31,9 +31,6 @@ export interface Reading {
   /** URL to the cover image, or null if not available */
   coverImageSrc: string | null;
 
-  /** Thoughts or notes about the reading */
-  thoughts: string;
-
   /** Indicates if this reading is an audiobook */
   audiobook?: boolean;
 }
@@ -50,7 +47,6 @@ export interface ReadingInput {
   author: string;
   finishedDate?: Date | string | null;
   coverImageSrc?: string | null;
-  thoughts?: string;
   audiobook?: boolean;
 }
 
