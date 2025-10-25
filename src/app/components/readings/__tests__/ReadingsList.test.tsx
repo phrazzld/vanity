@@ -70,8 +70,8 @@ describe('ReadingsList Component', () => {
       author: 'Test Author 1',
       finishedDate: new Date().toISOString(),
       coverImageSrc: '/test-cover-1.jpg',
-      thoughts: 'Great book',
       audiobook: false,
+      favorite: true,
     },
     {
       id: 2,
@@ -80,8 +80,8 @@ describe('ReadingsList Component', () => {
       author: 'Test Author 2',
       finishedDate: null,
       coverImageSrc: null,
-      thoughts: 'Currently reading',
       audiobook: false,
+      favorite: false,
     },
     {
       id: 3,
@@ -90,8 +90,8 @@ describe('ReadingsList Component', () => {
       author: 'Test Author 3',
       finishedDate: null,
       coverImageSrc: '/test-cover-3.jpg',
-      thoughts: 'Great audiobook',
       audiobook: true,
+      favorite: false,
     },
   ];
 
@@ -335,8 +335,8 @@ describe('ReadingsList Component', () => {
         title: 'Test Book 1',
         author: 'Test Author 1',
         coverImageSrc: '/test-cover-1.jpg',
-        thoughts: 'Great book',
         audiobook: false,
+        favorite: false,
         finishedDate: '2023-12-25T00:00:00Z',
       },
       {
@@ -345,8 +345,8 @@ describe('ReadingsList Component', () => {
         title: 'Test Book 3',
         author: 'Test Author 3',
         coverImageSrc: '/test-cover-3.jpg',
-        thoughts: 'Great audiobook',
         audiobook: true,
+        favorite: true,
         finishedDate: new Date('2023-06-15').toISOString(),
       },
     ];

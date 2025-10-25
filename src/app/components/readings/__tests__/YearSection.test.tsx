@@ -57,8 +57,8 @@ describe('YearSection Component', () => {
       author: 'Author A',
       finishedDate: '2023-01-15',
       coverImageSrc: '/covers/book-one.jpg',
-      thoughts: 'Great book',
       audiobook: false,
+      favorite: true,
     },
     {
       id: 2,
@@ -67,8 +67,8 @@ describe('YearSection Component', () => {
       author: 'Author B',
       finishedDate: '2023-03-20',
       coverImageSrc: null,
-      thoughts: '',
       audiobook: true,
+      favorite: false,
     },
   ];
 
@@ -80,8 +80,8 @@ describe('YearSection Component', () => {
     author: 'Author C',
     finishedDate: null,
     coverImageSrc: '/covers/book-three.jpg',
-    thoughts: 'Reading this now',
     audiobook: false,
+    favorite: false,
   };
 
   // Audiobook
@@ -92,8 +92,8 @@ describe('YearSection Component', () => {
     author: 'Author D',
     finishedDate: '2023-05-10',
     coverImageSrc: null,
-    thoughts: 'Great audiobook',
     audiobook: true,
+    favorite: true,
   };
 
   it('renders year heading correctly', () => {
