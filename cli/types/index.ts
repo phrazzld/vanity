@@ -28,10 +28,6 @@ export interface ImageFilePrompt {
   imagePath: string;
 }
 
-export interface ThoughtsPrompt {
-  addThoughts: boolean;
-}
-
 export interface AudiobookPrompt {
   audiobook: boolean;
 }
@@ -161,6 +157,7 @@ export interface ReadingFrontmatter {
   finished?: string | null;
   coverImage?: string;
   audiobook?: boolean;
+  favorite?: boolean;
 }
 
 export interface ProjectFrontmatter {
