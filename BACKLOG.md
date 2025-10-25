@@ -18,6 +18,43 @@ Analyzed by: 7 specialized perspectives (complexity-archaeologist, architecture-
 
 ## Now (Sprint-Ready, <2 weeks)
 
+### [AUTOMATION] Dependabot Lockfile Verification Action
+
+**Context**: Fixed immediate issue with manual PR, but need automation to prevent recurrence
+**Perspectives**: maintainability-maven, security-sentinel
+**Why**: Dependabot dependency grouping caused 8 PRs (2-3 months) to fail silently with missing package-lock.json updates. Manual verification required for every PR until proven working.
+**Implementation**:
+
+```yaml
+# .github/workflows/dependabot-verify.yml
+name: Verify Dependabot Lockfile
+on:
+  pull_request:
+    branches: [master]
+jobs:
+  verify-lockfile:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Check for lockfile changes
+        run: |
+          if git diff HEAD^..HEAD --name-only | grep -q 'package.json'; then
+            if ! git diff HEAD^..HEAD --name-only | grep -q 'package-lock.json'; then
+              echo "❌ ERROR: package.json modified without package-lock.json"
+              exit 1
+            fi
+          fi
+```
+
+**Effort**: S (1h) | **Value**: CRITICAL - Prevents silent lockfile desync
+**Acceptance**: Workflow fails Dependabot PRs missing lockfile, passes when lockfile included
+**Monitor**: Next 5 Dependabot PRs to verify grouping fix works
+
+## Now (Sprint-Ready, <2 weeks)
+
 ### [SECURITY] CLI Command Injection in Editor Spawn
 
 **File**: cli/lib/editor.ts:26, scripts/analyze-bundle.js:37,99

@@ -1,4 +1,11 @@
 # Keep dependencies up to date with automated pull requests
+#
+# IMPORTANT: Dependency grouping was causing Dependabot to skip package-lock.json
+# updates, leading to CI failures. Grouping disabled until root cause confirmed.
+# See TODO.md "Fix Dependabot CI Failures" for investigation details.
+#
+# If you re-enable grouping, verify that Dependabot PRs include package-lock.json
+# changes by checking the commit file list before merging.
 version: 2
 updates:
   # Enable version updates for npm
@@ -9,18 +16,19 @@ updates:
       time: '06:00'
       timezone: 'UTC'
     # Raise all npm dependencies updates as a single PR
-    groups:
-      production-dependencies:
-        dependency-type: 'production'
-      development-dependencies:
-        dependency-type: 'development'
-        patterns:
-          - '*'
-        exclude-patterns:
-          - '@types/*'
-      types-dependencies:
-        patterns:
-          - '@types/*'
+    # NOTE: Grouping temporarily disabled - was causing lockfile generation failures
+    # groups:
+    #   production-dependencies:
+    #     dependency-type: 'production'
+    #   development-dependencies:
+    #     dependency-type: 'development'
+    #     patterns:
+    #       - '*'
+    #     exclude-patterns:
+    #       - '@types/*'
+    #   types-dependencies:
+    #     patterns:
+    #       - '@types/*'
     # Limit number of open pull requests
     open-pull-requests-limit: 5
     # Always increase the minimum version requirement
