@@ -159,6 +159,16 @@ export async function addReading(): Promise<void> {
       },
     ]);
 
+    // Favorite prompt
+    const { favorite } = await inquirer.prompt<{ favorite: boolean }>([
+      {
+        type: 'confirm',
+        name: 'favorite',
+        message: 'Mark as favorite?',
+        default: false,
+      },
+    ]);
+
     // Cover image prompt
     const { imageChoice } = await inquirer.prompt<ImageChoicePrompt>([
       {
@@ -359,6 +369,10 @@ export async function addReading(): Promise<void> {
 
     if (audiobook) {
       frontmatter.audiobook = audiobook;
+    }
+
+    if (favorite) {
+      frontmatter.favorite = favorite;
     }
 
     const fileContent = matter.stringify('', frontmatter);
