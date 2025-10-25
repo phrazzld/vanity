@@ -16,7 +16,6 @@ import type {
   ImageChoicePrompt,
   ImageUrlPrompt,
   ImageFilePrompt,
-  ThoughtsPrompt,
   AudiobookPrompt,
   ContinueWithoutImagePrompt,
   ReadingActionPrompt,
@@ -269,36 +268,8 @@ export async function addReading(): Promise<void> {
       }
     }
 
-    // Thoughts prompt
-    const { addThoughts } = await inquirer.prompt<ThoughtsPrompt>([
-      {
-        type: 'confirm',
-        name: 'addThoughts',
-        message: 'Would you like to add your thoughts about this book?',
-        default: false,
-      },
-    ]);
-
-    let thoughts = '';
-    if (addThoughts) {
-      console.log(chalk.gray('\nOpening editor for your thoughts...'));
-      const thoughtsTemplate = `# Your thoughts on "${basicInfo.title}" by ${basicInfo.author}
-# Lines starting with # will be ignored
-# Write your thoughts below:
-
-`;
-      const thoughtsContent = await openEditor(thoughtsTemplate, '.md');
-      if (thoughtsContent) {
-        thoughts = thoughtsContent
-          .split('\n')
-          .filter(line => !line.startsWith('#'))
-          .join('\n')
-          .trim();
-      }
-    }
-
     // Show preview
-    console.log(previewReading(basicInfo.title, basicInfo.author, finished, thoughts || undefined));
+    console.log(previewReading(basicInfo.title, basicInfo.author, finished));
 
     // Check for existing readings and handle rereads
     let filename = `${slug}.md`;
@@ -390,7 +361,7 @@ export async function addReading(): Promise<void> {
       frontmatter.audiobook = audiobook;
     }
 
-    const fileContent = matter.stringify(thoughts, frontmatter);
+    const fileContent = matter.stringify('', frontmatter);
 
     // Ensure readings directory exists
     try {
