@@ -154,8 +154,8 @@ describe('Data Layer', () => {
           author: 'Author Two',
           finishedDate: '2023-02-20',
           coverImageSrc: null,
-          thoughts: 'Thoughts on book two',
           audiobook: false,
+          favorite: false,
         },
         {
           slug: 'book-one',
@@ -163,8 +163,8 @@ describe('Data Layer', () => {
           author: 'Author One',
           finishedDate: '2023-01-15',
           coverImageSrc: 'cover1.jpg',
-          thoughts: 'Thoughts on book one',
           audiobook: false,
+          favorite: false,
         },
       ]);
     });
@@ -183,7 +183,7 @@ describe('Data Layer', () => {
             finished: '2023-01-15',
             audiobook: false,
           },
-          content: 'Book one thoughts',
+          content: '',
         } as any)
         .mockReturnValueOnce({
           data: {
@@ -191,8 +191,9 @@ describe('Data Layer', () => {
             author: 'Author',
             finished: '2023-02-20',
             audiobook: true,
+            favorite: true,
           },
-          content: 'Book two thoughts',
+          content: '',
         } as any);
 
       const readings = getReadings();
@@ -200,8 +201,10 @@ describe('Data Layer', () => {
       expect(readings).toHaveLength(2);
       expect(readings[0]!.title).toBe('Book Two');
       expect(readings[0]!.audiobook).toBe(true);
+      expect(readings[0]!.favorite).toBe(true);
       expect(readings[1]!.title).toBe('Book One');
       expect(readings[1]!.audiobook).toBe(false);
+      expect(readings[1]!.favorite).toBe(false);
     });
 
     it('should handle null/undefined finished dates', () => {
@@ -217,7 +220,7 @@ describe('Data Layer', () => {
             author: 'Author',
             finished: '2023-01-15',
           },
-          content: 'Finished thoughts',
+          content: '',
         } as any)
         .mockReturnValueOnce({
           data: {
@@ -225,7 +228,7 @@ describe('Data Layer', () => {
             author: 'Author',
             finished: null,
           },
-          content: 'Current thoughts',
+          content: '',
         } as any);
 
       const readings = getReadings();
@@ -246,20 +249,23 @@ describe('Data Layer', () => {
       mockMatter
         .mockReturnValueOnce({
           data: { title: 'Old Book', author: 'Author', finished: '2023-01-01' },
-          content: 'Old thoughts',
+          content: '',
         } as any)
         .mockReturnValueOnce({
-          data: { title: 'New Book', author: 'Author', finished: '2023-03-01' },
-          content: 'New thoughts',
+          data: { title: 'New Book', author: 'Author', finished: '2023-03-01', favorite: true },
+          content: '',
         } as any)
         .mockReturnValueOnce({
           data: { title: 'Middle Book', author: 'Author', finished: '2023-02-01' },
-          content: 'Middle thoughts',
+          content: '',
         } as any);
 
       const readings = getReadings();
 
       expect(readings.map(r => r.title)).toEqual(['New Book', 'Middle Book', 'Old Book']);
+      expect(readings[0]!.favorite).toBe(true);
+      expect(readings[1]!.favorite).toBe(false);
+      expect(readings[2]!.favorite).toBe(false);
     });
   });
 
