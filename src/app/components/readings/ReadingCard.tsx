@@ -57,6 +57,7 @@ const ReadingCard = React.memo(function ReadingCard({
   author,
   coverImageSrc,
   audiobook,
+  favorite,
   finishedDate,
 }: ReadingCardProps) {
   const [imageError, setImageError] = useState(false);
@@ -98,7 +99,7 @@ const ReadingCard = React.memo(function ReadingCard({
       title={`${title} by ${author}`}
       tabIndex={0}
       role="button"
-      aria-label={`${title} by ${author}, ${statusText}${audiobook ? ', Audiobook' : ''}`}
+      aria-label={`${title} by ${author}, ${statusText}${audiobook ? ', Audiobook' : ''}${favorite ? ', Favorite' : ''}`}
     >
       {/* Book cover image */}
       <div
@@ -179,6 +180,38 @@ const ReadingCard = React.memo(function ReadingCard({
                 strokeWidth={2}
                 d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
               />
+            </svg>
+          </div>
+        )}
+        {/* Favorite badge - only visible on hover */}
+        {favorite && (
+          <div
+            style={{
+              position: 'absolute',
+              top: audiobook ? '44px' : '8px',
+              right: '8px',
+              width: '28px',
+              height: '28px',
+              borderRadius: '50%',
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            aria-label="Favorite"
+          >
+            <svg
+              style={{
+                width: '16px',
+                height: '16px',
+                color: '#fbbf24',
+              }}
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
             </svg>
           </div>
         )}
