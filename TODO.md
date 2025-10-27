@@ -86,7 +86,7 @@ Favorites feature (star badges + filter toggle) implemented but not visible on r
 
 ### Phase 3: Add Filter to Readings Page
 
-- [ ] **Add favorites filter to ReadingsPage**
+- [x] **Add favorites filter to ReadingsPage**
 
   File: `src/app/readings/page.tsx`
 

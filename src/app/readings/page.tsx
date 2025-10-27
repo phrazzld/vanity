@@ -10,6 +10,8 @@ import {
   getSortedYearKeys,
   sortReadingsWithinCategory,
 } from '@/lib/utils/readingUtils';
+import { useReadingsFilter } from '@/hooks/useReadingsFilter';
+import ReadingsFilterToggle from '../components/readings/ReadingsFilterToggle';
 
 export default function ReadingsPage() {
   const [readings, setReadings] = useState<Reading[]>([]);
@@ -17,6 +19,9 @@ export default function ReadingsPage() {
   const [years, setYears] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Use favorites filter hook
+  const { filteredReadings, showOnlyFavorites, setShowOnlyFavorites } = useReadingsFilter(readings);
 
   // Load all readings data
   useEffect(() => {
@@ -46,16 +51,23 @@ export default function ReadingsPage() {
     loadReadings();
   }, []);
 
-  // Group readings by year whenever they change
+  // Group readings by year whenever they change (using filtered readings)
   useEffect(() => {
-    if (readings.length === 0) return;
+    if (filteredReadings.length === 0 && readings.length > 0) {
+      // If filter is active but no results, still show empty state
+      setYearGroups({});
+      setYears([]);
+      return;
+    }
 
-    const grouped = groupReadingsByYear(readings);
+    if (filteredReadings.length === 0) return;
+
+    const grouped = groupReadingsByYear(filteredReadings);
     setYearGroups(grouped);
 
     const sortedYears = getSortedYearKeys(grouped);
     setYears(sortedYears);
-  }, [readings]);
+  }, [filteredReadings, readings.length]);
 
   return (
     <section>
@@ -63,6 +75,16 @@ export default function ReadingsPage() {
       {isLoading && (
         <div className="flex justify-center items-center py-16">
           <div className="w-10 h-10 border-t-2 border-b-2 border-indigo-500 rounded-full animate-spin"></div>
+        </div>
+      )}
+
+      {/* Favorites filter toggle */}
+      {!isLoading && readings.length > 0 && (
+        <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'flex-end' }}>
+          <ReadingsFilterToggle
+            active={showOnlyFavorites}
+            onToggle={() => setShowOnlyFavorites(!showOnlyFavorites)}
+          />
         </div>
       )}
 
