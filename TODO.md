@@ -1,78 +1,172 @@
-# TODO: Favorite Readings Feature
+# TODO: Fix Favorites Feature Display
 
-## Status: Feature Complete ✅
+## Context
 
-**PR**: [#79 - Add favorites feature and remove thoughts field](https://github.com/phrazzld/vanity/pull/79)
-**Branch**: `feature/fave-readings`
-**CI Status**: ✅ Passing (Build and Test + Security Scan)
+Favorites feature (star badges + filter toggle) implemented but not visible on readings page.
 
-## Completed Work
+**Root Cause:**
 
-### Core Implementation ✅
+1. YearSection doesn't pass `favorite` prop to ReadingCard
+2. ReadingsPage doesn't have filter toggle UI
+3. ReadingsList component has filter logic but isn't used on main page
 
-- [x] Remove thoughts field from all Reading interfaces
-- [x] Add favorite field to Reading, ReadingInput, ReadingListItem interfaces
-- [x] Update data layer to parse favorite from frontmatter
-- [x] Remove thoughts parsing from data layer
-- [x] Add favorite prompt to CLI reading add command
-- [x] Add favorite toggle to CLI reading update command
-- [x] Remove thoughts prompts from all CLI commands
-- [x] Add favorite badge to ReadingCard component (star icon, stacks with audiobook)
-- [x] Add favorites filter toggle to ReadingsList component
-- [x] Update all test files to remove thoughts from mock data
-- [x] Mark 84 personal favorite readings in content files
+**Architecture Issue:** Filter logic exists in ReadingsList but would be duplicated in ReadingsPage. Must extract shared logic to avoid duplication.
 
-### Code Quality ✅
+## Implementation Tasks
 
-- [x] Extract AudiobookBadge and FavoriteBadge components (ESLint compliance)
-- [x] Remove deprecated @types/sharp package
-- [x] All 345 tests passing
-- [x] TypeScript compilation clean
-- [x] ESLint checks passing
+### Phase 1: Extract Shared Filter Logic
 
-### CI/CD ✅
+- [x] **Create useReadingsFilter hook**
 
-- [x] Fix CI package manager mismatch (npm → pnpm)
-- [x] Update both GitHub Actions workflows to use pnpm
-- [x] Add pnpm caching for faster builds
-- [x] All CI checks passing
+  File: `src/hooks/useReadingsFilter.ts`
 
-## Remaining Tasks
+  Extract filter state and logic from ReadingsList component into reusable hook:
 
-### Pre-Merge
+  ```tsx
+  export function useReadingsFilter(readings: Reading[]) {
+    const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+    const filteredReadings = useMemo(
+      () => (showOnlyFavorites ? readings.filter(r => r.favorite) : readings),
+      [readings, showOnlyFavorites]
+    );
+    return { filteredReadings, showOnlyFavorites, setShowOnlyFavorites };
+  }
+  ```
 
-- [ ] Manual QA testing
-  - [ ] Test CLI: `pnpm run vanity -- reading add` (verify favorite prompt)
-  - [ ] Test CLI: `pnpm run vanity -- reading update` (verify favorite toggle)
-  - [ ] Test UI: Verify filter toggle works in browser
-  - [ ] Test UI: Verify favorite badges render on hover
-  - [ ] Test UI: Verify badges stack correctly (audiobook + favorite)
+  Success criteria: Hook encapsulates all filter state management, returns filtered readings and toggle function
 
-### Post-Merge (Optional)
+- [ ] **Create ReadingsFilterToggle component**
 
-- [ ] Update project CLAUDE.md with new CLI behavior (if needed)
-- [ ] Archive/remove original detailed TODO from planning phase
+  File: `src/app/components/readings/ReadingsFilterToggle.tsx`
+
+  Extract filter button UI from ReadingsList (lines 182-205) into standalone component:
+
+  ```tsx
+  interface ReadingsFilterToggleProps {
+    active: boolean;
+    onToggle: () => void;
+  }
+  ```
+
+  Success criteria: Component renders star icon + toggle button with proper styling and accessibility attributes
+
+### Phase 2: Update Existing Components
+
+- [ ] **Refactor ReadingsList to use extracted logic**
+
+  File: `src/app/components/readings/ReadingsList.tsx`
+
+  Replace inline filter state (lines 164-169) and button UI (lines 182-205) with:
+  - Import and use `useReadingsFilter` hook
+  - Import and render `<ReadingsFilterToggle>` component
+  - Use `filteredReadings` from hook instead of local state
+
+  Success criteria: ReadingsList behavior unchanged, all tests pass, code is DRY
+
+- [ ] **Add favorite prop to ReadingCard in YearSection**
+
+  File: `src/app/components/readings/YearSection.tsx` (line ~94)
+
+  Add missing prop to ReadingCard:
+
+  ```tsx
+  <ReadingCard
+    key={reading.slug}
+    slug={reading.slug}
+    title={reading.title}
+    author={reading.author}
+    coverImageSrc={reading.coverImageSrc}
+    audiobook={reading.audiobook}
+    favorite={reading.favorite} // ADD THIS LINE
+    finishedDate={reading.finishedDate}
+  />
+  ```
+
+  Success criteria: Star badges now visible on hover for favorited readings
+
+### Phase 3: Add Filter to Readings Page
+
+- [ ] **Add favorites filter to ReadingsPage**
+
+  File: `src/app/readings/page.tsx`
+
+  Changes:
+  1. Import `useReadingsFilter` hook and `ReadingsFilterToggle` component
+  2. Add filter logic before grouping (line ~37):
+     ```tsx
+     const { filteredReadings, showOnlyFavorites, setShowOnlyFavorites } = useReadingsFilter(
+       result.data
+     );
+     setReadings(filteredReadings);
+     ```
+  3. Add `<ReadingsFilterToggle>` component before year sections (line ~61):
+     ```tsx
+     <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'flex-end' }}>
+       <ReadingsFilterToggle
+         active={showOnlyFavorites}
+         onToggle={() => setShowOnlyFavorites(!showOnlyFavorites)}
+       />
+     </div>
+     ```
+
+  Success criteria: Filter toggle appears on page, clicking filters to only favorites, clicking again shows all
+
+### Phase 4: Testing
+
+- [ ] **Update ReadingsList tests**
+
+  File: `src/app/components/readings/__tests__/ReadingsList.test.tsx`
+
+  Verify tests still pass after refactoring to use hook and component. Tests should cover:
+  - Filter toggle renders
+  - Clicking toggle filters readings
+  - Filtered state updates correctly
+
+  Success criteria: All existing tests pass without modification
+
+- [ ] **Add YearSection favorite prop test**
+
+  File: `src/app/components/readings/__tests__/YearSection.test.tsx`
+
+  Add test case verifying `favorite` prop is passed through to ReadingCard:
+
+  ```tsx
+  it('passes favorite prop to ReadingCard', () => {
+    const readings = [{ ...mockReading, favorite: true }];
+    render(<YearSection year="2023" readings={readings} />);
+    // Verify ReadingCard receives favorite prop
+  });
+  ```
+
+  Success criteria: Test confirms prop passing works correctly
+
+- [ ] **Test ReadingsPage filter integration**
+
+  Manual QA:
+  1. Run `pnpm run dev`
+  2. Navigate to /readings page
+  3. Verify filter toggle button appears in top-right
+  4. Hover over favorited books → verify star badge appears
+  5. Click "Favorites Only" → verify list filters to only favorites
+  6. Click "Show All" → verify all readings display again
+  7. Test with both audiobook + favorite badges → verify they stack vertically
+
+  Success criteria: All manual test cases pass, feature works as expected
 
 ## Notes
 
-**Breaking Changes**:
+**Design Decision:** Extracted shared logic rather than duplicating to avoid:
 
-- Removed `thoughts` field from Reading type (coordinated across all layers)
-- All markdown body content now ignored (frontmatter-only)
+- Change amplification (updates in multiple places)
+- Maintenance burden (keeping implementations in sync)
+- Bug risk (implementations drifting apart)
 
-**Files Changed**: 103 files
+**Files Modified:**
 
-- Type definitions updated
-- Data layer parsing updated
-- CLI commands refactored
-- Components enhanced
-- Tests updated
-- 84 content files marked with favorites
-- CI workflow migrated to pnpm
-
-**Test Coverage**: 345/345 tests passing ✅
-
----
-
-_Feature implementation completed during single session._
-_Total implementation time: ~2.5 hours_
+- New: `src/hooks/useReadingsFilter.ts`
+- New: `src/app/components/readings/ReadingsFilterToggle.tsx`
+- Modified: `src/app/components/readings/ReadingsList.tsx`
+- Modified: `src/app/components/readings/YearSection.tsx`
+- Modified: `src/app/readings/page.tsx`
+- Modified: `src/app/components/readings/__tests__/ReadingsList.test.tsx`
+- Modified: `src/app/components/readings/__tests__/YearSection.test.tsx`
