@@ -52,7 +52,7 @@ Favorites feature (star badges + filter toggle) implemented but not visible on r
 
 ### Phase 2: Update Existing Components
 
-- [ ] **Refactor ReadingsList to use extracted logic**
+- [x] **Refactor ReadingsList to use extracted logic**
 
   File: `src/app/components/readings/ReadingsList.tsx`
 

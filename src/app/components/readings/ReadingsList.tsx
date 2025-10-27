@@ -11,10 +11,12 @@
  * - Responsive design
  */
 
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import Image from 'next/image';
 import type { Reading } from '@/types';
 import { logger } from '@/lib/logger';
+import { useReadingsFilter } from '@/hooks/useReadingsFilter';
+import ReadingsFilterToggle from './ReadingsFilterToggle';
 
 // Sort option interface
 interface ListSortOption {
@@ -160,13 +162,8 @@ export default function ReadingsList({
   // Theme context is not currently used in this component but may be used in future updates
   // const { isDarkMode } = useTheme();
 
-  // Favorites filter state
-  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
-
-  // Filter readings by favorites if enabled
-  const filteredReadings = showOnlyFavorites
-    ? readings.filter(reading => reading.favorite)
-    : readings;
+  // Use favorites filter hook
+  const { filteredReadings, showOnlyFavorites, setShowOnlyFavorites } = useReadingsFilter(readings);
 
   // Function to handle sort column click
   const handleSortClick = useCallback(
@@ -180,28 +177,10 @@ export default function ReadingsList({
     <div className={`w-full ${className}`}>
       {/* Favorites Filter Toggle */}
       <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'flex-end' }}>
-        <button
-          onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
-          style={{
-            padding: '8px 16px',
-            borderRadius: '8px',
-            border: '1px solid var(--border-color)',
-            backgroundColor: showOnlyFavorites ? 'var(--primary-color)' : 'transparent',
-            color: showOnlyFavorites ? 'white' : 'var(--text-color)',
-            cursor: 'pointer',
-            fontSize: '14px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            transition: 'all 0.2s ease',
-          }}
-          aria-label={showOnlyFavorites ? 'Show all readings' : 'Show only favorites'}
-        >
-          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-          </svg>
-          {showOnlyFavorites ? 'Show All' : 'Favorites Only'}
-        </button>
+        <ReadingsFilterToggle
+          active={showOnlyFavorites}
+          onToggle={() => setShowOnlyFavorites(!showOnlyFavorites)}
+        />
       </div>
 
       {/* Column Headers with Enhanced Sort Indicators */}
