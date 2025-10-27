@@ -24,19 +24,15 @@ export default function ReadingsFilterToggle({ active, onToggle }: ReadingsFilte
   return (
     <button
       onClick={onToggle}
-      style={{
-        padding: '8px 16px',
-        borderRadius: '8px',
-        border: '1px solid var(--border-color)',
-        backgroundColor: active ? 'var(--primary-color)' : 'transparent',
-        color: active ? 'white' : 'var(--text-color)',
-        cursor: 'pointer',
-        fontSize: '14px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '6px',
-        transition: 'all 0.2s ease',
-      }}
+      className={`
+        flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium
+        transition-all duration-200 cursor-pointer
+        ${
+          active
+            ? 'bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600'
+            : 'bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-foreground border border-border'
+        }
+      `}
       aria-label={active ? 'Show all readings' : 'Show only favorites'}
     >
       <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">

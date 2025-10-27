@@ -147,11 +147,13 @@ Favorites feature (star badges + filter toggle) implemented but not visible on r
   Bug 1: Missing favorite field in JSON (generate-static-data.js)
   Bug 2: Blank page on filter (page.tsx useEffect logic)
   Bug 3: Flickering from re-renders
+  Bug 4: "Show All" button invisible (undefined CSS variables)
 
   Fixes:
   - [x] Update generate-static-data.js to include favorite field
   - [x] Simplify page.tsx useEffect logic
   - [x] Regenerate JSON data (84 favorites confirmed)
+  - [x] Restyle filter toggle with Tailwind for visibility in both themes
   - [x] Verify no TypeScript errors
 
 - [ ] **Test ReadingsPage filter integration** (Manual QA - requires user)
