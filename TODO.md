@@ -63,7 +63,7 @@ Favorites feature (star badges + filter toggle) implemented but not visible on r
 
   Success criteria: ReadingsList behavior unchanged, all tests pass, code is DRY
 
-- [ ] **Add favorite prop to ReadingCard in YearSection**
+- [x] **Add favorite prop to ReadingCard in YearSection**
 
   File: `src/app/components/readings/YearSection.tsx` (line ~94)
 

@@ -92,6 +92,7 @@ export default function YearSection({
               author={reading.author}
               coverImageSrc={reading.coverImageSrc}
               audiobook={reading.audiobook}
+              favorite={reading.favorite}
               finishedDate={reading.finishedDate}
             />
           ))}
