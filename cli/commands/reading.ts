@@ -6,7 +6,6 @@ import chalk from 'chalk';
 import slugify from 'slugify';
 import sharp from 'sharp';
 import matter from 'gray-matter';
-import { openEditor } from '../lib/editor';
 import { previewReading } from '../lib/preview';
 import { getReadings } from '../../src/lib/data';
 import type {
