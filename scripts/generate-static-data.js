@@ -113,8 +113,8 @@ function generateReadings() {
       author: data.author || 'Unknown Author',
       finishedDate: data.finished || null,
       coverImageSrc: data.coverImage || null,
-      thoughts: content.trim(),
       audiobook: data.audiobook || false,
+      favorite: data.favorite || false,
     };
   });
 

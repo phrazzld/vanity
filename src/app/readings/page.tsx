@@ -51,23 +51,20 @@ export default function ReadingsPage() {
     loadReadings();
   }, []);
 
-  // Group readings by year whenever they change (using filtered readings)
+  // Group readings by year whenever filtered readings change
   useEffect(() => {
-    if (filteredReadings.length === 0 && readings.length > 0) {
-      // If filter is active but no results, still show empty state
+    if (filteredReadings.length === 0) {
       setYearGroups({});
       setYears([]);
       return;
     }
-
-    if (filteredReadings.length === 0) return;
 
     const grouped = groupReadingsByYear(filteredReadings);
     setYearGroups(grouped);
 
     const sortedYears = getSortedYearKeys(grouped);
     setYears(sortedYears);
-  }, [filteredReadings, readings.length]);
+  }, [filteredReadings]);
 
   return (
     <section>
