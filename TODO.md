@@ -35,7 +35,7 @@ Favorites feature (star badges + filter toggle) implemented but not visible on r
 
   Success criteria: Hook encapsulates all filter state management, returns filtered readings and toggle function
 
-- [ ] **Create ReadingsFilterToggle component**
+- [x] **Create ReadingsFilterToggle component**
 
   File: `src/app/components/readings/ReadingsFilterToggle.tsx`
 
