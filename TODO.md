@@ -142,7 +142,7 @@ Favorites feature (star badges + filter toggle) implemented but not visible on r
 
   Success criteria: Test confirms prop passing works correctly
 
-- [ ] **Test ReadingsPage filter integration**
+- [ ] **Test ReadingsPage filter integration** (Manual QA - requires user)
 
   Manual QA:
   1. Run `pnpm run dev`
