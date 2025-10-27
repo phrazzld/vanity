@@ -27,6 +27,7 @@ jest.mock('../ReadingCard', () => {
       title,
       author,
       audiobook,
+      favorite,
       finishedDate,
     }: {
       slug: string;
@@ -34,6 +35,7 @@ jest.mock('../ReadingCard', () => {
       author: string;
       coverImageSrc?: string | null;
       audiobook?: boolean;
+      favorite?: boolean;
       finishedDate?: string | Date | null;
     }) => (
       <div data-testid="reading-card" className="mocked-reading-card">
@@ -41,6 +43,7 @@ jest.mock('../ReadingCard', () => {
         <div>{author}</div>
         <div>{slug}</div>
         <div>{audiobook ? 'Audiobook' : ''}</div>
+        <div>{favorite ? 'Favorite' : ''}</div>
         <div>{finishedDate ? 'Finished' : 'Reading'}</div>
       </div>
     ),
@@ -152,5 +155,24 @@ describe('YearSection Component', () => {
 
     // We can use getByText directly since it's more specific and reliable
     expect(screen.getByText('Custom content')).toBeInTheDocument();
+  });
+
+  it('passes favorite prop to ReadingCard', () => {
+    const favoriteReading: Reading = {
+      id: 5,
+      slug: 'favorite-book',
+      title: 'Favorite Book',
+      author: 'Favorite Author',
+      finishedDate: '2023-06-01',
+      coverImageSrc: null,
+      audiobook: false,
+      favorite: true,
+    };
+
+    render(<YearSection year="2023" readings={[favoriteReading]} />);
+
+    // Verify the favorite reading is rendered with Favorite indicator
+    expect(screen.getByText('Favorite Book')).toBeInTheDocument();
+    expect(screen.getByText('Favorite')).toBeInTheDocument();
   });
 });

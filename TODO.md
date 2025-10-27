@@ -113,7 +113,7 @@ Favorites feature (star badges + filter toggle) implemented but not visible on r
 
 ### Phase 4: Testing
 
-- [ ] **Update ReadingsList tests**
+- [x] **Update ReadingsList tests**
 
   File: `src/app/components/readings/__tests__/ReadingsList.test.tsx`
 
@@ -124,7 +124,9 @@ Favorites feature (star badges + filter toggle) implemented but not visible on r
 
   Success criteria: All existing tests pass without modification
 
-- [ ] **Add YearSection favorite prop test**
+  Result: ✅ All 14 tests passing, no modifications needed
+
+- [x] **Add YearSection favorite prop test**
 
   File: `src/app/components/readings/__tests__/YearSection.test.tsx`
 
