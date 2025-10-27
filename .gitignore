@@ -10,6 +10,9 @@
 !.yarn/releases
 !.yarn/versions
 
+# lock files (project uses pnpm, ignore npm lock file)
+package-lock.json
+
 # testing
 /coverage
 

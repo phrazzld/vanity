@@ -1,9 +1,9 @@
 {
   "framework": "nextjs",
-  "buildCommand": "NODE_OPTIONS='--max-old-space-size=4096' npm run build",
+  "buildCommand": "NODE_OPTIONS='--max-old-space-size=4096' pnpm run build",
   "outputDirectory": ".next",
-  "devCommand": "npm run dev",
-  "installCommand": "npm ci",
+  "devCommand": "pnpm run dev",
+  "installCommand": "pnpm install --frozen-lockfile",
   "env": {
     "NODE_VERSION": "20",
     "SKIP_STORYBOOK": "true"

@@ -121,7 +121,7 @@
     "test:coverage": "jest --coverage",
     "test:snapshot": "jest --testMatch='**/*.snapshot.test.{ts,tsx}'",
     "test:snapshot:update": "node scripts/update-snapshots.js",
-    "security:audit": "npm audit --audit-level=critical",
+    "security:audit": "pnpm audit --audit-level=critical",
     "validate:logging": "./scripts/validate-structured-logging.sh",
     "prepare": "husky",
     "release": "standard-version",

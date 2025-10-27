@@ -9,18 +9,18 @@ fi
 
 echo "🔒 Running security vulnerability scan..."
 
-# Run npm audit for critical vulnerabilities only
+# Run pnpm audit for critical vulnerabilities only
 echo "🔍 Checking for critical security vulnerabilities..."
-if npm audit --audit-level=critical > /dev/null 2>&1; then
+if pnpm audit --audit-level=critical > /dev/null 2>&1; then
   echo "✅ No critical vulnerabilities found"
 else
   echo ""
   echo "❌ Critical security vulnerabilities detected!"
   echo ""
-  echo "Run 'npm audit' to see details"
+  echo "Run 'pnpm audit' to see details"
   echo ""
   echo "To fix security issues:"
-  echo "1. Update dependencies with 'npm audit fix'"
+  echo "1. Update dependencies with 'pnpm update'"
   echo "2. Manually update package.json for breaking changes"
   echo ""
   exit 1
