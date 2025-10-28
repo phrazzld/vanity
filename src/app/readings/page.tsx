@@ -25,7 +25,8 @@ export default function ReadingsPage() {
 
   // Calculate stats for header
   const favoritesCount = readings.filter(r => r.favorite).length;
-  const yearsCount = years.length;
+  // Exclude special sections like "Currently Reading" from year count
+  const yearsCount = years.filter(y => y !== 'Currently Reading').length;
 
   // Load all readings data
   useEffect(() => {
