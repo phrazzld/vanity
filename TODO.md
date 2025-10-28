@@ -156,6 +156,11 @@ Favorites feature (star badges + filter toggle) implemented but not visible on r
   - [x] Restyle filter toggle with Tailwind for visibility in both themes
   - [x] Verify no TypeScript errors
 
+- [x] **Polish filter toggle UX**
+  - [x] Add micro-animations (icon rotation 180°, button scale on click)
+  - [x] Respect prefers-reduced-motion accessibility
+  - [x] Fix button size consistency with min-w-40 (prevents resize when text changes)
+
 - [ ] **Test ReadingsPage filter integration** (Manual QA - requires user)
 
   Manual QA:
