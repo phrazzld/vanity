@@ -18,6 +18,8 @@
 
 ## Technical Debt Opportunities
 
+- **Refactor Layout Architecture**: Current layout uses global `container-content` wrapper, requiring components to "break out" using `.full-width-breakout` utility when they need edge-to-edge width. Consider moving to page-controlled containment where each page decides what's constrained vs full-width. Would eliminate negative margin workarounds. Effort: 3-4 hours.
+
 - **Refactor YearSection**: Consider if YearSection should accept ReadingListItem[] instead of Reading[] since it only uses subset of fields. Would clarify data contracts. Effort: 1 hour.
 
 - **Extract grouping logic**: The year grouping logic in ReadingsPage could be extracted to `useReadingsGrouping` hook similar to the filter hook. Would make page logic cleaner. Effort: 1-2 hours.

@@ -18,9 +18,15 @@ export interface ReadingsFilterToggleProps {
   active: boolean;
   /** Callback function to toggle the filter state */
   onToggle: () => void;
+  /** Optional count of favorites to display in the button */
+  count?: number;
 }
 
-export default function ReadingsFilterToggle({ active, onToggle }: ReadingsFilterToggleProps) {
+export default function ReadingsFilterToggle({
+  active,
+  onToggle,
+  count,
+}: ReadingsFilterToggleProps) {
   return (
     <button
       onClick={onToggle}
@@ -47,7 +53,11 @@ export default function ReadingsFilterToggle({ active, onToggle }: ReadingsFilte
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
         </svg>
       </span>
-      {active ? 'Show All' : 'Favorites Only'}
+      {active ? (
+        <>Show All{count !== undefined && ` (${count})`}</>
+      ) : (
+        <>Favorites{count !== undefined && ` (${count})`}</>
+      )}
     </button>
   );
 }

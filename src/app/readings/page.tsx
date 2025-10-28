@@ -11,7 +11,7 @@ import {
   sortReadingsWithinCategory,
 } from '@/lib/utils/readingUtils';
 import { useReadingsFilter } from '@/hooks/useReadingsFilter';
-import ReadingsFilterToggle from '../components/readings/ReadingsFilterToggle';
+import ReadingsHeader from '../components/readings/ReadingsHeader';
 
 export default function ReadingsPage() {
   const [readings, setReadings] = useState<Reading[]>([]);
@@ -22,6 +22,10 @@ export default function ReadingsPage() {
 
   // Use favorites filter hook
   const { filteredReadings, showOnlyFavorites, setShowOnlyFavorites } = useReadingsFilter(readings);
+
+  // Calculate stats for header
+  const favoritesCount = readings.filter(r => r.favorite).length;
+  const yearsCount = years.length;
 
   // Load all readings data
   useEffect(() => {
@@ -75,26 +79,29 @@ export default function ReadingsPage() {
         </div>
       )}
 
-      {/* Favorites filter toggle */}
+      {/* Integrated header with stats and filter */}
       {!isLoading && readings.length > 0 && (
-        <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'flex-end' }}>
-          <ReadingsFilterToggle
-            active={showOnlyFavorites}
-            onToggle={() => setShowOnlyFavorites(!showOnlyFavorites)}
-          />
-        </div>
+        <ReadingsHeader
+          totalCount={readings.length}
+          favoritesCount={favoritesCount}
+          yearsCount={yearsCount}
+          showOnlyFavorites={showOnlyFavorites}
+          onToggleFilter={() => setShowOnlyFavorites(!showOnlyFavorites)}
+        />
       )}
 
-      {/* Year-based sections */}
-      {!isLoading &&
-        years.length > 0 &&
-        years.map(year => (
-          <YearSection
-            key={year}
-            year={year}
-            readings={sortReadingsWithinCategory(yearGroups[year] || [], year)}
-          />
-        ))}
+      {/* Year-based sections with smooth transitions */}
+      <div className="transition-opacity duration-300">
+        {!isLoading &&
+          years.length > 0 &&
+          years.map(year => (
+            <YearSection
+              key={year}
+              year={year}
+              readings={sortReadingsWithinCategory(yearGroups[year] || [], year)}
+            />
+          ))}
+      </div>
 
       {/* No readings found message */}
       {!isLoading && readings.length === 0 && !error && (
