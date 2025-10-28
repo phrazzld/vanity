@@ -1,6 +1,6 @@
 import { writeFile, mkdir, readFile } from 'fs/promises';
 import { join } from 'path';
-import { existsSync, readdirSync, unlinkSync } from 'fs';
+import { existsSync, unlinkSync } from 'fs';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import slugify from 'slugify';
@@ -8,6 +8,7 @@ import matter from 'gray-matter';
 import { previewReading } from '../lib/preview';
 import { getReadings } from '../../src/lib/data';
 import { processReadingCoverImage } from '../lib/reading-image';
+import { getNextRereadFilename, getMostRecentReading } from '../lib/reading-reread';
 import type {
   BasicReadingInfo,
   FinishedPrompt,
@@ -24,77 +25,6 @@ import type {
 
 const READINGS_DIR = join(process.cwd(), 'content', 'readings');
 const IMAGES_DIR = join(process.cwd(), 'public', 'images', 'readings');
-
-/**
- * Find all existing readings for a given slug (base and numbered versions)
- */
-function findExistingReadings(baseSlug: string): string[] {
-  if (!existsSync(READINGS_DIR)) return [];
-
-  const files = readdirSync(READINGS_DIR);
-  const pattern = new RegExp(`^${baseSlug}(-\\d+)?\\.md$`);
-
-  return files
-    .filter(file => pattern.test(file))
-    .sort((a, b) => {
-      // Sort base file first, then numbered versions
-      const aNum = a.match(/-(\d+)\.md$/)?.[1];
-      const bNum = b.match(/-(\d+)\.md$/)?.[1];
-      if (!aNum && !bNum) return 0;
-      if (!aNum) return -1;
-      if (!bNum) return 1;
-      return parseInt(aNum) - parseInt(bNum);
-    });
-}
-
-/**
- * Get the next available filename for a reread
- */
-function getNextRereadFilename(baseSlug: string): string {
-  const existingFiles = findExistingReadings(baseSlug);
-
-  if (existingFiles.length === 0) {
-    return `${baseSlug}.md`;
-  }
-
-  // Find the highest number suffix
-  let maxNum = 1; // Start at 1 since base file exists
-  for (const file of existingFiles) {
-    const match = file.match(/-(\d+)\.md$/);
-    if (match && match[1]) {
-      maxNum = Math.max(maxNum, parseInt(match[1]));
-    }
-  }
-
-  return `${baseSlug}-${String(maxNum + 1).padStart(2, '0')}.md`;
-}
-
-/**
- * Get information about the most recent reading
- */
-async function getMostRecentReading(
-  baseSlug: string
-): Promise<{ date: string | null; count: number } | null> {
-  const existingFiles = findExistingReadings(baseSlug);
-  if (existingFiles.length === 0) return null;
-
-  // Read the most recent file to get its date
-  const mostRecentFile = existingFiles[existingFiles.length - 1];
-  if (!mostRecentFile) return null;
-
-  const filepath = join(READINGS_DIR, mostRecentFile);
-
-  try {
-    const content = await readFile(filepath, 'utf8');
-    const { data } = matter(content);
-    return {
-      date: (data.finished as string | null) || null,
-      count: existingFiles.length,
-    };
-  } catch {
-    return { date: null, count: existingFiles.length };
-  }
-}
 
 /**
  * Adds a new reading interactively using inquirer prompts
@@ -248,7 +178,7 @@ export async function addReading(): Promise<void> {
     let filename = `${slug}.md`;
     let filepath = join(READINGS_DIR, filename);
 
-    const existingReading = await getMostRecentReading(slug);
+    const existingReading = await getMostRecentReading(slug, READINGS_DIR);
 
     if (existingReading) {
       // Book already exists - offer reread options
@@ -273,7 +203,7 @@ export async function addReading(): Promise<void> {
           message: 'What would you like to do?',
           choices: [
             {
-              name: `Add as reread (creates ${getNextRereadFilename(slug)})`,
+              name: `Add as reread (creates ${getNextRereadFilename(slug, READINGS_DIR)})`,
               value: 'reread',
             },
             {
@@ -293,7 +223,7 @@ export async function addReading(): Promise<void> {
         console.log(chalk.yellow('✖ Reading creation cancelled.'));
         return;
       } else if (action === 'reread') {
-        filename = getNextRereadFilename(slug);
+        filename = getNextRereadFilename(slug, READINGS_DIR);
         filepath = join(READINGS_DIR, filename);
 
         // For rereads, if they selected a local image, we need to rename it

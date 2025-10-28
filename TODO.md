@@ -22,7 +22,7 @@ Each extracted module should be **deep** (high functionality / low interface com
 
 ## Implementation Tasks
 
-- [~] Extract `cli/lib/reading-image.ts` - Image processing module
+- [x] Extract `cli/lib/reading-image.ts` - Image processing module
 
   ```
   Files: Create cli/lib/reading-image.ts, update cli/commands/reading.ts:253-278,557-580
@@ -52,7 +52,7 @@ Each extracted module should be **deep** (high functionality / low interface com
   Time: 90min (60min implementation + 30min tests)
   ```
 
-- [ ] Extract `cli/lib/reading-reread.ts` - Reread detection & versioning
+- [~] Extract `cli/lib/reading-reread.ts` - Reread detection & versioning
 
   ```
   Files: Create cli/lib/reading-reread.ts, update cli/commands/reading.ts:29-96
