@@ -1,193 +1,122 @@
-# TODO: Fix Favorites Feature Display
+# TODO: Security and Cleanup Sprint
 
 ## Context
 
-Favorites feature (star badges + filter toggle) implemented but not visible on readings page.
-
-**Root Cause:**
-
-1. YearSection doesn't pass `favorite` prop to ReadingCard
-2. ReadingsPage doesn't have filter toggle UI
-3. ReadingsList component has filter logic but isn't used on main page
-
-**Architecture Issue:** Filter logic exists in ReadingsList but would be duplicated in ReadingsPage. Must extract shared logic to avoid duplication.
+- **Approach**: Three independent, high-impact removals (security, dead code, unused deps)
+- **Key Files**: docker-compose.yml, unused hooks (2 files + 2 test files), package.json
+- **Patterns**: Follow git rm for tracked files, npm uninstall for deps
+- **Bundle Impact**: 10-15% reduction (~15-25KB gzipped)
+- **Security**: Eliminates hardcoded credentials in git history
 
 ## Implementation Tasks
 
-### Phase 1: Extract Shared Filter Logic
+### Module 1: Security - Remove Hardcoded Credentials
 
-- [x] **Create useReadingsFilter hook**
-
-  File: `src/hooks/useReadingsFilter.ts`
-
-  Extract filter state and logic from ReadingsList component into reusable hook:
-
-  ```tsx
-  export function useReadingsFilter(readings: Reading[]) {
-    const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
-    const filteredReadings = useMemo(
-      () => (showOnlyFavorites ? readings.filter(r => r.favorite) : readings),
-      [readings, showOnlyFavorites]
-    );
-    return { filteredReadings, showOnlyFavorites, setShowOnlyFavorites };
-  }
+- [ ] Remove docker-compose.yml with hardcoded postgres password
+  ```
+  Files: docker-compose.yml:11-12 (git tracked, in history since 9222e32)
+  Approach: git rm docker-compose.yml (database removed per package.json:9-22)
+  Success: File removed from working tree and staged for deletion, no hardcoded credentials present
+  Test: Security scan passes (pnpm run security:audit), git status shows deletion staged
+  Module: Infrastructure configuration - removing legacy database setup
+  Rationale: Database removed in favor of markdown files, docker-compose serves no purpose
+  Time: 5min
   ```
 
-  Success criteria: Hook encapsulates all filter state management, returns filtered readings and toggle function
+### Module 2: Dead Code Elimination - Unused Hooks
 
-- [x] **Create ReadingsFilterToggle component**
+- [ ] Delete useFormState hook and tests (668 lines total)
 
-  File: `src/app/components/readings/ReadingsFilterToggle.tsx`
-
-  Extract filter button UI from ReadingsList (lines 182-205) into standalone component:
-
-  ```tsx
-  interface ReadingsFilterToggleProps {
-    active: boolean;
-    onToggle: () => void;
-  }
+  ```
+  Files:
+    - src/hooks/useFormState.ts (234 lines)
+    - src/hooks/__tests__/useFormState.test.ts (435 lines)
+  Approach: git rm both files (zero imports found in src/app or src/components)
+  Success: Files deleted, TypeScript compilation passes, test suite runs without errors
+  Test: npm test && npm run typecheck (verify no broken imports)
+  Module: Form state management - speculative abstraction never used
+  Evidence: grep -r "useFormState" src/{app,components} → No matches outside hooks/
+  Time: 5min
   ```
 
-  Success criteria: Component renders star icon + toggle button with proper styling and accessibility attributes
-
-### Phase 2: Update Existing Components
-
-- [x] **Refactor ReadingsList to use extracted logic**
-
-  File: `src/app/components/readings/ReadingsList.tsx`
-
-  Replace inline filter state (lines 164-169) and button UI (lines 182-205) with:
-  - Import and use `useReadingsFilter` hook
-  - Import and render `<ReadingsFilterToggle>` component
-  - Use `filteredReadings` from hook instead of local state
-
-  Success criteria: ReadingsList behavior unchanged, all tests pass, code is DRY
-
-- [x] **Add favorite prop to ReadingCard in YearSection**
-
-  File: `src/app/components/readings/YearSection.tsx` (line ~94)
-
-  Add missing prop to ReadingCard:
-
-  ```tsx
-  <ReadingCard
-    key={reading.slug}
-    slug={reading.slug}
-    title={reading.title}
-    author={reading.author}
-    coverImageSrc={reading.coverImageSrc}
-    audiobook={reading.audiobook}
-    favorite={reading.favorite} // ADD THIS LINE
-    finishedDate={reading.finishedDate}
-  />
+- [ ] Delete useSearchFilters hook and tests (863 lines total)
+  ```
+  Files:
+    - src/hooks/useSearchFilters.ts (305 lines)
+    - src/hooks/__tests__/useSearchFilters.test.ts (558 lines)
+  Approach: git rm both files (replaced by useReadingsFilter for actual use case)
+  Success: Files deleted, TypeScript compilation passes, all tests pass
+  Test: npm test && npm run typecheck (existing useReadingsFilter tests cover actual functionality)
+  Module: Generic search/filter abstraction - over-engineered for simple needs
+  Evidence: useReadingsFilter (909 lines) provides focused functionality actually needed
+  Time: 5min
   ```
 
-  Success criteria: Star badges now visible on hover for favorited readings
+### Module 3: Bundle Optimization - Unused Dependencies
 
-### Phase 3: Add Filter to Readings Page
+- [ ] Remove unused production dependencies
 
-- [x] **Add favorites filter to ReadingsPage**
-
-  File: `src/app/readings/page.tsx`
-
-  Changes:
-  1. Import `useReadingsFilter` hook and `ReadingsFilterToggle` component
-  2. Add filter logic before grouping (line ~37):
-     ```tsx
-     const { filteredReadings, showOnlyFavorites, setShowOnlyFavorites } = useReadingsFilter(
-       result.data
-     );
-     setReadings(filteredReadings);
-     ```
-  3. Add `<ReadingsFilterToggle>` component before year sections (line ~61):
-     ```tsx
-     <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'flex-end' }}>
-       <ReadingsFilterToggle
-         active={showOnlyFavorites}
-         onToggle={() => setShowOnlyFavorites(!showOnlyFavorites)}
-       />
-     </div>
-     ```
-
-  Success criteria: Filter toggle appears on page, clicking filters to only favorites, clicking again shows all
-
-### Phase 4: Testing
-
-- [x] **Update ReadingsList tests**
-
-  File: `src/app/components/readings/__tests__/ReadingsList.test.tsx`
-
-  Verify tests still pass after refactoring to use hook and component. Tests should cover:
-  - Filter toggle renders
-  - Clicking toggle filters readings
-  - Filtered state updates correctly
-
-  Success criteria: All existing tests pass without modification
-
-  Result: ✅ All 14 tests passing, no modifications needed
-
-- [x] **Add YearSection favorite prop test**
-
-  File: `src/app/components/readings/__tests__/YearSection.test.tsx`
-
-  Add test case verifying `favorite` prop is passed through to ReadingCard:
-
-  ```tsx
-  it('passes favorite prop to ReadingCard', () => {
-    const readings = [{ ...mockReading, favorite: true }];
-    render(<YearSection year="2023" readings={readings} />);
-    // Verify ReadingCard receives favorite prop
-  });
+  ```
+  Files: package.json:136-145
+  Approach: npm uninstall date-fns date-fns-tz zod
+  Success: Dependencies removed from package.json, no build/test failures
+  Test:
+    - npm run build (verify no import errors)
+    - npm test (all tests pass)
+    - Check bundle size reduction in build output
+  Module: Dependency management - removing unused libraries
+  Evidence:
+    - date-fns: No imports in src/ (grep -r "from 'date-fns" src/)
+    - date-fns-tz: No imports in src/
+    - zod: No imports in src/ (validation not needed for static markdown)
+  Exception: nanoid still used in src/__mocks__/nanoid.ts for test determinism
+  Bundle Impact: ~15-25KB gzipped (date-fns: 539KB, zod: significant)
+  Time: 10min
   ```
 
-  Success criteria: Test confirms prop passing works correctly
+- [ ] Move nanoid to devDependencies (used only in test mocks)
+  ```
+  Files: package.json, src/__mocks__/nanoid.ts:1
+  Approach: npm uninstall nanoid && npm install --save-dev nanoid
+  Success: nanoid in devDependencies, mock still functions, tests pass
+  Test: npm test (verify src/__mocks__/nanoid.ts still provides deterministic IDs)
+  Module: Test infrastructure - correctly categorize mock dependency
+  Rationale: nanoid only imported in src/__mocks__/, not production code
+  Time: 5min
+  ```
 
-- [x] **Fix critical bugs preventing favorites from working**
+## Validation Strategy
 
-  Bug 1: Missing favorite field in JSON (generate-static-data.js)
-  Bug 2: Blank page on filter (page.tsx useEffect logic)
-  Bug 3: Flickering from re-renders
-  Bug 4: "Show All" button invisible (undefined CSS variables)
+**Module Testing**:
 
-  Fixes:
-  - [x] Update generate-static-data.js to include favorite field
-  - [x] Simplify page.tsx useEffect logic
-  - [x] Regenerate JSON data (84 favorites confirmed)
-  - [x] Restyle filter toggle with Tailwind for visibility in both themes
-  - [x] Verify no TypeScript errors
+- Each task can be validated independently
+- No integration between tasks (parallel-ready)
+- Binary success: command succeeds or fails
 
-- [x] **Polish filter toggle UX**
-  - [x] Add micro-animations (icon rotation 180°, button scale on click)
-  - [x] Respect prefers-reduced-motion accessibility
-  - [x] Fix button size consistency with min-w-40 (prevents resize when text changes)
+**Acceptance Criteria**:
 
-- [ ] **Test ReadingsPage filter integration** (Manual QA - requires user)
+1. Security: `git status` shows docker-compose.yml deleted, no hardcoded credentials remain
+2. Dead Code: `npm run typecheck` passes, `npm test` passes (zero broken imports)
+3. Bundle: `npm run build` succeeds with smaller bundle sizes in output
 
-  Manual QA:
-  1. Run `pnpm run dev`
-  2. Navigate to /readings page
-  3. Verify filter toggle button appears in top-right
-  4. Hover over favorited books → verify star badge appears
-  5. Click "Favorites Only" → verify list filters to only favorites
-  6. Click "Show All" → verify all readings display again
-  7. Test with both audiobook + favorite badges → verify they stack vertically
+**Full Pipeline**:
 
-  Success criteria: All manual test cases pass, feature works as expected
+```bash
+npm run typecheck && npm test && npm run build && pnpm run security:audit
+```
+
+## Design Iteration
+
+After completion: Review remaining hooks/ directory for other unused abstractions
+
+## Automation Opportunities
+
+Future: Add CI check to fail if unused dependencies detected (e.g., depcheck or similar)
 
 ## Notes
 
-**Design Decision:** Extracted shared logic rather than duplicating to avoid:
-
-- Change amplification (updates in multiple places)
-- Maintenance burden (keeping implementations in sync)
-- Bug risk (implementations drifting apart)
-
-**Files Modified:**
-
-- New: `src/hooks/useReadingsFilter.ts`
-- New: `src/app/components/readings/ReadingsFilterToggle.tsx`
-- Modified: `src/app/components/readings/ReadingsList.tsx`
-- Modified: `src/app/components/readings/YearSection.tsx`
-- Modified: `src/app/readings/page.tsx`
-- Modified: `src/app/components/readings/__tests__/ReadingsList.test.tsx`
-- Modified: `src/app/components/readings/__tests__/YearSection.test.tsx`
+- **No Process Tasks**: This is pure implementation (deletion = code change)
+- **Parallel Ready**: All three modules independent (security, hooks, deps)
+- **Time Budget**: 30 minutes total for all tasks
+- **Risk**: Very low - all deletions verified safe by grep/testing
+- **Rollback**: Simple git revert if issues discovered
