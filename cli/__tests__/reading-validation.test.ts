@@ -41,12 +41,14 @@ describe('reading-validation', () => {
       const futureDate = new Date();
       futureDate.setFullYear(futureDate.getFullYear() + 1);
       const futureDateString = futureDate.toISOString().split('T')[0];
+      if (!futureDateString) throw new Error('Failed to generate future date');
 
       expect(() => validateDateInput(futureDateString)).toThrow('Date cannot be in the future');
     });
 
     it("should accept today's date", () => {
       const today = new Date().toISOString().split('T')[0];
+      if (!today) throw new Error('Failed to generate today date');
       const result = validateDateInput(today);
       expect(result).toBeDefined();
     });
@@ -161,6 +163,7 @@ describe('reading-validation', () => {
       const futureDate = new Date();
       futureDate.setFullYear(futureDate.getFullYear() + 1);
       const futureDateString = futureDate.toISOString().split('T')[0];
+      if (!futureDateString) throw new Error('Failed to generate future date');
 
       const result = validateDateForPrompt(futureDateString);
       expect(result).toBe('Date cannot be in the future');
@@ -177,6 +180,7 @@ describe('reading-validation', () => {
 
     it("should return true for today's date", () => {
       const today = new Date().toISOString().split('T')[0];
+      if (!today) throw new Error('Failed to generate today date');
       const result = validateDateForPrompt(today);
       expect(result).toBe(true);
     });

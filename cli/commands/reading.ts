@@ -9,16 +9,16 @@ import { getReadings } from '../../src/lib/data';
 import { processReadingCoverImage } from '../lib/reading-image';
 import { getNextRereadFilename, getMostRecentReading } from '../lib/reading-reread';
 import { sanitizeSlug, validateDateInput, validateDateForPrompt } from '../lib/reading-validation';
+import {
+  promptBasicReadingInfo,
+  promptReadingMetadata,
+  promptCoverImage,
+  promptRereadAction,
+} from '../lib/reading-prompts';
 import type {
-  BasicReadingInfo,
-  FinishedPrompt,
   DateInputPrompt,
-  ImageChoicePrompt,
-  ImageUrlPrompt,
   ImageFilePrompt,
-  AudiobookPrompt,
   ContinueWithoutImagePrompt,
-  ReadingActionPrompt,
   ReadingFrontmatter,
   ConfirmDeletePrompt,
 } from '../types';
@@ -33,121 +33,24 @@ export async function addReading(): Promise<void> {
   console.log(chalk.cyan("📚 Let's add a new reading...\n"));
 
   try {
-    // Title and author prompts
-    const basicInfo = await inquirer.prompt<BasicReadingInfo>([
-      {
-        type: 'input',
-        name: 'title',
-        message: 'Book title:',
-        validate: input => (input.trim() ? true : 'Title is required'),
-      },
-      {
-        type: 'input',
-        name: 'author',
-        message: 'Author:',
-        validate: input => (input.trim() ? true : 'Author is required'),
-      },
-    ]);
+    // Get basic reading information
+    const basicInfo = await promptBasicReadingInfo();
 
-    // Finished prompt
-    const { finished } = await inquirer.prompt<FinishedPrompt>([
-      {
-        type: 'confirm',
-        name: 'finished',
-        message: 'Have you finished this book?',
-        default: false,
-      },
-    ]);
+    // Get reading metadata (finished, date, audiobook, favorite)
+    const { finished, finishedDate, audiobook, favorite } = await promptReadingMetadata();
 
-    // Date prompt if finished
-    let finishedDate: string | null = null;
-    if (finished) {
-      const { dateInput } = await inquirer.prompt<DateInputPrompt>([
-        {
-          type: 'input',
-          name: 'dateInput',
-          message: 'When did you finish? (YYYY-MM-DD or press Enter for today):',
-          default: new Date().toISOString().split('T')[0],
-          validate: validateDateForPrompt,
-        },
-      ]);
-      finishedDate = validateDateInput(dateInput);
-    }
-
-    // Audiobook prompt
-    const { audiobook } = await inquirer.prompt<AudiobookPrompt>([
-      {
-        type: 'confirm',
-        name: 'audiobook',
-        message: 'Is this an audiobook?',
-        default: false,
-      },
-    ]);
-
-    // Favorite prompt
-    const { favorite } = await inquirer.prompt<{ favorite: boolean }>([
-      {
-        type: 'confirm',
-        name: 'favorite',
-        message: 'Mark as favorite?',
-        default: false,
-      },
-    ]);
-
-    // Cover image prompt
-    const { imageChoice } = await inquirer.prompt<ImageChoicePrompt>([
-      {
-        type: 'list',
-        name: 'imageChoice',
-        message: 'Add a cover image?',
-        choices: [
-          { name: '🔗 URL - Provide an image URL', value: 'url' },
-          { name: '📁 Local - Upload a local image file', value: 'local' },
-          { name: '⏭️  Skip - No cover image', value: 'skip' },
-        ],
-      },
-    ]);
+    // Get cover image choice and details
+    const slug = sanitizeSlug(basicInfo.title);
+    const coverImageResult = await promptCoverImage();
 
     let coverImage: string | null = null;
-    const slug = sanitizeSlug(basicInfo.title);
-
-    if (imageChoice === 'url') {
-      const { imageUrl } = await inquirer.prompt<ImageUrlPrompt>([
-        {
-          type: 'input',
-          name: 'imageUrl',
-          message: 'Image URL:',
-          validate: input => {
-            if (!input.trim()) return 'URL is required';
-            try {
-              new URL(input);
-              return true;
-            } catch {
-              return 'Please enter a valid URL';
-            }
-          },
-        },
-      ]);
-      coverImage = imageUrl;
-    } else if (imageChoice === 'local') {
-      const { imagePath } = await inquirer.prompt<ImageFilePrompt>([
-        {
-          type: 'input',
-          name: 'imagePath',
-          message: 'Path to image file:',
-          validate: input => {
-            if (!input.trim()) return 'Path is required';
-            return true;
-          },
-        },
-      ]);
-
-      // Process image using extracted module
-      // Note: We'll update the path later if this is a reread
+    if (coverImageResult.choice === 'url') {
+      coverImage = coverImageResult.value;
+    } else if (coverImageResult.choice === 'local' && coverImageResult.value) {
+      // Process local image
       console.log(chalk.gray('Optimizing image...'));
-
       try {
-        coverImage = await processReadingCoverImage(imagePath, slug, IMAGES_DIR);
+        coverImage = await processReadingCoverImage(coverImageResult.value, slug, IMAGES_DIR);
         console.log(chalk.green('✓ Image optimized and saved'));
       } catch (imageError) {
         const errorMessage = imageError instanceof Error ? imageError.message : String(imageError);
@@ -192,28 +95,12 @@ export async function addReading(): Promise<void> {
 
       console.log('\n' + message);
 
-      const { action } = await inquirer.prompt<ReadingActionPrompt>([
-        {
-          type: 'list',
-          name: 'action',
-          message: 'What would you like to do?',
-          choices: [
-            {
-              name: `Add as reread (creates ${getNextRereadFilename(slug, READINGS_DIR)})`,
-              value: 'reread',
-            },
-            {
-              name: 'Update most recent entry',
-              value: 'update',
-            },
-            {
-              name: 'Cancel',
-              value: 'cancel',
-            },
-          ],
-          default: 'reread',
-        },
-      ]);
+      const action = await promptRereadAction(
+        basicInfo.title,
+        existingReading.count,
+        existingReading.date,
+        getNextRereadFilename(slug, READINGS_DIR)
+      );
 
       if (action === 'cancel') {
         console.log(chalk.yellow('✖ Reading creation cancelled.'));
