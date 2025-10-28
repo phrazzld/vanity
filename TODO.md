@@ -12,7 +12,7 @@
 
 ### Module 1: Security - Remove Hardcoded Credentials
 
-- [ ] Remove docker-compose.yml with hardcoded postgres password
+- [x] Remove docker-compose.yml with hardcoded postgres password
   ```
   Files: docker-compose.yml:11-12 (git tracked, in history since 9222e32)
   Approach: git rm docker-compose.yml (database removed per package.json:9-22)
@@ -25,7 +25,7 @@
 
 ### Module 2: Dead Code Elimination - Unused Hooks
 
-- [ ] Delete useFormState hook and tests (668 lines total)
+- [x] Delete useFormState hook and tests (668 lines total)
 
   ```
   Files:
@@ -39,7 +39,7 @@
   Time: 5min
   ```
 
-- [ ] Delete useSearchFilters hook and tests (863 lines total)
+- [x] Delete useSearchFilters hook and tests (863 lines total)
   ```
   Files:
     - src/hooks/useSearchFilters.ts (305 lines)
@@ -54,7 +54,7 @@
 
 ### Module 3: Bundle Optimization - Unused Dependencies
 
-- [ ] Remove unused production dependencies
+- [x] Remove unused production dependencies
 
   ```
   Files: package.json:136-145
@@ -74,7 +74,7 @@
   Time: 10min
   ```
 
-- [ ] Move nanoid to devDependencies (used only in test mocks)
+- [x] Move nanoid to devDependencies (used only in test mocks)
   ```
   Files: package.json, src/__mocks__/nanoid.ts:1
   Approach: npm uninstall nanoid && npm install --save-dev nanoid
