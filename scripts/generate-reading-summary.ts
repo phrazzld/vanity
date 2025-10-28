@@ -10,8 +10,8 @@ interface Reading {
   author: string | null;
   finishedDate: string | null;
   coverImageSrc: string | null;
-  thoughts: string;
   audiobook?: boolean;
+  favorite?: boolean;
 }
 
 function generateReadingSummary() {

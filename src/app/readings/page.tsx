@@ -10,6 +10,8 @@ import {
   getSortedYearKeys,
   sortReadingsWithinCategory,
 } from '@/lib/utils/readingUtils';
+import { useReadingsFilter } from '@/hooks/useReadingsFilter';
+import ReadingsHeader from '../components/readings/ReadingsHeader';
 
 export default function ReadingsPage() {
   const [readings, setReadings] = useState<Reading[]>([]);
@@ -17,6 +19,13 @@ export default function ReadingsPage() {
   const [years, setYears] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Use favorites filter hook
+  const { filteredReadings, showOnlyFavorites, setShowOnlyFavorites } = useReadingsFilter(readings);
+
+  // Calculate stats for header
+  const favoritesCount = readings.filter(r => r.favorite).length;
+  const yearsCount = years.length;
 
   // Load all readings data
   useEffect(() => {
@@ -46,16 +55,20 @@ export default function ReadingsPage() {
     loadReadings();
   }, []);
 
-  // Group readings by year whenever they change
+  // Group readings by year whenever filtered readings change
   useEffect(() => {
-    if (readings.length === 0) return;
+    if (filteredReadings.length === 0) {
+      setYearGroups({});
+      setYears([]);
+      return;
+    }
 
-    const grouped = groupReadingsByYear(readings);
+    const grouped = groupReadingsByYear(filteredReadings);
     setYearGroups(grouped);
 
     const sortedYears = getSortedYearKeys(grouped);
     setYears(sortedYears);
-  }, [readings]);
+  }, [filteredReadings]);
 
   return (
     <section>
@@ -66,16 +79,29 @@ export default function ReadingsPage() {
         </div>
       )}
 
-      {/* Year-based sections */}
-      {!isLoading &&
-        years.length > 0 &&
-        years.map(year => (
-          <YearSection
-            key={year}
-            year={year}
-            readings={sortReadingsWithinCategory(yearGroups[year] || [], year)}
-          />
-        ))}
+      {/* Integrated header with stats and filter */}
+      {!isLoading && readings.length > 0 && (
+        <ReadingsHeader
+          totalCount={readings.length}
+          favoritesCount={favoritesCount}
+          yearsCount={yearsCount}
+          showOnlyFavorites={showOnlyFavorites}
+          onToggleFilter={() => setShowOnlyFavorites(!showOnlyFavorites)}
+        />
+      )}
+
+      {/* Year-based sections with smooth transitions */}
+      <div className="transition-opacity duration-300">
+        {!isLoading &&
+          years.length > 0 &&
+          years.map(year => (
+            <YearSection
+              key={year}
+              year={year}
+              readings={sortReadingsWithinCategory(yearGroups[year] || [], year)}
+            />
+          ))}
+      </div>
 
       {/* No readings found message */}
       {!isLoading && readings.length === 0 && !error && (

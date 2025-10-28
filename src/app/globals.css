@@ -199,6 +199,34 @@
     }
   }
 
+  /* Full-Width Breakout - Allows components to break out of container-content constraints */
+  /* Use when a component inside container-content needs to span full viewport width */
+  /* while maintaining content alignment with other constrained elements */
+  .full-width-breakout {
+    margin-left: calc(-1 * var(--container-padding-xs));
+    margin-right: calc(-1 * var(--container-padding-xs));
+    padding-left: var(--container-padding-xs);
+    padding-right: var(--container-padding-xs);
+  }
+
+  @media (min-width: 640px) {
+    .full-width-breakout {
+      margin-left: calc(-1 * var(--container-padding-sm));
+      margin-right: calc(-1 * var(--container-padding-sm));
+      padding-left: var(--container-padding-sm);
+      padding-right: var(--container-padding-sm);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .full-width-breakout {
+      margin-left: calc(-1 * var(--container-padding-lg));
+      margin-right: calc(-1 * var(--container-padding-lg));
+      padding-left: var(--container-padding-lg);
+      padding-right: var(--container-padding-lg);
+    }
+  }
+
   /* Site Header */
   .site-header {
     @apply border-b border-border backdrop-blur-sm bg-background;

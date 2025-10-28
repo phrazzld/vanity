@@ -15,6 +15,8 @@ import { useCallback } from 'react';
 import Image from 'next/image';
 import type { Reading } from '@/types';
 import { logger } from '@/lib/logger';
+import { useReadingsFilter } from '@/hooks/useReadingsFilter';
+import ReadingsFilterToggle from './ReadingsFilterToggle';
 
 // Sort option interface
 interface ListSortOption {
@@ -160,6 +162,9 @@ export default function ReadingsList({
   // Theme context is not currently used in this component but may be used in future updates
   // const { isDarkMode } = useTheme();
 
+  // Use favorites filter hook
+  const { filteredReadings, showOnlyFavorites, setShowOnlyFavorites } = useReadingsFilter(readings);
+
   // Function to handle sort column click
   const handleSortClick = useCallback(
     (field: string) => {
@@ -170,6 +175,14 @@ export default function ReadingsList({
 
   return (
     <div className={`w-full ${className}`}>
+      {/* Favorites Filter Toggle */}
+      <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'flex-end' }}>
+        <ReadingsFilterToggle
+          active={showOnlyFavorites}
+          onToggle={() => setShowOnlyFavorites(!showOnlyFavorites)}
+        />
+      </div>
+
       {/* Column Headers with Enhanced Sort Indicators */}
       <div className="border-b border-gray-200 dark:border-gray-700" role="grid">
         <div
@@ -242,7 +255,7 @@ export default function ReadingsList({
       </div>
 
       {/* Readings List Items */}
-      {readings.length === 0 ? (
+      {filteredReadings.length === 0 ? (
         <div className="p-8 text-center text-gray-500 dark:text-gray-400">
           <div className="w-16 h-16 mx-auto bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mb-3">
             <svg
@@ -268,7 +281,7 @@ export default function ReadingsList({
         </div>
       ) : (
         <ul className="item-list-body" aria-label="Readings list">
-          {readings.map(reading => (
+          {filteredReadings.map(reading => (
             <li key={reading.slug} className="list-none">
               <div
                 className={`item-list-item group ${selectedReading?.slug === reading.slug ? 'item-list-item-selected' : ''} hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150`}
@@ -386,15 +399,6 @@ export default function ReadingsList({
                           Audiobook
                         </span>
                       )}
-
-                      {/* Add this to show when content search matches */}
-                      {searchQuery &&
-                        reading.thoughts &&
-                        reading.thoughts.toLowerCase().includes(searchQuery.toLowerCase()) && (
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300">
-                            Match in content
-                          </span>
-                        )}
                     </div>
                   </div>
                 </div>

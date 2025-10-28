@@ -105,7 +105,7 @@ function generateReadings() {
   const dir = path.join(process.cwd(), 'content/readings');
   const files = fs.readdirSync(dir);
   const readings = files.map((file, index) => {
-    const { data, content } = matter(fs.readFileSync(path.join(dir, file), 'utf8'));
+    const { data } = matter(fs.readFileSync(path.join(dir, file), 'utf8'));
     return {
       id: index + 1, // Generate sequential IDs
       slug: file.replace('.md', ''),
@@ -113,8 +113,8 @@ function generateReadings() {
       author: data.author || 'Unknown Author',
       finishedDate: data.finished || null,
       coverImageSrc: data.coverImage || null,
-      thoughts: content.trim(),
       audiobook: data.audiobook || false,
+      favorite: data.favorite || false,
     };
   });
 

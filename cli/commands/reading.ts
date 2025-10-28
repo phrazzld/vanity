@@ -6,7 +6,6 @@ import chalk from 'chalk';
 import slugify from 'slugify';
 import sharp from 'sharp';
 import matter from 'gray-matter';
-import { openEditor } from '../lib/editor';
 import { previewReading } from '../lib/preview';
 import { getReadings } from '../../src/lib/data';
 import type {
@@ -16,7 +15,6 @@ import type {
   ImageChoicePrompt,
   ImageUrlPrompt,
   ImageFilePrompt,
-  ThoughtsPrompt,
   AudiobookPrompt,
   ContinueWithoutImagePrompt,
   ReadingActionPrompt,
@@ -160,6 +158,16 @@ export async function addReading(): Promise<void> {
       },
     ]);
 
+    // Favorite prompt
+    const { favorite } = await inquirer.prompt<{ favorite: boolean }>([
+      {
+        type: 'confirm',
+        name: 'favorite',
+        message: 'Mark as favorite?',
+        default: false,
+      },
+    ]);
+
     // Cover image prompt
     const { imageChoice } = await inquirer.prompt<ImageChoicePrompt>([
       {
@@ -269,36 +277,8 @@ export async function addReading(): Promise<void> {
       }
     }
 
-    // Thoughts prompt
-    const { addThoughts } = await inquirer.prompt<ThoughtsPrompt>([
-      {
-        type: 'confirm',
-        name: 'addThoughts',
-        message: 'Would you like to add your thoughts about this book?',
-        default: false,
-      },
-    ]);
-
-    let thoughts = '';
-    if (addThoughts) {
-      console.log(chalk.gray('\nOpening editor for your thoughts...'));
-      const thoughtsTemplate = `# Your thoughts on "${basicInfo.title}" by ${basicInfo.author}
-# Lines starting with # will be ignored
-# Write your thoughts below:
-
-`;
-      const thoughtsContent = await openEditor(thoughtsTemplate, '.md');
-      if (thoughtsContent) {
-        thoughts = thoughtsContent
-          .split('\n')
-          .filter(line => !line.startsWith('#'))
-          .join('\n')
-          .trim();
-      }
-    }
-
     // Show preview
-    console.log(previewReading(basicInfo.title, basicInfo.author, finished, thoughts || undefined));
+    console.log(previewReading(basicInfo.title, basicInfo.author, finished));
 
     // Check for existing readings and handle rereads
     let filename = `${slug}.md`;
@@ -390,7 +370,11 @@ export async function addReading(): Promise<void> {
       frontmatter.audiobook = audiobook;
     }
 
-    const fileContent = matter.stringify(thoughts, frontmatter);
+    if (favorite) {
+      frontmatter.favorite = favorite;
+    }
+
+    const fileContent = matter.stringify('', frontmatter);
 
     // Ensure readings directory exists
     try {
@@ -448,12 +432,8 @@ export function listReadings(limit: number = 10): void {
       console.log(chalk.gray('   by ') + reading.author);
       console.log(chalk.gray('   ') + status);
 
-      if (reading.thoughts && reading.thoughts.trim()) {
-        const truncatedThoughts =
-          reading.thoughts.length > 80
-            ? reading.thoughts.substring(0, 77) + '...'
-            : reading.thoughts;
-        console.log(chalk.gray('   ') + chalk.italic(`"${truncatedThoughts}"`));
+      if (reading.favorite) {
+        console.log(chalk.gray('   ⭐ Favorite'));
       }
 
       if (index < recentReadings.length - 1) {
@@ -485,8 +465,8 @@ async function updateCoverImage(
     author: string;
     finishedDate: string | null;
     coverImageSrc: string | null;
-    thoughts: string;
     audiobook: boolean;
+    favorite: boolean;
   },
   updatedFrontmatter: ReadingFrontmatter
 ): Promise<void> {
@@ -610,8 +590,8 @@ async function updateMultipleFields(
     author: string;
     finishedDate: string | null;
     coverImageSrc: string | null;
-    thoughts: string;
     audiobook: boolean;
+    favorite: boolean;
   },
   updatedFrontmatter: ReadingFrontmatter,
   content: string
@@ -626,8 +606,8 @@ async function updateMultipleFields(
         { name: 'Author', value: 'author' },
         { name: 'Cover Image', value: 'cover' },
         { name: 'Audiobook Status', value: 'audiobook' },
+        { name: 'Favorite Status', value: 'favorite' },
         { name: 'Finished Date', value: 'finished' },
-        { name: 'Thoughts', value: 'thoughts' },
       ],
     },
   ]);
@@ -670,6 +650,17 @@ async function updateMultipleFields(
         },
       ]);
       updatedFrontmatter.audiobook = isAudiobook;
+    } else if (field === 'favorite') {
+      const currentStatus = updatedFrontmatter.favorite || false;
+      const { isFavorite } = await inquirer.prompt<{ isFavorite: boolean }>([
+        {
+          type: 'confirm',
+          name: 'isFavorite',
+          message: 'Mark as favorite?',
+          default: currentStatus,
+        },
+      ]);
+      updatedFrontmatter.favorite = isFavorite;
     } else if (field === 'finished') {
       const { dateInput } = await inquirer.prompt<DateInputPrompt>([
         {
@@ -687,23 +678,6 @@ async function updateMultipleFields(
         },
       ]);
       updatedFrontmatter.finished = dateInput ? new Date(dateInput).toISOString() : null;
-    } else if (field === 'thoughts') {
-      console.log(chalk.gray('\nOpening editor for your thoughts...'));
-      const currentThoughts = updatedContent.trim();
-      const thoughtsTemplate = `# Your thoughts on "${updatedFrontmatter.title || currentReading.title}" by ${updatedFrontmatter.author || currentReading.author}
-# Lines starting with # will be ignored
-# Current thoughts are shown below. Edit as needed:
-
-${currentThoughts}`;
-
-      const newThoughts = await openEditor(thoughtsTemplate, '.md');
-      if (newThoughts) {
-        updatedContent = newThoughts
-          .split('\n')
-          .filter(line => !line.startsWith('#'))
-          .join('\n')
-          .trim();
-      }
     }
   }
 
@@ -722,7 +696,7 @@ async function searchBookCover(): Promise<string | null> {
 }
 
 /**
- * Update an existing reading (mark as finished, update thoughts, etc.)
+ * Update an existing reading (mark as finished, toggle favorite, etc.)
  */
 export async function updateReading() {
   try {
@@ -815,7 +789,7 @@ export async function updateReading() {
           { name: '✍️  Update author', value: 'author' },
           { name: '🖼️  Update cover image', value: 'cover' },
           { name: '🎧 Toggle audiobook status', value: 'audiobook' },
-          { name: '💭 Update thoughts', value: 'thoughts' },
+          { name: '⭐ Toggle favorite status', value: 'favorite' },
           { name: '🔄 Update multiple fields', value: 'multiple' },
           { name: '🗑️  Delete reading', value: 'delete' },
           { name: '❌ Cancel', value: 'cancel' },
@@ -891,24 +865,14 @@ export async function updateReading() {
           `✓ ${updatedFrontmatter.audiobook ? 'Marked as audiobook' : 'Removed audiobook status'}`
         )
       );
-    } else if (updateAction === 'thoughts') {
-      console.log(chalk.gray('\nOpening editor for your thoughts...'));
-      const currentThoughts = content.trim();
-      const thoughtsTemplate = `# Your thoughts on "${currentReading.title}" by ${currentReading.author}
-# Lines starting with # will be ignored
-# Current thoughts are shown below. Edit as needed:
-
-${currentThoughts}`;
-
-      const newThoughts = await openEditor(thoughtsTemplate, '.md');
-      if (newThoughts) {
-        updatedContent = newThoughts
-          .split('\n')
-          .filter(line => !line.startsWith('#'))
-          .join('\n')
-          .trim();
-        console.log(chalk.green('✓ Updated thoughts'));
-      }
+    } else if (updateAction === 'favorite') {
+      const currentStatus = typedFrontmatter.favorite || false;
+      updatedFrontmatter.favorite = !currentStatus;
+      console.log(
+        chalk.green(
+          `✓ ${updatedFrontmatter.favorite ? 'Marked as favorite' : 'Removed favorite status'}`
+        )
+      );
     } else if (updateAction === 'multiple') {
       updatedContent = await updateMultipleFields(currentReading, updatedFrontmatter, content);
     } else if (updateAction === 'delete') {

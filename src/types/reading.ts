@@ -31,11 +31,11 @@ export interface Reading {
   /** URL to the cover image, or null if not available */
   coverImageSrc: string | null;
 
-  /** Thoughts or notes about the reading */
-  thoughts: string;
-
   /** Indicates if this reading is an audiobook */
   audiobook?: boolean;
+
+  /** Indicates if this reading is marked as a favorite */
+  favorite?: boolean;
 }
 
 /**
@@ -50,8 +50,8 @@ export interface ReadingInput {
   author: string;
   finishedDate?: Date | string | null;
   coverImageSrc?: string | null;
-  thoughts?: string;
   audiobook?: boolean;
+  favorite?: boolean;
 }
 
 /**
@@ -67,4 +67,5 @@ export interface ReadingListItem {
   finishedDate: Date | string | null;
   coverImageSrc: string | null;
   audiobook?: boolean;
+  favorite?: boolean;
 }

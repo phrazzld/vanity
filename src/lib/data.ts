@@ -19,15 +19,15 @@ export function getReadings() {
   const dir = path.join(process.cwd(), 'content/readings');
   const files = fs.readdirSync(dir);
   const readings = files.map(file => {
-    const { data, content } = matter(fs.readFileSync(path.join(dir, file), 'utf8'));
+    const { data } = matter(fs.readFileSync(path.join(dir, file), 'utf8'));
     return {
       slug: file.replace('.md', ''),
       title: data.title as string,
       author: data.author as string,
       finishedDate: (data.finished as string | null) || null,
       coverImageSrc: (data.coverImage as string | null) || null,
-      thoughts: content.trim(),
       audiobook: (data.audiobook as boolean) || false,
+      favorite: (data.favorite as boolean) || false,
     };
   });
 

@@ -19,22 +19,29 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
-      - name: Pin npm version
-        run: |
-          echo "📦 Installing npm@10.9.2 to match local development environment..."
-          npm install -g npm@10.9.2
-          echo "✅ npm version: $(npm --version)"
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
         run: |
-          echo "📦 Installing project dependencies..."
-          npm ci || {
+          echo "📦 Installing project dependencies with pnpm..."
+          pnpm install --frozen-lockfile || {
             echo "❌ Failed to install dependencies!"
-            echo "→ Try running 'npm ci' locally to reproduce the issue"
-            echo "→ Ensure package-lock.json is committed and up to date"
-            echo "→ Check if you have access to all npm registries"
+            echo "→ Try running 'pnpm install --frozen-lockfile' locally to reproduce the issue"
+            echo "→ Ensure pnpm-lock.yaml is committed and up to date"
             exit 1
           }
 
@@ -44,12 +51,12 @@ jobs:
       - name: Lint
         run: |
           echo "🔍 Running ESLint..."
-          npm run lint || {
+          pnpm run lint || {
             echo "❌ Linting failed!"
             echo ""
             echo "To fix linting issues:"
             echo "1. Review the errors above"
-            echo "2. Run 'npm run lint:fix' to auto-fix some issues"
+            echo "2. Run 'pnpm run lint:fix' to auto-fix some issues"
             echo "3. Manually fix remaining issues"
             echo "4. Commit and push your changes"
             echo ""
@@ -69,7 +76,7 @@ jobs:
       - name: Type check
         run: |
           echo "📝 Running TypeScript type check..."
-          npm run typecheck || {
+          pnpm run typecheck || {
             echo "❌ TypeScript type check failed!"
             echo ""
             echo "To fix type errors:"
@@ -88,13 +95,13 @@ jobs:
       - name: Run tests with coverage
         run: |
           echo "🧪 Running tests with coverage..."
-          npm run test:coverage || {
+          pnpm run test:coverage || {
             echo "❌ Tests failed!"
             echo ""
             echo "To debug test failures:"
-            echo "1. Run 'npm test' locally"
-            echo "2. For specific test: 'npm test -- path/to/test'"
-            echo "3. Update snapshots if needed: 'npm test -- -u'"
+            echo "1. Run 'pnpm test' locally"
+            echo "2. For specific test: 'pnpm test -- path/to/test'"
+            echo "3. Update snapshots if needed: 'pnpm test -- -u'"
             echo "4. Review coverage report in CI artifacts"
             exit 1
           }
@@ -111,11 +118,11 @@ jobs:
       - name: Build
         run: |
           echo "🔨 Building Next.js application..."
-          npm run build || {
+          pnpm run build || {
             echo "❌ Build failed!"
             echo ""
             echo "To fix build issues:"
-            echo "1. Run 'npm run build' locally"
+            echo "1. Run 'pnpm run build' locally"
             echo "2. Check for TypeScript errors"
             echo "3. Verify all imports are correct"
             echo "4. Ensure environment variables are set"
@@ -149,27 +156,41 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
         run: |
-          echo "📦 Installing project dependencies..."
-          npm ci || {
+          echo "📦 Installing project dependencies with pnpm..."
+          pnpm install --frozen-lockfile || {
             echo "❌ Failed to install dependencies!"
-            echo "→ Try running 'npm ci' locally to reproduce the issue"
-            echo "→ Ensure package-lock.json is committed and up to date"
+            echo "→ Try running 'pnpm install --frozen-lockfile' locally to reproduce the issue"
+            echo "→ Ensure pnpm-lock.yaml is committed and up to date"
             exit 1
           }
 
       - name: Run security scan
         run: |
           echo "🔒 Checking for critical security vulnerabilities..."
-          npm run security:audit || {
+          pnpm run security:audit || {
             echo "❌ Critical security vulnerabilities detected!"
             echo ""
             echo "To fix:"
-            echo "1. Run 'npm audit' locally to see details"
-            echo "2. Update dependencies with 'npm audit fix'"
+            echo "1. Run 'pnpm audit' locally to see details"
+            echo "2. Update dependencies with 'pnpm update'"
             echo "3. For breaking changes, manually update package.json"
             exit 1
           }
