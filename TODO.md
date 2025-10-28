@@ -263,19 +263,15 @@ Each extracted module should be **deep** (high functionality / low interface com
   Time: 75min (refactoring + integration tests)
   ```
 
-- [ ] Update `listReadings()` - Keep as-is, add tests
+- [x] Update `listReadings()` - Keep as-is, add tests
 
   ```
-  Files: cli/commands/reading.ts:412-700
-  Approach: Already simple enough (< 300 lines, single responsibility)
-  Rationale: Listing logic is mostly formatting - no complex business logic
-  Change: Add integration tests only
-  Test Strategy:
-    - Integration test: Lists correct number of readings
-    - Integration test: Pagination works correctly
-    - Integration test: Handles empty directory
-    - Mock: getReadings() from src/lib/data.ts
-  Time: 20min (tests only)
+  Work Log:
+  - Created cli/__tests__/reading-list.test.ts with 9 comprehensive tests
+  - Tests cover: empty list, formatting, pagination, limit parameter, counts, errors
+  - Mocked getReadings() and preview module to isolate function behavior
+  - All 108 CLI tests passing (99 existing + 9 new)
+  - Function kept as-is (already simple and well-structured)
   ```
 
 - [x] Create CLI test infrastructure
