@@ -1,13 +1,13 @@
 import { writeFile, mkdir, readFile } from 'fs/promises';
 import { join } from 'path';
-import { existsSync, statSync, readdirSync, unlinkSync } from 'fs';
+import { existsSync, readdirSync, unlinkSync } from 'fs';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import slugify from 'slugify';
-import sharp from 'sharp';
 import matter from 'gray-matter';
 import { previewReading } from '../lib/preview';
 import { getReadings } from '../../src/lib/data';
+import { processReadingCoverImage } from '../lib/reading-image';
 import type {
   BasicReadingInfo,
   FinishedPrompt,
@@ -211,57 +211,21 @@ export async function addReading(): Promise<void> {
           message: 'Path to image file:',
           validate: input => {
             if (!input.trim()) return 'Path is required';
-
-            // Check if file exists
-            if (!existsSync(input)) return 'File not found';
-
-            // Validate file extension
-            const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif'];
-            const ext = input.toLowerCase().match(/\.[^.]+$/)?.[0];
-            if (!ext || !allowedExtensions.includes(ext)) {
-              return `Invalid image format. Allowed: ${allowedExtensions.join(', ')}`;
-            }
-
-            // Check file size (max 10MB)
-            const stats = statSync(input);
-            const fileSizeInMB = stats.size / (1024 * 1024);
-            if (fileSizeInMB > 10) {
-              return `File too large (${fileSizeInMB.toFixed(1)}MB). Maximum size: 10MB`;
-            }
-
-            // Check for directory traversal attempts
-            if (input.includes('..') || input.includes('~')) {
-              return 'Invalid path. Please use absolute or relative paths without .. or ~';
-            }
-
             return true;
           },
         },
       ]);
 
-      // Ensure images directory exists
-      if (!existsSync(IMAGES_DIR)) {
-        await mkdir(IMAGES_DIR, { recursive: true });
-      }
-
-      // Optimize and save image
+      // Process image using extracted module
       // Note: We'll update the path later if this is a reread
-      const tempOutputPath = join(IMAGES_DIR, `${slug}.webp`);
       console.log(chalk.gray('Optimizing image...'));
 
       try {
-        await sharp(imagePath)
-          .resize(400, 600, {
-            fit: 'cover',
-            position: 'center',
-          })
-          .webp({ quality: 80 })
-          .toFile(tempOutputPath);
-
-        coverImage = `/images/readings/${slug}.webp`;
+        coverImage = await processReadingCoverImage(imagePath, slug, IMAGES_DIR);
         console.log(chalk.green('✓ Image optimized and saved'));
       } catch (imageError) {
-        console.error(chalk.red('✖ Failed to process image:'), imageError);
+        const errorMessage = imageError instanceof Error ? imageError.message : String(imageError);
+        console.error(chalk.red('✖ Failed to process image:'), errorMessage);
         const { continueWithoutImage } = await inquirer.prompt<ContinueWithoutImagePrompt>([
           {
             type: 'confirm',
@@ -525,47 +489,23 @@ async function updateCoverImage(
         message: 'Path to image file:',
         validate: input => {
           if (!input.trim()) return 'Path is required';
-          if (!existsSync(input)) return 'File not found';
-
-          const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif'];
-          const ext = input.toLowerCase().match(/\.[^.]+$/)?.[0];
-          if (!ext || !allowedExtensions.includes(ext)) {
-            return `Invalid image format. Allowed: ${allowedExtensions.join(', ')}`;
-          }
-
-          const stats = statSync(input);
-          const fileSizeInMB = stats.size / (1024 * 1024);
-          if (fileSizeInMB > 10) {
-            return `File too large (${fileSizeInMB.toFixed(1)}MB). Maximum size: 10MB`;
-          }
-
           return true;
         },
       },
     ]);
 
-    // Ensure images directory exists
-    if (!existsSync(IMAGES_DIR)) {
-      await mkdir(IMAGES_DIR, { recursive: true });
-    }
-
-    // Optimize and save image
-    const outputPath = join(IMAGES_DIR, `${currentReading.slug}.webp`);
     console.log(chalk.gray('Optimizing image...'));
 
     try {
-      await sharp(imagePath)
-        .resize(400, 600, {
-          fit: 'cover',
-          position: 'center',
-        })
-        .webp({ quality: 80 })
-        .toFile(outputPath);
-
-      updatedFrontmatter.coverImage = `/images/readings/${currentReading.slug}.webp`;
+      updatedFrontmatter.coverImage = await processReadingCoverImage(
+        imagePath,
+        currentReading.slug,
+        IMAGES_DIR
+      );
       console.log(chalk.green('✓ Image optimized and saved'));
     } catch (imageError) {
-      console.error(chalk.red('✖ Failed to process image:'), imageError);
+      const errorMessage = imageError instanceof Error ? imageError.message : String(imageError);
+      console.error(chalk.red('✖ Failed to process image:'), errorMessage);
     }
   } else if (imageAction === 'search') {
     console.log(chalk.cyan('🔍 Searching for book cover online...'));
