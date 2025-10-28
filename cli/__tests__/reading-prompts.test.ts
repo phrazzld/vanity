@@ -39,7 +39,7 @@ describe('reading-prompts', () => {
 
       await promptBasicReadingInfo();
 
-      const promptCall = mockInquirer.prompt.mock.calls[0][0] as any[];
+      const promptCall = mockInquirer.prompt.mock.calls[0]?.[0] as unknown as any[];
       expect(promptCall[0].validate(' ')).toBe('Title is required');
       expect(promptCall[0].validate('Valid Title')).toBe(true);
       expect(promptCall[1].validate(' ')).toBe('Author is required');
@@ -145,7 +145,7 @@ describe('reading-prompts', () => {
 
       await promptCoverImage();
 
-      const urlPromptCall = mockInquirer.prompt.mock.calls[1][0] as any[];
+      const urlPromptCall = mockInquirer.prompt.mock.calls[1]?.[0] as unknown as any[];
       expect(urlPromptCall[0].validate('')).toBe('URL is required');
       expect(urlPromptCall[0].validate('not-a-url')).toBe('Please enter a valid URL');
       expect(urlPromptCall[0].validate('https://example.com')).toBe(true);
@@ -158,7 +158,7 @@ describe('reading-prompts', () => {
 
       await promptCoverImage();
 
-      const pathPromptCall = mockInquirer.prompt.mock.calls[1][0] as any[];
+      const pathPromptCall = mockInquirer.prompt.mock.calls[1]?.[0] as unknown as any[];
       expect(pathPromptCall[0].validate('')).toBe('Path is required');
       expect(pathPromptCall[0].validate('/valid/path')).toBe(true);
     });
@@ -173,7 +173,7 @@ describe('reading-prompts', () => {
       expect(result).toBe('reread');
       expect(mockInquirer.prompt).toHaveBeenCalledTimes(1);
 
-      const promptCall = mockInquirer.prompt.mock.calls[0][0] as any[];
+      const promptCall = mockInquirer.prompt.mock.calls[0]?.[0] as unknown as any[];
       expect(promptCall[0].choices[0].name).toContain('1984-02.md');
     });
 
@@ -198,7 +198,7 @@ describe('reading-prompts', () => {
 
       await promptRereadAction('Test', 1, null, 'test-02.md');
 
-      const promptCall = mockInquirer.prompt.mock.calls[0][0] as any[];
+      const promptCall = mockInquirer.prompt.mock.calls[0]?.[0] as unknown as any[];
       expect(promptCall[0].default).toBe('reread');
     });
 
@@ -207,7 +207,7 @@ describe('reading-prompts', () => {
 
       await promptRereadAction('Test', 1, null, 'test-02.md');
 
-      const promptCall = mockInquirer.prompt.mock.calls[0][0] as any[];
+      const promptCall = mockInquirer.prompt.mock.calls[0]?.[0] as unknown as any[];
       expect(promptCall[0].choices).toHaveLength(3);
       expect(promptCall[0].choices[0].value).toBe('reread');
       expect(promptCall[0].choices[1].value).toBe('update');

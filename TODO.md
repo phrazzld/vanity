@@ -105,7 +105,7 @@ Each extracted module should be **deep** (high functionality / low interface com
   Time: 45min (30min implementation + 15min tests)
   ```
 
-- [~] Extract `cli/lib/reading-prompts.ts` - Inquirer prompt flows
+- [x] Extract `cli/lib/reading-prompts.ts` - Inquirer prompt flows
 
   ```
   Files: Create cli/lib/reading-prompts.ts, update cli/commands/reading.ts:107-240,305-326
@@ -142,7 +142,7 @@ Each extracted module should be **deep** (high functionality / low interface com
   Time: 75min (50min implementation + 25min tests)
   ```
 
-- [ ] Extract `cli/lib/reading-frontmatter.ts` - YAML manipulation
+- [x] Extract `cli/lib/reading-frontmatter.ts` - YAML manipulation
 
   ```
   Files: Create cli/lib/reading-frontmatter.ts, update cli/commands/reading.ts:380-410,586-698

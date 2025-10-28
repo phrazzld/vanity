@@ -1,9 +1,8 @@
-import { writeFile, mkdir, readFile } from 'fs/promises';
+import { mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync, unlinkSync } from 'fs';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
-import matter from 'gray-matter';
 import { previewReading } from '../lib/preview';
 import { getReadings } from '../../src/lib/data';
 import { processReadingCoverImage } from '../lib/reading-image';
@@ -15,6 +14,11 @@ import {
   promptCoverImage,
   promptRereadAction,
 } from '../lib/reading-prompts';
+import {
+  readReadingFrontmatter,
+  writeReadingFrontmatter,
+  createReadingFrontmatter,
+} from '../lib/reading-frontmatter';
 import type {
   DateInputPrompt,
   ImageFilePrompt,
@@ -133,25 +137,11 @@ export async function addReading(): Promise<void> {
     }
 
     // Create the reading file content
-    const frontmatter: ReadingFrontmatter = {
-      title: basicInfo.title,
-      author: basicInfo.author,
-      finished: finishedDate || null,
-    };
-
-    if (coverImage) {
-      frontmatter.coverImage = coverImage;
-    }
-
-    if (audiobook) {
-      frontmatter.audiobook = audiobook;
-    }
-
-    if (favorite) {
-      frontmatter.favorite = favorite;
-    }
-
-    const fileContent = matter.stringify('', frontmatter);
+    const frontmatter = createReadingFrontmatter(basicInfo.title, basicInfo.author, finishedDate, {
+      coverImage: coverImage || undefined,
+      audiobook,
+      favorite,
+    });
 
     // Ensure readings directory exists
     try {
@@ -165,7 +155,7 @@ export async function addReading(): Promise<void> {
 
     // Write the file
     try {
-      await writeFile(filepath, fileContent);
+      await writeReadingFrontmatter(filepath, frontmatter);
       console.log(chalk.green(`\n✅ Reading "${basicInfo.title}" saved to ${filename}`));
     } catch (writeError) {
       console.error(chalk.red('✖ Failed to save reading file:'), writeError);
@@ -496,10 +486,7 @@ export async function updateReading() {
     }
 
     // Read current content
-    const fileContent = await readFile(filepath, 'utf-8');
-    const { data: frontmatter, content } = matter(fileContent);
-    // Type assertion for frontmatter from gray-matter
-    const typedFrontmatter = frontmatter as ReadingFrontmatter;
+    const { frontmatter: typedFrontmatter, content } = await readReadingFrontmatter(filepath);
     const currentReading = readings.find(r => r.slug === selectedSlug);
 
     if (!currentReading) {
@@ -715,8 +702,7 @@ export async function updateReading() {
     }
 
     // Write updated file
-    const newContent = matter.stringify(updatedContent, updatedFrontmatter);
-    await writeFile(filepath, newContent);
+    await writeReadingFrontmatter(filepath, updatedFrontmatter, updatedContent);
 
     console.log(
       chalk.green(`\n✅ Successfully updated "${updatedFrontmatter.title || currentReading.title}"`)
