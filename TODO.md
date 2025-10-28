@@ -52,7 +52,7 @@ Each extracted module should be **deep** (high functionality / low interface com
   Time: 90min (60min implementation + 30min tests)
   ```
 
-- [~] Extract `cli/lib/reading-reread.ts` - Reread detection & versioning
+- [x] Extract `cli/lib/reading-reread.ts` - Reread detection & versioning
 
   ```
   Files: Create cli/lib/reading-reread.ts, update cli/commands/reading.ts:29-96
@@ -80,7 +80,7 @@ Each extracted module should be **deep** (high functionality / low interface com
   Time: 60min (40min implementation + 20min tests)
   ```
 
-- [ ] Extract `cli/lib/reading-validation.ts` - Input validation & security
+- [~] Extract `cli/lib/reading-validation.ts` - Input validation & security
 
   ```
   Files: Create cli/lib/reading-validation.ts, update cli/commands/reading.ts:212-237

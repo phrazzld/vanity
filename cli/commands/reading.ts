@@ -3,12 +3,12 @@ import { join } from 'path';
 import { existsSync, unlinkSync } from 'fs';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
-import slugify from 'slugify';
 import matter from 'gray-matter';
 import { previewReading } from '../lib/preview';
 import { getReadings } from '../../src/lib/data';
 import { processReadingCoverImage } from '../lib/reading-image';
 import { getNextRereadFilename, getMostRecentReading } from '../lib/reading-reread';
+import { sanitizeSlug, validateDateInput, validateDateForPrompt } from '../lib/reading-validation';
 import type {
   BasicReadingInfo,
   FinishedPrompt,
@@ -68,14 +68,10 @@ export async function addReading(): Promise<void> {
           name: 'dateInput',
           message: 'When did you finish? (YYYY-MM-DD or press Enter for today):',
           default: new Date().toISOString().split('T')[0],
-          validate: input => {
-            if (!input) return true;
-            const date = new Date(input);
-            return !isNaN(date.getTime()) ? true : 'Please enter a valid date (YYYY-MM-DD)';
-          },
+          validate: validateDateForPrompt,
         },
       ]);
-      finishedDate = new Date(dateInput).toISOString();
+      finishedDate = validateDateInput(dateInput);
     }
 
     // Audiobook prompt
@@ -113,7 +109,7 @@ export async function addReading(): Promise<void> {
     ]);
 
     let coverImage: string | null = null;
-    const slug = slugify(basicInfo.title, { lower: true, strict: true });
+    const slug = sanitizeSlug(basicInfo.title);
 
     if (imageChoice === 'url') {
       const { imageUrl } = await inquirer.prompt<ImageUrlPrompt>([
@@ -540,14 +536,10 @@ async function updateMultipleFields(
           default: currentReading.finishedDate
             ? new Date(currentReading.finishedDate).toISOString().split('T')[0]
             : '',
-          validate: input => {
-            if (!input) return true;
-            const date = new Date(input);
-            return !isNaN(date.getTime()) ? true : 'Please enter a valid date';
-          },
+          validate: validateDateForPrompt,
         },
       ]);
-      updatedFrontmatter.finished = dateInput ? new Date(dateInput).toISOString() : null;
+      updatedFrontmatter.finished = dateInput ? validateDateInput(dateInput) : null;
     }
   }
 
@@ -685,21 +677,12 @@ export async function updateReading() {
           type: 'input',
           name: 'dateInput',
           message: 'When did you finish? (MM/DD/YYYY):',
-          validate: (input: string) => {
-            const date = new Date(input);
-            if (isNaN(date.getTime())) {
-              return 'Please enter a valid date (MM/DD/YYYY)';
-            }
-            if (date > new Date()) {
-              return 'Date cannot be in the future';
-            }
-            return true;
-          },
+          validate: (input: string) => validateDateForPrompt(input),
         },
       ]);
 
-      const date = new Date(dateInput);
-      updatedFrontmatter.finished = date.toISOString();
+      updatedFrontmatter.finished = validateDateInput(dateInput);
+      const date = new Date(updatedFrontmatter.finished);
       console.log(chalk.green(`✓ Marked as finished on ${date.toLocaleDateString()}`));
     } else if (updateAction === 'title') {
       const { newTitle } = await inquirer.prompt<{ newTitle: string }>([
