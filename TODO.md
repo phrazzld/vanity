@@ -230,7 +230,22 @@ Each extracted module should be **deep** (high functionality / low interface com
   Time: 60min (refactoring + integration tests)
   ```
 
-- [ ] Refactor `updateReading()` - Orchestration only
+- [x] Refactor `updateReading()` - Orchestration only
+
+  ```
+  Work Log:
+  - Reduced updateReading() from 275 to 55 lines (80% reduction)
+  - Extracted 5 helper functions with clear responsibilities:
+    - selectReadingToUpdate() - Reading selection and file loading
+    - displayCurrentReadingInfo() - Show current reading status
+    - promptUpdateAction() - Ask user what to update
+    - handleDeleteReading() - Delete with confirmation
+    - applyUpdateAction() - Dispatch to appropriate update handler
+    - previewAndConfirmChanges() - Show diff and get confirmation
+  - Main function now pure orchestration: select → display → prompt → apply → confirm → save
+  - File size increased 775→861 lines but maintainability greatly improved
+  - All 99 CLI tests passing
+  ```
 
   ```
   Files: Update cli/commands/reading.ts:701-988

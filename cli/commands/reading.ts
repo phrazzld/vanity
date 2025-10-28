@@ -498,275 +498,357 @@ async function searchBookCover(): Promise<string | null> {
 }
 
 /**
+ * Select a reading to update from the list
+ * Returns null if no readings available or user cancels
+ */
+async function selectReadingToUpdate(): Promise<{
+  filepath: string;
+  currentReading: ReturnType<typeof getReadings>[number];
+  frontmatter: ReadingFrontmatter;
+  content: string;
+} | null> {
+  const readings = getReadings();
+
+  // Filter to show unfinished first, then recent finished
+  const unfinishedReadings = readings.filter(r => !r.finishedDate);
+  const finishedReadings = readings.filter(r => r.finishedDate).slice(0, 10);
+
+  if (unfinishedReadings.length === 0 && finishedReadings.length === 0) {
+    console.log(chalk.yellow('No readings found to update.'));
+    return null;
+  }
+
+  // Build selection choices
+  const choices = [
+    ...unfinishedReadings.map(r => ({
+      name: chalk.yellow(`○ ${r.title} - ${r.author} (currently reading)`),
+      value: r.slug,
+    })),
+    ...finishedReadings.map(r => ({
+      name: chalk.green(
+        `✓ ${r.title} - ${r.author} (finished ${r.finishedDate ? new Date(r.finishedDate).toLocaleDateString() : 'Unknown'})`
+      ),
+      value: r.slug,
+    })),
+  ];
+
+  const { selectedSlug } = await inquirer.prompt<{ selectedSlug: string }>([
+    {
+      type: 'list',
+      name: 'selectedSlug',
+      message: 'Which reading would you like to update?',
+      choices,
+      pageSize: 15,
+    },
+  ]);
+
+  // Load the reading file
+  const filepath = join(READINGS_DIR, `${selectedSlug}.md`);
+
+  if (!existsSync(filepath)) {
+    console.error(chalk.red(`✖ Reading file not found: ${selectedSlug}.md`));
+    return null;
+  }
+
+  const { frontmatter, content } = await readReadingFrontmatter(filepath);
+  const currentReading = readings.find(r => r.slug === selectedSlug);
+
+  if (!currentReading) {
+    console.error(chalk.red('✖ Could not find reading data'));
+    return null;
+  }
+
+  return { filepath, currentReading, frontmatter, content };
+}
+
+/**
+ * Display current reading information
+ */
+function displayCurrentReadingInfo(reading: ReturnType<typeof getReadings>[number]): void {
+  console.log(chalk.cyan('\n📖 Current Reading:'));
+  console.log(chalk.gray(`   Title: ${reading.title}`));
+  console.log(chalk.gray(`   Author: ${reading.author}`));
+
+  if (reading.finishedDate) {
+    console.log(
+      chalk.gray(`   Status: Finished on ${new Date(reading.finishedDate).toLocaleDateString()}`)
+    );
+  } else {
+    console.log(chalk.gray(`   Status: Currently reading`));
+  }
+}
+
+/**
+ * Prompt user for update action
+ */
+async function promptUpdateAction(
+  reading: ReturnType<typeof getReadings>[number]
+): Promise<string> {
+  const { updateAction } = await inquirer.prompt<{ updateAction: string }>([
+    {
+      type: 'list',
+      name: 'updateAction',
+      message: 'What would you like to update?',
+      choices: [
+        ...(reading.finishedDate
+          ? []
+          : [
+              { name: 'Mark as finished (today)', value: 'finish_today' },
+              { name: 'Mark as finished (custom date)', value: 'finish_custom' },
+            ]),
+        { name: '📖 Update title', value: 'title' },
+        { name: '✍️  Update author', value: 'author' },
+        { name: '🖼️  Update cover image', value: 'cover' },
+        { name: '🎧 Toggle audiobook status', value: 'audiobook' },
+        { name: '⭐ Toggle favorite status', value: 'favorite' },
+        { name: '🔄 Update multiple fields', value: 'multiple' },
+        { name: '🗑️  Delete reading', value: 'delete' },
+        { name: '❌ Cancel', value: 'cancel' },
+      ],
+    },
+  ]);
+
+  return updateAction;
+}
+
+/**
+ * Handle reading deletion with confirmation
+ */
+async function handleDeleteReading(
+  filepath: string,
+  reading: ReturnType<typeof getReadings>[number]
+): Promise<void> {
+  const { confirmDelete } = await inquirer.prompt<ConfirmDeletePrompt>([
+    {
+      type: 'confirm',
+      name: 'confirmDelete',
+      message: chalk.yellow(
+        `⚠️  Are you sure you want to delete "${reading.title}"? This cannot be undone.`
+      ),
+      default: false,
+    },
+  ]);
+
+  if (!confirmDelete) {
+    console.log(chalk.yellow('✖ Deletion cancelled.'));
+    return;
+  }
+
+  try {
+    unlinkSync(filepath);
+    console.log(chalk.green(`\n✅ Successfully deleted "${reading.title}" by ${reading.author}`));
+  } catch (error) {
+    console.error(
+      chalk.red('✖ Failed to delete file:'),
+      error instanceof Error ? error.message : String(error)
+    );
+    console.log(chalk.gray(`  Attempted to delete: ${filepath}`));
+    process.exit(1);
+  }
+}
+
+/**
+ * Apply the selected update action to frontmatter/content
+ */
+async function applyUpdateAction(
+  action: string,
+  frontmatter: ReadingFrontmatter,
+  content: string,
+  reading: ReturnType<typeof getReadings>[number]
+): Promise<{ updatedFrontmatter: ReadingFrontmatter; updatedContent: string }> {
+  let updatedFrontmatter = { ...frontmatter };
+  let updatedContent = content;
+
+  if (action === 'finish_today') {
+    updatedFrontmatter.finished = new Date().toISOString();
+    console.log(chalk.green(`✓ Marked as finished today (${new Date().toLocaleDateString()})`));
+  } else if (action === 'finish_custom') {
+    const { dateInput } = await inquirer.prompt<DateInputPrompt>([
+      {
+        type: 'input',
+        name: 'dateInput',
+        message: 'When did you finish? (MM/DD/YYYY):',
+        validate: (input: string) => validateDateForPrompt(input),
+      },
+    ]);
+
+    updatedFrontmatter.finished = validateDateInput(dateInput);
+    const date = new Date(updatedFrontmatter.finished);
+    console.log(chalk.green(`✓ Marked as finished on ${date.toLocaleDateString()}`));
+  } else if (action === 'title') {
+    const { newTitle } = await inquirer.prompt<{ newTitle: string }>([
+      {
+        type: 'input',
+        name: 'newTitle',
+        message: 'New title:',
+        default: reading.title ?? '',
+        validate: input => (input.trim() ? true : 'Title is required'),
+      },
+    ]);
+    updatedFrontmatter.title = newTitle.trim();
+    console.log(chalk.green(`✓ Updated title to "${newTitle.trim()}"`));
+  } else if (action === 'author') {
+    const { newAuthor } = await inquirer.prompt<{ newAuthor: string }>([
+      {
+        type: 'input',
+        name: 'newAuthor',
+        message: 'New author:',
+        default: reading.author ?? '',
+        validate: input => (input.trim() ? true : 'Author is required'),
+      },
+    ]);
+    updatedFrontmatter.author = newAuthor.trim();
+    console.log(chalk.green(`✓ Updated author to "${newAuthor.trim()}"`));
+  } else if (action === 'cover') {
+    await updateCoverImage(reading, updatedFrontmatter);
+  } else if (action === 'audiobook') {
+    const currentStatus = frontmatter.audiobook || false;
+    updatedFrontmatter.audiobook = !currentStatus;
+    console.log(
+      chalk.green(
+        `✓ ${updatedFrontmatter.audiobook ? 'Marked as audiobook' : 'Removed audiobook status'}`
+      )
+    );
+  } else if (action === 'favorite') {
+    const currentStatus = frontmatter.favorite || false;
+    updatedFrontmatter.favorite = !currentStatus;
+    console.log(
+      chalk.green(
+        `✓ ${updatedFrontmatter.favorite ? 'Marked as favorite' : 'Removed favorite status'}`
+      )
+    );
+  } else if (action === 'multiple') {
+    updatedContent = await updateMultipleFields(reading, updatedFrontmatter, content);
+  }
+
+  return { updatedFrontmatter, updatedContent };
+}
+
+/**
+ * Preview changes and confirm with user
+ */
+async function previewAndConfirmChanges(
+  originalFrontmatter: ReadingFrontmatter,
+  updatedFrontmatter: ReadingFrontmatter,
+  originalContent: string,
+  updatedContent: string
+): Promise<boolean> {
+  const hasChanges =
+    JSON.stringify(originalFrontmatter) !== JSON.stringify(updatedFrontmatter) ||
+    originalContent !== updatedContent;
+
+  if (!hasChanges) {
+    return true; // No changes to confirm
+  }
+
+  console.log(chalk.cyan('\n📝 Preview of changes:'));
+
+  // Show frontmatter changes
+  const frontmatterChanges = [];
+
+  if (originalFrontmatter.title !== updatedFrontmatter.title) {
+    frontmatterChanges.push(`  Title: ${originalFrontmatter.title} → ${updatedFrontmatter.title}`);
+  }
+
+  if (originalFrontmatter.author !== updatedFrontmatter.author) {
+    frontmatterChanges.push(
+      `  Author: ${originalFrontmatter.author} → ${updatedFrontmatter.author}`
+    );
+  }
+
+  if (originalFrontmatter.coverImage !== updatedFrontmatter.coverImage) {
+    const oldCover = originalFrontmatter.coverImage || 'None';
+    const newCover = updatedFrontmatter.coverImage || 'None';
+    frontmatterChanges.push(`  Cover: ${oldCover} → ${newCover}`);
+  }
+
+  if (originalFrontmatter.audiobook !== updatedFrontmatter.audiobook) {
+    frontmatterChanges.push(
+      `  Audiobook: ${originalFrontmatter.audiobook || false} → ${updatedFrontmatter.audiobook}`
+    );
+  }
+
+  if (originalFrontmatter.finished !== updatedFrontmatter.finished) {
+    const oldDate = originalFrontmatter.finished
+      ? new Date(originalFrontmatter.finished).toLocaleDateString()
+      : 'Not finished';
+    const newDate = updatedFrontmatter.finished
+      ? new Date(updatedFrontmatter.finished).toLocaleDateString()
+      : 'Not finished';
+    frontmatterChanges.push(`  Finished: ${oldDate} → ${newDate}`);
+  }
+
+  if (frontmatterChanges.length > 0) {
+    console.log(chalk.gray(frontmatterChanges.join('\n')));
+  }
+
+  if (originalContent !== updatedContent) {
+    console.log(chalk.gray('  Thoughts: Updated'));
+  }
+
+  // Confirm save
+  const { confirmSave } = await inquirer.prompt<{ confirmSave: boolean }>([
+    {
+      type: 'confirm',
+      name: 'confirmSave',
+      message: 'Save these changes?',
+      default: true,
+    },
+  ]);
+
+  return confirmSave;
+}
+
+/**
  * Update an existing reading (mark as finished, toggle favorite, etc.)
  */
 export async function updateReading() {
   try {
-    // Get all readings
-    const readings = getReadings();
+    // Select reading to update
+    const selection = await selectReadingToUpdate();
+    if (!selection) return;
 
-    // Filter to show only unfinished readings first, then recent finished ones
-    const unfinishedReadings = readings.filter(r => !r.finishedDate);
-    const finishedReadings = readings.filter(r => r.finishedDate).slice(0, 10);
+    const { filepath, currentReading, frontmatter, content } = selection;
 
-    if (unfinishedReadings.length === 0 && finishedReadings.length === 0) {
-      console.log(chalk.yellow('No readings found to update.'));
-      return;
-    }
-
-    // Build choices for selection
-    const choices = [
-      ...unfinishedReadings.map(r => ({
-        name: chalk.yellow(`○ ${r.title} - ${r.author} (currently reading)`),
-        value: r.slug,
-      })),
-      ...finishedReadings.map(r => ({
-        name: chalk.green(
-          `✓ ${r.title} - ${r.author} (finished ${r.finishedDate ? new Date(r.finishedDate).toLocaleDateString() : 'Unknown'})`
-        ),
-        value: r.slug,
-      })),
-    ];
-
-    // Prompt for which reading to update
-    const { selectedSlug } = await inquirer.prompt<{ selectedSlug: string }>([
-      {
-        type: 'list',
-        name: 'selectedSlug',
-        message: 'Which reading would you like to update?',
-        choices,
-        pageSize: 15,
-      },
-    ]);
-
-    // Find the file for this reading
-    const filename = `${selectedSlug}.md`;
-    const filepath = join(READINGS_DIR, filename);
-
-    if (!existsSync(filepath)) {
-      console.error(chalk.red(`✖ Reading file not found: ${filename}`));
-      return;
-    }
-
-    // Read current content
-    const { frontmatter: typedFrontmatter, content } = await readReadingFrontmatter(filepath);
-    const currentReading = readings.find(r => r.slug === selectedSlug);
-
-    if (!currentReading) {
-      console.error(chalk.red('✖ Could not find reading data'));
-      return;
-    }
-
-    // Show current status
-    console.log(chalk.cyan('\n📖 Current Reading:'));
-    console.log(chalk.gray(`   Title: ${currentReading.title}`));
-    console.log(chalk.gray(`   Author: ${currentReading.author}`));
-    if (currentReading.finishedDate) {
-      console.log(
-        chalk.gray(
-          `   Status: Finished on ${new Date(currentReading.finishedDate).toLocaleDateString()}`
-        )
-      );
-    } else {
-      console.log(chalk.gray(`   Status: Currently reading`));
-    }
+    // Show current reading info
+    displayCurrentReadingInfo(currentReading);
 
     // Ask what to update
-    const { updateAction } = await inquirer.prompt<{ updateAction: string }>([
-      {
-        type: 'list',
-        name: 'updateAction',
-        message: 'What would you like to update?',
-        choices: [
-          ...(currentReading.finishedDate
-            ? []
-            : [
-                { name: 'Mark as finished (today)', value: 'finish_today' },
-                { name: 'Mark as finished (custom date)', value: 'finish_custom' },
-              ]),
-          { name: '📖 Update title', value: 'title' },
-          { name: '✍️  Update author', value: 'author' },
-          { name: '🖼️  Update cover image', value: 'cover' },
-          { name: '🎧 Toggle audiobook status', value: 'audiobook' },
-          { name: '⭐ Toggle favorite status', value: 'favorite' },
-          { name: '🔄 Update multiple fields', value: 'multiple' },
-          { name: '🗑️  Delete reading', value: 'delete' },
-          { name: '❌ Cancel', value: 'cancel' },
-        ],
-      },
-    ]);
-
+    const updateAction = await promptUpdateAction(currentReading);
     if (updateAction === 'cancel') {
       console.log(chalk.yellow('✖ Update cancelled.'));
       return;
     }
 
-    let updatedFrontmatter = { ...typedFrontmatter };
-    let updatedContent = content;
-
-    // Handle different update actions
-    if (updateAction === 'finish_today') {
-      updatedFrontmatter.finished = new Date().toISOString();
-      console.log(chalk.green(`✓ Marked as finished today (${new Date().toLocaleDateString()})`));
-    } else if (updateAction === 'finish_custom') {
-      const { dateInput } = await inquirer.prompt<DateInputPrompt>([
-        {
-          type: 'input',
-          name: 'dateInput',
-          message: 'When did you finish? (MM/DD/YYYY):',
-          validate: (input: string) => validateDateForPrompt(input),
-        },
-      ]);
-
-      updatedFrontmatter.finished = validateDateInput(dateInput);
-      const date = new Date(updatedFrontmatter.finished);
-      console.log(chalk.green(`✓ Marked as finished on ${date.toLocaleDateString()}`));
-    } else if (updateAction === 'title') {
-      const { newTitle } = await inquirer.prompt<{ newTitle: string }>([
-        {
-          type: 'input',
-          name: 'newTitle',
-          message: 'New title:',
-          default: currentReading.title ?? '',
-          validate: input => (input.trim() ? true : 'Title is required'),
-        },
-      ]);
-      updatedFrontmatter.title = newTitle.trim();
-      console.log(chalk.green(`✓ Updated title to "${newTitle.trim()}"`));
-    } else if (updateAction === 'author') {
-      const { newAuthor } = await inquirer.prompt<{ newAuthor: string }>([
-        {
-          type: 'input',
-          name: 'newAuthor',
-          message: 'New author:',
-          default: currentReading.author ?? '',
-          validate: input => (input.trim() ? true : 'Author is required'),
-        },
-      ]);
-      updatedFrontmatter.author = newAuthor.trim();
-      console.log(chalk.green(`✓ Updated author to "${newAuthor.trim()}"`));
-    } else if (updateAction === 'cover') {
-      await updateCoverImage(currentReading, updatedFrontmatter);
-    } else if (updateAction === 'audiobook') {
-      const currentStatus = typedFrontmatter.audiobook || false;
-      updatedFrontmatter.audiobook = !currentStatus;
-      console.log(
-        chalk.green(
-          `✓ ${updatedFrontmatter.audiobook ? 'Marked as audiobook' : 'Removed audiobook status'}`
-        )
-      );
-    } else if (updateAction === 'favorite') {
-      const currentStatus = typedFrontmatter.favorite || false;
-      updatedFrontmatter.favorite = !currentStatus;
-      console.log(
-        chalk.green(
-          `✓ ${updatedFrontmatter.favorite ? 'Marked as favorite' : 'Removed favorite status'}`
-        )
-      );
-    } else if (updateAction === 'multiple') {
-      updatedContent = await updateMultipleFields(currentReading, updatedFrontmatter, content);
-    } else if (updateAction === 'delete') {
-      // Confirm deletion before proceeding
-      const { confirmDelete } = await inquirer.prompt<ConfirmDeletePrompt>([
-        {
-          type: 'confirm',
-          name: 'confirmDelete',
-          message: chalk.yellow(
-            `⚠️  Are you sure you want to delete "${currentReading.title}"? This cannot be undone.`
-          ),
-          default: false,
-        },
-      ]);
-
-      if (!confirmDelete) {
-        console.log(chalk.yellow('✖ Deletion cancelled.'));
-        return;
-      }
-
-      // Delete the file
-      try {
-        unlinkSync(filepath);
-        console.log(
-          chalk.green(
-            `\n✅ Successfully deleted "${currentReading.title}" by ${currentReading.author}`
-          )
-        );
-        return; // Exit early, don't write file
-      } catch (error) {
-        console.error(
-          chalk.red('✖ Failed to delete file:'),
-          error instanceof Error ? error.message : String(error)
-        );
-        console.log(chalk.gray(`  Attempted to delete: ${filepath}`));
-        process.exit(1);
-      }
+    // Handle delete separately (no file write needed)
+    if (updateAction === 'delete') {
+      await handleDeleteReading(filepath, currentReading);
+      return;
     }
 
-    // Show preview of changes if any were made
-    const hasChanges =
-      JSON.stringify(typedFrontmatter) !== JSON.stringify(updatedFrontmatter) ||
-      content !== updatedContent;
+    // Apply the update
+    const { updatedFrontmatter, updatedContent } = await applyUpdateAction(
+      updateAction,
+      frontmatter,
+      content,
+      currentReading
+    );
 
-    if (hasChanges) {
-      console.log(chalk.cyan('\n📝 Preview of changes:'));
+    // Preview and confirm changes
+    const shouldSave = await previewAndConfirmChanges(
+      frontmatter,
+      updatedFrontmatter,
+      content,
+      updatedContent
+    );
 
-      // Show frontmatter changes
-      const frontmatterChanges = [];
-      if (typedFrontmatter.title !== updatedFrontmatter.title) {
-        frontmatterChanges.push(`  Title: ${typedFrontmatter.title} → ${updatedFrontmatter.title}`);
-      }
-      if (typedFrontmatter.author !== updatedFrontmatter.author) {
-        frontmatterChanges.push(
-          `  Author: ${typedFrontmatter.author} → ${updatedFrontmatter.author}`
-        );
-      }
-      if (typedFrontmatter.coverImage !== updatedFrontmatter.coverImage) {
-        const oldCover = typedFrontmatter.coverImage || 'None';
-        const newCover = updatedFrontmatter.coverImage || 'None';
-        frontmatterChanges.push(`  Cover: ${oldCover} → ${newCover}`);
-      }
-      if (typedFrontmatter.audiobook !== updatedFrontmatter.audiobook) {
-        frontmatterChanges.push(
-          `  Audiobook: ${typedFrontmatter.audiobook || false} → ${updatedFrontmatter.audiobook}`
-        );
-      }
-      if (typedFrontmatter.finished !== updatedFrontmatter.finished) {
-        const oldDate = typedFrontmatter.finished
-          ? new Date(typedFrontmatter.finished).toLocaleDateString()
-          : 'Not finished';
-        const newDate = updatedFrontmatter.finished
-          ? new Date(updatedFrontmatter.finished).toLocaleDateString()
-          : 'Not finished';
-        frontmatterChanges.push(`  Finished: ${oldDate} → ${newDate}`);
-      }
-
-      if (frontmatterChanges.length > 0) {
-        console.log(chalk.gray(frontmatterChanges.join('\n')));
-      }
-
-      if (content !== updatedContent) {
-        console.log(chalk.gray('  Thoughts: Updated'));
-      }
-
-      // Confirm before saving
-      const { confirmSave } = await inquirer.prompt<{ confirmSave: boolean }>([
-        {
-          type: 'confirm',
-          name: 'confirmSave',
-          message: 'Save these changes?',
-          default: true,
-        },
-      ]);
-
-      if (!confirmSave) {
-        console.log(chalk.yellow('✖ Changes discarded.'));
-        return;
-      }
+    if (!shouldSave) {
+      console.log(chalk.yellow('✖ Changes discarded.'));
+      return;
     }
 
-    // Write updated file
+    // Save updated reading
     await writeReadingFrontmatter(filepath, updatedFrontmatter, updatedContent);
-
     console.log(
       chalk.green(`\n✅ Successfully updated "${updatedFrontmatter.title || currentReading.title}"`)
     );
