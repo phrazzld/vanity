@@ -193,7 +193,7 @@ finished: null
       const updated = updateFrontmatterField(original, 'favorite', true);
 
       expect(updated.favorite).toBe(true);
-      expect(original.favorite).toBeUndefined();
+      expect('favorite' in original).toBe(false);
     });
 
     it('should update coverImage field', () => {
@@ -206,7 +206,7 @@ finished: null
       const updated = updateFrontmatterField(original, 'coverImage', '/images/new.webp');
 
       expect(updated.coverImage).toBe('/images/new.webp');
-      expect(original.coverImage).toBeUndefined();
+      expect('coverImage' in original).toBe(false);
     });
   });
 

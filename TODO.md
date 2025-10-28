@@ -176,7 +176,21 @@ Each extracted module should be **deep** (high functionality / low interface com
   Time: 45min (30min implementation + 15min tests)
   ```
 
-- [ ] Refactor `addReading()` - Orchestration only (no implementation details)
+- [x] Refactor `addReading()` - Orchestration only (no implementation details)
+
+  ```
+  Work Log:
+  - Reduced addReading() from 137 to 46 lines (66% reduction)
+  - Extracted 5 helper functions with clear single responsibilities:
+    - handleLocalImageProcessing() - Image processing with user fallback
+    - handleExistingReadings() - Reread detection and user choice
+    - renameImageForReread() - Image file renaming for versioned reads
+    - ensureDirectoryExists() - Directory creation with error handling
+    - handleAddReadingError() - Centralized error handling
+  - Main function now pure orchestration: gather input → process → save
+  - File size increased 714→775 lines but maintainability improved
+  - All 99 CLI tests passing
+  ```
 
   ```
   Files: Update cli/commands/reading.ts:102-410

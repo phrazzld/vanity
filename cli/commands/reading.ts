@@ -37,138 +37,201 @@ export async function addReading(): Promise<void> {
   console.log(chalk.cyan("📚 Let's add a new reading...\n"));
 
   try {
-    // Get basic reading information
+    // Gather input from user
     const basicInfo = await promptBasicReadingInfo();
-
-    // Get reading metadata (finished, date, audiobook, favorite)
     const { finished, finishedDate, audiobook, favorite } = await promptReadingMetadata();
-
-    // Get cover image choice and details
     const slug = sanitizeSlug(basicInfo.title);
+
+    // Process cover image if provided
+    let coverImage: string | null = null;
     const coverImageResult = await promptCoverImage();
 
-    let coverImage: string | null = null;
     if (coverImageResult.choice === 'url') {
       coverImage = coverImageResult.value;
     } else if (coverImageResult.choice === 'local' && coverImageResult.value) {
-      // Process local image
-      console.log(chalk.gray('Optimizing image...'));
-      try {
-        coverImage = await processReadingCoverImage(coverImageResult.value, slug, IMAGES_DIR);
-        console.log(chalk.green('✓ Image optimized and saved'));
-      } catch (imageError) {
-        const errorMessage = imageError instanceof Error ? imageError.message : String(imageError);
-        console.error(chalk.red('✖ Failed to process image:'), errorMessage);
-        const { continueWithoutImage } = await inquirer.prompt<ContinueWithoutImagePrompt>([
-          {
-            type: 'confirm',
-            name: 'continueWithoutImage',
-            message: 'Continue without cover image?',
-            default: true,
-          },
-        ]);
-        if (!continueWithoutImage) {
-          console.log(chalk.yellow('✖ Reading creation cancelled.'));
-          return;
-        }
-      }
+      coverImage = await handleLocalImageProcessing(coverImageResult.value, slug);
+      if (coverImage === null) return; // User cancelled after image error
     }
 
-    // Show preview
+    // Show preview and handle existing readings
     console.log(previewReading(basicInfo.title, basicInfo.author, finished));
 
-    // Check for existing readings and handle rereads
-    let filename = `${slug}.md`;
-    let filepath = join(READINGS_DIR, filename);
+    const { filename, filepath, finalCoverImage } = await handleExistingReadings(
+      slug,
+      basicInfo.title,
+      coverImage
+    );
 
-    const existingReading = await getMostRecentReading(slug, READINGS_DIR);
+    if (!filename) return; // User cancelled
 
-    if (existingReading) {
-      // Book already exists - offer reread options
-      let message: string;
-      if (existingReading.count === 1) {
-        const dateStr = existingReading.date
-          ? `finished ${new Date(existingReading.date).toLocaleDateString()}`
-          : 'currently reading';
-        message = chalk.yellow(`⚠️  '${basicInfo.title}' already tracked (${dateStr}).`);
-      } else {
-        message = chalk.yellow(
-          `⚠️  '${basicInfo.title}' already tracked (${existingReading.count} previous readings).`
-        );
-      }
-
-      console.log('\n' + message);
-
-      const action = await promptRereadAction(
-        basicInfo.title,
-        existingReading.count,
-        existingReading.date,
-        getNextRereadFilename(slug, READINGS_DIR)
-      );
-
-      if (action === 'cancel') {
-        console.log(chalk.yellow('✖ Reading creation cancelled.'));
-        return;
-      } else if (action === 'reread') {
-        filename = getNextRereadFilename(slug, READINGS_DIR);
-        filepath = join(READINGS_DIR, filename);
-
-        // For rereads, if they selected a local image, we need to rename it
-        if (coverImage && coverImage.startsWith('/images/readings/')) {
-          const rereadSlug = filename.replace('.md', '');
-          const newOutputPath = join(IMAGES_DIR, `${rereadSlug}.webp`);
-          const originalPath = join(IMAGES_DIR, `${slug}.webp`);
-
-          if (existsSync(originalPath)) {
-            try {
-              // Rename the file we just created to match the reread filename
-              const { renameSync } = await import('fs');
-              renameSync(originalPath, newOutputPath);
-              coverImage = `/images/readings/${rereadSlug}.webp`;
-            } catch {
-              console.warn(
-                chalk.yellow('⚠️  Could not rename image for reread, using original path')
-              );
-            }
-          }
-        }
-      }
-      // If 'update', we continue with the existing filepath
-    }
-
-    // Create the reading file content
+    // Create and save reading
     const frontmatter = createReadingFrontmatter(basicInfo.title, basicInfo.author, finishedDate, {
-      coverImage: coverImage || undefined,
+      coverImage: finalCoverImage || undefined,
       audiobook,
       favorite,
     });
 
-    // Ensure readings directory exists
-    try {
-      if (!existsSync(READINGS_DIR)) {
-        await mkdir(READINGS_DIR, { recursive: true });
-      }
-    } catch (dirError) {
-      console.error(chalk.red('✖ Failed to create readings directory:'), dirError);
-      process.exit(1);
+    await ensureDirectoryExists(READINGS_DIR);
+    await writeReadingFrontmatter(filepath, frontmatter);
+
+    console.log(chalk.green(`\n✅ Reading "${basicInfo.title}" saved to ${filename}`));
+  } catch (error) {
+    handleAddReadingError(error);
+  }
+}
+
+/**
+ * Process local image file with error handling
+ * Returns image path on success, null if user cancels
+ */
+async function handleLocalImageProcessing(imagePath: string, slug: string): Promise<string | null> {
+  console.log(chalk.gray('Optimizing image...'));
+  try {
+    const coverImage = await processReadingCoverImage(imagePath, slug, IMAGES_DIR);
+    console.log(chalk.green('✓ Image optimized and saved'));
+    return coverImage;
+  } catch (imageError) {
+    const errorMessage = imageError instanceof Error ? imageError.message : String(imageError);
+    console.error(chalk.red('✖ Failed to process image:'), errorMessage);
+
+    const { continueWithoutImage } = await inquirer.prompt<ContinueWithoutImagePrompt>([
+      {
+        type: 'confirm',
+        name: 'continueWithoutImage',
+        message: 'Continue without cover image?',
+        default: true,
+      },
+    ]);
+
+    if (!continueWithoutImage) {
+      console.log(chalk.yellow('✖ Reading creation cancelled.'));
+      return null;
     }
 
-    // Write the file
+    return null; // Continue without image
+  }
+}
+
+/**
+ * Handle existing reading detection and reread logic
+ * Returns filename, filepath, and potentially renamed cover image
+ */
+async function handleExistingReadings(
+  slug: string,
+  title: string,
+  coverImage: string | null
+): Promise<
+  | { filename: string; filepath: string; finalCoverImage: string | null }
+  | { filename: null; filepath: null; finalCoverImage: null }
+> {
+  const existingReading = await getMostRecentReading(slug, READINGS_DIR);
+
+  if (!existingReading) {
+    // No existing reading - use default filename
+    const filename = `${slug}.md`;
+    const filepath = join(READINGS_DIR, filename);
+    return { filename, filepath, finalCoverImage: coverImage };
+  }
+
+  // Show warning about existing reading
+  const message =
+    existingReading.count === 1
+      ? chalk.yellow(
+          `⚠️  '${title}' already tracked (${
+            existingReading.date
+              ? `finished ${new Date(existingReading.date).toLocaleDateString()}`
+              : 'currently reading'
+          }).`
+        )
+      : chalk.yellow(
+          `⚠️  '${title}' already tracked (${existingReading.count} previous readings).`
+        );
+
+  console.log('\n' + message);
+
+  // Ask user what to do
+  const action = await promptRereadAction(
+    title,
+    existingReading.count,
+    existingReading.date,
+    getNextRereadFilename(slug, READINGS_DIR)
+  );
+
+  if (action === 'cancel') {
+    console.log(chalk.yellow('✖ Reading creation cancelled.'));
+    return { filename: null, filepath: null, finalCoverImage: null };
+  }
+
+  if (action === 'update') {
+    // Update existing file
+    const filename = `${slug}.md`;
+    const filepath = join(READINGS_DIR, filename);
+    return { filename, filepath, finalCoverImage: coverImage };
+  }
+
+  // Create reread with new filename
+  const filename = getNextRereadFilename(slug, READINGS_DIR);
+  const filepath = join(READINGS_DIR, filename);
+
+  // Rename image file if needed
+  const finalCoverImage = await renameImageForReread(slug, filename, coverImage);
+
+  return { filename, filepath, finalCoverImage };
+}
+
+/**
+ * Rename processed image to match reread filename
+ */
+async function renameImageForReread(
+  baseSlug: string,
+  rereadFilename: string,
+  coverImage: string | null
+): Promise<string | null> {
+  if (!coverImage || !coverImage.startsWith('/images/readings/')) {
+    return coverImage;
+  }
+
+  const rereadSlug = rereadFilename.replace('.md', '');
+  const originalPath = join(IMAGES_DIR, `${baseSlug}.webp`);
+  const newOutputPath = join(IMAGES_DIR, `${rereadSlug}.webp`);
+
+  if (!existsSync(originalPath)) {
+    return coverImage;
+  }
+
+  try {
+    const { renameSync } = await import('fs');
+    renameSync(originalPath, newOutputPath);
+    return `/images/readings/${rereadSlug}.webp`;
+  } catch {
+    console.warn(chalk.yellow('⚠️  Could not rename image for reread, using original path'));
+    return coverImage;
+  }
+}
+
+/**
+ * Ensure directory exists, creating if necessary
+ */
+async function ensureDirectoryExists(dir: string): Promise<void> {
+  if (!existsSync(dir)) {
     try {
-      await writeReadingFrontmatter(filepath, frontmatter);
-      console.log(chalk.green(`\n✅ Reading "${basicInfo.title}" saved to ${filename}`));
-    } catch (writeError) {
-      console.error(chalk.red('✖ Failed to save reading file:'), writeError);
-      console.log(chalk.gray(`  Attempted to write to: ${filepath}`));
+      await mkdir(dir, { recursive: true });
+    } catch (error) {
+      console.error(chalk.red('✖ Failed to create directory:'), error);
       process.exit(1);
     }
-  } catch (error) {
-    if (error instanceof Error && error.message.includes('prompt')) {
-      console.log(chalk.yellow('\n✖ Reading creation cancelled.'));
-    } else {
-      console.error(chalk.red('✖ Error adding reading:'), error);
-      process.exit(1);
-    }
+  }
+}
+
+/**
+ * Handle errors during reading creation
+ */
+function handleAddReadingError(error: unknown): void {
+  if (error instanceof Error && error.message.includes('prompt')) {
+    console.log(chalk.yellow('\n✖ Reading creation cancelled.'));
+  } else {
+    console.error(chalk.red('✖ Error adding reading:'), error);
+    process.exit(1);
   }
 }
 
