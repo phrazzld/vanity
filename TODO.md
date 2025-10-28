@@ -278,18 +278,14 @@ Each extracted module should be **deep** (high functionality / low interface com
   Time: 20min (tests only)
   ```
 
-- [ ] Create CLI test infrastructure
+- [x] Create CLI test infrastructure
   ```
-  Files: Create cli/__tests__/setup.ts, jest.cli.config.js
-  Approach: Follow existing test pattern from src/**/__tests__/
-  Implementation:
-    - Jest config for CLI (Node environment, not jsdom)
-    - Mock utilities for inquirer, filesystem, sharp
-    - Fixture data for test readings
-    - Test helpers for temp directory management
-  Success: Tests can run with npm test cli/
-  Test Strategy: Infrastructure task - verified by running extracted module tests
-  Time: 30min
+  Work Log:
+  - Infrastructure already exists and working
+  - Tests run with npm test cli/__tests__/
+  - All 99 CLI tests passing across 5 test files
+  - Uses Jest with Node environment (not jsdom)
+  - Real temp directories for file operations (not mocks)
   ```
 
 ## Design Iteration
