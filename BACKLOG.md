@@ -55,23 +55,6 @@ const [error, setError] = useState<string | null>(null);
 
 ## Next (This Quarter, <3 months)
 
-### [Architecture] Extract CLI Reading God Object → 7 Focused Modules
-
-**File**: `cli/commands/reading.ts:1-988`
-**Perspectives**: complexity-archaeologist, architecture-guardian, maintainability-maven
-**Why**: 988 lines, 13 functions, 8 responsibilities = maintenance bottleneck
-**Impact**: Single file handles prompts + file I/O + image processing + validation + reread logic
-**Approach**: Extract modules:
-
-1. `cli/lib/reading-prompts.ts` (inquirer flows)
-2. `cli/lib/reading-image.ts` (sharp operations + magic number constants)
-3. `cli/lib/reading-reread.ts` (reread detection & versioning)
-4. `cli/lib/reading-frontmatter.ts` (YAML manipulation)
-5. `cli/lib/reading-validation.ts` (path traversal protection, input validation)
-6. Keep: addReading, updateReading, listReadings (orchestration only)
-   **Effort**: 12-16h | **Impact**: Unlocks parallel CLI feature development, halves test complexity
-   **Why Now**: Blocking further CLI enhancements, each addition increases complexity
-
 ### [UX] Improve Error Messages Across App
 
 **Files**: `src/app/readings/page.tsx:116`, CLI error handlers
@@ -83,18 +66,6 @@ const [error, setError] = useState<string | null>(null);
 - CLI: Detailed error context (sharp failures → "Image corrupted, try re-saving")
 - TypeScript discriminated unions for error types
   **Effort**: 3h | **Impact**: Users can self-recover vs abandoning, reduced support burden
-
-### [Maintainability] Consolidate Code Duplication in CLI
-
-**Files**: `cli/commands/reading.ts:188-278, 461-581`
-**Perspectives**: complexity-archaeologist, maintainability-maven
-**Why**: Image handling logic duplicated in addReading() and updateCoverImage()
-**Approach**: Extract `processReadingCoverImage(imagePath, slug)` shared function with:
-
-- Magic number constants (400x600, quality 80) with documentation about why
-- Unified validation (file size, format, path traversal protection)
-- Single sharp processing pipeline
-  **Effort**: 1h | **Impact**: Bug fixes apply once, eliminates 120+ lines duplication
 
 ### [UX] Add Mobile-Friendly Reading Card Interactions
 
@@ -108,35 +79,18 @@ const [error, setError] = useState<string | null>(null);
 - Improve keyboard focus visibility
   **Effort**: 45m | **Impact**: Mobile users discover card features, WCAG compliance improved
 
-### [Security] Strengthen Path Traversal Protection in CLI
+### [Security] ~~Strengthen Path Traversal Protection in CLI~~ ✅ COMPLETED
 
-**File**: `cli/commands/reading.ts:233`
-**Perspectives**: security-sentinel
-**Why**: Basic `..` check but missing URL encoding bypasses, no absolute path validation
-**Attack**: User provides `/Users/phaedrus/.ssh/id_rsa` → accepted, copied to public/images/
-**Fix**:
+**File**: `cli/lib/reading-image.ts:40-82`
+**Status**: ✅ Completed in PR #81 (CLI refactoring)
+**Implementation**:
 
-- Resolve to absolute path, verify within project root
-- Check for encoded characters (`%2e`, `%2f`)
-- Validate file extension allowlist
-- Enforce 10MB max file size
-  **Effort**: 20m | **Risk**: MEDIUM
-  **Acceptance**: Paths outside project rejected, encoded bypasses blocked
-
-### [Maintainability] Document Magic Numbers and Add Constants
-
-**File**: `cli/commands/reading.ts:254, 258, 562`
-**Perspectives**: maintainability-maven
-**Why**: `resize(400, 600)` and `quality: 80` appear with no context about why these values
-**Fix**: Create `COVER_IMAGE_CONFIG` constant with documentation:
-
-```typescript
-// 400x600 maintains 2:3 book cover aspect ratio (industry standard)
-// Quality 80 balances file size (~40KB) with visual fidelity
-// Profiled: 80 quality indistinguishable from 90 but 30% smaller
-```
-
-**Effort**: 20m | **Impact**: Future developers know if values are tunable
+- ✅ Resolves to absolute path, verifies within project root
+- ✅ Checks for encoded characters (`%2e`, `%2f`)
+- ✅ Validates file extension allowlist
+- ✅ Enforces 10MB max file size
+- ✅ Validates `..` and `~` patterns before operations
+  **Result**: Comprehensive path traversal protection with well-documented rationale
 
 ### [Architecture] Clarify ReadingsList Component Purpose
 
@@ -149,6 +103,27 @@ const [error, setError] = useState<string | null>(null);
 ---
 
 ## Soon (Exploring, 3-6 months)
+
+### CLI Reading Command Refinements (From PR #81 Code Review)
+
+**Context**: Post-refactoring architectural improvements suggested by Claude/Codex reviews
+**Perspectives**: architecture-guardian, maintainability-maven
+**Why**: Further simplify orchestration functions, reduce cognitive load
+
+- **[Architecture] Extract handleExistingReadings() reread logic** - 60-line function could split reread detection from user prompts
+  - **Effort**: 2h | **Value**: Clearer separation of concerns, easier testing
+  - **Approach**: Split into `detectExistingReadings()` and `promptRereadAction()`
+
+- **[Architecture] Refactor applyUpdateAction() to strategy pattern** - Replace switch statement with polymorphic action handlers
+  - **Effort**: 3h | **Value**: Extensible for new update actions, eliminates 100+ line switch
+  - **Approach**: `{ finish: FinishAction, title: TitleAction, ... }` object lookup
+
+- **[Architecture] Type refinement for date handling** - Use Date objects internally with serialization helpers
+  - **Effort**: 4h | **Risk**: Breaking change to frontmatter types
+  - **Value**: Type safety, eliminates string/ISO conversion logic
+  - **Approach**: `finished?: Date | null` with `serializeFrontmatter()` / `deserializeFrontmatter()` helpers
+
+---
 
 - **[Product] Reading Statistics Dashboard** - Show reading pace, books per year, favorite authors analytics (requires grouping logic refactor, visualization library)
 - **[Product] Export Functionality** - Export reading list to CSV/JSON for Goodreads import, backup (straightforward data transformation)
