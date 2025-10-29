@@ -1,6 +1,5 @@
 import { listReadings } from '../commands/reading';
 import { getReadings } from '../../src/lib/data';
-import chalk from 'chalk';
 
 // Mock dependencies
 jest.mock('../../src/lib/data');
