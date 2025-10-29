@@ -676,7 +676,12 @@ async function applyUpdateAction(
         type: 'input',
         name: 'dateInput',
         message: 'When did you finish? (MM/DD/YYYY):',
-        validate: (input: string) => validateDateForPrompt(input),
+        validate: (input: string) => {
+          if (!input || !input.trim()) {
+            return 'Date is required for custom finish date';
+          }
+          return validateDateForPrompt(input);
+        },
       },
     ]);
 

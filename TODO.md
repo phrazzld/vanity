@@ -338,6 +338,24 @@ Each extracted module should be **deep** (high functionality / low interface com
 - If tests reveal issues: Fix in place before continuing to next module
 - Rollback plan: Each module is additive, can revert individual commits
 
+## Post-Refactoring Fixes
+
+### P1 Issues from Codex Code Review
+
+- [x] **Cover Image Graceful Degradation** (PR #81, Commit f286347)
+  - **Issue**: Image processing failures caused command to exit even when user chose "Continue without image"
+  - **Root Cause**: `handleLocalImageProcessing()` returned `null` for both cancellation and continuation
+  - **Fix**: Return empty string `''` for continuation, `null` for cancellation
+  - **Impact**: Restored pre-refactoring graceful degradation behavior
+  - **Tests**: All 108 CLI tests passing
+
+- [x] **Custom Finish Date Empty Input Crash** (PR #81, Commit TBD)
+  - **Issue**: Pressing Enter on custom finish date prompt crashed CLI with "Date is required" error
+  - **Root Cause**: `validateDateForPrompt()` allows empty input (optional), but `validateDateInput()` rejects empty
+  - **Fix**: Added inline validation at prompt level to require date for custom finish date scenario
+  - **Impact**: Prevents crash, gives immediate user feedback
+  - **Tests**: All 400 tests passing (108 CLI + 292 app)
+
 ## Future Opportunities (NOT in this TODO)
 
 After this refactoring:

@@ -79,20 +79,18 @@ const [error, setError] = useState<string | null>(null);
 - Improve keyboard focus visibility
   **Effort**: 45m | **Impact**: Mobile users discover card features, WCAG compliance improved
 
-### [Security] Strengthen Path Traversal Protection in CLI
+### [Security] ~~Strengthen Path Traversal Protection in CLI~~ ✅ COMPLETED
 
-**File**: `cli/commands/reading.ts:233`
-**Perspectives**: security-sentinel
-**Why**: Basic `..` check but missing URL encoding bypasses, no absolute path validation
-**Attack**: User provides `/Users/phaedrus/.ssh/id_rsa` → accepted, copied to public/images/
-**Fix**:
+**File**: `cli/lib/reading-image.ts:40-82`
+**Status**: ✅ Completed in PR #81 (CLI refactoring)
+**Implementation**:
 
-- Resolve to absolute path, verify within project root
-- Check for encoded characters (`%2e`, `%2f`)
-- Validate file extension allowlist
-- Enforce 10MB max file size
-  **Effort**: 20m | **Risk**: MEDIUM
-  **Acceptance**: Paths outside project rejected, encoded bypasses blocked
+- ✅ Resolves to absolute path, verifies within project root
+- ✅ Checks for encoded characters (`%2e`, `%2f`)
+- ✅ Validates file extension allowlist
+- ✅ Enforces 10MB max file size
+- ✅ Validates `..` and `~` patterns before operations
+  **Result**: Comprehensive path traversal protection with well-documented rationale
 
 ### [Architecture] Clarify ReadingsList Component Purpose
 
@@ -105,6 +103,27 @@ const [error, setError] = useState<string | null>(null);
 ---
 
 ## Soon (Exploring, 3-6 months)
+
+### CLI Reading Command Refinements (From PR #81 Code Review)
+
+**Context**: Post-refactoring architectural improvements suggested by Claude/Codex reviews
+**Perspectives**: architecture-guardian, maintainability-maven
+**Why**: Further simplify orchestration functions, reduce cognitive load
+
+- **[Architecture] Extract handleExistingReadings() reread logic** - 60-line function could split reread detection from user prompts
+  - **Effort**: 2h | **Value**: Clearer separation of concerns, easier testing
+  - **Approach**: Split into `detectExistingReadings()` and `promptRereadAction()`
+
+- **[Architecture] Refactor applyUpdateAction() to strategy pattern** - Replace switch statement with polymorphic action handlers
+  - **Effort**: 3h | **Value**: Extensible for new update actions, eliminates 100+ line switch
+  - **Approach**: `{ finish: FinishAction, title: TitleAction, ... }` object lookup
+
+- **[Architecture] Type refinement for date handling** - Use Date objects internally with serialization helpers
+  - **Effort**: 4h | **Risk**: Breaking change to frontmatter types
+  - **Value**: Type safety, eliminates string/ISO conversion logic
+  - **Approach**: `finished?: Date | null` with `serializeFrontmatter()` / `deserializeFrontmatter()` helpers
+
+---
 
 - **[Product] Reading Statistics Dashboard** - Show reading pace, books per year, favorite authors analytics (requires grouping logic refactor, visualization library)
 - **[Product] Export Functionality** - Export reading list to CSV/JSON for Goodreads import, backup (straightforward data transformation)
