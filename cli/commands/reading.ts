@@ -49,8 +49,9 @@ export async function addReading(): Promise<void> {
     if (coverImageResult.choice === 'url') {
       coverImage = coverImageResult.value;
     } else if (coverImageResult.choice === 'local' && coverImageResult.value) {
-      coverImage = await handleLocalImageProcessing(coverImageResult.value, slug);
-      if (coverImage === null) return; // User cancelled after image error
+      const imageResult = await handleLocalImageProcessing(coverImageResult.value, slug);
+      if (imageResult === null) return; // User cancelled after image error
+      coverImage = imageResult || null; // Empty string becomes null (no image)
     }
 
     // Show preview and handle existing readings
@@ -82,7 +83,13 @@ export async function addReading(): Promise<void> {
 
 /**
  * Process local image file with error handling
- * Returns image path on success, null if user cancels
+ *
+ * @returns Image path on success, empty string to continue without image, null if user cancels
+ *
+ * Note: This function uses three return values to distinguish user intent:
+ * - Success: Returns full image path (e.g., "/images/readings/slug.webp")
+ * - Continue without image: Returns empty string (user chose to proceed despite processing failure)
+ * - Cancel: Returns null (user chose to cancel reading creation entirely)
  */
 async function handleLocalImageProcessing(imagePath: string, slug: string): Promise<string | null> {
   console.log(chalk.gray('Optimizing image...'));
@@ -108,7 +115,8 @@ async function handleLocalImageProcessing(imagePath: string, slug: string): Prom
       return null;
     }
 
-    return null; // Continue without image
+    console.log(chalk.yellow('⚠ Continuing without cover image'));
+    return ''; // Empty string signals: continue without image
   }
 }
 
