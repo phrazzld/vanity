@@ -31,6 +31,12 @@ interface UIState {
   closeSidebar: () => void;
   toggleSidebar: () => void;
 
+  // Mobile navigation state
+  isMobileNavOpen: boolean;
+  openMobileNav: () => void;
+  closeMobileNav: () => void;
+  toggleMobileNav: () => void;
+
   // Modal state
   activeModal: string | null;
   openModal: (_modalId: string) => void;
@@ -179,6 +185,12 @@ const createUIStore = () => {
     openSidebar: () => set({ isSidebarOpen: true }),
     closeSidebar: () => set({ isSidebarOpen: false }),
     toggleSidebar: () => set((state: UIState) => ({ isSidebarOpen: !state.isSidebarOpen })),
+
+    // Mobile navigation state
+    isMobileNavOpen: false,
+    openMobileNav: () => set({ isMobileNavOpen: true }),
+    closeMobileNav: () => set({ isMobileNavOpen: false }),
+    toggleMobileNav: () => set((state: UIState) => ({ isMobileNavOpen: !state.isMobileNavOpen })),
 
     // Modal state
     activeModal: null,

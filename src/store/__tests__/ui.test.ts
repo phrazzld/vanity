@@ -470,4 +470,95 @@ describe('UI Store - Theme Logic', () => {
       expect(result.current.isDarkMode).toBe(false);
     });
   });
+
+  describe('Mobile Navigation State', () => {
+    it('should initialize with mobile nav closed', () => {
+      const { result } = renderHook(() => ({
+        isMobileNavOpen: useUIStore(state => state.isMobileNavOpen),
+      }));
+
+      expect(result.current.isMobileNavOpen).toBe(false);
+    });
+
+    it('should open mobile nav when openMobileNav is called', () => {
+      const { result } = renderHook(() => ({
+        isMobileNavOpen: useUIStore(state => state.isMobileNavOpen),
+        openMobileNav: useUIStore(state => state.openMobileNav),
+      }));
+
+      act(() => {
+        result.current.openMobileNav();
+      });
+
+      expect(result.current.isMobileNavOpen).toBe(true);
+    });
+
+    it('should close mobile nav when closeMobileNav is called', () => {
+      const { result } = renderHook(() => ({
+        isMobileNavOpen: useUIStore(state => state.isMobileNavOpen),
+        openMobileNav: useUIStore(state => state.openMobileNav),
+        closeMobileNav: useUIStore(state => state.closeMobileNav),
+      }));
+
+      // First open it
+      act(() => {
+        result.current.openMobileNav();
+      });
+
+      expect(result.current.isMobileNavOpen).toBe(true);
+
+      // Then close it
+      act(() => {
+        result.current.closeMobileNav();
+      });
+
+      expect(result.current.isMobileNavOpen).toBe(false);
+    });
+
+    it('should toggle mobile nav state', () => {
+      const { result } = renderHook(() => ({
+        isMobileNavOpen: useUIStore(state => state.isMobileNavOpen),
+        toggleMobileNav: useUIStore(state => state.toggleMobileNav),
+      }));
+
+      const initialState = result.current.isMobileNavOpen;
+
+      // Toggle once
+      act(() => {
+        result.current.toggleMobileNav();
+      });
+
+      expect(result.current.isMobileNavOpen).toBe(!initialState);
+
+      // Toggle back
+      act(() => {
+        result.current.toggleMobileNav();
+      });
+
+      expect(result.current.isMobileNavOpen).toBe(initialState);
+    });
+
+    it('should not persist mobile nav state to localStorage', () => {
+      const { result } = renderHook(() => ({
+        openMobileNav: useUIStore(state => state.openMobileNav),
+      }));
+
+      // Open mobile nav
+      act(() => {
+        result.current.openMobileNav();
+      });
+
+      // Check that localStorage was called (for theme state)
+      // but mobile nav state should NOT be in the persisted data
+      const setItemCalls = (localStorage.setItem as jest.Mock).mock.calls;
+
+      if (setItemCalls.length > 0) {
+        const lastCall = setItemCalls[setItemCalls.length - 1];
+        const persistedData = JSON.parse(lastCall[1] as string);
+
+        // Mobile nav state should not be persisted
+        expect(persistedData.state).not.toHaveProperty('isMobileNavOpen');
+      }
+    });
+  });
 });
