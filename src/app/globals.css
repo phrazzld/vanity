@@ -634,10 +634,25 @@
   }
 }
 
+/* Mobile navigation drawer animations */
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* Disable animations for reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in,
-  .animate-glitch {
+  .animate-glitch,
+  .animate-slide-in-left {
     animation: none;
   }
 
