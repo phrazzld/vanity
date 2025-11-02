@@ -11,7 +11,7 @@
  * - Auto-close on route changes
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useFocusTrap } from '@/hooks/keyboard/useFocusTrap';
@@ -49,12 +49,23 @@ const MobileNav = React.memo(function MobileNav({
     onEscape: onClose,
   });
 
-  // Close drawer on route change
+  /**
+   * Auto-close drawer on route navigation
+   *
+   * CRITICAL: Do NOT include `isOpen` in dependency array!
+   * - Including it would cause the drawer to close immediately when opened
+   * - We only want to close on pathname changes (user navigating to a new page)
+   * - Use ref pattern to detect actual pathname changes, not re-renders
+   */
+  const prevPathnameRef = useRef(pathname);
+
   useEffect(() => {
-    if (isOpen) {
+    if (prevPathnameRef.current !== pathname) {
+      // Pathname has changed - user navigated to a new page
       onClose();
+      prevPathnameRef.current = pathname;
     }
-  }, [pathname, isOpen, onClose]);
+  }, [pathname, onClose]);
 
   // Prevent body scroll when drawer is open
   useEffect(() => {
@@ -83,7 +94,7 @@ const MobileNav = React.memo(function MobileNav({
     <>
       {/* Overlay backdrop */}
       <div
-        className="mobile-nav-overlay fixed inset-0 bg-black/50 z-overlay animate-fade-in"
+        className="mobile-nav-overlay fixed inset-0 bg-black/50 z-modal animate-fade-in"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -91,14 +102,14 @@ const MobileNav = React.memo(function MobileNav({
       {/* Drawer */}
       <nav
         ref={drawerRef}
-        className={`mobile-nav-drawer fixed top-0 left-0 h-full w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 z-modal shadow-2xl animate-slide-in-left ${className}`}
+        id="mobile-navigation"
+        className={`mobile-nav-drawer fixed top-0 left-0 h-full w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 z-overlay shadow-2xl animate-slide-in-left ${className}`}
         role="dialog"
         aria-modal="true"
         aria-label="Mobile navigation"
       >
         {/* Header with close button */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
-          <span className="text-lg font-semibold text-gray-900 dark:text-white">Menu</span>
+        <div className="flex items-center justify-end p-4 border-b border-gray-200 dark:border-gray-800">
           <button
             onClick={onClose}
             className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
