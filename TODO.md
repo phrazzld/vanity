@@ -1,366 +1,357 @@
-# TODO: Extract CLI Reading God Object → 7 Focused Modules
+# TODO: Mobile Experience Enhancement
 
 ## Context
 
-- **Problem**: `cli/commands/reading.ts` is 988 lines with 13 functions handling 8 responsibilities
-- **Impact**: Maintenance bottleneck blocking CLI feature velocity, test complexity, parallel development
-- **Approach**: Extract deep modules with simple interfaces, following existing pattern in `cli/lib/`
-- **Key Files**:
-  - `cli/commands/reading.ts` (extract from)
-  - `cli/lib/editor.ts`, `cli/lib/preview.ts` (existing pattern examples)
-  - `cli/types/index.ts` (shared types)
-- **Testing**: No existing CLI tests - will add unit tests for extracted pure functions
-
-## Module Design Principles
-
-Each extracted module should be **deep** (high functionality / low interface complexity):
-
-- Simple public interface (1-3 functions max)
-- Hide implementation details
-- Single clear responsibility
-- Minimize dependencies between modules
+- **Approach**: Progressive enhancement with CSS-driven responsiveness
+- **Key Files**: Header.tsx, QuotesList.tsx, ReadingsList.tsx, ui.ts (Zustand store), globals.css
+- **Patterns**: Follow DarkModeToggle.tsx for Client Components, useFocusTrap hook for accessibility, existing test patterns (snapshot + a11y)
+- **Existing Assets**: Focus trap utilities in `src/utils/keyboard/trap.ts`, Zustand store in `src/store/ui.ts`, responsive breakpoints in `tailwind.config.ts`
 
 ## Implementation Tasks
 
-- [x] Extract `cli/lib/reading-image.ts` - Image processing module
+### Phase 1: Mobile Navigation Infrastructure
+
+- [ ] Add mobile nav state to Zustand store
 
   ```
-  Files: Create cli/lib/reading-image.ts, update cli/commands/reading.ts:253-278,557-580
-  Approach: Deep module pattern - single `processReadingCoverImage()` interface
-  Interface:
-    export async function processReadingCoverImage(
-      imagePath: string,
-      slug: string,
-      imagesDir: string
-    ): Promise<string>
+  Files: src/store/ui.ts:44-46, src/store/__tests__/ui.test.ts
+  Approach: Add isMobileNavOpen (boolean) alongside existing sidebar state (line 178-181)
+  Pattern: Follow isSidebarOpen pattern - add state + open/close/toggle actions
+  Success: Store exposes isMobileNavOpen, openMobileNav(), closeMobileNav(), toggleMobileNav()
+  Test: Unit test state mutations, verify no localStorage persistence for nav state
+  Module: UIState manages all transient navigation state, hides implementation
+  Time: 20min
+  ```
+
+- [ ] Create MobileNav drawer component
+
+  ```
+  Files: src/app/components/MobileNav.tsx (new), src/app/components/__tests__/MobileNav.test.tsx (new)
+  Approach: Client Component using useFocusTrap hook, similar to DarkModeToggle pattern
+  Pattern: Follow DarkModeToggle.tsx structure - memo wrapper, ref management, accessibility
+  Interface: Props { isOpen: boolean, onClose: () => void, navLinks: Array<{href, label}> }
   Implementation:
-    - Constants: COVER_IMAGE_CONFIG with documented magic numbers
-      // 400x600 maintains 2:3 book cover aspect ratio (industry standard)
-      // Quality 80 balances file size (~40KB) with visual fidelity
-      // Profiled: 80 quality indistinguishable from 90 but 30% smaller
-    - Path validation (file exists, size < 10MB, allowed extensions)
-    - Path traversal protection (absolute path resolution, within project)
-    - Sharp processing pipeline (resize + WebP conversion)
-    - Return WebP path (/images/readings/{slug}.webp)
-  Success: Single responsibility, eliminates 120+ lines duplication, magic numbers documented
-  Test Strategy:
-    - Unit tests: Valid image → correct WebP output
-    - Unit tests: Invalid path/size/format → throws descriptive error
-    - Unit tests: Path traversal attempts → rejected
-    - Mock: sharp library, filesystem calls
-  Module Value: High functionality (validation + processing + error handling) / Low interface (single function)
-  Time: 90min (60min implementation + 30min tests)
+    - Drawer: Fixed position, translateX animation, z-modal layer
+    - Overlay: Semi-transparent bg, onClick closes drawer
+    - Focus trap: useFocusTrap with onEscape callback
+    - Close button: Accessible X icon with aria-label
+    - Auto-close: On route navigation (usePathname effect)
+  Success: Drawer slides in/out smoothly, focus trapped, ESC/overlay/X closes it
+  Test: Unit tests for open/close, keyboard navigation, snapshot tests
+  Module: Hides focus trap complexity, animation orchestration, event handling
+  Time: 1.5hr
   ```
 
-- [x] Extract `cli/lib/reading-reread.ts` - Reread detection & versioning
+- [ ] Create HamburgerButton component
 
   ```
-  Files: Create cli/lib/reading-reread.ts, update cli/commands/reading.ts:29-96
-  Approach: Deep module - hide filename generation complexity
-  Interface:
-    export function findExistingReadings(baseSlug: string, readingsDir: string): string[]
-    export function getNextRereadFilename(baseSlug: string, readingsDir: string): string
-    export async function getMostRecentReading(
-      baseSlug: string,
-      readingsDir: string
-    ): Promise<{ date: string | null; count: number } | null>
+  Files: src/app/components/HamburgerButton.tsx (new), src/app/components/__tests__/HamburgerButton.test.tsx (new)
+  Approach: Animated hamburger icon with accessibility (like DarkModeToggle button pattern)
+  Interface: Props { isOpen: boolean, onClick: () => void, className?: string }
   Implementation:
-    - Regex pattern matching for base + numbered versions
-    - Sorting logic (base first, then numbered)
-    - Next number calculation with zero-padding
-    - YAML frontmatter parsing for date extraction
-  Success: Clear separation of reread logic, independently testable
-  Test Strategy:
-    - Unit tests: No existing → returns base filename
-    - Unit tests: Base exists → returns slug-02
-    - Unit tests: Multiple rereads → correct next number
-    - Unit tests: getMostRecentReading → parses date correctly
-    - Mock: filesystem reads, gray-matter parsing
-  Module Value: Hides filename numbering complexity behind simple interface
-  Time: 60min (40min implementation + 20min tests)
+    - Three-line SVG icon that animates to X when open
+    - aria-label, aria-expanded attributes
+    - Minimum 44x44px touch target
+    - Smooth animation (transform-based, GPU-accelerated)
+  Success: Icon toggles smoothly, accessible, correct touch target size
+  Test: Snapshot tests for open/closed states, a11y tests for attributes
+  Module: Single responsibility (visual toggle state), simple interface
+  Time: 30min
   ```
 
-- [x] Extract `cli/lib/reading-validation.ts` - Input validation & security
+- [ ] Update Header component for mobile nav
 
   ```
-  Files: Create cli/lib/reading-validation.ts, update cli/commands/reading.ts:212-237
-  Approach: Deep module - centralize all validation rules
-  Interface:
-    export function validateImagePath(imagePath: string): void
-    export function validateDateInput(dateInput: string): Date
-    export function sanitizeSlug(title: string): string
+  Files: src/app/components/Header.tsx:1-49, src/app/components/__tests__/Header.test.tsx (new)
+  Approach: Conditional rendering - desktop nav hidden on mobile, HamburgerButton shown
+  Pattern: Use Tailwind responsive classes (hidden md:flex, flex md:hidden)
   Implementation:
-    - Path validation: exists, extension allowlist, size limits
-    - Path security: absolute path resolution, project root verification, encoded char checks
-    - Date validation: ISO format, reasonable range
-    - Slug generation: consistent with existing slugify usage
-  Success: All input validation in one place, security rules clearly documented
-  Test Strategy:
-    - Unit tests: Valid inputs → pass silently
-    - Unit tests: Invalid inputs → throw descriptive errors
-    - Unit tests: Path traversal (../, ~/, absolute, URL encoded) → rejected
-    - Unit tests: Various date formats → normalized to ISO
-    - No mocks: Pure validation logic
-  Module Value: Security-critical logic isolated and thoroughly tested
-  Time: 45min (30min implementation + 15min tests)
+    - Import MobileNav, HamburgerButton, useUIStore
+    - Desktop nav: Wrap in <div className="hidden md:flex">
+    - Mobile: Add HamburgerButton + MobileNav components
+    - Wire to Zustand: isMobileNavOpen, toggleMobileNav
+    - Maintain Server Component wrapper where possible
+  Success: Desktop unchanged, mobile shows hamburger, drawer works, no layout shift
+  Test: Snapshot tests for both viewports, integration test for state flow
+  Module: Header orchestrates nav variants, hides viewport detection logic
+  Time: 45min
   ```
 
-- [x] Extract `cli/lib/reading-prompts.ts` - Inquirer prompt flows
-
+- [ ] Add mobile nav styles to globals.css
   ```
-  Files: Create cli/lib/reading-prompts.ts, update cli/commands/reading.ts:107-240,305-326
-  Approach: Deep module - encapsulate all user interaction logic
-  Interface:
-    export async function promptBasicReadingInfo(): Promise<BasicReadingInfo>
-    export async function promptReadingMetadata(): Promise<{
-      finished: boolean;
-      finishedDate: string | null;
-      audiobook: boolean;
-      favorite: boolean;
-    }>
-    export async function promptCoverImage(): Promise<{
-      choice: 'url' | 'local' | 'skip';
-      value: string | null;
-    }>
-    export async function promptRereadAction(
-      title: string,
-      existingCount: number,
-      lastDate: string | null,
-      nextFilename: string
-    ): Promise<'reread' | 'update' | 'cancel'>
+  Files: src/app/globals.css:457-end
+  Approach: Add drawer animation utilities, z-index semantic values
+  Pattern: Follow existing animation patterns (iconSwitch, fadeIn)
   Implementation:
-    - Group related prompts into logical flows
-    - Type validation using cli/types/index.ts interfaces
-    - Consistent error messages and defaults
-    - Reuse validation from reading-validation.ts
-  Success: All inquirer logic isolated, commands become pure orchestration
-  Test Strategy:
-    - Integration tests: Mock inquirer responses → verify correct data flow
-    - Unit tests: Prompt configuration → correct validators and defaults
-    - Mock: inquirer.prompt() with predefined answers
-  Module Value: Hides inquirer complexity, makes command functions testable
-  Time: 75min (50min implementation + 25min tests)
+    - @keyframes slideInLeft (translateX(-100%) to 0)
+    - @keyframes slideOutLeft (0 to translateX(-100%))
+    - @keyframes fadeIn/fadeOut for overlay
+    - .mobile-nav-drawer class (positioning, transforms)
+    - .mobile-nav-overlay class (backdrop, z-index)
+    - Respect prefers-reduced-motion
+  Success: Smooth 60fps animations, no jank, reduced motion support
+  Test: Manual testing on dev server, Lighthouse performance check
+  Module: Style system hides animation implementation, exposes class interface
+  Time: 30min
   ```
 
-- [x] Extract `cli/lib/reading-frontmatter.ts` - YAML manipulation
+### Phase 2: Mobile Quote List Optimization
+
+- [ ] Optimize QuotesList for mobile layout
 
   ```
-  Files: Create cli/lib/reading-frontmatter.ts, update cli/commands/reading.ts:380-410,586-698
-  Approach: Deep module - abstract gray-matter operations
-  Interface:
-    export async function readReadingFrontmatter(
-      filepath: string
-    ): Promise<{ frontmatter: ReadingFrontmatter; content: string }>
-    export async function writeReadingFrontmatter(
-      filepath: string,
-      frontmatter: ReadingFrontmatter,
-      content: string
-    ): Promise<void>
-    export function updateFrontmatterField<K extends keyof ReadingFrontmatter>(
-      frontmatter: ReadingFrontmatter,
-      field: K,
-      value: ReadingFrontmatter[K]
-    ): ReadingFrontmatter
+  Files: src/app/components/quotes/QuotesList.tsx:163-173,203-272
+  Approach: Hide headers, adjust grid, increase touch targets with responsive classes
+  Pattern: Use Tailwind responsive utilities (hidden md:flex, text-sm md:text-base)
   Implementation:
-    - Wrap gray-matter with typed interfaces
-    - Handle missing/malformed frontmatter gracefully
-    - Preserve markdown content during updates
-    - Consistent formatting (alphabetical fields, proper spacing)
-  Success: Type-safe frontmatter operations, isolated from file I/O
-  Test Strategy:
-    - Unit tests: Valid markdown → parsed correctly
-    - Unit tests: Missing fields → defaults applied
-    - Unit tests: Round-trip (read → modify → write) → preserves content
-    - Mock: fs.readFile, fs.writeFile
-  Module Value: Type safety + error handling for YAML operations
-  Time: 45min (30min implementation + 15min tests)
+    - Column headers: Add `hidden md:flex` to line 164 wrapper
+    - Quote items: Remove grid, use single column layout on mobile
+    - Touch targets: Increase min-height to 48px (py-3 md:py-2)
+    - Typography: text-base on mobile, keep text-sm on desktop
+    - Icon size: h-5 w-5 on mobile (was h-4 w-4)
+    - Spacing: Increase gap between items (space-y-2 md:space-y-1)
+  Success: Headers hidden <768px, readable text, 48px+ touch targets, no horizontal scroll
+  Test: Update existing tests for responsive classes, add mobile viewport snapshots
+  Module: Same interface, hides responsive layout complexity
+  Time: 45min
   ```
 
-- [x] Refactor `addReading()` - Orchestration only (no implementation details)
-
+- [ ] Add mobile-specific quote card styles
   ```
-  Work Log:
-  - Reduced addReading() from 137 to 46 lines (66% reduction)
-  - Extracted 5 helper functions with clear single responsibilities:
-    - handleLocalImageProcessing() - Image processing with user fallback
-    - handleExistingReadings() - Reread detection and user choice
-    - renameImageForReread() - Image file renaming for versioned reads
-    - ensureDirectoryExists() - Directory creation with error handling
-    - handleAddReadingError() - Centralized error handling
-  - Main function now pure orchestration: gather input → process → save
-  - File size increased 714→775 lines but maintainability improved
-  - All 99 CLI tests passing
-  ```
-
-  ```
-  Files: Update cli/commands/reading.ts:102-410
-  Approach: Reduce to thin orchestration layer using extracted modules
-  Pattern:
-    - Call reading-prompts for user input
-    - Call reading-validation for sanitization
-    - Call reading-image for cover processing
-    - Call reading-reread for filename/version logic
-    - Call reading-frontmatter for file creation
+  Files: src/app/globals.css:429-437
+  Approach: Add responsive utilities for quote display on mobile
+  Pattern: Follow existing .quote-text-display pattern
   Implementation:
-    const basicInfo = await promptBasicReadingInfo();
-    const metadata = await promptReadingMetadata();
-    const coverInfo = await promptCoverImage();
-
-    const slug = sanitizeSlug(basicInfo.title);
-    let coverImage = null;
-    if (coverInfo.choice === 'local') {
-      coverImage = await processReadingCoverImage(coverInfo.value, slug, IMAGES_DIR);
-    }
-
-    const existing = await getMostRecentReading(slug, READINGS_DIR);
-    let filename = `${slug}.md`;
-    if (existing) {
-      const action = await promptRereadAction(basicInfo.title, existing.count, existing.date, getNextRereadFilename(slug));
-      if (action === 'cancel') return;
-      if (action === 'reread') filename = getNextRereadFilename(slug, READINGS_DIR);
-    }
-
-    await writeReadingFrontmatter(filepath, frontmatter, '');
-  Success: Function < 100 lines, pure orchestration, no business logic
-  Test Strategy:
-    - Integration test: Mock all module functions → verify correct call sequence
-    - Integration test: Reread flow → correct filename versioning
-    - Integration test: Error handling → graceful failures with user messages
-  Module Value: Simple interface delegates to deep modules
-  Time: 60min (refactoring + integration tests)
+    - .quote-card-mobile class for enhanced mobile cards
+    - Larger padding, better visual hierarchy
+    - Enhanced focus states for touch
+    - Subtle shadow on mobile for card separation
+  Success: Visually distinct cards on mobile, improved readability
+  Test: Visual regression snapshots at 375px, 428px viewports
+  Module: Style tokens for mobile quote cards
+  Time: 20min
   ```
 
-- [x] Refactor `updateReading()` - Orchestration only
+### Phase 3: Mobile Reading List Optimization
+
+- [ ] Optimize ReadingsList for mobile layout
 
   ```
-  Work Log:
-  - Reduced updateReading() from 275 to 55 lines (80% reduction)
-  - Extracted 5 helper functions with clear responsibilities:
-    - selectReadingToUpdate() - Reading selection and file loading
-    - displayCurrentReadingInfo() - Show current reading status
-    - promptUpdateAction() - Ask user what to update
-    - handleDeleteReading() - Delete with confirmation
-    - applyUpdateAction() - Dispatch to appropriate update handler
-    - previewAndConfirmChanges() - Show diff and get confirmation
-  - Main function now pure orchestration: select → display → prompt → apply → confirm → save
-  - File size increased 775→861 lines but maintainability greatly improved
-  - All 99 CLI tests passing
-  ```
-
-  ```
-  Files: Update cli/commands/reading.ts:701-988
-  Approach: Same orchestration pattern as addReading()
+  Files: src/app/components/readings/ReadingsList.tsx:187-255,284-409
+  Approach: Similar to QuotesList - hide headers, single column, larger targets
+  Pattern: Responsive Tailwind classes, maintain existing functionality
   Implementation:
-    - Use reading-prompts for action selection
-    - Use reading-frontmatter for reading/writing
-    - Use reading-image for cover updates
-    - Use reading-validation for input sanitization
-  Success: Function < 150 lines (more complex than add due to multiple update paths)
-  Test Strategy:
-    - Integration tests: Each update action (finish, thoughts, cover, fields, delete)
-    - Integration tests: Error scenarios (file not found, invalid date)
-  Module Value: Delegates complexity to focused modules
-  Time: 75min (refactoring + integration tests)
+    - Column headers (lines 187-254): Add `hidden md:flex` wrapper
+    - Grid: Single column on mobile (remove grid-cols-12 constraint)
+    - Book covers: Larger on mobile - h-20 w-14 md:h-14 md:w-10 (60x84 vs 40x56)
+    - Touch targets: min-h-[60px] on list items
+    - Title typography: text-lg md:text-sm
+    - Author typography: text-base md:text-xs
+    - Metadata: Stack vertically on mobile with more spacing
+    - Audiobook badge: Smaller on mobile (text-2xs md:text-xs)
+  Success: Headers hidden <768px, larger covers, 60px+ targets, improved hierarchy
+  Test: Update ReadingsList.test.tsx, add mobile snapshots, verify image sizes
+  Module: Interface unchanged, responsive complexity hidden
+  Time: 1hr
   ```
 
-- [x] Update `listReadings()` - Keep as-is, add tests
+- [ ] Optimize ReadingsFilterToggle for mobile
+  ```
+  Files: src/app/components/readings/ReadingsFilterToggle.tsx
+  Approach: Ensure button meets touch target requirements
+  Implementation:
+    - Verify/enforce minimum 44x44px button size
+    - Add responsive padding if needed (p-2 md:p-1.5)
+    - Test touch interaction on mobile viewports
+  Success: Button easily tappable on mobile, no accidental activations
+  Test: Manual testing, touch target measurement
+  Module: Self-contained filter UI
+  Time: 15min
+  ```
+
+### Phase 4: Testing & Polish
+
+- [ ] Create comprehensive mobile navigation tests
 
   ```
-  Work Log:
-  - Created cli/__tests__/reading-list.test.ts with 9 comprehensive tests
-  - Tests cover: empty list, formatting, pagination, limit parameter, counts, errors
-  - Mocked getReadings() and preview module to isolate function behavior
-  - All 108 CLI tests passing (99 existing + 9 new)
-  - Function kept as-is (already simple and well-structured)
+  Files: src/app/components/__tests__/MobileNav.a11y.test.tsx (new)
+  Approach: Follow existing a11y test patterns (DarkModeToggle.a11y.test.tsx)
+  Pattern: Use test-utils/a11y-helpers.tsx utilities
+  Implementation:
+    - Focus trap behavior (Tab, Shift+Tab cycling)
+    - ESC key closes drawer
+    - Overlay click closes drawer
+    - Proper ARIA attributes (aria-modal, role="dialog")
+    - Focus return after close
+    - Screen reader announcements
+  Success: All a11y tests pass, no jest-axe violations
+  Test: Run with npm test, verify 100% coverage for a11y paths
+  Module: Test module validates accessibility contract
+  Time: 45min
   ```
 
-- [x] Create CLI test infrastructure
+- [ ] Add mobile viewport snapshot tests
+
   ```
-  Work Log:
-  - Infrastructure already exists and working
-  - Tests run with npm test cli/__tests__/
-  - All 99 CLI tests passing across 5 test files
-  - Uses Jest with Node environment (not jsdom)
-  - Real temp directories for file operations (not mocks)
+  Files: src/app/components/__tests__/MobileNav.snapshot.test.tsx (new)
+  Files: src/app/components/quotes/__tests__/QuotesList.test.tsx (update)
+  Files: src/app/components/readings/__tests__/ReadingsList.test.tsx (update)
+  Approach: Follow DarkModeToggle.snapshot.test.tsx pattern
+  Pattern: Use createComponentSnapshot with viewport options
+  Implementation:
+    - MobileNav: Open/closed states, overlay visible/hidden
+    - QuotesList: 375px viewport (iPhone SE), 768px (tablet)
+    - ReadingsList: 375px viewport, verify image sizes
+    - HamburgerButton: Open/closed animation states
+  Success: Snapshots capture all responsive states, UPDATE_SNAPSHOTS=true works
+  Test: npm run test:snapshot passes
+  Module: Visual regression safety net
+  Time: 30min
   ```
+
+- [ ] Performance validation and optimization
+
+  ```
+  Files: n/a (testing task)
+  Approach: Use Chrome DevTools, Lighthouse mobile audit
+  Implementation:
+    - Run Lighthouse mobile audit (target: score >90)
+    - Measure CLS (target: 0)
+    - Measure animation FPS (target: 60fps)
+    - Test on throttled 3G network
+    - Verify no layout shift when drawer opens/closes
+    - Check bundle size impact (target: <5KB for new code)
+  Success: Lighthouse >90, CLS=0, smooth animations, fast load
+  Test: Document results in performance-results.md
+  Module: Validation of performance requirements
+  Time: 45min
+  ```
+
+- [ ] Cross-device manual testing
+
+  ```
+  Files: n/a (testing task)
+  Approach: Test on real devices and browser DevTools
+  Implementation:
+    - iPhone SE (320px): Nav, quotes, readings all usable
+    - iPhone 14 Pro (393px): Optimal layout, no cramping
+    - iPad Mini (768px): Breakpoint transition works correctly
+    - Android Chrome: Touch targets work, animations smooth
+    - Landscape orientation: No layout breaks
+    - Dark mode: All mobile components themed correctly
+    - Safari iOS: Focus trap works, animations smooth
+  Success: No critical bugs, acceptable UX on all tested devices
+  Test: Document issues in TESTING.md, create follow-up issues for edge cases
+  Module: Real-world validation
+  Time: 1hr
+  ```
+
+- [ ] Update documentation
+  ```
+  Files: docs/RESPONSIVE_DESIGN.md:172-190, CLAUDE.md:12-25
+  Approach: Document new mobile navigation pattern and responsive conventions
+  Implementation:
+    - Add "Mobile Navigation Pattern" section to RESPONSIVE_DESIGN.md
+    - Document drawer, hamburger, focus trap usage
+    - Add examples for mobile-optimized list patterns
+    - Update CLAUDE.md with mobile development guidance
+  Success: Engineers can implement similar patterns without questions
+  Test: Review clarity with fresh eyes, ensure examples are runnable
+  Module: Knowledge capture for future development
+  Time: 30min
+  ```
+
+## Acceptance Criteria
+
+**Phase 1 Complete When**:
+
+- [ ] Hamburger menu visible only <768px viewports
+- [ ] Drawer slides in/out smoothly (60fps)
+- [ ] Focus trapped in open drawer (Tab/Shift+Tab cycle)
+- [ ] ESC key, overlay click, X button all close drawer
+- [ ] Desktop navigation completely unchanged
+- [ ] No layout shift when toggling drawer
+- [ ] All tests pass (unit, snapshot, a11y)
+
+**Phase 2 Complete When**:
+
+- [ ] Quote column headers hidden <768px
+- [ ] Quote text minimum 16px font size on mobile
+- [ ] Minimum 48px touch targets per quote
+- [ ] No horizontal scrolling on narrow viewports (320px)
+- [ ] Search highlighting preserved on mobile
+- [ ] All QuotesList tests updated and passing
+
+**Phase 3 Complete When**:
+
+- [ ] Reading column headers hidden <768px
+- [ ] Book covers 60x84px on mobile (larger than desktop)
+- [ ] Title text minimum 18px on mobile
+- [ ] Minimum 60px touch targets per reading
+- [ ] Favorites filter button ≥44x44px
+- [ ] All ReadingsList tests updated and passing
+
+**Phase 4 Complete When**:
+
+- [ ] Lighthouse mobile score ≥90
+- [ ] CLS = 0 (no layout shift)
+- [ ] All animations 60fps (no dropped frames)
+- [ ] Zero jest-axe violations
+- [ ] Manual testing completed on 5+ devices/viewports
+- [ ] Documentation updated with mobile patterns
 
 ## Design Iteration
 
-**After Phase 1** (Extract image, reread, validation modules):
+**After Phase 1**:
 
-- Review: Are module interfaces simple enough? Any leaking implementation details?
-- Measure: Line count reduction in reading.ts, test coverage of extracted modules
+- Review mobile nav state management - is Zustand overkill for boolean?
+- Evaluate drawer animation smoothness - any jank on low-end devices?
+- Check if focus trap needs refinement based on testing
 
-**After Phase 2** (Extract prompts, frontmatter, refactor commands):
+**After Phase 3**:
 
-- Review: Can commands be understood without reading implementations?
-- Refactor: Any duplicated patterns in update vs add?
-- Document: Add JSDoc comments explaining module boundaries
+- Review touch target sizes across all components
+- Identify any remaining mobile UX friction
+- Consider if virtualization needed based on scroll performance
 
-## Success Criteria
+**Post-Launch**:
 
-- [~] `cli/commands/reading.ts` reduced to < 400 lines (60% reduction)
-  - Current: 859 lines (started at 988)
-  - Main functions reduced dramatically: addReading() 137→46, updateReading() 275→55
-  - File grew due to helper functions, but architecture vastly improved
-  - Trade-off: Maintainability > line count
-- [x] Each extracted module has 80%+ test coverage
-  - reading-image: 10 tests covering all paths
-  - reading-reread: 22 tests covering all scenarios
-  - reading-validation: 33 tests covering all validation rules
-  - reading-prompts: 15 tests covering all prompt flows
-  - reading-frontmatter: 19 tests covering all operations
-  - reading-list: 9 tests covering all display logic
-- [x] All CLI commands still work identically (no behavior changes)
-  - All 108 tests passing
-  - Zero breaking changes to public interfaces
-- [x] Module interfaces are simple (1-3 public functions each)
-  - reading-image: 1 function (processReadingCoverImage)
-  - reading-reread: 3 functions (findExistingReadings, getNextRereadFilename, getMostRecentReading)
-  - reading-validation: 3 functions (validateDateInput, sanitizeSlug, validateDateForPrompt)
-  - reading-prompts: 4 functions (promptBasicReadingInfo, promptReadingMetadata, promptCoverImage, promptRereadAction)
-  - reading-frontmatter: 4 functions (readReadingFrontmatter, writeReadingFrontmatter, updateFrontmatterField, createReadingFrontmatter)
-- [x] Zero coupling between extracted modules (only command orchestrates)
-  - Modules are independent and only used by command functions
-  - No module imports another extracted module
-- [x] Magic numbers eliminated and replaced with documented constants
-  - Image dimensions: 400x600 with aspect ratio documentation
-  - Quality: 80 with profiling rationale
-- [x] Security: Path traversal protection strengthened (absolute path + allowlist checks)
-  - Validates path patterns before file operations
-  - Checks for .., ~, URL encoding
-  - Absolute path resolution with project root verification
+- Monitor for user feedback on mobile experience
+- Plan follow-up: gesture support (swipe to close drawer)?
+- Consider mobile-specific features (pull-to-refresh, infinite scroll)
 
-## Risk Mitigation
+## Automation Opportunities
 
-- Manual testing after each extraction: `npm run vanity -- reading add|update|list`
-- Keep commits atomic: One module extraction per commit
-- If tests reveal issues: Fix in place before continuing to next module
-- Rollback plan: Each module is additive, can revert individual commits
+- Create script to measure touch target sizes automatically
+- Add Lighthouse CI integration for mobile performance regression prevention
+- Generate responsive screenshot matrix (multiple viewports × light/dark themes)
+- Automate bundle size tracking for mobile-specific code
 
-## Post-Refactoring Fixes
+## Notes
 
-### P1 Issues from Codex Code Review
+**Module Boundaries**:
 
-- [x] **Cover Image Graceful Degradation** (PR #81, Commit f286347)
-  - **Issue**: Image processing failures caused command to exit even when user chose "Continue without image"
-  - **Root Cause**: `handleLocalImageProcessing()` returned `null` for both cancellation and continuation
-  - **Fix**: Return empty string `''` for continuation, `null` for cancellation
-  - **Impact**: Restored pre-refactoring graceful degradation behavior
-  - **Tests**: All 108 CLI tests passing
+- **MobileNav**: Owns drawer UI, focus management, close behavior (hides trap complexity)
+- **HamburgerButton**: Owns icon animation, touch target (simple visual component)
+- **Header**: Orchestrates nav variants (hides viewport detection)
+- **List Components**: Own responsive layouts (hide grid→card logic)
+- **UI Store**: Owns all transient UI state (mobile nav, sidebar, modals)
 
-- [x] **Custom Finish Date Empty Input Crash** (PR #81, Commit TBD)
-  - **Issue**: Pressing Enter on custom finish date prompt crashed CLI with "Date is required" error
-  - **Root Cause**: `validateDateForPrompt()` allows empty input (optional), but `validateDateInput()` rejects empty
-  - **Fix**: Added inline validation at prompt level to require date for custom finish date scenario
-  - **Impact**: Prevents crash, gives immediate user feedback
-  - **Tests**: All 400 tests passing (108 CLI + 292 app)
+**Value Formula Applied**:
 
-## Future Opportunities (NOT in this TODO)
+- MobileNav: High functionality (drawer + trap + animations) - Simple interface (isOpen, onClose) = High value ✅
+- HamburgerButton: Medium functionality (animated icon) - Simple interface (isOpen, onClick) = Medium value ✅
+- Lists: High functionality (responsive layouts + all existing features) - Same interface = High value ✅
 
-After this refactoring:
+**Parallel Execution**:
 
-- Search book cover API integration becomes trivial (add to reading-image.ts)
-- Bulk import feature can reuse all modules
-- Quote/project/place commands can use same patterns
-- CLI integration tests for full workflows
+- Phase 1 tasks are mostly sequential (store → components → integration)
+- Phase 2 and 3 can be done in parallel (quotes and readings independent)
+- Phase 4 tests can be parallelized across different test types
+
+**Risk Mitigation**:
+
+- Focus trap: Using existing proven utility (src/utils/keyboard/trap.ts)
+- Animations: CSS transforms (GPU-accelerated), reduced motion support
+- Layout shift: Fixed positioning, transform-only animations
+- Testing: Following established patterns (snapshot + a11y + integration)
