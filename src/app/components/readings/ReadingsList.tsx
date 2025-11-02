@@ -183,8 +183,8 @@ export default function ReadingsList({
         />
       </div>
 
-      {/* Column Headers with Enhanced Sort Indicators */}
-      <div className="border-b border-gray-200 dark:border-gray-700" role="grid">
+      {/* Column Headers with Enhanced Sort Indicators - hidden on mobile */}
+      <div className="hidden md:block border-b border-gray-200 dark:border-gray-700" role="grid">
         <div
           className="grid grid-cols-12 py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-750"
           role="row"
@@ -284,7 +284,7 @@ export default function ReadingsList({
           {filteredReadings.map(reading => (
             <li key={reading.slug} className="list-none">
               <div
-                className={`item-list-item group ${selectedReading?.slug === reading.slug ? 'item-list-item-selected' : ''} hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150`}
+                className={`item-list-item group min-h-[48px] py-3 md:py-2 ${selectedReading?.slug === reading.slug ? 'item-list-item-selected' : ''} hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150`}
                 role="button"
                 onClick={() => onSelectReading(reading)}
                 onKeyDown={e => {
@@ -296,10 +296,10 @@ export default function ReadingsList({
                 tabIndex={0}
                 aria-current={selectedReading?.slug === reading.slug ? 'true' : 'false'}
               >
-                <div className="flex items-start gap-3">
-                  {/* Book Cover Image or Placeholder */}
+                <div className="flex items-start gap-3 md:gap-3">
+                  {/* Book Cover Image or Placeholder - larger on mobile */}
                   {reading.coverImageSrc ? (
-                    <div className="h-14 w-10 flex-shrink-0 rounded overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 group-hover:shadow-sm">
+                    <div className="h-16 w-11 md:h-14 md:w-10 flex-shrink-0 rounded overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 group-hover:shadow-sm">
                       {/* External image URLs are handled by Next.js Image component */}
                       {reading.coverImageSrc ? (
                         <Image
@@ -323,7 +323,7 @@ export default function ReadingsList({
                       )}
                     </div>
                   ) : (
-                    <div className="h-14 w-10 flex-shrink-0 rounded bg-gray-100 dark:bg-gray-700 flex items-center justify-center border border-gray-200 dark:border-gray-600 transition-all duration-200 group-hover:bg-gray-200 dark:group-hover:bg-gray-600">
+                    <div className="h-16 w-11 md:h-14 md:w-10 flex-shrink-0 rounded bg-gray-100 dark:bg-gray-700 flex items-center justify-center border border-gray-200 dark:border-gray-600 transition-all duration-200 group-hover:bg-gray-200 dark:group-hover:bg-gray-600">
                       <svg
                         className="h-6 w-6 text-gray-400"
                         fill="none"
@@ -340,9 +340,9 @@ export default function ReadingsList({
                     </div>
                   )}
 
-                  {/* Reading Details with Search Highlighting */}
+                  {/* Reading Details with Search Highlighting - larger text on mobile */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate flex gap-1 items-center">
+                    <h3 className="text-base md:text-sm font-medium text-gray-900 dark:text-white truncate flex gap-1 items-center">
                       {searchQuery &&
                       reading.title.toLowerCase().includes(searchQuery.toLowerCase()) ? (
                         <span>{highlightSearchTerm(reading.title, searchQuery)}</span>
@@ -351,7 +351,7 @@ export default function ReadingsList({
                       )}
                     </h3>
 
-                    <div className="mt-1 text-xs text-gray-600 dark:text-gray-300 truncate">
+                    <div className="mt-1.5 md:mt-1 text-sm md:text-xs text-gray-600 dark:text-gray-300 truncate">
                       {searchQuery &&
                       reading.author.toLowerCase().includes(searchQuery.toLowerCase()) ? (
                         <span>{highlightSearchTerm(reading.author, searchQuery)}</span>
@@ -360,10 +360,10 @@ export default function ReadingsList({
                       )}
                     </div>
 
-                    <div className="mt-1 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                    <div className="mt-1.5 md:mt-1 flex items-center gap-2 text-sm md:text-xs text-gray-500 dark:text-gray-400">
                       <span className="flex items-center">
                         <svg
-                          className="h-3 w-3 text-gray-400 mr-1"
+                          className="h-4 w-4 md:h-3 md:w-3 text-gray-400 mr-1"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -381,9 +381,9 @@ export default function ReadingsList({
                       </span>
 
                       {reading.audiobook && (
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300">
+                        <span className="inline-flex items-center px-2 md:px-1.5 py-1 md:py-0.5 rounded-full text-sm md:text-xs font-medium bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300">
                           <svg
-                            className="h-3 w-3 mr-1"
+                            className="h-4 w-4 md:h-3 md:w-3 mr-1"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
