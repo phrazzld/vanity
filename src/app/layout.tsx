@@ -5,6 +5,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Suspense } from 'react';
 import { inter, spaceGrotesk } from './fonts';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
   title: 'phaedrus | software engineer and general tinkerer',
@@ -66,6 +68,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="container-content pt-16 pb-8">{children}</div>
         </main>
         <Footer />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
