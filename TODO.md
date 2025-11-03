@@ -43,9 +43,21 @@ Test coverage needed:
 - Overlay click closes drawer
 - Route change auto-close
 - Body scroll lock when open
-- Focus return after close
+- **Focus return after close** (P1 - Codex feedback)
 
 **Pattern**: Follow `MobileNav.test.tsx` + `DarkModeToggle.a11y.test.tsx`
+
+**P1 Bug Fix Required** (from PR feedback):
+
+- **Issue**: Keyboard focus returns to document.body instead of hamburger button when drawer closes
+- **Impact**: Keyboard users must tab from top of page, losing navigation context
+- **Root Cause**: `useFocusTrap` hook doesn't implement focus restoration despite `returnFocusOnUnmount: true`
+- **Fix**: Modify `src/hooks/keyboard/useFocusTrap.ts`:
+  - Capture `document.activeElement` before drawer opens
+  - Store in ref to survive re-renders
+  - Restore focus on cleanup when `returnFocusOnUnmount: true`
+  - Test specifically: hamburger → drawer → close → hamburger has focus
+- **Time**: 30min implementation + 15min testing
 
 #### 2. Mobile viewport snapshot tests
 

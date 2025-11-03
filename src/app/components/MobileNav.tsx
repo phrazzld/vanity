@@ -103,7 +103,7 @@ const MobileNav = React.memo(function MobileNav({
       <nav
         ref={drawerRef}
         id="mobile-navigation"
-        className={`mobile-nav-drawer fixed top-0 left-0 h-full w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 z-overlay shadow-2xl animate-slide-in-left ${className}`}
+        className={`mobile-nav-drawer fixed top-0 left-0 h-full w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 z-drawer shadow-2xl animate-slide-in-left ${className}`}
         role="dialog"
         aria-modal="true"
         aria-label="Mobile navigation"
