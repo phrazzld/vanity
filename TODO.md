@@ -47,17 +47,18 @@ Test coverage needed:
 
 **Pattern**: Follow `MobileNav.test.tsx` + `DarkModeToggle.a11y.test.tsx`
 
-**P1 Bug Fix Required** (from PR feedback):
+**P1 Bug Fix - COMPLETED** ✅ (from PR feedback):
 
 - **Issue**: Keyboard focus returns to document.body instead of hamburger button when drawer closes
 - **Impact**: Keyboard users must tab from top of page, losing navigation context
-- **Root Cause**: `useFocusTrap` hook doesn't implement focus restoration despite `returnFocusOnUnmount: true`
-- **Fix**: Modify `src/hooks/keyboard/useFocusTrap.ts`:
-  - Capture `document.activeElement` before drawer opens
-  - Store in ref to survive re-renders
-  - Restore focus on cleanup when `returnFocusOnUnmount: true`
-  - Test specifically: hamburger → drawer → close → hamburger has focus
-- **Time**: 30min implementation + 15min testing
+- **Root Cause**: `createFocusTrap()` in `trap.ts` didn't implement focus restoration despite accepting `returnFocusOnUnmount` option
+- **Fix Implemented** (2025-11-02):
+  - Modified `src/utils/keyboard/trap.ts` createFocusTrap function
+  - Captures `document.activeElement` BEFORE setting initial focus (line 40)
+  - Restores focus in cleanup function when `returnFocusOnUnmount: true` (lines 108-122)
+  - Defensive checks: verifies element still exists in DOM and is visible
+  - Test verified: hamburger → drawer → close → hamburger has focus ✓
+- **Result**: WCAG 2.1 AA compliant, keyboard navigation context preserved
 
 #### 2. Mobile viewport snapshot tests
 
