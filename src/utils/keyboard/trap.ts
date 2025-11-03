@@ -23,11 +23,15 @@ export function createFocusTrap(
   container: HTMLElement,
   options: FocusTrapOptions = {}
 ): () => void {
-  const { enabled = true, initialFocus = true, onEscape } = options;
+  const { enabled = true, initialFocus = true, returnFocusOnUnmount = true, onEscape } = options;
 
   if (!enabled) {
     return () => {}; // No-op cleanup if disabled
   }
+
+  // Capture the currently focused element before setting initial focus
+  // This allows us to restore focus when the trap is removed
+  const previouslyFocusedElement = document.activeElement as HTMLElement | null;
 
   if (initialFocus) {
     focusFirstElement(container);
@@ -97,6 +101,14 @@ export function createFocusTrap(
 
   // Return cleanup function
   return () => {
+    // Restore focus to the previously focused element if requested
+    if (returnFocusOnUnmount && previouslyFocusedElement) {
+      // Verify the element still exists in the DOM and is focusable
+      if (document.body.contains(previouslyFocusedElement) && isVisible(previouslyFocusedElement)) {
+        previouslyFocusedElement.focus({ preventScroll: true });
+      }
+    }
+
     container.removeEventListener('keydown', handleTrapFocus);
     document.removeEventListener('click', handleClickOutside);
   };

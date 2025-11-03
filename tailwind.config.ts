@@ -235,6 +235,7 @@ export default {
         sticky: '20',
         fixed: '30',
         modal: '40',
+        drawer: '50', // Mobile navigation drawer (above modal overlay)
         popover: '50',
         tooltip: '60',
         toast: '70',

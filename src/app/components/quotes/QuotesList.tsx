@@ -161,7 +161,7 @@ export default function QuotesList({
 
   // Render column headers section
   const renderColumnHeaders = () => (
-    <div className="border-b border-gray-200 dark:border-gray-700" role="grid">
+    <div className="hidden md:block border-b border-gray-200 dark:border-gray-700" role="grid">
       <div
         className="grid grid-cols-12 py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-750"
         role="row"
@@ -210,7 +210,7 @@ export default function QuotesList({
     return (
       <li key={quote.id} className="list-none">
         <div
-          className={`item-list-item group ${isSelected ? 'item-list-item-selected' : ''} hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150`}
+          className={`item-list-item group min-h-[48px] py-3 md:py-2 ${isSelected ? 'item-list-item-selected' : ''} hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150`}
           role="button"
           onClick={() => onSelectQuote(quote)}
           onKeyDown={e => {
@@ -224,9 +224,9 @@ export default function QuotesList({
         >
           <div className="flex flex-col">
             <div className="flex items-start">
-              {/* Quote icon */}
+              {/* Quote icon - larger on mobile */}
               <svg
-                className="h-4 w-4 text-gray-400 mt-0.5 mr-1.5 flex-shrink-0 group-hover:text-gray-500 dark:group-hover:text-gray-300 transition-colors duration-150"
+                className="h-5 w-5 md:h-4 md:w-4 text-gray-400 mt-0.5 mr-2 md:mr-1.5 flex-shrink-0 group-hover:text-gray-500 dark:group-hover:text-gray-300 transition-colors duration-150"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -240,8 +240,8 @@ export default function QuotesList({
                 />
               </svg>
 
-              {/* Quote text with search highlighting */}
-              <p className="text-sm font-medium text-gray-900 dark:text-white leading-5 quote-text-truncated">
+              {/* Quote text with search highlighting - larger on mobile */}
+              <p className="text-base md:text-sm font-medium text-gray-900 dark:text-white leading-6 md:leading-5 quote-text-truncated">
                 {shouldHighlightText ? (
                   <>&ldquo;{highlightSearchTerm(truncateText(quote.text), searchQuery)}&rdquo;</>
                 ) : (
@@ -250,8 +250,8 @@ export default function QuotesList({
               </p>
             </div>
 
-            {/* Author with search highlighting */}
-            <div className="mt-1 ml-5.5 text-xs text-gray-500 dark:text-gray-400">
+            {/* Author with search highlighting - larger on mobile */}
+            <div className="mt-1.5 md:mt-1 ml-7 md:ml-5.5 text-sm md:text-xs text-gray-500 dark:text-gray-400">
               {shouldHighlightAuthor ? (
                 <>
                   —{' '}

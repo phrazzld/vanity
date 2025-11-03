@@ -31,8 +31,8 @@ export default function ReadingsFilterToggle({
     <button
       onClick={onToggle}
       className={`
-        flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium
-        min-w-40
+        flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium
+        min-h-[44px] min-w-0
         transition-all duration-200 cursor-pointer
         motion-safe:active:scale-95
         ${
