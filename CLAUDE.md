@@ -73,6 +73,29 @@ Reading states:
 - Audiobook indicator: audiobook: true (shows 🎧)
 ```
 
+## Analytics & Observability
+
+**Vercel Analytics**: Tracks pageviews and traffic sources
+
+- Components: `<Analytics />` and `<SpeedInsights />` in `src/app/layout.tsx`
+- Zero configuration needed (auto-detects production environment)
+- Data visible in Vercel dashboard → Analytics tab
+
+**Core Web Vitals Monitoring**:
+
+- LCP (Largest Contentful Paint): Target ≤2.5s
+- INP (Interaction to Next Paint): Target ≤200ms
+- CLS (Cumulative Layout Shift): Target ≤0.1
+- Tracked automatically via Speed Insights component
+
+**Privacy**:
+
+- GDPR-compliant (no cookies, no PII)
+- First-party tracking only (`/_vercel/insights`)
+- No consent banner required
+
+**Free Tier Limits**: 2,500 events/month (sufficient for personal site)
+
 ## Testing Strategy
 
 ```bash

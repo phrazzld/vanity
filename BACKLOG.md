@@ -7,8 +7,6 @@ Analyzed by: 7 specialized perspectives (complexity, architecture, security, per
 
 ## Now (Sprint-Ready, <2 weeks)
 
-### [INFRA] Vercel Analytics and Observability
-
 ### [Security] Remove shell:true from CLI Editor - Command Injection Risk
 
 **File**: `cli/lib/editor.ts:26`
