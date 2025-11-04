@@ -317,9 +317,17 @@
   Time Estimate: 2 hours
   ```
 
-- [ ] **Write component tests for ReadCountBadge**
+- [x] **Write component tests for ReadCountBadge**
 
   ```
+  Work Log:
+  - Added 16 test cases covering all badge features (229 lines)
+  - All 45 tests passing (29 existing + 16 new)
+  - Followed existing RTL patterns exactly
+  - Fixed one test that incorrectly expected badge not in DOM vs opacity
+  - Comprehensive coverage: rendering, positioning, font size, accessibility, styling
+  - Verified hover behavior, aria-labels, and badge stacking
+
   Files: src/app/components/readings/__tests__/ReadingCard.test.tsx (add ~80 lines)
   Architecture: Tests ReadCountBadge component from DESIGN.md section 9.2
 
