@@ -14,14 +14,21 @@ import { useState } from 'react';
 import type { ReadingListItem } from '@/types';
 import { getSeededPlaceholderStyles } from './placeholderUtils';
 
+/**
+ * Badge positioning constants
+ */
+const BADGE_SPACING = 8;
+const BADGE_SIZE = 28;
+const BADGE_OFFSET = BADGE_SIZE + BADGE_SPACING; // 36px
+
 /** Badge component for audiobook indicator */
 function AudiobookBadge() {
   return (
     <div
       style={{
         position: 'absolute',
-        top: '8px',
-        right: '8px',
+        top: `${BADGE_SPACING}px`,
+        right: `${BADGE_SPACING}px`,
         width: '28px',
         height: '28px',
         borderRadius: '50%',
@@ -61,7 +68,7 @@ function FavoriteBadge({ audiobook }: { audiobook?: boolean }) {
     <div
       style={{
         position: 'absolute',
-        top: audiobook ? '44px' : '8px',
+        top: audiobook ? `${BADGE_OFFSET + BADGE_SPACING}px` : `${BADGE_SPACING}px`,
         right: '8px',
         width: '28px',
         height: '28px',
@@ -89,6 +96,53 @@ function FavoriteBadge({ audiobook }: { audiobook?: boolean }) {
     </div>
   );
 }
+
+/** Badge component for read count indicator */
+function ReadCountBadge({
+  count,
+  audiobook,
+  favorite,
+}: {
+  count: number;
+  audiobook?: boolean;
+  favorite?: boolean;
+}) {
+  if (count <= 1) return null;
+
+  const topOffset = BADGE_SPACING + (audiobook ? BADGE_OFFSET : 0) + (favorite ? BADGE_OFFSET : 0);
+  const fontSize = count > 9 ? '9px' : '11px';
+
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: `${topOffset}px`,
+        right: '8px',
+        width: '28px',
+        height: '28px',
+        borderRadius: '50%',
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+      aria-label={`Read ${count} times`}
+    >
+      <span
+        style={{
+          color: 'rgba(255, 255, 255, 0.9)',
+          fontSize,
+          fontWeight: 600,
+          letterSpacing: '-0.02em',
+        }}
+      >
+        ×{count}
+      </span>
+    </div>
+  );
+}
+
 import { getFullImageUrl } from '@/lib/utils/readingUtils';
 import { logger } from '@/lib/logger';
 
@@ -135,6 +189,7 @@ const ReadingCard = React.memo(function ReadingCard({
   audiobook,
   favorite,
   finishedDate,
+  readCount,
 }: ReadingCardProps) {
   const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -175,7 +230,7 @@ const ReadingCard = React.memo(function ReadingCard({
       title={`${title} by ${author}`}
       tabIndex={0}
       role="button"
-      aria-label={`${title} by ${author}, ${statusText}${audiobook ? ', Audiobook' : ''}${favorite ? ', Favorite' : ''}`}
+      aria-label={`${title} by ${author}, ${statusText}${audiobook ? ', Audiobook' : ''}${favorite ? ', Favorite' : ''}${readCount && readCount > 1 ? `, Read ${readCount} times` : ''}`}
     >
       {/* Book cover image */}
       <div
@@ -225,6 +280,10 @@ const ReadingCard = React.memo(function ReadingCard({
         {audiobook && <AudiobookBadge />}
         {/* Favorite badge - only visible on hover */}
         {favorite && <FavoriteBadge audiobook={audiobook} />}
+        {/* Read count badge - only visible on hover */}
+        {readCount && (
+          <ReadCountBadge count={readCount} audiobook={audiobook} favorite={favorite} />
+        )}
         {/* Book information */}
         <div
           style={{

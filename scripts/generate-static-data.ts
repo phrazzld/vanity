@@ -30,8 +30,8 @@ function calculateContentHash() {
   const contentDir = path.join(process.cwd(), 'content');
 
   // Get all .md files recursively
-  function getAllMdFiles(dir) {
-    const files = [];
+  function getAllMdFiles(dir: string): string[] {
+    const files: string[] = [];
     const items = fs.readdirSync(dir);
 
     for (const item of items) {
