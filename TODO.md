@@ -169,9 +169,16 @@
 
 ### Phase 2: UI Component (Badge Display)
 
-- [ ] **Implement ReadCountBadge component in ReadingCard**
+- [x] **Implement ReadCountBadge component in ReadingCard**
 
   ```
+  Work Log:
+  - Implemented ReadCountBadge following AudiobookBadge/FavoriteBadge pattern
+  - Extracted badge sizing constants for all three badge components
+  - Applied simplicity review recommendations (constants, removed redundant check)
+  - Fixed pre-existing TypeScript error in generate-static-data.ts
+  - All tests pass: typecheck ✓, lint ✓, pre-commit hooks ✓
+
   Files: src/app/components/readings/ReadingCard.tsx (after line 91, add ~50 lines)
   Architecture: Implements ReadCountBadge module from DESIGN.md section 2.2
   Pseudocode: See DESIGN.md section 5.4 (Badge Positioning)
