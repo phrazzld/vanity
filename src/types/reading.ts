@@ -36,6 +36,12 @@ export interface Reading {
 
   /** Indicates if this reading is marked as a favorite */
   favorite?: boolean;
+
+  /** Number of times this book has been read (1 for first read, 2+ for rereads) */
+  readCount?: number;
+
+  /** Base slug without suffix (for grouping rereads of same book) */
+  baseSlug?: string;
 }
 
 /**
@@ -68,4 +74,10 @@ export interface ReadingListItem {
   coverImageSrc: string | null;
   audiobook?: boolean;
   favorite?: boolean;
+
+  /** Number of times this book has been read (1 for first read, 2+ for rereads) */
+  readCount?: number;
+
+  /** Base slug without suffix (for grouping rereads of same book) */
+  baseSlug?: string;
 }
