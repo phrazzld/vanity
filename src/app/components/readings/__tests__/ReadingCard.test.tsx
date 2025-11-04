@@ -551,4 +551,233 @@ describe('ReadingCard Component', () => {
       expect(card).toBeInTheDocument();
     });
   });
+
+  describe('ReadCountBadge', () => {
+    describe('Badge Rendering', () => {
+      it('renders ×2 badge for readCount=2', async () => {
+        const user = setupUser();
+        const props = createMockProps({ readCount: 2 });
+        renderWithTheme(<ReadingCard {...props} />);
+
+        const card = screen.getByTitle('Test Book by Test Author');
+        await user.hover(card);
+
+        const badge = screen.getByLabelText('Read 2 times');
+        expect(badge).toBeInTheDocument();
+        expect(badge.textContent).toBe('×2');
+      });
+
+      it('renders ×3 badge for readCount=3', async () => {
+        const user = setupUser();
+        const props = createMockProps({ readCount: 3 });
+        renderWithTheme(<ReadingCard {...props} />);
+
+        const card = screen.getByTitle('Test Book by Test Author');
+        await user.hover(card);
+
+        const badge = screen.getByLabelText('Read 3 times');
+        expect(badge).toBeInTheDocument();
+        expect(badge.textContent).toBe('×3');
+      });
+
+      it('does not render for readCount=1', async () => {
+        const user = setupUser();
+        const props = createMockProps({ readCount: 1 });
+        renderWithTheme(<ReadingCard {...props} />);
+
+        const card = screen.getByTitle('Test Book by Test Author');
+        await user.hover(card);
+
+        expect(screen.queryByLabelText(/Read \d+ times/)).not.toBeInTheDocument();
+      });
+
+      it('does not render for undefined readCount', async () => {
+        const user = setupUser();
+        const props = createMockProps({ readCount: undefined });
+        renderWithTheme(<ReadingCard {...props} />);
+
+        const card = screen.getByTitle('Test Book by Test Author');
+        await user.hover(card);
+
+        expect(screen.queryByLabelText(/Read \d+ times/)).not.toBeInTheDocument();
+      });
+    });
+
+    describe('Badge Positioning', () => {
+      it('positions at top: 8px with no other badges', async () => {
+        const user = setupUser();
+        const props = createMockProps({ readCount: 2, audiobook: false, favorite: false });
+        renderWithTheme(<ReadingCard {...props} />);
+
+        const card = screen.getByTitle('Test Book by Test Author');
+        await user.hover(card);
+
+        const badge = screen.getByLabelText('Read 2 times');
+        expect(badge).toHaveStyle({ top: '8px' });
+      });
+
+      it('positions at top: 44px with audiobook badge', async () => {
+        const user = setupUser();
+        const props = createMockProps({ readCount: 2, audiobook: true, favorite: false });
+        renderWithTheme(<ReadingCard {...props} />);
+
+        const card = screen.getByTitle('Test Book by Test Author');
+        await user.hover(card);
+
+        const badge = screen.getByLabelText('Read 2 times');
+        expect(badge).toHaveStyle({ top: '44px' });
+      });
+
+      it('positions at top: 44px with favorite badge', async () => {
+        const user = setupUser();
+        const props = createMockProps({ readCount: 2, audiobook: false, favorite: true });
+        renderWithTheme(<ReadingCard {...props} />);
+
+        const card = screen.getByTitle('Test Book by Test Author');
+        await user.hover(card);
+
+        const badge = screen.getByLabelText('Read 2 times');
+        expect(badge).toHaveStyle({ top: '44px' });
+      });
+
+      it('positions at top: 80px with both audiobook and favorite badges', async () => {
+        const user = setupUser();
+        const props = createMockProps({ readCount: 2, audiobook: true, favorite: true });
+        renderWithTheme(<ReadingCard {...props} />);
+
+        const card = screen.getByTitle('Test Book by Test Author');
+        await user.hover(card);
+
+        const badge = screen.getByLabelText('Read 2 times');
+        expect(badge).toHaveStyle({ top: '80px' });
+      });
+    });
+
+    describe('Font Size Adjustment', () => {
+      it('uses 11px font for readCount ≤9', async () => {
+        const user = setupUser();
+        const props = createMockProps({ readCount: 5 });
+        renderWithTheme(<ReadingCard {...props} />);
+
+        const card = screen.getByTitle('Test Book by Test Author');
+        await user.hover(card);
+
+        const badge = screen.getByLabelText('Read 5 times');
+        const span = badge.querySelector('span');
+        expect(span).toHaveStyle({ fontSize: '11px' });
+      });
+
+      it('uses 9px font for readCount >9', async () => {
+        const user = setupUser();
+        const props = createMockProps({ readCount: 15 });
+        renderWithTheme(<ReadingCard {...props} />);
+
+        const card = screen.getByTitle('Test Book by Test Author');
+        await user.hover(card);
+
+        const badge = screen.getByLabelText('Read 15 times');
+        const span = badge.querySelector('span');
+        expect(span).toHaveStyle({ fontSize: '9px' });
+      });
+    });
+
+    describe('Accessibility', () => {
+      it('has aria-label "Read N times"', async () => {
+        const user = setupUser();
+        const props = createMockProps({ readCount: 2 });
+        renderWithTheme(<ReadingCard {...props} />);
+
+        const card = screen.getByTitle('Test Book by Test Author');
+        await user.hover(card);
+
+        const badge = screen.getByLabelText('Read 2 times');
+        expect(badge).toHaveAttribute('aria-label', 'Read 2 times');
+      });
+
+      it('includes read count in ReadingCard aria-label', () => {
+        const props = createMockProps({ readCount: 2 });
+        renderWithTheme(<ReadingCard {...props} />);
+
+        const card = screen.getByRole('button');
+        expect(card).toHaveAttribute(
+          'aria-label',
+          'Test Book by Test Author, Finished Dec 2022, Read 2 times'
+        );
+      });
+
+      it('does not include read count in aria-label when readCount=1', () => {
+        const props = createMockProps({ readCount: 1 });
+        renderWithTheme(<ReadingCard {...props} />);
+
+        const card = screen.getByRole('button');
+        expect(card).toHaveAttribute('aria-label', 'Test Book by Test Author, Finished Dec 2022');
+      });
+
+      it('badge visible on hover like other badges', async () => {
+        const user = setupUser();
+        const props = createMockProps({ readCount: 2 });
+        renderWithTheme(<ReadingCard {...props} />);
+
+        const card = screen.getByTitle('Test Book by Test Author');
+
+        // Badge exists but overlay is not visible initially
+        const overlayDiv = card.querySelector('.hover-overlay');
+        expect(overlayDiv).toHaveStyle({ opacity: '0' });
+
+        // Badge becomes visible on hover
+        await user.hover(card);
+        const badge = screen.getByLabelText('Read 2 times');
+        expect(badge).toBeInTheDocument();
+        expect(overlayDiv).toHaveStyle({ opacity: '1' });
+
+        // Badge hidden after unhover (overlay opacity returns to 0)
+        await user.unhover(card);
+        expect(overlayDiv).toHaveStyle({ opacity: '0' });
+      });
+    });
+
+    describe('Badge Styling', () => {
+      it('has circular badge styling', async () => {
+        const user = setupUser();
+        const props = createMockProps({ readCount: 2 });
+        renderWithTheme(<ReadingCard {...props} />);
+
+        const card = screen.getByTitle('Test Book by Test Author');
+        await user.hover(card);
+
+        const badge = screen.getByLabelText('Read 2 times');
+        expect(badge).toHaveStyle({
+          position: 'absolute',
+          right: '8px',
+          width: '28px',
+          height: '28px',
+          borderRadius: '50%',
+        });
+      });
+
+      it('matches audiobook/favorite badge styling', async () => {
+        const user = setupUser();
+        const props = createMockProps({ readCount: 2, audiobook: true, favorite: true });
+        renderWithTheme(<ReadingCard {...props} />);
+
+        const card = screen.getByTitle('Test Book by Test Author');
+        await user.hover(card);
+
+        const readCountBadge = screen.getByLabelText('Read 2 times');
+        const audiobookBadge = screen.getByLabelText('Audiobook');
+        const favoriteBadge = screen.getByLabelText('Favorite');
+
+        // All badges should have same base styling
+        [readCountBadge, audiobookBadge, favoriteBadge].forEach(badge => {
+          expect(badge).toHaveStyle({
+            position: 'absolute',
+            right: '8px',
+            width: '28px',
+            height: '28px',
+            borderRadius: '50%',
+          });
+        });
+      });
+    });
+  });
 });
