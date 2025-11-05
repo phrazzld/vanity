@@ -371,47 +371,26 @@
   Time Estimate: 1.5 hours
   ```
 
-- [ ] **Write integration test for build process with rereads**
+- [x] **Write integration test for build process with rereads**
 
   ```
-  Files: scripts/__tests__/generate-static-data.test.js (add ~60 lines)
-  Architecture: Tests StaticDataGenerator integration from DESIGN.md section 9.3
+  Files: scripts/__tests__/generate-static-data.test.js (added 167 lines)
+  Completed: 2025-01-04
+  Commit: 7bf377c
 
-  Test Cases:
-  1. JSON output structure:
-     - readings.json includes readCount field
-     - readings.json includes baseSlug field
-     - First read has readCount=1
-     - Second read has readCount=2
-     - Both share same baseSlug
+  Work Log:
+  - Created integration test suite with 14 test cases
+  - Tests execute actual build script (no mocks per requirements)
+  - Validates JSON output structure (readCount, baseSlug fields)
+  - Verifies sequential readCount assignment (1, 2, 3, ...)
+  - Tests logging output (reread detection summary)
+  - Checks error handling (orphaned files, build completion)
+  - Optimized to run script once (1.066s vs 2s+ for 3 executions)
+  - Fixed lint warnings (unused variable)
+  - All 14 tests passing
 
-  2. Reread detection:
-     - Detects 6 existing rereads in content/readings/
-     - Groups files correctly (how-to-read-a-book.md, how-to-read-a-book-02.md)
-     - Computes correct readCount for each file
-
-  3. Logging:
-     - Build logs include "Detected N rereads" message
-     - Build logs include unique book count
-     - Warnings logged for invalid sequences (if present)
-
-  4. Error handling:
-     - Orphaned reread files (no base) handled gracefully (readCount=1)
-     - Sequence gaps logged as warnings (non-fatal)
-     - Build completes successfully despite warnings
-
-  Pattern: Mock fs operations, test actual files in content/readings/
-  Setup: Use existing readings directory, don't create temp files
-  Assertions: Verify JSON structure, field presence, correct values
-
-  Success Criteria:
-  - Test passes with real content/readings/ files
-  - JSON output matches expected structure
-  - Build process completes without errors
-  - Warnings logged appropriately for edge cases
-
-  Dependencies: All previous tasks (detection, integration, types)
-  Time Estimate: 1 hour
+  Note: Test file reduced from initial ~240 lines to 167 lines by
+  consolidating setup and eliminating duplicate script executions.
   ```
 
 ### Phase 4: Manual QA & Polish
