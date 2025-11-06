@@ -29,6 +29,7 @@ jest.mock('../ReadingCard', () => {
       audiobook,
       favorite,
       finishedDate,
+      readCount,
     }: {
       slug: string;
       title: string;
@@ -37,6 +38,7 @@ jest.mock('../ReadingCard', () => {
       audiobook?: boolean;
       favorite?: boolean;
       finishedDate?: string | Date | null;
+      readCount?: number;
     }) => (
       <div data-testid="reading-card" className="mocked-reading-card">
         <div>{title}</div>
@@ -45,6 +47,7 @@ jest.mock('../ReadingCard', () => {
         <div>{audiobook ? 'Audiobook' : ''}</div>
         <div>{favorite ? 'Favorite' : ''}</div>
         <div>{finishedDate ? 'Finished' : 'Reading'}</div>
+        <div>{readCount ? `Read Count: ${readCount}` : ''}</div>
       </div>
     ),
   };
@@ -62,6 +65,7 @@ describe('YearSection Component', () => {
       coverImageSrc: '/covers/book-one.jpg',
       audiobook: false,
       favorite: true,
+      readCount: 1,
     },
     {
       id: 2,
@@ -72,6 +76,7 @@ describe('YearSection Component', () => {
       coverImageSrc: null,
       audiobook: true,
       favorite: false,
+      readCount: 1,
     },
   ];
 
@@ -85,6 +90,7 @@ describe('YearSection Component', () => {
     coverImageSrc: '/covers/book-three.jpg',
     audiobook: false,
     favorite: false,
+    readCount: 1,
   };
 
   // Audiobook
@@ -97,6 +103,7 @@ describe('YearSection Component', () => {
     coverImageSrc: null,
     audiobook: true,
     favorite: true,
+    readCount: 1,
   };
 
   it('renders year heading correctly', () => {
@@ -167,6 +174,7 @@ describe('YearSection Component', () => {
       coverImageSrc: null,
       audiobook: false,
       favorite: true,
+      readCount: 1,
     };
 
     render(<YearSection year="2023" readings={[favoriteReading]} />);
@@ -174,5 +182,23 @@ describe('YearSection Component', () => {
     // Verify the favorite reading is rendered with Favorite indicator
     expect(screen.getByText('Favorite Book')).toBeInTheDocument();
     expect(screen.getByText('Favorite')).toBeInTheDocument();
+  });
+
+  it('passes readCount to ReadingCard for rereads', () => {
+    const reread: Reading = {
+      id: 6,
+      slug: 'reread-book-02',
+      title: 'Reread Book',
+      author: 'Returning Reader',
+      finishedDate: '2023-07-15',
+      coverImageSrc: null,
+      audiobook: false,
+      favorite: false,
+      readCount: 2,
+    };
+
+    render(<YearSection year="2023" readings={[reread]} />);
+
+    expect(screen.getByText('Read Count: 2')).toBeInTheDocument();
   });
 });

@@ -125,6 +125,7 @@ module.exports = [
   {
     files: [
       'cli/**/*.{js,ts}',
+      'scripts/**/*.{js,ts}',
       'src/lib/data.ts',
       'src/lib/static-data.ts',
       'src/lib/utils/readingUtils.ts',
@@ -225,10 +226,16 @@ module.exports = [
     },
   },
 
-  // TypeScript parser configuration for all TS files (excluding test files)
+  // TypeScript parser configuration for all TS files (excluding test files and CLI/scripts)
   {
     files: ['**/*.{ts,tsx}'],
-    ignores: ['**/*.test.{ts,tsx}', '**/__tests__/**/*.{ts,tsx}', '**/test-utils/**/*.{ts,tsx}'],
+    ignores: [
+      '**/*.test.{ts,tsx}',
+      '**/__tests__/**/*.{ts,tsx}',
+      '**/test-utils/**/*.{ts,tsx}',
+      'cli/**/*.{ts,tsx}',
+      'scripts/**/*.{ts,tsx}',
+    ],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
@@ -352,6 +359,7 @@ module.exports = [
       '**/commitlint.config.js',
       '**/.prettierrc.js',
       '**/scripts/**/*.js',
+      '**/scripts/**/*.ts',
       '**/src/lib/logger.ts',
       '**/src/lib/prisma.ts',
       '**/src/middleware/logging.ts',

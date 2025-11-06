@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 
 /**
  * Generate static JSON files from markdown content at build time
@@ -7,10 +7,19 @@
  * Caching: Calculates hash of all markdown files and skips generation if unchanged
  */
 
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
-const matter = require('gray-matter');
+import fs from 'fs';
+import path from 'path';
+import crypto from 'crypto';
+import matter from 'gray-matter';
+import {
+  parseRereadSlug,
+  buildRereadMap,
+  computeReadCount,
+  validateRereadSequences,
+} from '../cli/lib/reading-reread.js';
+
+// Generator version - increment when schema changes to invalidate cache
+const GENERATOR_VERSION = '2';
 
 // Ensure public/data directory exists
 const dataDir = path.join(process.cwd(), 'public', 'data');
@@ -21,11 +30,15 @@ if (!fs.existsSync(dataDir)) {
 // Calculate hash of all markdown files in content/
 function calculateContentHash() {
   const hash = crypto.createHash('sha256');
+
+  // Hash generator version to invalidate cache when schema changes
+  hash.update(`v${GENERATOR_VERSION}`);
+
   const contentDir = path.join(process.cwd(), 'content');
 
   // Get all .md files recursively
-  function getAllMdFiles(dir) {
-    const files = [];
+  function getAllMdFiles(dir: string): string[] {
+    const files: string[] = [];
     const items = fs.readdirSync(dir);
 
     for (const item of items) {
@@ -104,17 +117,31 @@ function generateQuotes() {
 function generateReadings() {
   const dir = path.join(process.cwd(), 'content/readings');
   const files = fs.readdirSync(dir);
+
+  // Build reread map before processing files
+  const rereadMap = buildRereadMap(files);
+  validateRereadSequences(rereadMap);
+
   const readings = files.map((file, index) => {
     const { data } = matter(fs.readFileSync(path.join(dir, file), 'utf8'));
+    const slug = file.replace('.md', '');
+
+    // Compute reread metadata
+    const readCount = computeReadCount(slug, rereadMap);
+    const parsed = parseRereadSlug(slug);
+    const baseSlug = parsed ? parsed.baseSlug : slug;
+
     return {
       id: index + 1, // Generate sequential IDs
-      slug: file.replace('.md', ''),
+      slug,
       title: data.title || 'Untitled',
       author: data.author || 'Unknown Author',
       finishedDate: data.finished || null,
       coverImageSrc: data.coverImage || null,
       audiobook: data.audiobook || false,
       favorite: data.favorite || false,
+      readCount,
+      baseSlug,
     };
   });
 
@@ -134,7 +161,11 @@ function generateReadings() {
 
   fs.writeFileSync(path.join(dataDir, 'readings.json'), JSON.stringify(readingsData, null, 2));
 
+  // Log reread summary
+  const rereadCount = sortedReadings.filter(r => r.readCount > 1).length;
+  const uniqueBooks = new Set(sortedReadings.map(r => r.baseSlug)).size;
   console.log(`✓ Generated readings.json with ${sortedReadings.length} readings`);
+  console.log(`✓ Detected ${rereadCount} rereads across ${uniqueBooks} unique books`);
   return sortedReadings.length;
 }
 

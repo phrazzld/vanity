@@ -103,7 +103,7 @@
     "dev:log": "./scripts/rotate-logs.sh && next dev --turbopack 2>&1 | tee -a logs/dev.log",
     "logs": "cat logs/dev.log",
     "logs:watch": "tail -f logs/dev.log",
-    "build": "node scripts/generate-static-data.js && next build",
+    "build": "tsx scripts/generate-static-data.ts && next build",
     "analyze": "node scripts/analyze-bundle.js",
     "start": "next start",
     "lint": "eslint --config eslint.config.cjs",
