@@ -18,6 +18,9 @@ import {
   validateRereadSequences,
 } from '../cli/lib/reading-reread.js';
 
+// Generator version - increment when schema changes to invalidate cache
+const GENERATOR_VERSION = '2';
+
 // Ensure public/data directory exists
 const dataDir = path.join(process.cwd(), 'public', 'data');
 if (!fs.existsSync(dataDir)) {
@@ -27,6 +30,10 @@ if (!fs.existsSync(dataDir)) {
 // Calculate hash of all markdown files in content/
 function calculateContentHash() {
   const hash = crypto.createHash('sha256');
+
+  // Hash generator version to invalidate cache when schema changes
+  hash.update(`v${GENERATOR_VERSION}`);
+
   const contentDir = path.join(process.cwd(), 'content');
 
   // Get all .md files recursively
