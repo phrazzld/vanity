@@ -94,6 +94,7 @@ export default function YearSection({
               audiobook={reading.audiobook}
               favorite={reading.favorite}
               finishedDate={reading.finishedDate}
+              readCount={reading.readCount}
             />
           ))}
         </div>
