@@ -16,9 +16,9 @@ export default function HomePage() {
 
     const sections = [
       { ref: heroRef, delay: 0 },
-      { ref: quotesRef, delay: 200 },
-      { ref: aboutRef, delay: 400 },
-      { ref: linksRef, delay: 600 },
+      { ref: aboutRef, delay: 200 },
+      { ref: linksRef, delay: 400 },
+      { ref: quotesRef, delay: 600 },
     ];
 
     const observer = new IntersectionObserver(
@@ -94,14 +94,6 @@ export default function HomePage() {
         </p>
       </section>
 
-      {/* TypewriterQuotes Section - Centered, generous spacing */}
-      <section
-        ref={quotesRef}
-        className="section-quotes opacity-0 translate-y-4 transition-all duration-500"
-      >
-        <TypewriterQuotes />
-      </section>
-
       {/* About/Bio Section - Right-aligned, asymmetric */}
       <section
         ref={aboutRef}
@@ -149,6 +141,14 @@ export default function HomePage() {
             <p className="text-sm text-gray-600 dark:text-gray-400">{link.description}</p>
           </a>
         ))}
+      </section>
+
+      {/* TypewriterQuotes Section - Centered, generous spacing, contemplative ending */}
+      <section
+        ref={quotesRef}
+        className="section-quotes opacity-0 translate-y-4 transition-all duration-500"
+      >
+        <TypewriterQuotes />
       </section>
     </>
   );
