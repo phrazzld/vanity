@@ -1,558 +1,357 @@
-# TODO: Reread Tracking with Visual Badges
+# TODO: The Craftsman Aesthetic Transformation
 
-## Context
+Transform Vanity from multi-page portfolio with safe defaults (Space Grotesk, Tailwind blue) into a focused one-pager digital business card with technical warmth (IBM Plex Mono, amber accents, asymmetric composition).
 
-**Architecture**: Build-Time Reread Detection with Inline Badge Components (DESIGN.md)
+**Branch**: `feature/craftsman-redesign`
+**Estimated Total**: 9-13 hours across 6 phases
 
-**Key Design Decisions**:
+---
 
-- Reuse existing `cli/lib/reading-reread.ts` utilities (findExistingReadings pattern)
-- Compute reread metadata at build time (zero runtime overhead)
-- Display badges on hover (consistent with AudiobookBadge/FavoriteBadge)
-- Use flat `scripts/` structure per existing codebase patterns
+## Phase 1: Typography Foundation (1.5-2 hours)
 
-**Key Files**:
+### Font Import & Configuration
 
-- `cli/lib/reading-reread.ts` - Enhanced with parseRereadSlug, buildRereadMap, computeReadCount
-- `scripts/generate-static-data.js` - Integrate reread detection into generateReadings()
-- `src/types/reading.ts` - Add readCount and baseSlug optional fields
-- `src/app/components/readings/ReadingCard.tsx` - Add ReadCountBadge component
+- [x] Replace Space Grotesk with IBM Plex Mono in `src/app/fonts.ts`
+  - Import `IBM_Plex_Mono` from `next/font/google`
+  - Load weights: 400 (regular), 500 (medium), 600 (semibold), 700 (bold)
+  - Configure: `subsets: ['latin']`, `display: 'swap'`, `variable: '--font-ibm-plex-mono'`
+  - Export as `ibmPlexMono` constant
+  - Success criteria: Font loads without console errors, variable available in CSS
 
-**Existing Patterns**:
-
-- Badge components: AudiobookBadge (line 18-56), FavoriteBadge (line 58-91)
-- Build script: generate-static-data.js uses gray-matter, console.log, CommonJS
-- CLI utilities: reading-reread.ts uses TypeScript, exports functions with JSDoc
-- Tests: Jest with `it()` assertions, `__tests__/` subdirectories, RTL for components
-
-**Architecture Validation Notes**:
-
-- ✅ Approved with modifications (see architecture-strategist review)
-- ⚠️ Use flat `scripts/` structure (not `scripts/lib/`)
-- ⚠️ Tests go in `__tests__/` subdirectories
-- ⚠️ Maintain existing TypeScript patterns in CLI utilities
-
-## Implementation Tasks
-
-### Phase 1: Build-Time Detection (Core Module)
-
-- [x] **Enhance reading-reread.ts with reread detection utilities**
-
-  ```
-  Files: cli/lib/reading-reread.ts (lines 1-127, add ~60 lines)
-  Architecture: Implements RereadDetector module from DESIGN.md section 2
-  Pseudocode: See DESIGN.md sections 5.1 (Detection/Grouping) and 5.2 (Read Count)
-
-  Tasks:
-  1. Add parseRereadSlug(slug: string): { baseSlug: string; sequence: number } | null
-     - Extract base slug and sequence from filenames (gatsby-02 → {baseSlug: "gatsby", sequence: 2})
-     - Regex pattern: /-(\d+)$/ matches -02, -03, -99
-     - Handle edge cases: no suffix (sequence = 1), null/undefined (return null)
-
-  2. Add buildRereadMap(filenames: string[]): Map<string, string[]>
-     - Group files by base slug (gatsby.md, gatsby-02.md → Map{"gatsby" => [...]})
-     - Sort files within groups (base file first, then numbered versions)
-     - Leverage existing findExistingReadings pattern (lines 20-37)
+- [ ] Update font variable in `src/app/layout.tsx`
+  - Replace `${spaceGrotesk.variable}` with `${ibmPlexMono.variable}` in html className
+  - Keep `${inter.variable}` unchanged (body copy)
+  - Success criteria: Both font variables present in DOM, no hydration warnings
 
-  3. Add computeReadCount(slug: string, rereadMap: Map<string, string[]>): number
-     - Lookup base slug in map, return position (1-indexed)
-     - Fallback to 1 for unmapped slugs (orphaned files)
+### Typography Styling
 
-  4. Add validateRereadSequences(rereadMap: Map<string, string[]>): void
-     - Check for sequence gaps (gatsby-02, gatsby-04 missing gatsby-03)
-     - Log warnings with console.warn() for invalid sequences
-     - Non-fatal - continues processing with warnings
+- [ ] Update heading font-family in `src/app/globals.css` (lines 142-149)
+  - Change all `h1, h2, h3, h4, h5, h6` to use `font-family: var(--font-ibm-plex-mono), monospace`
+  - Add `letter-spacing: -0.02em` to heading base styles (tighter tracking for monospace)
+  - Success criteria: All headings render in IBM Plex Mono with tighter letter-spacing
 
-  Pattern: Follow existing findExistingReadings structure (RegExp, sort, filter)
-  Types: Export TypeScript interfaces for RereadSlugInfo, RereadMap
-  Docs: Add JSDoc comments matching existing function documentation style
+- [ ] Add body text letter-spacing in `src/app/globals.css` (line 139)
+  - Add `letter-spacing: 0.01em` to body style (breathing room for Inter)
+  - Success criteria: Body text has subtle spacing increase, improved readability
 
-  Success Criteria:
-  - parseRereadSlug("gatsby-02") returns { baseSlug: "gatsby", sequence: 2 }
-  - buildRereadMap groups 6 existing reread files correctly
-  - computeReadCount("gatsby-02", map) returns 2
-  - validateRereadSequences logs warnings for sequence gaps
-  - TypeScript compilation succeeds with strict mode
-  - Exports match DESIGN.md Module 1 interface specification
+- [ ] Update `.typewriter-container` font in `src/app/globals.css` (line 479)
+  - Change to use IBM Plex Mono via `font-family: var(--font-ibm-plex-mono), monospace`
+  - Success criteria: Typewriter quotes render in monospace, matches heading aesthetic
 
-  Test Strategy:
-  - Unit tests in cli/lib/__tests__/reading-reread.test.ts
-  - Test cases: base slugs, numbered suffixes, hyphenated titles, edge cases
-  - Mock filesystem for integration scenarios
-  - Coverage target: >95% for new functions
+- [ ] Update Tailwind config font-family in `tailwind.config.ts` (lines 26-27)
+  - Replace `'space-grotesk': ['var(--font-space-grotesk)', ...defaultTheme.fontFamily.sans]`
+  - With `'ibm-plex-mono': ['var(--font-ibm-plex-mono)', ...defaultTheme.fontFamily.mono]`
+  - Success criteria: Tailwind utility classes reference correct font variable
 
-  Dependencies: None (pure functions, Node.js built-ins only)
-  Time Estimate: 2 hours
-  ```
+---
 
-- [x] **Integrate reread detection into static data generation**
+## Phase 2: Color System (1-1.5 hours)
 
-  ```
-  Files: scripts/generate-static-data.js (line 104-139, add ~15 lines)
-  Architecture: Enhances StaticDataGenerator module from DESIGN.md section 3
-  Pseudocode: See DESIGN.md section 5.2 (Read Count Computation)
-
-  Tasks:
-  1. Import reread utilities from cli/lib/reading-reread.ts
-     const { parseRereadSlug, buildRereadMap, computeReadCount, validateRereadSequences } =
-       require('../cli/lib/reading-reread');
-
-  2. In generateReadings() before files.map() loop:
-     - Build reread map: const rereadMap = buildRereadMap(files);
-     - Validate sequences: validateRereadSequences(rereadMap);
-
-  3. In files.map() for each reading:
-     - Compute readCount: const readCount = computeReadCount(slug, rereadMap);
-     - Parse base slug: const parsed = parseRereadSlug(slug);
-     - Add fields to output: readCount, baseSlug: parsed?.baseSlug || slug
-
-  4. Add summary logging after processing:
-     - Count rereads: readings.filter(r => r.readCount > 1).length
-     - Count unique books: new Set(readings.map(r => r.baseSlug)).size
-     - Log: "✓ Detected N rereads across M books (X total readings)"
-
-  Pattern: Follow existing gray-matter parsing loop structure (lines 107-119)
-  Error Handling: Graceful degradation - if detection fails, default readCount=1
-
-  Success Criteria:
-  - Build completes successfully (npm run build)
-  - public/data/readings.json includes readCount and baseSlug fields
-  - 6 existing reread files have readCount=2 in JSON output
-  - Build logs show reread detection summary
-  - Build time increase <100ms (measure with time npm run build)
-  - No breaking changes to existing JSON structure
-
-  Test Strategy:
-  - Integration test in scripts/__tests__/generate-static-data.test.js
-  - Verify JSON output structure with readCount/baseSlug fields
-  - Test with mock markdown files (base, -02, -03 suffixes)
-  - Test orphaned files and sequence gaps (warnings logged, non-fatal)
-
-  Dependencies: cli/lib/reading-reread.ts (must be implemented first)
-  Time Estimate: 1.5 hours
-  ```
-
-- [x] **Add TypeScript type definitions for reread metadata**
-
-  ```
-  Files: src/types/reading.ts (lines 12-71, add ~10 lines)
-  Architecture: Extends Reading/ReadingListItem interfaces from DESIGN.md section 8.1
-
-  Tasks:
-  1. Add optional fields to Reading interface (after line 38):
-     /** Number of times this book has been read (1 for first read, 2+ for rereads) */
-     readCount?: number;
-
-     /** Base slug without suffix (for grouping rereads of same book) */
-     baseSlug?: string;
-
-  2. Add same optional fields to ReadingListItem interface (after line 70):
-     readCount?: number;
-     baseSlug?: string;
-
-  3. DO NOT add to ReadingInput interface (computed fields, not user input)
-
-  Pattern: Match existing optional fields (audiobook?, favorite? lines 35-38)
-  Type Safety: Optional fields maintain backward compatibility
-
-  Success Criteria:
-  - TypeScript compilation succeeds (npm run typecheck)
-  - No breaking changes to existing code using Reading types
-  - ReadingCard component accepts readCount prop without type errors
-  - Static data generation outputs match new type shape
-
-  Test Strategy: Type-checked at compile time, no runtime tests needed
-
-  Dependencies: None (standalone type definitions)
-  Time Estimate: 15 minutes
-  ```
-
-### Phase 2: UI Component (Badge Display)
-
-- [x] **Implement ReadCountBadge component in ReadingCard**
-
-  ```
-  Work Log:
-  - Implemented ReadCountBadge following AudiobookBadge/FavoriteBadge pattern
-  - Extracted badge sizing constants for all three badge components
-  - Applied simplicity review recommendations (constants, removed redundant check)
-  - Fixed pre-existing TypeScript error in generate-static-data.ts
-  - All tests pass: typecheck ✓, lint ✓, pre-commit hooks ✓
-
-  Files: src/app/components/readings/ReadingCard.tsx (after line 91, add ~50 lines)
-  Architecture: Implements ReadCountBadge module from DESIGN.md section 2.2
-  Pseudocode: See DESIGN.md section 5.4 (Badge Positioning)
-
-  Tasks:
-  1. Create ReadCountBadge component after FavoriteBadge (line 91):
-     function ReadCountBadge({ count, audiobook, favorite }: {
-       count: number;
-       audiobook?: boolean;
-       favorite?: boolean;
-     }) {
-       if (count <= 1) return null;
-
-       const topOffset = 8 + (audiobook ? 36 : 0) + (favorite ? 36 : 0);
-       const fontSize = count > 9 ? '9px' : '11px';
-
-       return (
-         <div style={{
-           position: 'absolute',
-           top: `${topOffset}px`,
-           right: '8px',
-           width: '28px',
-           height: '28px',
-           borderRadius: '50%',
-           backgroundColor: 'rgba(0, 0, 0, 0.7)',
-           border: '1px solid rgba(255, 255, 255, 0.2)',
-           display: 'flex',
-           alignItems: 'center',
-           justifyContent: 'center',
-         }} aria-label={`Read ${count} times`}>
-           <span style={{
-             color: 'rgba(255, 255, 255, 0.9)',
-             fontSize,
-             fontWeight: 600,
-             letterSpacing: '-0.02em',
-           }}>
-             ×{count}
-           </span>
-         </div>
-       );
-     }
-
-  2. Update ReadingCardProps type (line 106):
-     - Already includes readCount from ReadingListItem type ✓
-
-  3. Destructure readCount in ReadingCard function (line 130):
-     - Add readCount to destructured props
-
-  4. Render badge in hover overlay (after line 227, before hover content):
-     {readCount && readCount > 1 && (
-       <ReadCountBadge count={readCount} audiobook={audiobook} favorite={favorite} />
-     )}
-
-  5. Update aria-label to include read count (line 178):
-     const readCountText = readCount && readCount > 1 ? `, Read ${readCount} times` : '';
-     aria-label={`${title} by ${author}, ${statusText}${audiobookText}${favoriteText}${readCountText}`}
-
-  Pattern: Follow AudiobookBadge/FavoriteBadge structure (lines 18-91)
-  Positioning: Match existing badge offset pattern (line 64: top: audiobook ? '44px' : '8px')
-  Styling: Reuse badge style constants (28px size, 8px offset, rgba colors)
-
-  Success Criteria:
-  - Badge renders on hover for readCount > 1
-  - Badge does not render for readCount = 1 or undefined
-  - Badge positions correctly below audiobook/favorite badges (8px, 44px, 80px)
-  - Font size adjusts for counts >9 (9px vs 11px)
-  - Aria-label includes "Read N times" text
-  - Visual appearance matches AudiobookBadge/FavoriteBadge style
-  - No visual regressions on existing badges
-
-  Test Strategy:
-  - Component tests in __tests__/ReadingCard.test.tsx
-  - Test badge rendering with different readCount values (1, 2, 3, 15)
-  - Test positioning combinations (audiobook only, favorite only, both, all three)
-  - Test aria-label includes read count
-  - Snapshot test for badge visual regression
-  - Manual QA: Hover over reread cards, verify badge appears correctly
-
-  Dependencies: src/types/reading.ts (readCount field must exist)
-  Time Estimate: 1.5 hours
-  ```
-
-### Phase 3: Testing & Validation
-
-- [x] **Write unit tests for reread detection utilities**
-
-  ```
-  Work Log:
-  - Added 28 test cases for 4 new functions (223 lines)
-  - Coverage: 92.56% statements, 99.02% lines (exceeds >95% target)
-  - All 50 tests passing (22 existing + 28 new)
-  - Followed existing test patterns: it() assertions, describe blocks
-  - Used console.warn mocking for validation tests
-  - Comprehensive edge case coverage documented
-
-  Files: cli/lib/__tests__/reading-reread.test.ts (add ~150 lines)
-  Architecture: Tests RereadDetector module from DESIGN.md section 9.1
-
-  Test Cases:
-  1. parseRereadSlug:
-     - Base slug without suffix: "gatsby" → { baseSlug: "gatsby", sequence: 1 }
-     - Slug with -02 suffix: "gatsby-02" → { baseSlug: "gatsby", sequence: 2 }
-     - Hyphenated titles: "how-to-read-a-book-03" → { baseSlug: "how-to-read-a-book", sequence: 3 }
-     - High sequence numbers: "popular-book-15" → { baseSlug: "popular-book", sequence: 15 }
-     - Invalid suffixes: "book-2" (no leading zero) → treated as base slug
-     - Null/undefined: returns null
-
-  2. buildRereadMap:
-     - Groups rereads correctly: ["gatsby.md", "gatsby-02.md"] → Map{"gatsby" => [...]}
-     - Sorts files by sequence: ["gatsby-03.md", "gatsby.md", "gatsby-02.md"] → ordered
-     - Handles single books: ["1984.md"] → Map{"1984" => ["1984.md"]}
-     - Empty input: [] → empty Map
-
-  3. computeReadCount:
-     - First read: computeReadCount("gatsby", map) → 1
-     - Second read: computeReadCount("gatsby-02", map) → 2
-     - Third read: computeReadCount("1984-03", map) → 3
-     - Unmapped slug: computeReadCount("unknown", map) → 1
-
-  4. validateRereadSequences:
-     - Valid sequence: no warnings for [1, 2, 3]
-     - Gap in sequence: warns for [1, 2, 4] (missing -03)
-     - Missing base file: warns for [2, 3] (no base .md)
-
-  Pattern: Use `it()` assertions (existing convention), `describe` blocks for grouping
-  Setup: Create temp directory with mock markdown files using fs.writeFileSync
-  Cleanup: Remove temp files in afterEach() hook
-
-  Success Criteria:
-  - All test cases pass (npm test -- reading-reread)
-  - Coverage >95% for new functions (npm run test:coverage)
-  - Tests follow existing patterns in reading-reread.test.ts
-  - No flaky tests (run 3 times, all pass)
-
-  Dependencies: cli/lib/reading-reread.ts implementation
-  Time Estimate: 2 hours
-  ```
-
-- [x] **Write component tests for ReadCountBadge**
-
-  ```
-  Work Log:
-  - Added 16 test cases covering all badge features (229 lines)
-  - All 45 tests passing (29 existing + 16 new)
-  - Followed existing RTL patterns exactly
-  - Fixed one test that incorrectly expected badge not in DOM vs opacity
-  - Comprehensive coverage: rendering, positioning, font size, accessibility, styling
-  - Verified hover behavior, aria-labels, and badge stacking
-
-  Files: src/app/components/readings/__tests__/ReadingCard.test.tsx (add ~80 lines)
-  Architecture: Tests ReadCountBadge component from DESIGN.md section 9.2
-
-  Test Cases:
-  1. Badge rendering:
-     - Renders ×2 badge for readCount=2
-     - Renders ×3 badge for readCount=3
-     - Does not render for readCount=1
-     - Does not render for undefined readCount
-
-  2. Badge positioning:
-     - Top: 8px with no other badges
-     - Top: 44px with audiobook badge (8 + 36)
-     - Top: 44px with favorite badge (8 + 36)
-     - Top: 80px with both audiobook and favorite (8 + 36 + 36)
-
-  3. Font size adjustment:
-     - 11px font for readCount ≤9
-     - 9px font for readCount >9 (e.g., 15)
-
-  4. Accessibility:
-     - Badge has aria-label="Read N times"
-     - ReadingCard aria-label includes "Read N times" text
-     - Badge visible on hover (same as other badges)
-
-  5. Visual regression:
-     - Snapshot test with readCount=2 badge
-     - Snapshot test with all three badges (audiobook + favorite + reread)
-
-  Pattern: Use React Testing Library (screen, render, fireEvent)
-  Mocking: Mock Next.js Image (existing pattern lines 34-65)
-  Hover: Use fireEvent.mouseEnter(card) to trigger hover state
-
-  Success Criteria:
-  - All test cases pass (npm test -- ReadingCard)
-  - Coverage includes new ReadCountBadge component
-  - Snapshots updated (UPDATE_SNAPSHOTS=true npm test)
-  - Tests use existing mocks and patterns
-
-  Dependencies: ReadCountBadge implementation in ReadingCard.tsx
-  Time Estimate: 1.5 hours
-  ```
-
-- [x] **Write integration test for build process with rereads**
-
-  ```
-  Files: scripts/__tests__/generate-static-data.test.js (added 167 lines)
-  Completed: 2025-01-04
-  Commit: 7bf377c
-
-  Work Log:
-  - Created integration test suite with 14 test cases
-  - Tests execute actual build script (no mocks per requirements)
-  - Validates JSON output structure (readCount, baseSlug fields)
-  - Verifies sequential readCount assignment (1, 2, 3, ...)
-  - Tests logging output (reread detection summary)
-  - Checks error handling (orphaned files, build completion)
-  - Optimized to run script once (1.066s vs 2s+ for 3 executions)
-  - Fixed lint warnings (unused variable)
-  - All 14 tests passing
-
-  Note: Test file reduced from initial ~240 lines to 167 lines by
-  consolidating setup and eliminating duplicate script executions.
-  ```
-
-### Phase 4: Manual QA & Polish
-
-- [ ] **Manual QA and visual verification**
-
-  ```
-  Architecture: Final validation per DESIGN.md success criteria
-
-  Tasks:
-  1. Build and run dev server:
-     npm run build
-     npm run dev
-
-  2. Navigate to /readings page
-
-  3. Verify 6 reread books display with badges:
-     - How to Read a Book (2019 section) - should show ×2 badge
-     - Phil Gordon's Little Green Book (verify year, ×2 badge)
-     - Steppenwolf (verify year, ×2 badge)
-     - The Fountainhead (verify year, ×2 badge)
-     - The Metamorphosis of Prime Intellect (verify year, ×2 badge)
-     - The Sovereign Individual (verify year, ×2 badge)
-
-  4. Test badge positioning:
-     - Hover over reread with audiobook flag (badge below audiobook)
-     - Hover over reread with favorite flag (badge below favorite)
-     - Hover over reread with both flags (badge below both, at 80px)
-
-  5. Test accessibility:
-     - Tab to ReadingCard, verify focus ring
-     - Screen reader announces "Read N times"
-     - Badge visible on focus (not just hover)
-
-  6. Test responsive design:
-     - Mobile viewport (375px): Badge visible and properly sized
-     - Tablet viewport (768px): Badge positioning correct
-     - Desktop viewport (1440px): No layout issues
-
-  7. Verify no regressions:
-     - First reads (no badge) display normally
-     - Audiobook/favorite badges still work
-     - Year grouping unchanged
-     - Sort order within years correct
-
-  8. Performance check:
-     - Page load time not significantly increased
-     - No console errors
-     - No React warnings
-
-  Success Criteria:
-  - All 6 rereads show correct badges (×2)
-  - Badge positioning correct for all combinations
-  - No visual regressions on existing features
-  - Accessibility requirements met (WCAG 2.1 AA)
-  - Mobile/tablet/desktop all work correctly
-  - No performance degradation
-
-  Test Strategy: Manual browser testing, cross-browser check (Chrome, Safari, Firefox)
-  Time Estimate: 1 hour
-  ```
-
-- [ ] **Update snapshots and final validation**
-
-  ```
-  Files: src/app/components/readings/__tests__/*.snapshot.test.tsx
-
-  Tasks:
-  1. Update component snapshots:
-     UPDATE_SNAPSHOTS=true npm test -- ReadingCard.snapshot
-
-  2. Review snapshot changes:
-     - Verify ReadCountBadge appears in snapshot
-     - Confirm no unintended style changes
-     - Check all three badge combinations captured
-
-  3. Run full test suite:
-     npm test
-
-  4. Run type checking:
-     npm run typecheck
-
-  5. Run linting:
-     npm run lint
-
-  6. Verify build succeeds:
-     npm run build
-
-  7. Check build output:
-     - public/data/readings.json includes new fields
-     - Build time increase <100ms from baseline
-     - No build warnings or errors
-
-  Success Criteria:
-  - All tests pass (npm test exits 0)
-  - Type check passes (npm run typecheck exits 0)
-  - Linting passes (npm run lint exits 0)
-  - Build succeeds (npm run build exits 0)
-  - Snapshots updated and committed
-
-  Dependencies: All previous tasks complete
-  Time Estimate: 30 minutes
-  ```
-
-## Design Iteration Checkpoints
-
-**After Phase 1 (Build-Time Detection)**:
-
-- Review module boundaries: Is RereadDetector truly hiding complexity?
-- Review performance: Is build time increase <100ms as expected?
-- Extract patterns: Any reusable utilities emerging?
-
-**After Phase 2 (UI Components)**:
-
-- Review badge positioning: Does dynamic offset scale to 4+ badges?
-- Review component coupling: Can ReadCountBadge work standalone?
-- Identify improvements: Font size cutoff optimal at >9?
-
-**After Phase 3 (Testing)**:
-
-- Review test coverage: Are edge cases handled (orphaned files, high counts)?
-- Review test patterns: Any brittle tests that need improvement?
-- Document learnings: Update ARCHITECTURE.md with implementation notes
-
-**After Phase 4 (QA)**:
-
-- Review user experience: Badge visibility and clarity
-- Review accessibility: Screen reader announcements clear?
-- Plan future enhancements: Stats dashboard, timeline view
-
-## Success Metrics
-
-**Build Time**: <100ms increase (baseline: measure before implementation)
-**Test Coverage**: >90% for new functions (check with npm run test:coverage)
-**Visual Regression**: Zero unintended changes to existing features
-**Accessibility**: WCAG 2.1 AA compliance (verified with axe DevTools)
-**Performance**: No perceivable page load impact (<10ms)
-
-## Out of Scope (BACKLOG.md)
-
-These are intentionally excluded from this PR:
-
-- Stats dashboard showing "377 unique books, 383 total readings"
-- Reread timeline visualization
-- "Most reread books" section
-- CLI validation to prevent sequence gaps during `reading add`
-- Build-time cache optimization for reread detection
-- Migrate existing 6 reread files to new format (keep as-is)
-
-## Notes
-
-**Architecture Validation Feedback**:
-
-- ✅ Use flat `scripts/` structure (not `scripts/lib/`)
-- ✅ Tests go in `__tests__/` subdirectories
-- ✅ Maintain TypeScript in CLI utilities
-- ✅ Use `it()` assertions (not `test()`) per existing conventions
-- ✅ Follow existing badge positioning pattern (8px + 36px \* badgeCount)
-
-**Implementation Order**:
-Phase 1 and Phase 2 can be parallelized after type definitions are added.
-Phase 3 tests require Phase 1+2 implementations complete.
-Phase 4 requires everything complete.
-
-**Time Estimate**: 8 hours total (includes validation checkpoint reviews)
+### CSS Variable Color Tokens
+
+- [ ] Replace blue primary with amber in `src/app/globals.css` light mode tokens (lines 33-43)
+  - `--primary-50: #fffbeb` (amber-50)
+  - `--primary-100: #fef3c7` (amber-100)
+  - `--primary-200: #fde68a` (amber-200)
+  - `--primary-300: #fcd34d` (amber-300)
+  - `--primary-400: #fbbf24` (amber-400)
+  - `--primary-500: #f59e0b` (amber-500)
+  - `--primary-600: #d97706` (amber-600) ← Signal color
+  - `--primary-700: #b45309` (amber-700)
+  - `--primary-800: #92400e` (amber-800)
+  - `--primary-900: #78350f` (amber-900)
+  - Success criteria: All primary color references now amber gradient
+
+- [ ] Update dark mode primary tokens in `src/app/globals.css` (lines 66-76)
+  - Inverse the scale for dark mode (darker = higher number)
+  - Keep amber hue, adjust lightness for dark backgrounds
+  - Success criteria: Amber works in both light/dark mode with proper contrast
+
+- [ ] Add section gradient token in `src/app/globals.css` dark mode (line 48)
+  - Add new variable: `--section-gradient: linear-gradient(135deg, #111827 0%, #1f2937 100%);`
+  - This provides subtle depth behind sections in dark mode
+  - Success criteria: Gradient token available for section backgrounds
+
+### Tailwind Palette Configuration
+
+- [ ] Ensure amber palette complete in `tailwind.config.ts` (lines 31-123)
+  - Verify amber color scale already exists (should be default Tailwind)
+  - If missing, add full amber scale matching CSS variables
+  - Success criteria: `bg-amber-600`, `text-amber-600` utilities work
+
+- [ ] Add gradient utilities in `tailwind.config.ts`
+  - Extend `backgroundImage` theme with custom gradients
+  - Add `'section-dark': 'linear-gradient(135deg, #111827 0%, #1f2937 100%)'`
+  - Success criteria: Can use `bg-gradient-section-dark` utility class
+
+### Component Color Updates
+
+- [ ] Update dark mode moon glow in `src/app/globals.css` (line 126)
+  - Change `filter: drop-shadow(0 0 8px rgba(148, 163, 184, 0.4))` blue tint
+  - To `filter: drop-shadow(0 0 8px rgba(217, 119, 6, 0.4))` amber tint (amber-600 with opacity)
+  - Success criteria: Moon icon glows amber in dark mode
+
+---
+
+## Phase 3: Page Consolidation (2-3 hours)
+
+### Delete Obsolete Route Directories
+
+- [ ] Delete `src/app/readings/` directory and all contents
+  - Remove `src/app/readings/page.tsx`
+  - Remove any nested components/layouts
+  - Success criteria: No readings route exists, build doesn't reference readings
+
+- [ ] Delete `src/app/projects/` directory and all contents
+  - Remove `src/app/projects/page.tsx`
+  - Remove any nested components/layouts
+  - Success criteria: No projects route exists, build doesn't reference projects
+
+- [ ] Delete `src/app/map/` directory and all contents
+  - Remove `src/app/map/page.tsx`
+  - Remove `src/app/map/layout.tsx` if exists
+  - Success criteria: No map route exists, build doesn't reference map
+
+### Delete Obsolete Components
+
+- [ ] Delete `src/app/components/MobileNav.tsx`
+  - No navigation needed for one-pager
+  - Success criteria: Component removed, no import errors
+
+- [ ] Delete project components from `src/app/components/`
+  - Remove `ProjectItem.tsx`
+  - Remove `ProjectCard.tsx`
+  - Success criteria: No project component files remain
+
+- [ ] Delete readings component directory `src/app/components/readings/`
+  - Remove entire directory with all reading components
+  - Includes `ReadingCard.tsx`, `YearSection.tsx`, `ReadingsHeader.tsx`, etc.
+  - Success criteria: No readings components remain
+
+- [ ] Delete Map component `src/app/components/Map.tsx`
+  - Remove map visualization component
+  - Success criteria: Map component removed
+
+### Update Header Component
+
+- [ ] Simplify `src/app/components/Header.tsx` to remove navigation
+  - Remove all `<nav>` navigation links (currently links to readings, projects, map)
+  - Keep only site branding (if any) and DarkModeToggle
+  - Update layout to simple flex container: logo (if present) + dark mode toggle
+  - Success criteria: Header renders with only essential elements, no broken nav links
+
+### Update Footer Component
+
+- [ ] Simplify `src/app/components/Footer.tsx` to remove route links
+  - Remove internal route links that no longer exist
+  - Keep copyright/basic info
+  - Consider adding external links here or wait for Phase 4 links section
+  - Success criteria: Footer renders without broken internal links
+
+---
+
+## Phase 4: One-Pager Layout (2-3 hours)
+
+### Section Utility Classes
+
+- [ ] Add section utility classes to `src/app/globals.css` @layer components
+  - `.section-hero`: min-height 100vh, flex column, justify-center, left-aligned (60% width desktop)
+  - `.section-quotes`: centered, max-width 80%, generous padding (py-32)
+  - `.section-about`: right-aligned (60% width desktop, ml-auto), padding-y
+  - `.section-links`: left-aligned, padding-y, grid setup
+  - Success criteria: Section utilities handle responsive layout, asymmetric positioning
+
+### Hero Section
+
+- [ ] Redesign hero in `src/app/page.tsx` (replace lines 3-21)
+  - Create full-viewport hero section with `min-h-screen` flex column
+  - Add `<h1 className="text-8xl md:text-9xl">phaedrus</h1>` (massive, IBM Plex Mono)
+  - Add tagline `<p className="text-xl md:text-2xl mt-4">software engineer, general tinkerer</p>`
+  - Wrap in container div: 60% width on desktop (`max-w-3xl`), left-side positioning
+  - Add amber accent bar: `border-l-2 border-amber-600 pl-8` on container
+  - Success criteria: Hero takes full viewport, massive name, left-aligned, amber accent visible
+
+### TypewriterQuotes Section
+
+- [ ] Wrap TypewriterQuotes in centered section in `src/app/page.tsx`
+  - Remove inline styles (lines 9-15)
+  - Wrap `<TypewriterQuotes />` in semantic `<section className="section-quotes">`
+  - Apply center alignment with `mx-auto max-w-4xl`
+  - Add generous vertical padding: `py-32` (128px top/bottom)
+  - Success criteria: Quotes centered, generous breathing room, preserved functionality
+
+### About/Bio Section
+
+- [ ] Create About section in `src/app/page.tsx`
+  - New `<section className="section-about">`
+  - Add semantic bio content (2-3 sentences about you, your work, approach)
+  - Right-align: `ml-auto max-w-3xl` (60% width desktop)
+  - Include inline amber link to Misty Step: `<a className="text-amber-600 hover:text-amber-700">Misty Step</a>`
+  - Success criteria: Bio right-aligned, amber link styled, clear identity statement
+
+### External Links Section
+
+- [ ] Create Links section in `src/app/page.tsx`
+  - New `<section className="section-links">`
+  - Grid layout: `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6`
+  - Left-aligned container: `max-w-3xl`
+  - Create link components with structure:
+    - Icon placeholder (can use simple SVG or emoji initially)
+    - Label in IBM Plex Mono: `font-ibm-plex-mono`
+    - Hover states: `hover:scale-105 transition-transform`
+  - Links to include: Misty Step, readings service, GitHub, LinkedIn, email
+  - Success criteria: Links grid responsive, monospace labels, amber hover accents
+
+---
+
+## Phase 5: Motion & Craft (1.5-2 hours)
+
+### Spring Physics Timing
+
+- [ ] Add spring timing function to `tailwind.config.ts` (line 200)
+  - In `transitionTimingFunction` section, add: `'spring': 'cubic-bezier(0.34, 1.56, 0.64, 1)'`
+  - This creates playful bounce effect on hover states
+  - Success criteria: Spring timing available as utility class
+
+### Link Animations
+
+- [ ] Update link underline animation in `src/app/globals.css` (lines 294, 371)
+  - Change `.content-link::after` and `.project-link::after` (if still exists)
+  - Replace `ease-elegant-entrance` with `ease-spring`
+  - Update background color from `bg-foreground` to `bg-amber-600`
+  - Success criteria: Links have amber underline with spring bounce
+
+### Staggered Section Entrance
+
+- [ ] Implement IntersectionObserver for section fade-in in `src/app/page.tsx`
+  - Add `useEffect` hook to observe all sections
+  - Add `opacity-0 translate-y-4` initial state to sections
+  - Add `transition-all duration-500` to sections
+  - Stagger delays: hero (0ms), quotes (200ms), about (400ms), links (600ms)
+  - On intersect: add `opacity-100 translate-y-0`
+  - Success criteria: Sections fade in sequentially on scroll, respects `prefers-reduced-motion`
+
+### Noise Texture Overlay
+
+- [ ] Create noise SVG pattern in `public/noise.svg`
+  - SVG with `<filter>` containing `<feTurbulence>` for organic noise
+  - Pattern should be tileable, subtle grain texture
+  - Dimensions: 200x200px for performance
+  - Success criteria: SVG file exists, renders as subtle texture
+
+- [ ] Apply noise texture to dark mode in `src/app/globals.css`
+  - Add `.dark::before` pseudo-element with position fixed, inset-0
+  - Background: `url('/noise.svg')` repeat
+  - Opacity: 0.02 (very subtle, just visible texture)
+  - Pointer-events: none (don't interfere with interactions)
+  - Z-index: -1 (behind content)
+  - Success criteria: Subtle grain visible in dark mode, doesn't affect performance
+
+### Viewport Accent Bar
+
+- [ ] Add active section indicator in `src/app/page.tsx`
+  - Extend IntersectionObserver to track currently visible section
+  - Add `border-l-2 border-amber-600` to active section
+  - Animate border with `transition-colors duration-300`
+  - Only one section has border at a time
+  - Success criteria: Amber left border follows scroll position smoothly
+
+---
+
+## Phase 6: Cleanup & Polish (1-2 hours)
+
+### Remove Unused Code
+
+- [ ] Audit and remove unused CSS in `src/app/globals.css`
+  - Remove `.project-*` classes (project-card, project-image-container, etc.) lines 343-423
+  - Remove `.reading-card` styles if not used elsewhere
+  - Remove `.nav-list` navigation styles (lines 241-266) if simplified header doesn't use them
+  - Remove `.full-width-breakout` utility (lines 205-228) - unused
+  - Success criteria: CSS file cleaned, no dead code, build size reduced
+
+- [ ] Remove unused CLI commands (if removing content system entirely)
+  - Check `cli/` directory for quote/reading commands
+  - If quotes are staying but readings are removed, only remove reading CLI
+  - Update `package.json` scripts if needed
+  - Success criteria: No broken CLI commands, scripts reflect current features
+
+- [ ] Remove unused API routes
+  - Check `src/app/api/` for readings/projects routes
+  - Delete any routes serving removed content
+  - Success criteria: No dead API routes, cleaner route structure
+
+### Accessibility Validation
+
+- [ ] Test amber color contrast ratios
+  - Verify amber-600 (#d97706) on white background meets WCAG AA (4.5:1 for text)
+  - Verify amber-600 on gray-900 dark background meets WCAG AA
+  - Adjust shade if needed (darker amber for light mode, lighter for dark mode)
+  - Success criteria: All text/interactive elements meet WCAG AA minimum
+
+- [ ] Test keyboard navigation on one-pager
+  - Tab through all interactive elements (links, dark mode toggle)
+  - Verify focus indicators visible on all focusable elements
+  - Test with screen reader: announce sections, links, content hierarchy
+  - Success criteria: Full keyboard access, clear focus states, logical tab order
+
+- [ ] Test asymmetric layout accessibility
+  - Verify content order makes sense when linearized (screen reader order)
+  - Check mobile responsive behavior (asymmetry collapses to single column)
+  - Test with zoom up to 200% (no content clipping or overlap)
+  - Success criteria: Layout accessible at all viewport sizes, logical reading order
+
+### Performance Validation
+
+- [ ] Verify IBM Plex Mono font loading
+  - Check Network tab: font loads with `display: swap` (no FOIT)
+  - Verify no Cumulative Layout Shift (CLS) from font swap
+  - Measure Web Vitals: LCP should stay under 2.5s
+  - Success criteria: Fonts load efficiently, no layout shift, good CLS score
+
+- [ ] Validate no layout thrashing
+  - Check browser performance tab during scroll/interaction
+  - Verify IntersectionObserver doesn't cause excessive reflows
+  - Check noise texture doesn't impact frame rate
+  - Success criteria: 60fps maintained during scroll, no performance warnings
+
+- [ ] Verify Vercel Analytics still works
+  - Check `<Analytics />` and `<SpeedInsights />` components still mounted in layout
+  - Test page view tracking after deploy
+  - Success criteria: Analytics functional, no console errors
+
+### Dark Mode Refinement
+
+- [ ] Test gradient background visual quality
+  - View section gradient (`--section-gradient`) in dark mode
+  - Verify subtle depth without being distracting
+  - Check gradient transitions smoothly with theme toggle
+  - Success criteria: Gradient visible, professional, adds depth without overwhelm
+
+- [ ] Verify noise texture visibility
+  - View dark mode noise overlay at various screen brightnesses
+  - Should be just barely visible (2% opacity) - adds texture without noise
+  - Test on different displays (retina vs standard)
+  - Success criteria: Texture adds subtle craftsmanship feel, not distracting
+
+- [ ] Check amber glow consistency
+  - Moon icon in dark mode (DarkModeToggle)
+  - Link hover states
+  - Active section border
+  - All should use consistent amber-600 color with appropriate opacity
+  - Success criteria: Cohesive amber accent throughout, warm technical feel
+
+---
+
+## Post-Implementation
+
+After all tasks complete:
+
+- Run `npm run build` to verify production build succeeds
+- Run `npm run typecheck` to verify no TypeScript errors
+- Run `npm test` to verify existing tests still pass (update/remove tests for deleted features)
+- Commit changes: `git add . && git commit -m "feat: transform to craftsman one-pager aesthetic"`
+- Create PR: `gh pr create --title "feat: The Craftsman Aesthetic Transformation" --body "$(cat TODO.md)"`
+
+---
+
+**Ousterhout Strategic Programming Note**: This transformation prioritizes deep module improvement (complete aesthetic system overhaul) over tactical fixes (keeping scattered pages with minor tweaks). The one-pager consolidation reduces complexity, the typography/color changes create a cohesive design language (deep abstraction), and the craft details demonstrate strategic investment in user experience quality. Estimated 9-13 hours for comprehensive transformation rather than quick surface changes.

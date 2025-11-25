@@ -1,4 +1,4 @@
-import { Inter, Space_Grotesk } from 'next/font/google';
+import { Inter, IBM_Plex_Mono } from 'next/font/google';
 
 /**
  * Inter font configuration
@@ -12,12 +12,12 @@ export const inter = Inter({
 });
 
 /**
- * Space Grotesk font configuration
- * Used for headings and display text
+ * IBM Plex Mono font configuration
+ * Used for headings and display text - technical, distinctive monospace aesthetic
  */
-export const spaceGrotesk = Space_Grotesk({
+export const ibmPlexMono = IBM_Plex_Mono({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-space-grotesk',
-  weight: ['400', '700'],
+  variable: '--font-ibm-plex-mono',
+  weight: ['400', '500', '600', '700'],
 });
