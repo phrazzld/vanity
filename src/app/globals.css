@@ -231,6 +231,65 @@
     }
   }
 
+  /* One-Pager Section Utilities - Craftsman Asymmetric Layout */
+  .section-hero {
+    @apply min-h-screen flex flex-col justify-center;
+    max-width: 60%;
+  }
+
+  @media (max-width: 768px) {
+    .section-hero {
+      max-width: 100%;
+    }
+  }
+
+  .section-quotes {
+    @apply mx-auto py-32;
+    max-width: 80%;
+  }
+
+  @media (max-width: 768px) {
+    .section-quotes {
+      @apply py-16;
+      max-width: 100%;
+    }
+  }
+
+  .section-about {
+    @apply ml-auto py-16;
+    max-width: 60%;
+  }
+
+  @media (max-width: 768px) {
+    .section-about {
+      @apply ml-0;
+      max-width: 100%;
+    }
+  }
+
+  .section-links {
+    @apply py-16 grid grid-cols-1 gap-6;
+    max-width: 60%;
+  }
+
+  @media (min-width: 640px) {
+    .section-links {
+      @apply grid-cols-2;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .section-links {
+      @apply grid-cols-3;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .section-links {
+      max-width: 100%;
+    }
+  }
+
   /* Site Header */
   .site-header {
     @apply border-b border-border backdrop-blur-sm bg-background;
