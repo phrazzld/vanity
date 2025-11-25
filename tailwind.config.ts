@@ -67,6 +67,18 @@ export default {
           800: '#065f46',
           900: '#064e3b',
         },
+        amber: {
+          50: '#fffbeb',
+          100: '#fef3c7',
+          200: '#fde68a',
+          300: '#fcd34d',
+          400: '#fbbf24',
+          500: '#f59e0b',
+          600: '#d97706',
+          700: '#b45309',
+          800: '#92400e',
+          900: '#78350f',
+        },
 
         // Semantic tokens
         primary: {
@@ -171,6 +183,11 @@ export default {
           '0 10px 20px -6px rgba(0, 0, 0, 0.35), 0 3px 6px -3px rgba(0, 0, 0, 0.25)',
         card: '0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.03)',
         'card-dark': '0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px -1px rgba(0, 0, 0, 0.15)',
+      },
+
+      // Background gradients
+      backgroundImage: {
+        'gradient-section-dark': 'linear-gradient(135deg, #111827 0%, #1f2937 100%)',
       },
 
       // Animation
