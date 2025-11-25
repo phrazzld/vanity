@@ -185,4 +185,42 @@ NOT rewrites or architectural overhauls - the foundation is sound.
 
 ---
 
+## Craftsman Aesthetic Transformation Backlog
+
+**Context**: Items identified during one-pager redesign planning (feature/craftsman-redesign branch) that are valuable but not required for initial aesthetic transformation.
+
+### Future Enhancements (Post-Launch)
+
+- **Letter bounce on TypewriterQuotes completion**: Subtle spring animation to each letter when typing completes (2-3h, playful personality)
+- **Parallax effect on hero section**: 0.1x speed parallax on hero background during scroll (1-2h, premium depth)
+- **Custom cursor on interactive areas**: Code bracket `[ ]` or crosshair cursor (1h, strong technical signal)
+- **Animated ambient background**: Gradient mesh or particle system behind sections (4-6h, living page feel)
+- **Custom monospace iconography**: Branded SVG icons for external links (3-4h, cohesive aesthetic)
+- **Inline quote interaction**: Click quote to save/share with source context (3-4h, engagement)
+- **Bio expansion**: Collapsible detailed bio with timeline/skills viz (2-3h, context without clutter)
+- **Status indicator**: Live "currently working on" badge (1-2h manual, 3-4h automated)
+
+### Nice-to-Have Improvements
+
+- **Variable IBM Plex Mono**: Test variable font for finer weight control (1h, smoother hierarchy)
+- **OpenType ligatures**: Enable `font-feature-settings: 'liga'` where appropriate (30m, typographic polish)
+- **Fluid responsive typography**: Use `clamp()` for smooth font scaling (1-2h, better all-size typography)
+- **Preload critical fonts**: Add `<link rel="preload">` for woff2 files (30m, faster rendering)
+- **Optimize noise texture**: Convert SVG to PNG or CSS-generated (1h, faster load)
+- **Theme transition animation**: Smooth color-mix() interpolation on theme switch (1h, polished feel)
+- **Per-section dark mode themes**: Alternate backgrounds for visual rhythm (2h, added depth)
+
+### Technical Debt (If Needed)
+
+- **Extract section components**: Separate hero/quotes/about/links components (2h, organization)
+- **Design tokens file**: Centralize spacing/timing/z-index values (1-2h, maintainability)
+- **Animation hooks library**: Reusable IntersectionObserver hooks (2h, DRY principle)
+- **Visual regression tests**: Chromatic/Percy for screenshot testing (3-4h, catch regressions)
+- **A11y unit tests**: jest-axe for all sections (2h, automated validation)
+- **Performance budgets**: Web Vitals thresholds in CI (1-2h, prevent degradation)
+
+**Note**: Resist premature implementation. One-pager is strategically simple—add features only when solving observed problems, not hypothetical ones.
+
+---
+
 _Run /backlog-groom quarterly to maintain strategic clarity and discover high-leverage opportunities._
