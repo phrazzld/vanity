@@ -25,20 +25,20 @@ Transform Vanity from multi-page portfolio with safe defaults (Space Grotesk, Ta
 
 ### Typography Styling
 
-- [ ] Update heading font-family in `src/app/globals.css` (lines 142-149)
+- [x] Update heading font-family in `src/app/globals.css` (lines 142-149)
   - Change all `h1, h2, h3, h4, h5, h6` to use `font-family: var(--font-ibm-plex-mono), monospace`
   - Add `letter-spacing: -0.02em` to heading base styles (tighter tracking for monospace)
   - Success criteria: All headings render in IBM Plex Mono with tighter letter-spacing
 
-- [ ] Add body text letter-spacing in `src/app/globals.css` (line 139)
+- [x] Add body text letter-spacing in `src/app/globals.css` (line 139)
   - Add `letter-spacing: 0.01em` to body style (breathing room for Inter)
   - Success criteria: Body text has subtle spacing increase, improved readability
 
-- [ ] Update `.typewriter-container` font in `src/app/globals.css` (line 479)
+- [x] Update `.typewriter-container` font in `src/app/globals.css` (line 479)
   - Change to use IBM Plex Mono via `font-family: var(--font-ibm-plex-mono), monospace`
   - Success criteria: Typewriter quotes render in monospace, matches heading aesthetic
 
-- [ ] Update Tailwind config font-family in `tailwind.config.ts` (lines 26-27)
+- [x] Update Tailwind config font-family in `tailwind.config.ts` (lines 26-27)
   - Replace `'space-grotesk': ['var(--font-space-grotesk)', ...defaultTheme.fontFamily.sans]`
   - With `'ibm-plex-mono': ['var(--font-ibm-plex-mono)', ...defaultTheme.fontFamily.mono]`
   - Success criteria: Tailwind utility classes reference correct font variable

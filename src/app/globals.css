@@ -137,6 +137,7 @@
 
   body {
     @apply h-full bg-background text-foreground font-inter leading-relaxed antialiased;
+    letter-spacing: 0.01em;
   }
 
   h1,
@@ -145,7 +146,9 @@
   h4,
   h5,
   h6 {
-    @apply font-space-grotesk font-bold tracking-tight;
+    font-family: var(--font-ibm-plex-mono), monospace;
+    @apply font-bold tracking-tight;
+    letter-spacing: -0.02em;
   }
 
   h1 {
@@ -476,7 +479,8 @@
 
   /* Typewriter */
   .typewriter-container {
-    @apply font-space-grotesk font-semibold text-foreground transition-colors duration-300;
+    font-family: var(--font-ibm-plex-mono), monospace;
+    @apply font-semibold text-foreground transition-colors duration-300;
   }
 }
 

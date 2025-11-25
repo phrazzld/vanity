@@ -24,7 +24,7 @@ export default {
       // Font families
       fontFamily: {
         inter: ['var(--font-inter)', ...defaultTheme.fontFamily.sans],
-        'space-grotesk': ['var(--font-space-grotesk)', ...defaultTheme.fontFamily.sans],
+        'ibm-plex-mono': ['var(--font-ibm-plex-mono)', ...defaultTheme.fontFamily.mono],
       },
 
       // Color system with semantic naming
