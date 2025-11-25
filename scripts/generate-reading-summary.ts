@@ -161,7 +161,6 @@ function generateReadingSummary() {
   });
 
   // Write the summary file
-  // eslint-disable-next-line no-undef -- process is a Node.js global available in scripts but not recognized by browser-targeted ESLint config
   const outputPath = join(process.cwd(), 'READING_SUMMARY.md');
   writeFileSync(outputPath, content, 'utf8');
 
@@ -179,7 +178,6 @@ try {
   // Use exit code 1 to indicate failure
 
   if (typeof process !== 'undefined') {
-    // eslint-disable-next-line no-undef -- process.exit() is a Node.js global for terminating scripts with error codes, not available in browser
     process.exit(1);
   }
 }
