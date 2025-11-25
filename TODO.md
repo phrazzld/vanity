@@ -18,7 +18,7 @@ Transform Vanity from multi-page portfolio with safe defaults (Space Grotesk, Ta
   - Export as `ibmPlexMono` constant
   - Success criteria: Font loads without console errors, variable available in CSS
 
-- [ ] Update font variable in `src/app/layout.tsx`
+- [x] Update font variable in `src/app/layout.tsx`
   - Replace `${spaceGrotesk.variable}` with `${ibmPlexMono.variable}` in html className
   - Keep `${inter.variable}` unchanged (body copy)
   - Success criteria: Both font variables present in DOM, no hydration warnings

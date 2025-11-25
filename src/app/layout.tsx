@@ -4,7 +4,7 @@ import ThemeInitializer from '@/app/components/ThemeInitializer';
 import type { Metadata } from 'next';
 import './globals.css';
 import { Suspense } from 'react';
-import { inter, spaceGrotesk } from './fonts';
+import { inter, ibmPlexMono } from './fonts';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${spaceGrotesk.variable}`}
+      className={`${inter.variable} ${ibmPlexMono.variable}`}
     >
       <head>
         <script
