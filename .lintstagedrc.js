@@ -44,8 +44,8 @@ module.exports = {
     return nonSymlinks.length > 0 ? [`prettier --write ${nonSymlinks.join(' ')}`] : [];
   },
 
-  // All other supported files - just format
-  '**/*.{css,json,md,html,svg}': files => {
+  // All other supported files - just format (excluding svg which lacks parser)
+  '**/*.{css,json,md,html}': files => {
     const nonSymlinks = filterSymlinks(files);
     return nonSymlinks.length > 0 ? [`prettier --write ${nonSymlinks.join(' ')}`] : [];
   },

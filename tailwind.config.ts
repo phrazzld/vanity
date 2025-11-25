@@ -218,6 +218,7 @@ export default {
         'elegant-entrance': 'cubic-bezier(0.19, 1, 0.22, 1)',
         'standard-exit': 'cubic-bezier(0.4, 0, 0.2, 1)',
         'content-entrance': 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+        spring: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       },
 
       // Custom width utilities for responsive layouts

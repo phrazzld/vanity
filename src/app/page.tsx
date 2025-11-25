@@ -1,6 +1,58 @@
+'use client';
+
 import TypewriterQuotes from '@/app/components/TypewriterQuotes';
+import { useEffect, useRef } from 'react';
 
 export default function HomePage() {
+  const heroRef = useRef<HTMLElement>(null);
+  const quotesRef = useRef<HTMLElement>(null);
+  const aboutRef = useRef<HTMLElement>(null);
+  const linksRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    // Check if user prefers reduced motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    const sections = [
+      { ref: heroRef, delay: 0 },
+      { ref: quotesRef, delay: 200 },
+      { ref: aboutRef, delay: 400 },
+      { ref: linksRef, delay: 600 },
+    ];
+
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const section = sections.find(s => s.ref.current === entry.target);
+            if (section) {
+              setTimeout(() => {
+                entry.target.classList.add('opacity-100', 'translate-y-0');
+                entry.target.classList.remove('opacity-0', 'translate-y-4');
+              }, section.delay);
+            }
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    sections.forEach(({ ref }) => {
+      if (ref.current) {
+        observer.observe(ref.current);
+      }
+    });
+
+    return () => {
+      sections.forEach(({ ref }) => {
+        if (ref.current) {
+          observer.unobserve(ref.current);
+        }
+      });
+    };
+  }, []);
+
   const externalLinks = [
     {
       label: 'Misty Step',
@@ -32,7 +84,10 @@ export default function HomePage() {
   return (
     <>
       {/* Hero Section - Full viewport, left-aligned, amber accent */}
-      <section className="section-hero border-l-2 border-amber-600 pl-8">
+      <section
+        ref={heroRef}
+        className="section-hero border-l-2 border-amber-600 pl-8 opacity-0 translate-y-4 transition-all duration-500"
+      >
         <h1 className="text-8xl md:text-9xl font-ibm-plex-mono">phaedrus</h1>
         <p className="text-xl md:text-2xl mt-4 text-gray-700 dark:text-gray-300">
           software engineer, general tinkerer
@@ -40,12 +95,18 @@ export default function HomePage() {
       </section>
 
       {/* TypewriterQuotes Section - Centered, generous spacing */}
-      <section className="section-quotes">
+      <section
+        ref={quotesRef}
+        className="section-quotes opacity-0 translate-y-4 transition-all duration-500"
+      >
         <TypewriterQuotes />
       </section>
 
       {/* About/Bio Section - Right-aligned, asymmetric */}
-      <section className="section-about">
+      <section
+        ref={aboutRef}
+        className="section-about opacity-0 translate-y-4 transition-all duration-500"
+      >
         <h2 className="text-3xl md:text-4xl font-ibm-plex-mono mb-6">About</h2>
         <div className="prose dark:prose-invert max-w-none">
           <p className="text-lg leading-relaxed text-gray-800 dark:text-gray-200">
@@ -70,7 +131,10 @@ export default function HomePage() {
       </section>
 
       {/* External Links Section - Left-aligned, grid layout */}
-      <section className="section-links">
+      <section
+        ref={linksRef}
+        className="section-links opacity-0 translate-y-4 transition-all duration-500"
+      >
         {externalLinks.map(link => (
           <a
             key={link.href}

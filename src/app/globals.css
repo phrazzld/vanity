@@ -136,6 +136,20 @@
     color-scheme: dark;
   }
 
+  /* Subtle noise texture overlay for dark mode craftsmanship */
+  html.dark::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('/noise.svg') repeat;
+    opacity: 0.02;
+    pointer-events: none;
+    z-index: -1;
+  }
+
   body {
     @apply h-full bg-background text-foreground font-inter leading-relaxed antialiased;
     letter-spacing: 0.01em;
@@ -354,7 +368,7 @@
   }
 
   .content-link::after {
-    @apply content-[''] absolute left-0 -bottom-0.5 h-px w-full bg-foreground scale-x-0 origin-left transition-transform duration-200 ease-elegant-entrance;
+    @apply content-[''] absolute left-0 -bottom-0.5 h-px w-full bg-amber-600 scale-x-0 origin-left transition-transform duration-200 ease-spring;
   }
 
   .content-link:hover::after {
@@ -430,8 +444,8 @@
   }
 
   .project-link::after {
-    @apply content-[''] absolute left-0 -bottom-0.5 h-px w-full bg-foreground;
-    @apply scale-x-0 origin-left transition-transform duration-200 ease-elegant-entrance;
+    @apply content-[''] absolute left-0 -bottom-0.5 h-px w-full bg-amber-600;
+    @apply scale-x-0 origin-left transition-transform duration-200 ease-spring;
   }
 
   .project-link:hover::after {
