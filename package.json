@@ -166,7 +166,7 @@
     "boxen": "^8.0.1",
     "chalk": "^5.5.0",
     "commander": "^14.0.0",
-    "eslint": "^9.22.0",
+    "eslint": "^9.39.1",
     "eslint-config-next": "^15.2.2",
     "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-jsx-a11y": "^6.10.2",
