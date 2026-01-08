@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phaedrus</title>
+  <meta name="description" content="Software engineer and builder. Rapid prototyping, AI integration, and full-stack development.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    // Prevent flash of incorrect theme
+    (function() {
+      var theme = localStorage.getItem('theme');
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="#" class="logo">phaedrus</a>
+      <div class="nav-links">
+        <a href="#projects">projects</a>
+        <a href="#services">services</a>
+        <a href="#contact">contact</a>
+        <button id="theme-toggle" aria-label="Toggle dark mode">
+          <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section id="hero">
+      <h1>I build things.</h1>
+      <p class="subtitle">Ideas to working products, fast. AI integration, rapid prototyping, full-stack development.</p>
+      <p class="cta-text"><strong>Open to work.</strong> Startups, companies, individuals — if you need to ship, let's talk.</p>
+      <a href="#contact" class="cta-button">Get in touch</a>
+    </section>
+
+    <section id="projects">
+      <h2>Projects</h2>
+
+      <div class="featured-project">
+        <div class="featured-content">
+          <h3>misty step</h3>
+          <p>Software studio for teams that ship. We build MVPs, modernize legacy systems, and automate the boring stuff.</p>
+          <a href="https://www.mistystep.io/" target="_blank" rel="noopener" class="featured-link">mistystep.io →</a>
+        </div>
+      </div>
+
+      <div class="projects-grid">
+        <article class="project-card">
+          <h4>gitpulse</h4>
+          <p>Your commits, summarized. Standups write themselves.</p>
+          <div class="project-links">
+            <a href="https://www.gitpulse.app/" target="_blank" rel="noopener">Live</a>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <h4>scry</h4>
+          <p>Paste anything, get flashcards. Spaced repetition handles the rest.</p>
+          <div class="project-links">
+            <a href="https://www.scry.study/" target="_blank" rel="noopener">Live</a>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <h4>chrondle</h4>
+          <p>Daily history puzzle. Guess the year from six events.</p>
+          <div class="project-links">
+            <a href="https://www.chrondle.app/" target="_blank" rel="noopener">Play</a>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <h4>volume</h4>
+          <p>Gym logging without the friction. Track lifts, see trends.</p>
+          <div class="project-links">
+            <a href="https://www.volume.fitness/" target="_blank" rel="noopener">Live</a>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <h4>heartbeat</h4>
+          <p>Uptime monitoring. Know when it breaks, show users you care.</p>
+          <div class="project-links">
+            <a href="https://www.heartbeat.engineering/" target="_blank" rel="noopener">Live</a>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <h4>bibliomnomnom</h4>
+          <p>Reading tracker. Log books, see what friends are into.</p>
+          <div class="project-links">
+            <a href="https://www.bibliomnomnom.com/" target="_blank" rel="noopener">Live</a>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <h4>brainrot publishing</h4>
+          <p>Classic literature, translated to zoomer. No cap fr fr.</p>
+          <div class="project-links">
+            <a href="https://www.brainrotpublishing.com/" target="_blank" rel="noopener">Live</a>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <h4>linejam</h4>
+          <p>Collaborative poetry. Write a line, pass it on.</p>
+          <div class="project-links">
+            <a href="https://www.linejam.app/" target="_blank" rel="noopener">Play</a>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <h4>sploot</h4>
+          <p>Search your memes by vibes. Describe it, find it.</p>
+          <div class="project-links">
+            <a href="https://www.sploot.app/" target="_blank" rel="noopener">Live</a>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <h4>vibe machine</h4>
+          <p>Music visualizer. Drop a track, watch it move.</p>
+          <div class="project-links">
+            <a href="https://vibe-machine-eight.vercel.app/" target="_blank" rel="noopener">Live</a>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <h4>time is money</h4>
+          <p>See prices in hours worked. That $80 shirt? 3 hours of your life.</p>
+          <div class="project-links">
+            <a href="https://www.timeismoney.works/" target="_blank" rel="noopener">Info</a>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <h4>trump goggles</h4>
+          <p>Translates any webpage to Trumpspeak. Tremendous extension. Believe me.</p>
+          <div class="project-links">
+            <a href="https://www.trumpgoggles.com/" target="_blank" rel="noopener">Info</a>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <h4>handoff</h4>
+          <p>Codebase → clipboard. For pasting into AI chats.</p>
+          <div class="project-links">
+            <a href="https://github.com/phrazzld/handoff" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <h4>glance</h4>
+          <p>Auto-generate READMEs for every folder in your project.</p>
+          <div class="project-links">
+            <a href="https://github.com/phrazzld/glance" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <h4>wrap it up</h4>
+          <p>Holiday platformer. Endless mode, festive chaos.</p>
+          <div class="project-links">
+            <a href="http://platformer.christmas/" target="_blank" rel="noopener">Play</a>
+          </div>
+        </article>
+      </div>
+
+    </section>
+
+    <section id="services">
+      <h2>What I Do</h2>
+      <div class="services-grid">
+
+        <div class="service-card">
+          <h3>Rapid Prototyping</h3>
+          <p>Go from idea to working product fast. I specialize in building MVPs and prototypes that help you validate concepts and learn quickly.</p>
+        </div>
+
+        <div class="service-card">
+          <h3>AI Integration</h3>
+          <p>Incorporate AI into your product, operations, or workflow. From LLM-powered features to intelligent automation.</p>
+        </div>
+
+        <div class="service-card">
+          <h3>Full-Stack Development</h3>
+          <p>End-to-end software development. Web apps, mobile apps, APIs, browser extensions — whatever the project needs.</p>
+        </div>
+
+        <div class="service-card">
+          <h3>Technical Consulting</h3>
+          <p>Architecture reviews, tech stack decisions, scaling strategies. I help teams make informed technical choices.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="contact">
+      <h2>Let's Work Together</h2>
+      <p>I'm available for contract work, consulting, and collaboration. Whether you're a startup needing to ship faster, a company looking to integrate AI, or an individual with a project idea — I'd love to hear from you.</p>
+      <a href="mailto:phaedrus.raznikov@pm.me" class="cta-button">Get in touch</a>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Phaedrus. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="https://github.com/phrazzld" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
