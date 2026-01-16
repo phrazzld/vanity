@@ -8,21 +8,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Crimson+Pro:wght@400;500&display=swap" rel="stylesheet">
-  <script>
-    (function() {
-      var theme = localStorage.getItem('theme');
-      if (!theme) theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-    })();
-  </script>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Scroll progress indicator -->
   <div class="scroll-progress" id="scroll-progress"></div>
-
-  <!-- Custom cursor follower -->
-  <div class="cursor-follower" id="cursor-follower"></div>
 
   <header>
     <nav>
@@ -31,124 +20,96 @@
         <a href="#projects">projects</a>
         <a href="#services">services</a>
         <a href="#contact">contact</a>
-        <button id="theme-toggle" aria-label="Toggle dark mode">
-          <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-          <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-          </svg>
-        </button>
       </div>
     </nav>
   </header>
 
   <main>
-    <section class="hero" id="hero">
-      <h1 id="hero-title">I build things.</h1>
-      <p class="subtitle">Ideas to working products, fast.</p>
-      <a href="#contact" class="btn cta">Get in touch</a>
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-main">
+          <h1>
+            <span class="line" id="hero-title">I build <em>things.</em></span>
+          </h1>
+        </div>
+        <div class="hero-side">
+          <p class="hero-sub">Ideas to working products, fast. Software engineer specializing in rapid prototyping and AI integration.</p>
+          <a href="#contact" class="btn">Get in touch</a>
+        </div>
+      </div>
     </section>
 
     <section id="projects">
-      <h2 class="section-title reveal"><span class="title-text">Projects</span></h2>
+      <div class="section-inner">
+        <h2 class="section-title reveal">Projects</h2>
 
-      <div class="featured reveal">
-        <h3>misty step</h3>
-        <p>Software studio for teams that ship. We build MVPs, modernize legacy systems, and automate the boring stuff.</p>
-        <a href="https://www.mistystep.io/" target="_blank" rel="noopener" class="link">mistystep.io</a>
-      </div>
+        <div class="featured reveal">
+          <div class="featured-content">
+            <h3>misty step</h3>
+            <p>Software studio for teams that ship. We build MVPs, modernize legacy systems, and automate the boring stuff.</p>
+            <a href="https://www.mistystep.io/" target="_blank" rel="noopener" class="link">mistystep.io &rarr;</a>
+          </div>
+          <div class="featured-visual">
+            <svg viewBox="0 0 36 16" width="180" height="80" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="8" cy="8" r="8" fill="#FDFBF7" fill-opacity="0.2" />
+              <circle cx="17.6" cy="8" r="8" fill="#FDFBF7" fill-opacity="0.5" />
+              <circle cx="27.2" cy="8" r="8" fill="#FDFBF7" fill-opacity="1" />
+            </svg>
+          </div>
+        </div>
 
-      <div class="projects-grid">
-        <article class="project reveal">
-          <h4>gitpulse</h4>
-          <p>GitHub analytics with teeth. AI summaries, every claim cited.</p>
-          <a href="https://www.gitpulse.app/" target="_blank" rel="noopener">Try</a>
-        </article>
-        <article class="project reveal">
-          <h4>scry</h4>
-          <p>Paste anything, get flashcards. Spaced repetition does the rest.</p>
-          <a href="https://www.scry.study/" target="_blank" rel="noopener">Try</a>
-        </article>
-        <article class="project reveal">
-          <h4>chrondle</h4>
-          <p>The history nerd's Wordle. Six events, one year.</p>
-          <a href="https://www.chrondle.app/" target="_blank" rel="noopener">Play</a>
-        </article>
-        <article class="project reveal">
-          <h4>caesar in a year</h4>
-          <p>Daily Latin micro-lessons. Zero to Gallic Wars in 365 days.</p>
-          <a href="https://www.caesarinayear.com/" target="_blank" rel="noopener">Start</a>
-        </article>
-        <article class="project reveal">
-          <h4>volume</h4>
-          <p>Workout tracking without the cruft. Log sets, spot trends.</p>
-          <a href="https://www.volume.fitness/" target="_blank" rel="noopener">Try</a>
-        </article>
-        <article class="project reveal">
-          <h4>heartbeat</h4>
-          <p>Set-and-forget uptime monitoring. Beautiful status pages included.</p>
-          <a href="https://www.heartbeat.engineering/" target="_blank" rel="noopener">Try</a>
-        </article>
-        <article class="project reveal">
-          <h4>bibliomnomnom</h4>
-          <p>Private-first book tracking. Your reading, no algorithms.</p>
-          <a href="https://www.bibliomnomnom.com/" target="_blank" rel="noopener">Try</a>
-        </article>
-        <article class="project reveal">
-          <h4>thinktank</h4>
-          <p>Multi-model code review. GPT, Claude, Gemini in one CLI.</p>
-          <a href="https://github.com/phrazzld/thinktank" target="_blank" rel="noopener">Get</a>
-        </article>
-        <article class="project reveal">
-          <h4>brainrot publishing</h4>
-          <p>Public domain, translated to zoomer. Shakespeare meets skibidi.</p>
-          <a href="https://www.brainrotpublishing.com/" target="_blank" rel="noopener">Read</a>
-        </article>
-        <article class="project reveal">
-          <h4>linejam</h4>
-          <p>Multiplayer poetry. Write a line, pass the chaos.</p>
-          <a href="https://www.linejam.app/" target="_blank" rel="noopener">Play</a>
-        </article>
-        <article class="project reveal">
-          <h4>sploot</h4>
-          <p>Meme library with semantic search. Describe the vibe, find the image.</p>
-          <a href="https://www.sploot.app/" target="_blank" rel="noopener">Try</a>
-        </article>
-        <article class="project reveal">
-          <h4>vibe machine</h4>
-          <p>Audio-reactive visuals. Drop a track, zone out.</p>
-          <a href="https://vibe-machine-eight.vercel.app/" target="_blank" rel="noopener">Watch</a>
-        </article>
-        <article class="project reveal">
-          <h4>time is money</h4>
-          <p>See prices in hours worked. That $80 shirt? 3 hours of your life.</p>
-          <a href="https://www.timeismoney.works/" target="_blank" rel="noopener">Get</a>
-        </article>
-        <article class="project reveal">
-          <h4>trump goggles</h4>
-          <p>Any webpage, translated to Trumpspeak. Tremendous.</p>
-          <a href="https://www.trumpgoggles.com/" target="_blank" rel="noopener">Install</a>
-        </article>
-        <article class="project reveal">
-          <h4>wrap it up</h4>
-          <p>Festive infinite runner. Deliver gifts, dodge coal.</p>
-          <a href="http://platformer.christmas/" target="_blank" rel="noopener">Play</a>
-        </article>
+        <div class="projects-stagger">
+          <article class="project reveal">
+            <h4>gitpulse</h4>
+            <p>GitHub analytics with AI summaries. Every claim cited.</p>
+            <a href="https://www.gitpulse.app/" target="_blank" rel="noopener">Try</a>
+          </article>
+          <article class="project reveal">
+            <h4>scry</h4>
+            <p>Paste anything, get flashcards. Spaced repetition.</p>
+            <a href="https://www.scry.study/" target="_blank" rel="noopener">Try</a>
+          </article>
+          <article class="project reveal">
+            <h4>chrondle</h4>
+            <p>The history nerd's Wordle. Six events, one year.</p>
+            <a href="https://www.chrondle.app/" target="_blank" rel="noopener">Play</a>
+          </article>
+          <article class="project reveal">
+            <h4>heartbeat</h4>
+            <p>Set-and-forget uptime monitoring. Beautiful status pages.</p>
+            <a href="https://www.heartbeat.engineering/" target="_blank" rel="noopener">Try</a>
+          </article>
+          <article class="project reveal">
+            <h4>thinktank</h4>
+            <p>Multi-model code review. GPT, Claude, Gemini in one CLI.</p>
+            <a href="https://github.com/phrazzld/thinktank" target="_blank" rel="noopener">Get</a>
+          </article>
+          <article class="project reveal">
+            <h4>volume</h4>
+            <p>Workout tracking without the cruft.</p>
+            <a href="https://www.volume.fitness/" target="_blank" rel="noopener">Try</a>
+          </article>
+          <article class="project reveal">
+            <h4>caesar in a year</h4>
+            <p>Daily Latin micro-lessons. Zero to Gallic Wars.</p>
+            <a href="https://www.caesarinayear.com/" target="_blank" rel="noopener">Start</a>
+          </article>
+          <article class="project reveal">
+            <h4>bibliomnomnom</h4>
+            <p>Private-first book tracking. No algorithms.</p>
+            <a href="https://www.bibliomnomnom.com/" target="_blank" rel="noopener">Try</a>
+          </article>
+          <article class="project reveal">
+            <h4>vibe machine</h4>
+            <p>Audio-reactive visuals. Drop a track, zone out.</p>
+            <a href="https://vibe-machine-eight.vercel.app/" target="_blank" rel="noopener">Watch</a>
+          </article>
+        </div>
       </div>
     </section>
 
     <section id="services">
-      <h2 class="section-title reveal"><span class="title-text">What I Do</span></h2>
-
+      <h2 class="section-title reveal">What I Do</h2>
       <div class="services-grid">
         <div class="service reveal">
           <h3>Rapid Prototyping</h3>
@@ -170,17 +131,17 @@
     </section>
 
     <section id="contact">
-      <h2 class="section-title reveal"><span class="title-text">Let's Work Together</span></h2>
-      <p class="contact-intro reveal">I'm available for contract work, consulting, and collaboration. Whether you're a startup needing to ship faster, a company looking to integrate AI, or an individual with a project idea — I'd love to hear from you.</p>
-      <a href="mailto:phaedrus.raznikov@pm.me" class="btn contact-link reveal">Say hello</a>
+      <div class="section-inner">
+        <h2 class="section-title reveal">Let's Work Together</h2>
+        <p class="contact-intro reveal">I'm available for contract work, consulting, and collaboration. Whether you're a startup needing to ship faster, a company looking to integrate AI, or an individual with a project idea — I'd love to hear from you.</p>
+        <a href="mailto:phaedrus.raznikov@pm.me" class="btn reveal">Say hello</a>
+      </div>
     </section>
   </main>
 
   <footer>
-    <p>&copy; 2025 Phaedrus. All rights reserved.</p>
-    <div class="footer-links">
-      <a href="https://github.com/phrazzld" target="_blank" rel="noopener">GitHub</a>
-    </div>
+    <p>&copy; 2025 Phaedrus</p>
+    <a href="https://github.com/phrazzld" target="_blank" rel="noopener">GitHub</a>
   </footer>
 
   <script src="script.js"></script>
