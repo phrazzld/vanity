@@ -77,12 +77,9 @@
     return;
   }
 
-  let mouseX = 0, mouseY = 0;
-  let cursorX = 0, cursorY = 0;
-
   document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
     cursor.classList.add('active');
   });
 
@@ -90,35 +87,25 @@
     cursor.classList.remove('active');
   });
 
-  // Smooth cursor following with lerp
-  function animateCursor() {
-    cursorX += (mouseX - cursorX) * 0.15;
-    cursorY += (mouseY - cursorY) * 0.15;
-    cursor.style.left = cursorX + 'px';
-    cursor.style.top = cursorY + 'px';
-    requestAnimationFrame(animateCursor);
-  }
-  animateCursor();
-
   // Hover effect on interactive elements
-  const ctaButton = document.querySelector('.cta');
-  const interactiveElements = document.querySelectorAll('a:not(.cta), button, .project, .service, .featured');
+  const buttons = document.querySelectorAll('.btn');
+  const interactiveElements = document.querySelectorAll('a:not(.btn), button, .project, .service, .featured');
 
   interactiveElements.forEach(el => {
     el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
     el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
   });
 
-  // Special CTA hover - lens effect
-  if (ctaButton) {
-    ctaButton.addEventListener('mouseenter', () => {
+  // Button hover - lens effect
+  buttons.forEach(btn => {
+    btn.addEventListener('mouseenter', () => {
       cursor.classList.remove('hover');
       cursor.classList.add('cta-hover');
     });
-    ctaButton.addEventListener('mouseleave', () => {
+    btn.addEventListener('mouseleave', () => {
       cursor.classList.remove('cta-hover');
     });
-  }
+  });
 })();
 
 // Scroll reveal with IntersectionObserver
@@ -154,43 +141,6 @@
   document.querySelectorAll('.section-title').forEach(el => titleObserver.observe(el));
 })();
 
-// Magnetic button effect with magnetic text
-(function() {
-  const ctaButton = document.querySelector('.cta');
-  if (!ctaButton) return;
-
-  const ctaText = ctaButton.querySelector('.cta-text');
-  const ctaArrow = ctaButton.querySelector('.arrow');
-
-  // Skip on touch devices
-  if ('ontouchstart' in window) return;
-
-  // Respect reduced motion
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  ctaButton.addEventListener('mousemove', (e) => {
-    const rect = ctaButton.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-
-    // Button follows cursor slightly
-    ctaButton.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px)`;
-
-    // Text follows cursor more aggressively (magnetic pull)
-    if (ctaText) {
-      ctaText.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px)`;
-    }
-    if (ctaArrow) {
-      ctaArrow.style.transform = `translate(${x * 0.15 + 6}px, ${y * 0.1}px)`;
-    }
-  });
-
-  ctaButton.addEventListener('mouseleave', () => {
-    ctaButton.style.transform = 'translate(0, 0)';
-    if (ctaText) ctaText.style.transform = 'translate(0, 0)';
-    if (ctaArrow) ctaArrow.style.transform = 'translate(0, 0)';
-  });
-})();
 
 // Hide scroll indicator on scroll
 (function() {

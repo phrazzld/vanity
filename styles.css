@@ -41,6 +41,22 @@ body {
   transition: background 0.6s cubic-bezier(0.16, 1, 0.3, 1),
               color 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   overflow-x: hidden;
+  cursor: none;
+}
+
+/* Subtle film grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10000;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+a, button, input, textarea, .project, .service, .featured, .cta {
+  cursor: none;
 }
 
 /* Custom cursor follower */
@@ -255,11 +271,9 @@ nav {
   50% { opacity: 0.5; }
 }
 
-/* Main content */
+/* Main content - full-width for section backgrounds */
 main {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
+  /* No constraints - sections handle their own backgrounds full-bleed */
 }
 
 /* Hero */
@@ -269,6 +283,8 @@ main {
   flex-direction: column;
   justify-content: center;
   max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
   position: relative;
   padding-top: 80px;
 }
@@ -316,8 +332,8 @@ main {
   animation: fadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.4s forwards;
 }
 
-/* Magnetic CTA button */
-.cta {
+/* Button base */
+.btn {
   display: inline-block;
   padding: 1rem 2.5rem;
   background: transparent;
@@ -329,13 +345,10 @@ main {
   text-transform: uppercase;
   position: relative;
   overflow: hidden;
-  opacity: 0;
-  transform: translateY(30px);
-  animation: fadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.6s forwards;
-  transition: color 0.4s ease, border-color 0.4s ease, transform 0.2s ease;
+  transition: color 0.4s ease;
 }
 
-.cta::before {
+.btn::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -346,28 +359,19 @@ main {
   z-index: -1;
 }
 
-.cta:hover {
+.btn:hover {
   color: var(--bg);
 }
 
-.cta:hover::before {
+.btn:hover::before {
   transform: scaleX(1);
 }
 
-.cta .arrow {
-  display: inline-block;
-  margin-left: 8px;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.cta:hover .arrow {
-  transform: translateX(6px);
-}
-
-.cta-text,
-.cta .arrow {
-  display: inline-block;
-  transition: transform 0.1s ease-out;
+/* Hero CTA entrance animation */
+.cta {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.6s forwards;
 }
 
 /* Floating scroll indicator */
@@ -395,11 +399,33 @@ main {
   animation: pulse 2s ease-in-out infinite;
 }
 
-/* Sections */
+/* Sections - full-bleed backgrounds with constrained content */
 section {
-  padding: 8rem 0;
+  padding: 8rem 2rem;
   scroll-margin-top: 80px;
 }
+
+/* Constrain section children to content width */
+.section-title,
+.featured,
+.projects-grid,
+.services-grid,
+.contact-intro,
+section > .btn {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Alternating section backgrounds */
+#projects {
+  background: var(--bg-surface);
+}
+
+#contact {
+  background: var(--bg-surface);
+}
+
 
 .section-title {
   font-family: 'Cormorant Garamond', serif;
@@ -539,7 +565,13 @@ section {
   padding: 2rem;
   position: relative;
   overflow: hidden;
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(0);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .project::before {
@@ -557,9 +589,9 @@ section {
 
 .project:hover {
   background: var(--bg-surface);
-  transform: scale(1.03);
+  transform: translateY(-6px);
   z-index: 1;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.12);
 }
 
 .project:hover::before {
@@ -567,7 +599,7 @@ section {
 }
 
 [data-theme="dark"] .project:hover {
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
 }
 
 .project h4 {
@@ -653,8 +685,10 @@ section {
 }
 
 /* Contact */
-#contact {
-  max-width: 600px;
+#contact .section-title,
+.contact-intro,
+#contact > .btn {
+  max-width: 700px;
 }
 
 .contact-intro {
@@ -664,39 +698,6 @@ section {
   margin-bottom: 2rem;
 }
 
-.contact-link {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2.5rem;
-  font-style: italic;
-  color: var(--accent);
-  text-decoration: none;
-  display: inline-block;
-  position: relative;
-  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.contact-link::before {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--accent);
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.contact-link:hover {
-  transform: scale(1.05);
-  text-shadow: 0 0 40px var(--glow);
-}
-
-.contact-link:hover::before {
-  transform: scaleX(1);
-  transform-origin: left;
-}
 
 /* Footer */
 footer {
@@ -763,9 +764,6 @@ footer {
     text-align: center;
   }
 
-  .contact-link {
-    font-size: 1.75rem;
-  }
 }
 
 /* Reduced motion preference */
