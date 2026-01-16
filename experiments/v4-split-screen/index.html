@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V4: Split Screen | Phaedrus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --light: #f8f6f3;
+      --dark: #0d0d0d;
+      --accent: #e63946;
+      --text-light: #f8f6f3;
+      --text-dark: #0d0d0d;
+      --muted-light: rgba(248,246,243,0.6);
+      --muted-dark: rgba(13,13,13,0.5);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Split layout */
+    .split-hero {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .split-left, .split-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4rem;
+      position: relative;
+    }
+
+    .split-left {
+      background: var(--light);
+      color: var(--text-dark);
+    }
+
+    .split-right {
+      background: var(--dark);
+      color: var(--text-light);
+    }
+
+    /* Animated divider */
+    .split-divider {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 2px;
+      background: var(--accent);
+      transform: scaleY(0);
+      animation: dividerGrow 1s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+      z-index: 10;
+    }
+
+    @keyframes dividerGrow {
+      to { transform: scaleY(1); }
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 2rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-style: italic;
+      color: var(--text-dark);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 3rem;
+    }
+
+    .nav-links a {
+      color: var(--text-light);
+      text-decoration: none;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    /* Hero content */
+    .hero-content {
+      max-width: 450px;
+    }
+
+    .hero-label {
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 2rem;
+      color: var(--muted-dark);
+    }
+
+    .split-right .hero-label {
+      color: var(--muted-light);
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 400;
+      line-height: 1.1;
+      margin-bottom: 2rem;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-text {
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .split-left .hero-text {
+      color: var(--muted-dark);
+    }
+
+    .split-right .hero-text {
+      color: var(--muted-light);
+    }
+
+    .hero-btn {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      border: 1px solid currentColor;
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      position: relative;
+      overflow: hidden;
+      transition: color 0.3s ease;
+    }
+
+    .split-left .hero-btn {
+      color: var(--text-dark);
+    }
+
+    .split-right .hero-btn {
+      color: var(--text-light);
+    }
+
+    .hero-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--accent);
+      transform: translateX(-100%);
+      transition: transform 0.4s ease;
+      z-index: -1;
+    }
+
+    .hero-btn:hover {
+      color: var(--text-light);
+    }
+
+    .hero-btn:hover::before {
+      transform: translateX(0);
+    }
+
+    /* Projects section */
+    .projects {
+      background: var(--light);
+      padding: 10rem 4rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 6rem;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-style: italic;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--dark);
+      opacity: 0.1;
+    }
+
+    /* Alternating project layout */
+    .project-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      padding: 4rem 0;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+      align-items: center;
+    }
+
+    .project-item:nth-child(even) .project-info {
+      order: 2;
+    }
+
+    .project-num {
+      font-size: 4rem;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      color: rgba(0,0,0,0.1);
+      margin-bottom: 1rem;
+    }
+
+    .project-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-style: italic;
+      margin-bottom: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    .project-item:hover .project-name {
+      color: var(--accent);
+    }
+
+    .project-desc {
+      color: var(--muted-dark);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .project-link {
+      color: var(--text-dark);
+      text-decoration: none;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: gap 0.3s ease, color 0.3s ease;
+    }
+
+    .project-link:hover {
+      color: var(--accent);
+      gap: 1rem;
+    }
+
+    .project-visual {
+      aspect-ratio: 4/3;
+      background: var(--dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-style: italic;
+      color: var(--text-light);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-visual::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--accent);
+      transform: translateY(100%);
+      transition: transform 0.5s ease;
+    }
+
+    .project-item:hover .project-visual::after {
+      transform: translateY(0);
+    }
+
+    .project-visual span {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Services */
+    .services {
+      background: var(--dark);
+      color: var(--text-light);
+      padding: 10rem 4rem;
+    }
+
+    .services .section-title {
+      color: var(--text-light);
+    }
+
+    .services .section-line {
+      background: var(--text-light);
+    }
+
+    .services-flex {
+      display: flex;
+      gap: 4rem;
+    }
+
+    .service-box {
+      flex: 1;
+      padding: 3rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      position: relative;
+      transition: all 0.4s ease;
+    }
+
+    .service-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--accent);
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform 0.4s ease;
+      z-index: 0;
+    }
+
+    .service-box:hover::before {
+      transform: scaleY(1);
+    }
+
+    .service-box:hover {
+      border-color: var(--accent);
+    }
+
+    .service-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-style: italic;
+      color: rgba(255,255,255,0.2);
+      margin-bottom: 1.5rem;
+      position: relative;
+      transition: color 0.4s ease;
+    }
+
+    .service-box:hover .service-num {
+      color: var(--text-light);
+    }
+
+    .service-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-style: italic;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .service-desc {
+      font-size: 0.9375rem;
+      color: var(--muted-light);
+      line-height: 1.7;
+      position: relative;
+      transition: color 0.4s ease;
+    }
+
+    .service-box:hover .service-desc {
+      color: var(--text-light);
+    }
+
+    /* Contact */
+    .contact {
+      display: flex;
+      min-height: 60vh;
+    }
+
+    .contact-left {
+      flex: 1;
+      background: var(--light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem;
+    }
+
+    .contact-right {
+      flex: 1;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem;
+    }
+
+    .contact-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-style: italic;
+      color: var(--text-dark);
+    }
+
+    .contact-btn {
+      display: inline-block;
+      padding: 1.5rem 4rem;
+      background: var(--dark);
+      color: var(--text-light);
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .contact-btn:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    footer {
+      background: var(--dark);
+      color: var(--muted-light);
+      padding: 3rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+    }
+
+    footer a {
+      color: var(--muted-light);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: var(--accent);
+    }
+
+    @media (max-width: 1024px) {
+      .services-flex { flex-wrap: wrap; }
+      .service-box { flex: 1 1 45%; }
+    }
+
+    @media (max-width: 768px) {
+      .split-hero { flex-direction: column; }
+      .split-left, .split-right { min-height: 100vh; }
+      .split-divider { display: none; }
+      .project-item { grid-template-columns: 1fr; }
+      .project-item:nth-child(even) .project-info { order: 0; }
+      .services-flex { flex-direction: column; }
+      .service-box { flex: 1 1 100%; }
+      .contact { flex-direction: column; }
+      nav { padding: 1.5rem 2rem; }
+      .nav-links { gap: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="split-divider"></div>
+
+  <nav>
+    <div class="logo">phaedrus</div>
+    <div class="nav-links">
+      <a href="#projects">Work</a>
+      <a href="#services">Services</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <section class="split-hero">
+    <div class="split-left">
+      <div class="hero-content">
+        <span class="hero-label">Software Engineer</span>
+        <h1 class="hero-title">I build <em>things.</em></h1>
+        <p class="hero-text">Ideas to working products, fast. Specializing in rapid prototyping, AI integration, and full-stack development.</p>
+        <a href="#projects" class="hero-btn">View Work</a>
+      </div>
+    </div>
+    <div class="split-right">
+      <div class="hero-content">
+        <span class="hero-label">Available for Projects</span>
+        <h1 class="hero-title">Let's <em>work.</em></h1>
+        <p class="hero-text">Whether you're a startup needing to ship faster, a company looking to integrate AI, or have a project idea.</p>
+        <a href="#contact" class="hero-btn">Get in Touch</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="projects" id="projects">
+    <div class="section-header">
+      <h2 class="section-title">Selected Work</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <article class="project-item">
+      <div class="project-info">
+        <div class="project-num">01</div>
+        <h3 class="project-name">Misty Step</h3>
+        <p class="project-desc">Software studio for teams that ship. We build MVPs, modernize legacy systems, and automate the boring stuff.</p>
+        <a href="https://mistystep.io" class="project-link">Visit &rarr;</a>
+      </div>
+      <div class="project-visual"><span>MS</span></div>
+    </article>
+
+    <article class="project-item">
+      <div class="project-info">
+        <div class="project-num">02</div>
+        <h3 class="project-name">GitPulse</h3>
+        <p class="project-desc">GitHub analytics with teeth. AI summaries with every claim cited to the commit.</p>
+        <a href="https://gitpulse.app" class="project-link">Try &rarr;</a>
+      </div>
+      <div class="project-visual"><span>GP</span></div>
+    </article>
+
+    <article class="project-item">
+      <div class="project-info">
+        <div class="project-num">03</div>
+        <h3 class="project-name">Scry</h3>
+        <p class="project-desc">Paste anything, get flashcards. Spaced repetition handles the rest.</p>
+        <a href="https://scry.study" class="project-link">Try &rarr;</a>
+      </div>
+      <div class="project-visual"><span>SC</span></div>
+    </article>
+
+    <article class="project-item">
+      <div class="project-info">
+        <div class="project-num">04</div>
+        <h3 class="project-name">Heartbeat</h3>
+        <p class="project-desc">Set-and-forget uptime monitoring with beautiful public status pages.</p>
+        <a href="https://heartbeat.engineering" class="project-link">Try &rarr;</a>
+      </div>
+      <div class="project-visual"><span>HB</span></div>
+    </article>
+  </section>
+
+  <section class="services" id="services">
+    <div class="section-header">
+      <h2 class="section-title">What I Do</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="services-flex">
+      <div class="service-box">
+        <div class="service-num">01</div>
+        <h3 class="service-name">Rapid Prototyping</h3>
+        <p class="service-desc">Go from idea to working product fast. MVPs and prototypes that validate concepts quickly.</p>
+      </div>
+      <div class="service-box">
+        <div class="service-num">02</div>
+        <h3 class="service-name">AI Integration</h3>
+        <p class="service-desc">Incorporate AI into your product, operations, or workflow. From LLM features to automation.</p>
+      </div>
+      <div class="service-box">
+        <div class="service-num">03</div>
+        <h3 class="service-name">Full-Stack Dev</h3>
+        <p class="service-desc">End-to-end software development. Web apps, mobile, APIs, browser extensions.</p>
+      </div>
+      <div class="service-box">
+        <div class="service-num">04</div>
+        <h3 class="service-name">Consulting</h3>
+        <p class="service-desc">Architecture reviews, tech stack decisions, scaling strategies for informed choices.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="contact-left">
+      <h2 class="contact-title">Let's work</h2>
+    </div>
+    <div class="contact-right">
+      <a href="mailto:phaedrus.raznikov@pm.me" class="contact-btn">Get in touch</a>
+    </div>
+  </section>
+
+  <footer>
+    <span>&copy; 2025 Phaedrus</span>
+    <a href="https://github.com/phrazzld">GitHub</a>
+  </footer>
+</body>
+</html>

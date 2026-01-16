@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V3: Particle Field | Phaedrus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #000;
+      --text: #fff;
+      --text-dim: rgba(255,255,255,0.5);
+      --accent: #a855f7;
+      --accent-glow: rgba(168, 85, 247, 0.4);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Syne', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* Particle canvas */
+    #particles {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 2rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 3rem;
+    }
+
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    /* Hero with magnetic title */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 2rem;
+    }
+
+    .hero-title {
+      font-size: clamp(4rem, 20vw, 14rem);
+      font-weight: 800;
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      position: relative;
+    }
+
+    .hero-title span {
+      display: inline-block;
+      transition: transform 0.2s ease-out;
+    }
+
+    .hero-title .accent {
+      color: var(--accent);
+      text-shadow: 0 0 60px var(--accent-glow);
+    }
+
+    .hero-sub {
+      margin-top: 3rem;
+      font-size: 1.125rem;
+      color: var(--text-dim);
+      max-width: 500px;
+      line-height: 1.6;
+    }
+
+    .hero-cta {
+      margin-top: 3rem;
+      display: inline-block;
+      padding: 1rem 3rem;
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .hero-cta:hover {
+      box-shadow: 0 0 40px var(--accent-glow);
+    }
+
+    .hero-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+      z-index: -1;
+    }
+
+    .hero-cta:hover::before {
+      transform: scaleX(1);
+    }
+
+    /* Projects - floating cards */
+    .projects {
+      padding: 10rem 4rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6rem;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      margin: 0 3rem;
+    }
+
+    .section-count {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-family: monospace;
+    }
+
+    .projects-float {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .project-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      padding: 2.5rem;
+      position: relative;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+    }
+
+    .project-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent-glow) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .project-card:hover {
+      transform: translateY(-10px);
+      border-color: var(--accent);
+      box-shadow: 0 30px 60px rgba(168, 85, 247, 0.2);
+    }
+
+    .project-card:hover::before {
+      opacity: 1;
+    }
+
+    .project-num {
+      font-size: 0.625rem;
+      color: var(--accent);
+      font-family: monospace;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .project-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.75rem;
+      position: relative;
+    }
+
+    .project-desc {
+      font-size: 0.9375rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .project-link {
+      font-size: 0.6875rem;
+      color: var(--text);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      transition: color 0.3s ease, gap 0.3s ease;
+    }
+
+    .project-link:hover {
+      color: var(--accent);
+      gap: 1rem;
+    }
+
+    /* Services */
+    .services {
+      padding: 10rem 4rem;
+      background: rgba(255,255,255,0.01);
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0;
+    }
+
+    .service-cell {
+      padding: 4rem;
+      border: 1px solid rgba(255,255,255,0.05);
+      margin: -1px;
+      position: relative;
+      transition: all 0.4s ease;
+    }
+
+    .service-cell::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .service-cell:hover::after {
+      width: 100%;
+    }
+
+    .service-cell:hover {
+      background: rgba(168, 85, 247, 0.05);
+    }
+
+    .service-icon {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .service-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    .service-cell:hover .service-name {
+      color: var(--accent);
+    }
+
+    .service-desc {
+      font-size: 0.9375rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    /* Contact */
+    .contact {
+      padding: 15rem 4rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .contact-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      filter: blur(100px);
+      pointer-events: none;
+    }
+
+    .contact-title {
+      font-size: clamp(3rem, 12vw, 8rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      position: relative;
+    }
+
+    .contact-btn {
+      margin-top: 4rem;
+      display: inline-block;
+      padding: 1.5rem 5rem;
+      background: var(--accent);
+      color: var(--bg);
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .contact-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 60px var(--accent-glow);
+    }
+
+    footer {
+      padding: 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    footer a {
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: var(--accent);
+    }
+
+    @media (max-width: 1024px) {
+      .projects-float { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .projects-float { grid-template-columns: 1fr; }
+      .services-grid { grid-template-columns: 1fr; }
+      nav { padding: 1.5rem 2rem; }
+      .nav-links { gap: 1.5rem; }
+      .projects, .services { padding: 6rem 2rem; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+
+  <div class="content">
+    <nav>
+      <div class="logo">Phaedrus</div>
+      <div class="nav-links">
+        <a href="#projects">Work</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <h1 class="hero-title">
+        <span>I</span> <span>BUILD</span><br>
+        <span class="accent">THINGS</span>
+      </h1>
+      <p class="hero-sub">Ideas to working products, fast. Software engineer specializing in rapid prototyping and AI integration.</p>
+      <a href="#contact" class="hero-cta">Get in touch</a>
+    </section>
+
+    <section class="projects" id="projects">
+      <div class="section-header">
+        <h2 class="section-title">Work</h2>
+        <div class="section-line"></div>
+        <span class="section-count">[15]</span>
+      </div>
+
+      <div class="projects-float">
+        <article class="project-card">
+          <span class="project-num">//001</span>
+          <h3 class="project-name">Misty Step</h3>
+          <p class="project-desc">Software studio for teams that ship. MVPs, legacy modernization, automation.</p>
+          <a href="https://mistystep.io" class="project-link">Visit &rarr;</a>
+        </article>
+        <article class="project-card">
+          <span class="project-num">//002</span>
+          <h3 class="project-name">GitPulse</h3>
+          <p class="project-desc">GitHub analytics with AI summaries. Every claim cited.</p>
+          <a href="https://gitpulse.app" class="project-link">Try &rarr;</a>
+        </article>
+        <article class="project-card">
+          <span class="project-num">//003</span>
+          <h3 class="project-name">Scry</h3>
+          <p class="project-desc">Paste anything, get flashcards. Spaced repetition does the rest.</p>
+          <a href="https://scry.study" class="project-link">Try &rarr;</a>
+        </article>
+        <article class="project-card">
+          <span class="project-num">//004</span>
+          <h3 class="project-name">Chrondle</h3>
+          <p class="project-desc">The history nerd's Wordle. Six events, one year.</p>
+          <a href="https://chrondle.app" class="project-link">Play &rarr;</a>
+        </article>
+        <article class="project-card">
+          <span class="project-num">//005</span>
+          <h3 class="project-name">Heartbeat</h3>
+          <p class="project-desc">Set-and-forget uptime monitoring. Beautiful status pages.</p>
+          <a href="https://heartbeat.engineering" class="project-link">Try &rarr;</a>
+        </article>
+        <article class="project-card">
+          <span class="project-num">//006</span>
+          <h3 class="project-name">Thinktank</h3>
+          <p class="project-desc">Multi-model code review. GPT, Claude, Gemini in one CLI.</p>
+          <a href="https://github.com/phrazzld/thinktank" class="project-link">Get &rarr;</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="services" id="services">
+      <div class="section-header">
+        <h2 class="section-title">Services</h2>
+        <div class="section-line"></div>
+        <span class="section-count">[04]</span>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-cell">
+          <div class="service-icon">⚡</div>
+          <h3 class="service-name">Rapid Prototyping</h3>
+          <p class="service-desc">Go from idea to working product fast. MVPs and prototypes that validate concepts quickly.</p>
+        </div>
+        <div class="service-cell">
+          <div class="service-icon">🤖</div>
+          <h3 class="service-name">AI Integration</h3>
+          <p class="service-desc">Incorporate AI into your product, operations, or workflow. LLM features to automation.</p>
+        </div>
+        <div class="service-cell">
+          <div class="service-icon">🔧</div>
+          <h3 class="service-name">Full-Stack Development</h3>
+          <p class="service-desc">End-to-end software development. Web, mobile, APIs, browser extensions.</p>
+        </div>
+        <div class="service-cell">
+          <div class="service-icon">📐</div>
+          <h3 class="service-name">Technical Consulting</h3>
+          <p class="service-desc">Architecture reviews, tech stack decisions, scaling strategies.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="contact-glow"></div>
+      <h2 class="contact-title">Let's work</h2>
+      <a href="mailto:phaedrus.raznikov@pm.me" class="contact-btn">Get in touch</a>
+    </section>
+
+    <footer>
+      <span>&copy; 2025 Phaedrus</span>
+      <a href="https://github.com/phrazzld">GitHub</a>
+    </footer>
+  </div>
+
+  <script>
+    // Particle system
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let mouse = { x: null, y: null };
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.3;
+        this.vy = (Math.random() - 0.5) * 0.3;
+        this.radius = Math.random() * 1.5 + 0.5;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        // Mouse interaction
+        if (mouse.x && mouse.y) {
+          const dx = mouse.x - this.x;
+          const dy = mouse.y - this.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            const force = (150 - dist) / 150;
+            this.vx -= (dx / dist) * force * 0.02;
+            this.vy -= (dy / dist) * force * 0.02;
+          }
+        }
+
+        // Boundaries
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(168, 85, 247, 0.5)';
+        ctx.fill();
+      }
+    }
+
+    function init() {
+      particles = [];
+      const count = Math.min(100, Math.floor((canvas.width * canvas.height) / 15000));
+      for (let i = 0; i < count; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function connectParticles() {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(168, 85, 247, ${0.15 * (1 - dist / 120)})`;
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+
+      connectParticles();
+      requestAnimationFrame(animate);
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    document.addEventListener('mouseleave', () => {
+      mouse.x = null;
+      mouse.y = null;
+    });
+
+    init();
+    animate();
+
+    // Magnetic title effect
+    document.querySelectorAll('.hero-title span').forEach(span => {
+      span.addEventListener('mousemove', (e) => {
+        const rect = span.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        span.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+      });
+      span.addEventListener('mouseleave', () => {
+        span.style.transform = '';
+      });
+    });
+  </script>
+</body>
+</html>

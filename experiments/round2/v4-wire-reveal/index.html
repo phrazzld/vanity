@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V4: Wire Reveal | Phaedrus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* DNA: [bento, high-contrast, minimal, subtle, mixed, solid] */
+    /* Raw-to-polish reveals - wireframe on hover */
+
+    :root {
+      --bg: #FAFAFA;
+      --bg-dark: #0A0A0A;
+      --text: #0A0A0A;
+      --text-light: #FAFAFA;
+      --text-dim: #737373;
+      --accent: #DC2626;
+      --wire: #E5E5E5;
+      --wire-accent: #A3A3A3;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Fira Code', monospace;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 1.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--wire);
+    }
+
+    .logo {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.25rem;
+      font-style: italic;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    /* Hero - reveals wireframe structure on hover */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 8rem 3rem;
+      position: relative;
+    }
+
+    .hero-wireframe {
+      position: absolute;
+      inset: 0;
+      padding: 8rem 3rem;
+      display: flex;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+    }
+
+    .hero:hover .hero-wireframe {
+      opacity: 1;
+    }
+
+    .hero:hover .hero-content {
+      opacity: 0;
+    }
+
+    .wireframe-box {
+      border: 2px dashed var(--wire-accent);
+      padding: 3rem;
+      position: relative;
+    }
+
+    .wireframe-box::before {
+      content: 'hero_section';
+      position: absolute;
+      top: -1.5rem;
+      left: 1rem;
+      font-size: 0.625rem;
+      color: var(--wire-accent);
+      background: var(--bg);
+      padding: 0 0.5rem;
+    }
+
+    .wireframe-title {
+      height: 80px;
+      background: repeating-linear-gradient(
+        0deg,
+        var(--wire),
+        var(--wire) 12px,
+        transparent 12px,
+        transparent 20px
+      );
+      margin-bottom: 1.5rem;
+      width: 400px;
+    }
+
+    .wireframe-text {
+      height: 60px;
+      background: repeating-linear-gradient(
+        0deg,
+        var(--wire),
+        var(--wire) 8px,
+        transparent 8px,
+        transparent 14px
+      );
+      width: 300px;
+      margin-bottom: 2rem;
+    }
+
+    .wireframe-btn {
+      width: 150px;
+      height: 40px;
+      border: 2px dashed var(--wire-accent);
+    }
+
+    .hero-content {
+      max-width: 700px;
+      transition: opacity 0.5s ease;
+    }
+
+    .hero-label {
+      font-size: 0.625rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title em {
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      font-size: 0.9375rem;
+      color: var(--text-dim);
+      max-width: 450px;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      padding: 0.875rem 2rem;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      text-decoration: none;
+      font-size: 0.6875rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+    }
+
+    .hero-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    /* Comment annotations */
+    .code-comment {
+      font-size: 0.625rem;
+      color: var(--text-dim);
+      opacity: 0.6;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Projects - bento grid with wire reveals */
+    .projects {
+      padding: 8rem 3rem;
+      background: var(--bg);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 4rem;
+    }
+
+    .section-num {
+      font-size: 0.5rem;
+      color: var(--text-dim);
+    }
+
+    .section-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.5rem;
+      font-style: italic;
+    }
+
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(3, 200px);
+      gap: 1rem;
+    }
+
+    .bento-item {
+      background: var(--bg-dark);
+      color: var(--text-light);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+    }
+
+    /* Bento sizes */
+    .bento-item.large {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+
+    .bento-item.wide {
+      grid-column: span 2;
+    }
+
+    .bento-item.tall {
+      grid-row: span 2;
+    }
+
+    /* Wire overlay on hover */
+    .bento-item::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 2px dashed var(--accent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .bento-item::after {
+      content: attr(data-wire);
+      position: absolute;
+      top: 0.75rem;
+      left: 0.75rem;
+      font-size: 0.5rem;
+      color: var(--accent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .bento-item:hover::before,
+    .bento-item:hover::after {
+      opacity: 1;
+    }
+
+    .bento-item:hover {
+      transform: scale(0.98);
+    }
+
+    .bento-num {
+      font-size: 0.5rem;
+      color: var(--accent);
+      margin-bottom: auto;
+    }
+
+    .bento-name {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.125rem;
+      font-style: italic;
+      margin-bottom: 0.25rem;
+    }
+
+    .bento-item.large .bento-name {
+      font-size: 1.5rem;
+    }
+
+    .bento-desc {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    .bento-link {
+      position: absolute;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      font-size: 0.5rem;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* Services - minimal list */
+    .services {
+      padding: 8rem 3rem;
+      border-top: 1px solid var(--wire);
+    }
+
+    .services-list {
+      max-width: 600px;
+    }
+
+    .service-item {
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--wire);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .service-item::before {
+      content: attr(data-wire);
+      position: absolute;
+      top: 0.5rem;
+      right: 0;
+      font-size: 0.5rem;
+      color: var(--wire-accent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .service-item:hover::before {
+      opacity: 1;
+    }
+
+    .service-item:hover {
+      padding-left: 1rem;
+    }
+
+    .service-item:hover .service-name {
+      color: var(--accent);
+    }
+
+    .service-name {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.25rem;
+      font-style: italic;
+      transition: color 0.3s ease;
+    }
+
+    .service-num {
+      font-size: 0.5rem;
+      color: var(--text-dim);
+    }
+
+    /* Contact - high contrast */
+    .contact {
+      padding: 10rem 3rem;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      position: relative;
+    }
+
+    .contact-wire {
+      position: absolute;
+      top: 2rem;
+      left: 3rem;
+      font-size: 0.5rem;
+      color: var(--text-dim);
+    }
+
+    .contact-content {
+      max-width: 500px;
+    }
+
+    .contact-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-style: italic;
+      margin-bottom: 1.5rem;
+    }
+
+    .contact-title em {
+      color: var(--accent);
+    }
+
+    .contact-text {
+      font-size: 0.875rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .contact-btn {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      background: var(--accent);
+      color: var(--text-light);
+      text-decoration: none;
+      font-size: 0.6875rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+    }
+
+    .contact-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px rgba(220, 38, 38, 0.3);
+    }
+
+    footer {
+      padding: 2rem 3rem;
+      background: var(--bg-dark);
+      color: var(--text-dim);
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.625rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    footer a {
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: var(--accent);
+    }
+
+    @media (max-width: 1024px) {
+      .bento-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
+      .bento-item.large, .bento-item.wide, .bento-item.tall { grid-column: span 1; grid-row: span 1; }
+    }
+
+    @media (max-width: 768px) {
+      .bento-grid { grid-template-columns: 1fr; }
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1rem; }
+      .hero, .projects, .services, .contact { padding-left: 1.5rem; padding-right: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">phaedrus</div>
+    <div class="nav-links">
+      <a href="#projects">Work</a>
+      <a href="#services">Services</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-wireframe">
+      <div class="wireframe-box">
+        <div class="wireframe-title"></div>
+        <div class="wireframe-text"></div>
+        <div class="wireframe-btn"></div>
+      </div>
+    </div>
+    <div class="hero-content">
+      <span class="code-comment">// hero_section.jsx</span>
+      <span class="hero-label">Software Engineer</span>
+      <h1 class="hero-title">I build <em>things.</em></h1>
+      <p class="hero-sub">Ideas to working products, fast. Specializing in rapid prototyping, AI integration, and full-stack development.</p>
+      <a href="#contact" class="hero-cta">Get in touch</a>
+    </div>
+  </section>
+
+  <section class="projects" id="projects">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Selected Work</h2>
+    </div>
+
+    <div class="bento-grid">
+      <article class="bento-item large" data-wire="<ProjectCard featured />">
+        <span class="bento-num">PJ_001</span>
+        <h3 class="bento-name">Misty Step</h3>
+        <p class="bento-desc">Software studio for teams that ship. MVPs, legacy modernization, automation.</p>
+        <a href="https://mistystep.io" class="bento-link">Visit →</a>
+      </article>
+      <article class="bento-item" data-wire="<ProjectCard />">
+        <span class="bento-num">PJ_002</span>
+        <h3 class="bento-name">GitPulse</h3>
+        <p class="bento-desc">GitHub analytics with AI summaries.</p>
+        <a href="https://gitpulse.app" class="bento-link">Try →</a>
+      </article>
+      <article class="bento-item" data-wire="<ProjectCard />">
+        <span class="bento-num">PJ_003</span>
+        <h3 class="bento-name">Scry</h3>
+        <p class="bento-desc">Paste anything, get flashcards.</p>
+        <a href="https://scry.study" class="bento-link">Try →</a>
+      </article>
+      <article class="bento-item wide" data-wire="<ProjectCard wide />">
+        <span class="bento-num">PJ_004</span>
+        <h3 class="bento-name">Heartbeat</h3>
+        <p class="bento-desc">Set-and-forget uptime monitoring. Beautiful status pages included.</p>
+        <a href="https://heartbeat.engineering" class="bento-link">Try →</a>
+      </article>
+      <article class="bento-item" data-wire="<ProjectCard />">
+        <span class="bento-num">PJ_005</span>
+        <h3 class="bento-name">Thinktank</h3>
+        <p class="bento-desc">Multi-model code review CLI.</p>
+        <a href="https://github.com/phrazzld/thinktank" class="bento-link">Get →</a>
+      </article>
+      <article class="bento-item" data-wire="<ProjectCard />">
+        <span class="bento-num">PJ_006</span>
+        <h3 class="bento-name">Vibe Machine</h3>
+        <p class="bento-desc">Audio-reactive visuals.</p>
+        <a href="#" class="bento-link">Watch →</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="services" id="services">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title">What I Do</h2>
+    </div>
+
+    <div class="services-list">
+      <div class="service-item" data-wire="<ServiceItem index={0} />">
+        <h3 class="service-name">Rapid Prototyping</h3>
+        <span class="service-num">SVC_01</span>
+      </div>
+      <div class="service-item" data-wire="<ServiceItem index={1} />">
+        <h3 class="service-name">AI Integration</h3>
+        <span class="service-num">SVC_02</span>
+      </div>
+      <div class="service-item" data-wire="<ServiceItem index={2} />">
+        <h3 class="service-name">Full-Stack Development</h3>
+        <span class="service-num">SVC_03</span>
+      </div>
+      <div class="service-item" data-wire="<ServiceItem index={3} />">
+        <h3 class="service-name">Technical Consulting</h3>
+        <span class="service-num">SVC_04</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <span class="contact-wire">// contact_section.jsx</span>
+    <div class="contact-content">
+      <h2 class="contact-title">Let's <em>work.</em></h2>
+      <p class="contact-text">Whether you're a startup needing to ship faster, a company looking to integrate AI, or have a project idea — I'd love to hear from you.</p>
+      <a href="mailto:phaedrus.raznikov@pm.me" class="contact-btn">Get in touch</a>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2025 Phaedrus</span>
+    <a href="https://github.com/phrazzld">GitHub</a>
+  </footer>
+</body>
+</html>

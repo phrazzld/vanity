@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V1: Copper Spotlight | Phaedrus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* DNA: [asymmetric, dark, editorial, orchestrated, mixed, textured] */
+    /* Palette: Modern Copper - warm black + burnt orange */
+
+    :root {
+      --bg: #1C1917;
+      --bg-warm: #1f1c19;
+      --text: #F5F0EB;
+      --text-dim: #A8A29E;
+      --accent: #D97706;
+      --accent-glow: rgba(217, 119, 6, 0.3);
+      --grid-reveal: rgba(217, 119, 6, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'IBM Plex Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Hidden grid that spotlight reveals */
+    .grid-underlay {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--grid-reveal) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-reveal) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Spotlight cursor */
+    .spotlight {
+      position: fixed;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle,
+        rgba(217, 119, 6, 0.15) 0%,
+        rgba(217, 119, 6, 0.08) 30%,
+        transparent 70%
+      );
+      mix-blend-mode: screen;
+    }
+
+    /* Grid mask that follows spotlight */
+    .grid-mask {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background-image:
+        linear-gradient(var(--accent) 1px, transparent 1px),
+        linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.1;
+      mask-image: radial-gradient(circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%), black 0%, transparent 100%);
+      -webkit-mask-image: radial-gradient(circle 200px at var(--mouse-x, 50%) var(--mouse-y, 50%), black 0%, transparent 100%);
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Nav - asymmetric positioning */
+    nav {
+      position: fixed;
+      top: 2rem;
+      left: 4rem;
+      right: 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'Cormorant', serif;
+      font-size: 1.5rem;
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.25rem;
+    }
+
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.6875rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    /* Hero - asymmetric layout */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 4rem;
+      padding: 12rem 4rem 8rem;
+      align-items: end;
+    }
+
+    .hero-meta {
+      font-size: 0.6875rem;
+      color: var(--text-dim);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      line-height: 2;
+    }
+
+    .hero-main {
+      padding-bottom: 4rem;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant', serif;
+      font-size: clamp(4rem, 10vw, 8rem);
+      font-weight: 400;
+      font-style: italic;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
+    }
+
+    .hero-title .accent {
+      color: var(--accent);
+      display: inline-block;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .hero-title:hover .accent {
+      transform: translateX(20px);
+    }
+
+    .hero-sub {
+      font-size: 0.9375rem;
+      color: var(--text-dim);
+      max-width: 400px;
+      line-height: 1.7;
+    }
+
+    .hero-sub strong {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* Projects - staggered asymmetric grid */
+    .projects {
+      padding: 8rem 4rem;
+    }
+
+    .section-header {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 2rem;
+      align-items: center;
+      margin-bottom: 6rem;
+    }
+
+    .section-num {
+      font-size: 0.625rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+    }
+
+    .section-line {
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+    }
+
+    .section-title {
+      font-family: 'Cormorant', serif;
+      font-size: 1.25rem;
+      font-style: italic;
+      color: var(--text-dim);
+    }
+
+    .projects-stagger {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1rem;
+    }
+
+    .project-card {
+      background: var(--bg-warm);
+      border: 1px solid rgba(255,255,255,0.05);
+      padding: 2rem;
+      position: relative;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.4s ease;
+    }
+
+    .project-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--accent);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+    }
+
+    .project-card:hover::before {
+      width: 100%;
+    }
+
+    /* Staggered positions */
+    .project-card:nth-child(1) { grid-column: 1 / 5; }
+    .project-card:nth-child(2) { grid-column: 5 / 9; margin-top: 4rem; }
+    .project-card:nth-child(3) { grid-column: 9 / 13; margin-top: 8rem; }
+    .project-card:nth-child(4) { grid-column: 2 / 6; margin-top: -2rem; }
+    .project-card:nth-child(5) { grid-column: 6 / 10; margin-top: 2rem; }
+    .project-card:nth-child(6) { grid-column: 10 / 13; margin-top: 6rem; }
+
+    .project-num {
+      font-size: 0.5rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .project-name {
+      font-family: 'Cormorant', serif;
+      font-size: 1.5rem;
+      font-style: italic;
+      margin-bottom: 0.5rem;
+      transition: color 0.3s ease;
+    }
+
+    .project-card:hover .project-name {
+      color: var(--accent);
+    }
+
+    .project-desc {
+      font-size: 0.8125rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .project-link {
+      font-size: 0.625rem;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: letter-spacing 0.3s ease;
+    }
+
+    .project-link:hover {
+      letter-spacing: 0.25em;
+    }
+
+    /* Services - horizontal cards */
+    .services {
+      padding: 8rem 4rem;
+      background: var(--bg-warm);
+    }
+
+    .services-grid {
+      display: flex;
+      gap: 2rem;
+      overflow-x: auto;
+      padding-bottom: 2rem;
+      scrollbar-width: none;
+    }
+
+    .services-grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .service-card {
+      min-width: 320px;
+      padding: 2.5rem;
+      border: 1px solid rgba(255,255,255,0.05);
+      background: var(--bg);
+      position: relative;
+      flex-shrink: 0;
+      transition: all 0.4s ease;
+    }
+
+    .service-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 0;
+      background: var(--accent);
+      transition: height 0.3s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-10px);
+    }
+
+    .service-card:hover::after {
+      height: 3px;
+    }
+
+    .service-num {
+      font-size: 2.5rem;
+      font-family: 'Cormorant', serif;
+      font-style: italic;
+      color: rgba(255,255,255,0.1);
+      margin-bottom: 1.5rem;
+    }
+
+    .service-name {
+      font-family: 'Cormorant', serif;
+      font-size: 1.375rem;
+      font-style: italic;
+      margin-bottom: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    .service-card:hover .service-name {
+      color: var(--accent);
+    }
+
+    .service-desc {
+      font-size: 0.8125rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    /* Contact - offset layout */
+    .contact {
+      padding: 12rem 4rem;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 4rem;
+      align-items: end;
+    }
+
+    .contact-label {
+      font-size: 0.625rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .contact-main h2 {
+      font-family: 'Cormorant', serif;
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-style: italic;
+      line-height: 1;
+      margin-bottom: 2rem;
+    }
+
+    .contact-btn {
+      display: inline-block;
+      padding: 1rem 3rem;
+      background: var(--accent);
+      color: var(--bg);
+      text-decoration: none;
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+    }
+
+    .contact-btn:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px var(--accent-glow);
+    }
+
+    footer {
+      padding: 3rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.6875rem;
+      color: var(--text-dim);
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    footer a {
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: var(--accent);
+    }
+
+    @media (max-width: 1024px) {
+      .hero { grid-template-columns: 1fr; }
+      .projects-stagger { grid-template-columns: 1fr; }
+      .project-card { grid-column: 1 !important; margin-top: 0 !important; }
+      .contact { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      nav { left: 2rem; right: 2rem; }
+      .hero, .projects, .services, .contact { padding-left: 2rem; padding-right: 2rem; }
+      .spotlight, .grid-mask { display: none; }
+      body { cursor: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="spotlight" id="spotlight"></div>
+  <div class="grid-mask" id="gridMask"></div>
+
+  <div class="content">
+    <nav>
+      <div class="logo">phaedrus</div>
+      <div class="nav-links">
+        <a href="#projects">Work</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-meta">
+        Software<br>Engineer<br><br>
+        Oakland, CA<br>
+        Available<br>for projects
+      </div>
+      <div class="hero-main">
+        <h1 class="hero-title">I build<br><span class="accent">things.</span></h1>
+        <p class="hero-sub">Ideas to <strong>working products</strong>, fast. Specializing in rapid prototyping, AI integration, and full-stack development.</p>
+      </div>
+    </section>
+
+    <section class="projects" id="projects">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <div class="section-line"></div>
+        <span class="section-title">Selected Work</span>
+      </div>
+
+      <div class="projects-stagger">
+        <article class="project-card">
+          <span class="project-num">PJ_001</span>
+          <h3 class="project-name">Misty Step</h3>
+          <p class="project-desc">Software studio for teams that ship. MVPs, legacy modernization, automation.</p>
+          <a href="https://mistystep.io" class="project-link">Visit →</a>
+        </article>
+        <article class="project-card">
+          <span class="project-num">PJ_002</span>
+          <h3 class="project-name">GitPulse</h3>
+          <p class="project-desc">GitHub analytics with AI summaries. Every claim cited.</p>
+          <a href="https://gitpulse.app" class="project-link">Try →</a>
+        </article>
+        <article class="project-card">
+          <span class="project-num">PJ_003</span>
+          <h3 class="project-name">Scry</h3>
+          <p class="project-desc">Paste anything, get flashcards. Spaced repetition does the rest.</p>
+          <a href="https://scry.study" class="project-link">Try →</a>
+        </article>
+        <article class="project-card">
+          <span class="project-num">PJ_004</span>
+          <h3 class="project-name">Heartbeat</h3>
+          <p class="project-desc">Set-and-forget uptime monitoring. Beautiful status pages.</p>
+          <a href="https://heartbeat.engineering" class="project-link">Try →</a>
+        </article>
+        <article class="project-card">
+          <span class="project-num">PJ_005</span>
+          <h3 class="project-name">Thinktank</h3>
+          <p class="project-desc">Multi-model code review. GPT, Claude, Gemini in one CLI.</p>
+          <a href="https://github.com/phrazzld/thinktank" class="project-link">Get →</a>
+        </article>
+        <article class="project-card">
+          <span class="project-num">PJ_006</span>
+          <h3 class="project-name">Vibe Machine</h3>
+          <p class="project-desc">Audio-reactive visuals. Drop a track, zone out.</p>
+          <a href="#" class="project-link">Watch →</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="services" id="services">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <div class="section-line"></div>
+        <span class="section-title">What I Do</span>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-num">01</div>
+          <h3 class="service-name">Rapid Prototyping</h3>
+          <p class="service-desc">Go from idea to working product fast. MVPs and prototypes that validate concepts quickly.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-num">02</div>
+          <h3 class="service-name">AI Integration</h3>
+          <p class="service-desc">Incorporate AI into your product, operations, or workflow. LLM features to automation.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-num">03</div>
+          <h3 class="service-name">Full-Stack Dev</h3>
+          <p class="service-desc">End-to-end software development. Web apps, mobile, APIs, browser extensions.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-num">04</div>
+          <h3 class="service-name">Consulting</h3>
+          <p class="service-desc">Architecture reviews, tech stack decisions, scaling strategies for informed choices.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="contact-label">Let's connect</div>
+      <div class="contact-main">
+        <h2>Let's work.</h2>
+        <a href="mailto:phaedrus.raznikov@pm.me" class="contact-btn">Get in touch</a>
+      </div>
+    </section>
+
+    <footer>
+      <span>© 2025 Phaedrus</span>
+      <a href="https://github.com/phrazzld">GitHub</a>
+    </footer>
+  </div>
+
+  <script>
+    const spotlight = document.getElementById('spotlight');
+    const gridMask = document.getElementById('gridMask');
+
+    document.addEventListener('mousemove', (e) => {
+      spotlight.style.left = e.clientX + 'px';
+      spotlight.style.top = e.clientY + 'px';
+
+      // Update CSS custom properties for mask
+      const x = (e.clientX / window.innerWidth) * 100;
+      const y = (e.clientY / window.innerHeight) * 100;
+      gridMask.style.setProperty('--mouse-x', x + '%');
+      gridMask.style.setProperty('--mouse-y', y + '%');
+    });
+  </script>
+</body>
+</html>
