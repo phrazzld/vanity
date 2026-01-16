@@ -1,6 +1,15 @@
-/* Coral Editorial - Light mode, coral accent, staggered projects */
+/*
+ * Coral Editorial + Lattice System
+ *
+ * Design vocabulary:
+ * - Grid of nodes (100px spacing)
+ * - Coral accent for interactive elements
+ * - L-shaped Manhattan connections in hero/contact
+ * - Subtle grid background elsewhere
+ */
 
 :root {
+  /* Core palette */
   --bg: #FDFBF7;
   --bg-alt: #F5F0E8;
   --text: #1A1714;
@@ -8,6 +17,26 @@
   --accent: #E85A4F;
   --accent-hover: #D14940;
   --border: #E8E2D9;
+
+  /* Lattice system - single source of truth */
+  --grid-size: 100;
+  --grid-size-px: 100px;
+  --node-radius: 2px;
+  --node-color: rgba(26, 23, 20, 0.12);
+  --node-color-solid: #1A1714;
+  --line-color: rgba(232, 90, 79, 0.5);
+  --connection-radius: 250;
+}
+
+[data-theme="dark"] {
+  --bg: #1A1714;
+  --bg-alt: #252220;
+  --text: #FDFBF7;
+  --text-dim: #A09A93;
+  --border: #3D3835;
+  --node-color: rgba(253, 251, 247, 0.15);
+  --node-color-solid: #FDFBF7;
+  --line-color: rgba(232, 90, 79, 0.7);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,7 +51,32 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Scroll progress */
+/* ==========================================================================
+   Lattice Canvas - shared by hero and contact
+   ========================================================================== */
+
+.lattice-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Grid Background - CSS-only for content sections
+   Single radial gradient repeated, matches canvas grid exactly
+   ========================================================================== */
+
+.grid-bg {
+  background-image: radial-gradient(circle at center, var(--node-color) var(--node-radius), transparent var(--node-radius));
+  background-size: var(--grid-size-px) var(--grid-size-px);
+  background-position: calc(var(--grid-size-px) / 2) calc(var(--grid-size-px) / 2);
+}
+
+/* ==========================================================================
+   Scroll Progress
+   ========================================================================== */
+
 .scroll-progress {
   position: fixed;
   top: 0;
@@ -33,13 +87,16 @@ body {
   z-index: 1000;
 }
 
-/* Header */
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
 header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(253, 251, 247, 0.9);
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
   z-index: 50;
@@ -95,15 +152,38 @@ nav {
   width: 100%;
 }
 
-/* Hero */
+/* Theme toggle */
+.theme-toggle {
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  padding: 0.5rem 0.75rem;
+  font-family: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.theme-toggle:hover {
+  opacity: 0.8;
+}
+
+/* ==========================================================================
+   Hero - Full lattice effect
+   ========================================================================== */
+
 .hero {
+  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   padding: 8rem 3rem;
+  overflow: hidden;
 }
 
 .hero-content {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 3rem;
@@ -169,7 +249,10 @@ nav {
   line-height: 1.7;
 }
 
-/* Buttons */
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
 .btn {
   display: inline-block;
   padding: 1rem 2.5rem;
@@ -204,25 +287,15 @@ nav {
   transform: scaleX(1);
 }
 
-/* Sections */
+/* ==========================================================================
+   Sections - Base styles
+   ========================================================================== */
+
 section {
   padding: 8rem 3rem;
   max-width: 1400px;
   margin: 0 auto;
   scroll-margin-top: 80px;
-}
-
-#projects {
-  background: var(--bg-alt);
-  max-width: none;
-  padding-left: 0;
-  padding-right: 0;
-}
-
-#projects .section-inner {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 3rem;
 }
 
 .section-title {
@@ -243,6 +316,26 @@ section {
   margin-top: 1rem;
 }
 
+/* ==========================================================================
+   Projects Section - Grid background
+   ========================================================================== */
+
+#projects {
+  position: relative;
+  background: var(--bg-alt);
+  max-width: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+#projects .section-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 3rem;
+}
+
 /* Featured project */
 .featured {
   background: var(--bg);
@@ -254,11 +347,33 @@ section {
   gap: 4rem;
   align-items: center;
   transition: all 0.5s ease;
+  position: relative;
+}
+
+.featured::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at center, var(--node-color) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: 25px 25px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.featured:hover::before {
+  opacity: 1;
 }
 
 .featured:hover {
   border-color: var(--accent);
   box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+}
+
+.featured-content {
+  position: relative;
+  z-index: 1;
 }
 
 .featured-content h3 {
@@ -276,6 +391,8 @@ section {
 }
 
 .featured-visual {
+  position: relative;
+  z-index: 1;
   background: var(--text);
   color: var(--bg);
   aspect-ratio: 4/3;
@@ -310,6 +427,34 @@ section {
   border: 1px solid var(--border);
   padding: 2rem;
   transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Pulse node on hover - grid vocabulary */
+.project::after {
+  content: '';
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.4s ease;
+}
+
+.project:hover::after {
+  opacity: 1;
+  transform: scale(1);
+  animation: nodePulse 2s ease-in-out infinite;
+}
+
+@keyframes nodePulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.5); opacity: 1; }
 }
 
 .project:hover {
@@ -353,8 +498,28 @@ section {
   font-size: 0.8125rem;
 }
 
-/* Services */
+/* ==========================================================================
+   Services Section - Grid background
+   ========================================================================== */
+
+#services {
+  position: relative;
+}
+
+#services::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at center, var(--node-color) var(--node-radius), transparent var(--node-radius));
+  background-size: var(--grid-size-px) var(--grid-size-px);
+  background-position: calc(var(--grid-size-px) / 2) calc(var(--grid-size-px) / 2);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .services-grid {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 3rem;
@@ -364,6 +529,25 @@ section {
   border-left: 2px solid var(--border);
   padding-left: 2rem;
   transition: all 0.4s ease;
+  position: relative;
+}
+
+/* Node marker at top of border */
+.service::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 0;
+  width: 8px;
+  height: 8px;
+  background: var(--border);
+  border-radius: 50%;
+  transition: all 0.4s ease;
+}
+
+.service:hover::before {
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
 }
 
 .service:hover {
@@ -388,14 +572,21 @@ section {
   font-size: 1rem;
 }
 
-/* Contact */
+/* ==========================================================================
+   Contact Section - Full lattice effect (bookend)
+   ========================================================================== */
+
 #contact {
+  position: relative;
   background: var(--bg-alt);
   max-width: none;
   text-align: center;
+  overflow: hidden;
 }
 
 #contact .section-inner {
+  position: relative;
+  z-index: 1;
   max-width: 700px;
   margin: 0 auto;
 }
@@ -412,7 +603,10 @@ section {
   line-height: 1.7;
 }
 
-/* Footer */
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+
 footer {
   padding: 3rem;
   border-top: 1px solid var(--border);
@@ -434,7 +628,10 @@ footer a:hover {
   color: var(--accent);
 }
 
-/* Reveal animations */
+/* ==========================================================================
+   Reveal Animations
+   ========================================================================== */
+
 .reveal {
   opacity: 0;
   transform: translateY(40px);
@@ -446,7 +643,10 @@ footer a:hover {
   transform: translateY(0);
 }
 
-/* Responsive */
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
 @media (max-width: 1024px) {
   .featured { grid-template-columns: 1fr; }
   .projects-stagger { grid-template-columns: 1fr; }
