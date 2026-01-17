@@ -374,6 +374,8 @@ section {
   align-items: center;
   transition: all 0.5s ease;
   position: relative;
+  text-decoration: none;
+  color: inherit;
 }
 
 .featured::before {
@@ -449,12 +451,32 @@ section {
 }
 
 .project {
+  display: block;
   background: var(--bg);
   border: 1px solid var(--border);
   padding: 2rem;
   transition: all 0.4s ease;
   position: relative;
   overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Dotted background on hover - same as featured */
+.project::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at center, var(--node-color) 1px, transparent 1px);
+  background-size: 30px 30px;
+  background-position: 15px 15px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.project:hover::before {
+  opacity: 1;
 }
 
 /* Pulse node on hover - grid vocabulary */
@@ -506,6 +528,8 @@ section {
   font-style: italic;
   margin-bottom: 0.5rem;
   transition: color 0.3s ease;
+  position: relative;
+  z-index: 1;
 }
 
 .project:hover h4 {
@@ -515,13 +539,8 @@ section {
 .project p {
   color: var(--text-dim);
   font-size: 0.9375rem;
-  margin-bottom: 1rem;
-}
-
-.project a {
-  color: var(--accent);
-  text-decoration: none;
-  font-size: 0.8125rem;
+  position: relative;
+  z-index: 1;
 }
 
 /* ==========================================================================
