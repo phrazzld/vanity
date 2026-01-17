@@ -104,9 +104,11 @@ class Lattice {
   }
 
   getColors() {
-    // Read from CSS variables (respects theme)
-    const style = getComputedStyle(document.documentElement);
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    // Detect effective theme (explicit override or system preference)
+    const explicit = document.documentElement.getAttribute('data-theme');
+    const isDark = explicit
+      ? explicit === 'dark'
+      : window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     return {
       node: isDark ? 'rgba(253, 251, 247, 0.15)' : 'rgba(26, 23, 20, 0.12)',
@@ -206,25 +208,39 @@ if (contactCanvas && contactSection) {
 
 const themeToggle = document.getElementById('theme-toggle');
 if (themeToggle) {
-  // Check for saved preference or system preference
+  const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+  // Get effective theme (saved preference or system)
+  const getEffectiveTheme = () => {
+    const saved = localStorage.getItem('theme');
+    if (saved) return saved;
+    return darkQuery.matches ? 'dark' : 'light';
+  };
+
+  // Update button text to show opposite of current theme
+  const updateButton = () => {
+    themeToggle.textContent = getEffectiveTheme() === 'dark' ? 'light' : 'dark';
+  };
+
+  // Apply saved preference only (let CSS handle system default)
   const savedTheme = localStorage.getItem('theme');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-  if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-    document.documentElement.setAttribute('data-theme', 'dark');
-    themeToggle.textContent = 'light';
+  if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
   }
+  updateButton();
 
+  // Toggle saves explicit preference
   themeToggle.addEventListener('click', () => {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    if (isDark) {
-      document.documentElement.removeAttribute('data-theme');
-      themeToggle.textContent = 'dark';
-      localStorage.setItem('theme', 'light');
-    } else {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      themeToggle.textContent = 'light';
-      localStorage.setItem('theme', 'dark');
+    const newTheme = getEffectiveTheme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateButton();
+  });
+
+  // Listen for system theme changes (only matters if no saved preference)
+  darkQuery.addEventListener('change', () => {
+    if (!localStorage.getItem('theme')) {
+      updateButton();
     }
   });
 }
