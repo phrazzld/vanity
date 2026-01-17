@@ -19,8 +19,8 @@ class Lattice {
 
     // Config from CSS variables (single source of truth)
     this.gridSize = 100;
-    this.connectionRadius = 250;
-    this.nodeRadius = 3;
+    this.connectionRadius = 200;
+    this.nodeRadius = 2.5;
 
     // State
     this.nodes = [];
@@ -111,8 +111,8 @@ class Lattice {
       : window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     return {
-      node: isDark ? 'rgba(253, 251, 247, 0.15)' : 'rgba(26, 23, 20, 0.12)',
-      line: isDark ? 'rgba(232, 90, 79, 0.7)' : 'rgba(232, 90, 79, 0.5)',
+      node: isDark ? 'rgba(253, 251, 247, 0.12)' : 'rgba(26, 23, 20, 0.08)',
+      line: isDark ? 'rgba(232, 90, 79, 0.4)' : 'rgba(232, 90, 79, 0.25)',
       glow: isDark
     };
   }
@@ -142,10 +142,10 @@ class Lattice {
 
       if (manhattan < this.connectionRadius) {
         const alpha = 1 - manhattan / this.connectionRadius;
-        const lineAlpha = colors.glow ? alpha * 0.8 : alpha * 0.5;
+        const lineAlpha = colors.glow ? alpha * 0.5 : alpha * 0.3;
 
         this.ctx.strokeStyle = `rgba(232, 90, 79, ${lineAlpha})`;
-        this.ctx.lineWidth = 1.5;
+        this.ctx.lineWidth = 1;
 
         // L-shaped path (horizontal then vertical)
         this.ctx.beginPath();
@@ -156,8 +156,8 @@ class Lattice {
 
         // Glow in dark mode
         if (colors.glow) {
-          this.ctx.shadowColor = 'rgba(232, 90, 79, 0.5)';
-          this.ctx.shadowBlur = 8;
+          this.ctx.shadowColor = 'rgba(232, 90, 79, 0.25)';
+          this.ctx.shadowBlur = 4;
           this.ctx.stroke();
           this.ctx.shadowBlur = 0;
         }
