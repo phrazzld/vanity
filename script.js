@@ -17,10 +17,11 @@ class Lattice {
     this.ctx = canvas.getContext('2d');
     this.container = container;
 
-    // Config from CSS variables (single source of truth)
-    this.gridSize = 100;
-    this.connectionRadius = 200;
-    this.nodeRadius = 2.5;
+    // Canvas constants — read from CSS (single source of truth).
+    const styles = getComputedStyle(canvas);
+    this.gridSize = parseFloat(styles.getPropertyValue('--grid-size-px')) || 100;
+    this.connectionRadius = parseFloat(styles.getPropertyValue('--connection-radius')) || 200;
+    this.nodeRadius = parseFloat(styles.getPropertyValue('--node-radius')) || 2;
 
     // State
     this.nodes = [];
@@ -104,16 +105,15 @@ class Lattice {
   }
 
   getColors() {
-    // Detect effective theme (explicit override or system preference)
-    const explicit = document.documentElement.getAttribute('data-theme');
-    const isDark = explicit
-      ? explicit === 'dark'
-      : window.matchMedia('(prefers-color-scheme: dark)').matches;
-
+    // Re-read each frame so theme changes take effect without restart.
+    const styles = getComputedStyle(this.canvas);
     return {
-      node: isDark ? 'rgba(253, 251, 247, 0.12)' : 'rgba(26, 23, 20, 0.08)',
-      line: isDark ? 'rgba(232, 90, 79, 0.4)' : 'rgba(232, 90, 79, 0.25)',
-      glow: isDark
+      node: styles.getPropertyValue('--node-color').trim(),
+      accentRgb: styles.getPropertyValue('--accent-rgb').trim(),
+      lineAlphaMax: parseFloat(styles.getPropertyValue('--lattice-line-alpha-max')) || 0.3,
+      crosshairAlpha: parseFloat(styles.getPropertyValue('--lattice-crosshair-alpha')) || 0.25,
+      glow: styles.getPropertyValue('--lattice-glow').trim() === '1',
+      glowAlpha: parseFloat(styles.getPropertyValue('--lattice-glow-alpha')) || 0.25,
     };
   }
 
@@ -142,9 +142,9 @@ class Lattice {
 
       if (manhattan < this.connectionRadius) {
         const alpha = 1 - manhattan / this.connectionRadius;
-        const lineAlpha = colors.glow ? alpha * 0.5 : alpha * 0.3;
+        const lineAlpha = alpha * colors.lineAlphaMax;
 
-        this.ctx.strokeStyle = `rgba(232, 90, 79, ${lineAlpha})`;
+        this.ctx.strokeStyle = `rgba(${colors.accentRgb}, ${lineAlpha})`;
         this.ctx.lineWidth = 1;
 
         // L-shaped path (horizontal then vertical)
@@ -156,7 +156,7 @@ class Lattice {
 
         // Glow in dark mode
         if (colors.glow) {
-          this.ctx.shadowColor = 'rgba(232, 90, 79, 0.25)';
+          this.ctx.shadowColor = `rgba(${colors.accentRgb}, ${colors.glowAlpha})`;
           this.ctx.shadowBlur = 4;
           this.ctx.stroke();
           this.ctx.shadowBlur = 0;
@@ -165,7 +165,7 @@ class Lattice {
     });
 
     // Crosshair
-    this.ctx.strokeStyle = colors.line;
+    this.ctx.strokeStyle = `rgba(${colors.accentRgb}, ${colors.crosshairAlpha})`;
     this.ctx.lineWidth = 1;
     this.ctx.setLineDash([5, 5]);
     this.ctx.beginPath();

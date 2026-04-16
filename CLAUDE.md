@@ -27,9 +27,11 @@ Three files, single responsibility each:
 ## Design System
 
 CSS variables defined in `:root` and overridden in `[data-theme="dark"]`:
-- Colors: `--bg`, `--bg-alt`, `--text`, `--text-dim`, `--accent`, `--accent-hover`, `--border`
-- Lattice tokens: `--grid-size`, `--grid-size-px`, `--node-radius`, `--node-color`, `--line-color`, `--connection-radius`
+- Colors: `--bg`, `--bg-alt`, `--text`, `--text-dim`, `--accent`, `--accent-rgb`, `--accent-hover`, `--border`
+- Lattice tokens (consumed by CSS and by `script.js` via `getComputedStyle`): `--grid-size-px`, `--node-radius`, `--node-color`, `--connection-radius`, `--lattice-line-alpha-max`, `--lattice-crosshair-alpha`, `--lattice-glow`, `--lattice-glow-alpha`
 - Typography: Cormorant Garamond (display) + Crimson Pro (body), loaded from Google Fonts in `index.html`
+
+CSS is the single source of truth for all visual constants. `script.js` reads tokens at runtime; no hardcoded color values. To change the lattice color, edit `--accent` / `--accent-rgb`; to change lattice behavior, edit the `--lattice-*` tokens. `.featured::before`, `.project::before`, `#services::before`, and the `.grid-bg` utility share one radial-gradient pattern — consumers scope `--grid-size-px` and `--node-radius` locally for size variants.
 
 ## Deploy
 

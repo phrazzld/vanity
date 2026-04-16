@@ -15,17 +15,19 @@
   --text: #1A1714;
   --text-dim: #6B635A;
   --accent: #E85A4F;
+  --accent-rgb: 232, 90, 79;
   --accent-hover: #D14940;
   --border: #E8E2D9;
 
-  /* Lattice system - single source of truth */
-  --grid-size: 100;
+  /* Lattice system — single source of truth, read by script.js via getComputedStyle */
   --grid-size-px: 100px;
   --node-radius: 2px;
   --node-color: rgba(26, 23, 20, 0.12);
-  --node-color-solid: #1A1714;
-  --line-color: rgba(232, 90, 79, 0.5);
-  --connection-radius: 250;
+  --connection-radius: 200;
+  --lattice-line-alpha-max: 0.3;
+  --lattice-crosshair-alpha: 0.25;
+  --lattice-glow: 0;
+  --lattice-glow-alpha: 0.25;
 }
 
 /* System preference (no flash) */
@@ -37,8 +39,9 @@
     --text-dim: #A09A93;
     --border: #3D3835;
     --node-color: rgba(253, 251, 247, 0.15);
-    --node-color-solid: #FDFBF7;
-    --line-color: rgba(232, 90, 79, 0.7);
+    --lattice-line-alpha-max: 0.5;
+    --lattice-crosshair-alpha: 0.4;
+    --lattice-glow: 1;
   }
 }
 
@@ -50,8 +53,9 @@
   --text-dim: #6B635A;
   --border: #E8E2D9;
   --node-color: rgba(26, 23, 20, 0.12);
-  --node-color-solid: #1A1714;
-  --line-color: rgba(232, 90, 79, 0.5);
+  --lattice-line-alpha-max: 0.3;
+  --lattice-crosshair-alpha: 0.25;
+  --lattice-glow: 0;
 }
 
 [data-theme="dark"] {
@@ -61,8 +65,9 @@
   --text-dim: #A09A93;
   --border: #3D3835;
   --node-color: rgba(253, 251, 247, 0.15);
-  --node-color-solid: #FDFBF7;
-  --line-color: rgba(232, 90, 79, 0.7);
+  --lattice-line-alpha-max: 0.5;
+  --lattice-crosshair-alpha: 0.4;
+  --lattice-glow: 1;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -89,11 +94,15 @@ body {
 }
 
 /* ==========================================================================
-   Grid Background - CSS-only for content sections
-   Single radial gradient repeated, matches canvas grid exactly
+   Grid Background - single reusable pattern
+   Consumers scope --grid-size-px / --node-radius locally for size variants.
+   Matches canvas lattice exactly.
    ========================================================================== */
 
-.grid-bg {
+.grid-bg,
+.featured::before,
+.project::before,
+#services::before {
   background-image: radial-gradient(circle at center, var(--node-color) var(--node-radius), transparent var(--node-radius));
   background-size: var(--grid-size-px) var(--grid-size-px);
   background-position: calc(var(--grid-size-px) / 2) calc(var(--grid-size-px) / 2);
@@ -382,9 +391,8 @@ section {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at center, var(--node-color) 1px, transparent 1px);
-  background-size: 50px 50px;
-  background-position: 25px 25px;
+  --grid-size-px: 50px;
+  --node-radius: 1px;
   opacity: 0;
   transition: opacity 0.5s ease;
   pointer-events: none;
@@ -468,14 +476,13 @@ section {
   color: inherit;
 }
 
-/* Dotted background on hover - same as featured */
+/* Dotted background on hover — tighter grid for small cards */
 .project::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at center, var(--node-color) 1px, transparent 1px);
-  background-size: 30px 30px;
-  background-position: 15px 15px;
+  --grid-size-px: 30px;
+  --node-radius: 1px;
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: none;
@@ -551,9 +558,6 @@ section {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at center, var(--node-color) var(--node-radius), transparent var(--node-radius));
-  background-size: var(--grid-size-px) var(--grid-size-px);
-  background-position: calc(var(--grid-size-px) / 2) calc(var(--grid-size-px) / 2);
   opacity: 0.5;
   pointer-events: none;
 }
