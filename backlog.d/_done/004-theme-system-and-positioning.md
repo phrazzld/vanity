@@ -1,7 +1,7 @@
 # Theme system (Editorial / Contractor / Lattice) + Agent Architect positioning
 
 Priority: high
-Status: ready
+Status: shipped
 Blocked-by: 003-projects-data-driven
 Estimate: L
 
@@ -68,3 +68,10 @@ Replace the current dark/light toggle with a three-theme system (Editorial, Cont
 - Does the projects grid reorder per theme, or only restyle? Start with restyle only; reorder via `emphasis` field later if needed.
 
 This is the demonstration piece — if the site *looks* like three sites but *is* one CSS file flipping tokens, it proves the design system works and doubles as a portfolio artifact in its own right.
+
+## What Was Built (cycle 01KPBZS3DH603ZAWVE6714YCKW)
+- Added a three-theme system driven by `[data-theme="editorial"]`, `[data-theme="contractor"]`, and `[data-theme="lattice"]` selectors in `styles.css`, with each theme changing palette, typography, and a distinctive visual treatment.
+- Added `themes.json` and rewired `script.js` so hero, positioning, and contact copy switch with the selected theme instead of staying generic.
+- Replaced the old dark/light button with a segmented theme picker in the nav, persisted selection to `localStorage`, and honored `?theme=` overrides before saved preference.
+- Kept the lattice canvas token-driven so theme changes recolor the canvas through CSS variables instead of hardcoded JS values.
+- Verified locally in Chrome that Editorial, Contractor, and Lattice all render distinctly, and verified production serves the shipped assets at `https://www.phaedrus.io/`, including `https://www.phaedrus.io/themes.json` and forced-theme URLs such as `/?theme=editorial`.
