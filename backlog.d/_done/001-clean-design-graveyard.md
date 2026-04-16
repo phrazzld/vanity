@@ -1,7 +1,7 @@
 # Clean design graveyard, fix stale CLAUDE.md
 
 Priority: high
-Status: ready
+Status: shipped
 Estimate: S
 
 ## Goal
@@ -25,3 +25,7 @@ Context from grooming investigation (2026-04-15):
 - CLAUDE.md was written when fonts were Playfair/Inter/JetBrains Mono; current `index.html:10` loads Cormorant Garamond + Crimson Pro.
 
 This unblocks item 002 (design tokens) and item 004 (theme system) by removing mental clutter — every future redesign keeps accreting these if we don't reset now.
+
+## What Was Built (cycle 01KPBNJXP8ZNPSK1P5VQDJEASH)
+- Branch: flywheel/001-clean-design-graveyard
+- Evidence: backlog.d/_cycles/01KPBNJXP8ZNPSK1P5VQDJEASH/evidence/
