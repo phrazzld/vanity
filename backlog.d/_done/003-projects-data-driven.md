@@ -1,7 +1,7 @@
 # Extract projects to JSON + render from data
 
 Priority: medium
-Status: ready
+Status: shipped
 Estimate: S
 
 ## Goal
@@ -30,3 +30,9 @@ Forward-looking field candidates (don't add until needed):
 - `year`, `status` — if the site ever shows vintage or active/archived
 
 Prereq for item 004 if themes re-order or re-style the grid — easier to iterate against data than against 18 hand-edited blocks.
+
+## What Was Built (cycle 01KPBYGKNT41G4VS81PT2BYH8Z)
+- `projects.json` now holds all 18 project entries as plain data with `name`, `url`, and `blurb`.
+- `index.html` now ships a single `#projects-grid` container plus a clear `<noscript>` fallback instead of 18 hand-edited project cards.
+- `script.js` now fetches `./projects.json`, renders cards with `document.createElement`, and registers each rendered card with the existing reveal observer.
+- Local verification passed with headless Chrome: HTTP mode rendered 18 cards from JSON, and `file://` mode showed the explicit fallback message instead of a silent empty grid.
