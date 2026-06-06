@@ -7,15 +7,13 @@
   <meta name="description" content="Phaedrus builds agent systems, operator tools, and the infrastructure around them.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <main class="hero" aria-labelledby="hero-title">
-    <canvas class="field-canvas" id="field-canvas" aria-hidden="true"></canvas>
-
     <header class="hero-header">
-      <a class="brand" href="#">phaedrus</a>
+      <a class="brand" href="#">PHAEDRUS</a>
       <nav class="view-tabs" aria-label="Page views">
         <button class="view-tab is-active" type="button" data-view="work" aria-pressed="true">Work</button>
         <button class="view-tab" type="button" data-view="notes" aria-pressed="false">Notes</button>
@@ -25,11 +23,23 @@
 
     <section class="hero-grid">
       <div class="hero-copy">
+        <div class="meta-row" aria-label="System metadata">
+          <span>OUTPUT <strong id="view-output">096</strong></span>
+          <span>SEED: <strong id="view-seed">3573860127</strong></span>
+        </div>
         <p class="eyebrow" id="view-kicker">Independent systems engineering</p>
         <h1 id="hero-title">Agents, tools, infrastructure.</h1>
         <p class="lede" id="view-body">I build the operating layer around agents: harnesses, review loops, local tools, and prototypes that turn fuzzy ideas into running systems.</p>
         <div class="actions">
           <a class="primary-action" id="view-action" href="mailto:phaedrus.raznikov@pm.me">Start a thread</a>
+        </div>
+      </div>
+
+      <div class="orb-stage" aria-hidden="true">
+        <div class="orb">
+          <span></span>
+          <span></span>
+          <span></span>
         </div>
       </div>
 
@@ -39,6 +49,7 @@
           <span>01</span>
         </div>
         <h2 id="panel-title">Small surface. Real systems.</h2>
+        <pre class="code-block" id="view-code">$ phaedrus inspect --work</pre>
         <ul class="panel-list" id="panel-list">
           <li>Agent architecture and tool boundaries</li>
           <li>Evaluation harnesses and operator review</li>

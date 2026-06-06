@@ -3,44 +3,53 @@
   "views": {
     "work": {
       "kicker": "Independent systems engineering",
-      "title": "Agents, tools, infrastructure.",
-      "body": "I build the operating layer around agents: harnesses, review loops, local tools, and prototypes that turn fuzzy ideas into running systems.",
+      "title": "Systems that learn without becoming vague.",
+      "body": "I build the operating layer around agents: memory, harnesses, review loops, and small interfaces that make autonomous work inspectable.",
       "action": "Start a thread",
       "href": "mailto:phaedrus.raznikov@pm.me",
-      "panelLabel": "Current mode",
-      "panelTitle": "Small surface. Real systems.",
+      "output": "096",
+      "seed": "3573860127",
+      "code": "$ phaedrus inspect --work",
+      "panelLabel": "Current node",
+      "panelTitle": "Small surface. Deep internals.",
       "panelItems": [
-        "Agent architecture and tool boundaries",
-        "Evaluation harnesses and operator review",
-        "Prototype paths that can survive cleanup"
+        "memory and context that survive sessions",
+        "tool boundaries with explicit authority",
+        "review loops for work that should not run blind"
       ]
     },
     "notes": {
       "kicker": "Working notes",
-      "title": "Build the system before the story gets too clean.",
-      "body": "The useful work usually starts rough: a stubborn workflow, a fragile agent loop, a prototype with one honest question inside it.",
+      "title": "Build the system before the myth gets clean.",
+      "body": "Useful work starts rough: a stubborn workflow, a fragile loop, a prototype with one honest question and enough instrumentation to answer it.",
       "action": "Read GitHub",
       "href": "https://github.com/phrazzld",
+      "output": "288",
+      "seed": "2226809351",
+      "code": "$ notes query --truthy --local",
       "panelLabel": "Bias",
       "panelTitle": "Less theater. More operating truth.",
       "panelItems": [
-        "Prefer small interfaces with deep internals",
-        "Keep proofs inspectable and claims modest",
-        "Let working software clarify the taste"
+        "prefer small interfaces with deep internals",
+        "keep proofs inspectable and claims modest",
+        "let running software clarify the taste"
       ]
     },
     "contact": {
       "kicker": "Contact",
-      "title": "Bring the sharp edge.",
-      "body": "Send the workflow, the failure mode, and the part that is hard to explain. I will tell you what I would build first.",
+      "title": "Bring the edge case.",
+      "body": "Send the workflow, the failure mode, and the part that refuses to become a product brief. I will tell you what I would build first.",
       "action": "Email Phaedrus",
       "href": "mailto:phaedrus.raznikov@pm.me",
+      "output": "317",
+      "seed": "3396188657",
+      "code": "$ mail compose --constraint",
       "panelLabel": "Fit",
       "panelTitle": "Good briefs have a live constraint.",
       "panelItems": [
-        "Ambiguous agent product surface",
-        "Operator tooling or review workflow",
-        "Prototype that needs engineering taste"
+        "ambiguous agent product surface",
+        "operator tooling or review workflow",
+        "prototype that needs engineering taste"
       ]
     }
   }
