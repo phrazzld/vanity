@@ -1,10 +1,12 @@
 :root {
-  --paper: #f1ead8;
-  --ink: #11110e;
-  --muted: #675f4d;
-  --line: rgba(17, 17, 14, 0.28);
-  --signal: #00e5ad;
+  --paper: #f5efe4;
+  --paper-shadow: #e3d7c6;
+  --ink: #17130e;
+  --muted: #766b59;
+  --line: rgba(23, 19, 14, 0.22);
+  --signal: #19c6a2;
   --font-display: 'Space Grotesk', sans-serif;
+  --font-serif: 'Playfair Display', serif;
   --font-mono: 'IBM Plex Mono', monospace;
 }
 
@@ -22,10 +24,11 @@ body {
 body {
   color: var(--ink);
   background:
-    linear-gradient(rgba(17, 17, 14, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(17, 17, 14, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 18% 18%, rgba(25, 198, 162, 0.08), transparent 18rem),
+    linear-gradient(rgba(23, 19, 14, 0.032) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23, 19, 14, 0.026) 1px, transparent 1px),
     var(--paper);
-  background-size: 36px 36px;
+  background-size: auto, 40px 40px, 40px 40px;
   font-family: var(--font-display);
   -webkit-font-smoothing: antialiased;
 }
@@ -42,18 +45,19 @@ body::after {
 .hero {
   display: grid;
   min-height: 100svh;
-  place-items: center;
+  align-items: center;
   padding: clamp(1rem, 4vw, 3rem);
 }
 
 .hero-card {
   position: relative;
   z-index: 1;
-  width: min(100%, 62rem);
+  width: min(100%, 68rem);
   border-top: 1px solid var(--ink);
   border-bottom: 1px solid var(--ink);
   padding-block: clamp(2rem, 7vw, 5rem);
-  text-align: center;
+  margin-inline: auto;
+  text-align: left;
 }
 
 .hero-card::before {
@@ -61,10 +65,10 @@ body::after {
   display: block;
   width: 0.82rem;
   height: 0.82rem;
-  margin: 0 auto clamp(1rem, 2vw, 1.6rem);
+  margin: 0 0 clamp(1rem, 2vw, 1.6rem);
   border: 1px solid var(--ink);
   background: var(--signal);
-  box-shadow: 0.26rem 0.26rem 0 var(--ink);
+  box-shadow: 0.26rem 0.26rem 0 var(--paper-shadow);
 }
 
 .eyebrow {
@@ -78,18 +82,18 @@ body::after {
 
 h1 {
   margin-top: clamp(0.8rem, 2vw, 1.3rem);
-  font-size: clamp(4.2rem, 15vw, 12rem);
-  font-weight: 700;
-  line-height: 0.82;
-  letter-spacing: -0.055em;
-  text-transform: uppercase;
+  font-family: var(--font-serif);
+  font-size: clamp(4.3rem, 14vw, 12rem);
+  font-weight: 600;
+  line-height: 0.88;
+  letter-spacing: 0;
 }
 
 .role {
   margin-top: clamp(1.2rem, 2.6vw, 2rem);
   color: var(--muted);
-  font-size: clamp(1.15rem, 3vw, 2rem);
-  line-height: 1.2;
+  font-size: clamp(1.1rem, 2.5vw, 1.7rem);
+  line-height: 1.25;
 }
 
 .role a {
