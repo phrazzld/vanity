@@ -1016,18 +1016,29 @@ section {
 }
 
 @media (max-width: 560px) {
+  .site-nav {
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+  }
+
   .theme-picker {
     width: 100%;
     justify-content: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
 
   .theme-option {
-    flex: 1 1 8.5rem;
+    min-width: 0;
+    flex: 1 1 0;
+    padding: 0.5rem 0.35rem;
+    font-size: 0.72rem;
   }
 
-  .hero,
   section {
     padding-top: clamp(4.5rem, 14vw, 6rem);
+  }
+
+  .hero {
+    padding-top: calc(11rem + clamp(2.25rem, 8vw, 3rem));
   }
 }
