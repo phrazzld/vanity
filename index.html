@@ -1,155 +1,52 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="lattice">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Phaedrus</title>
-  <meta name="description" content="Independent systems engineering. I build agents, the tools to build agents, and the tools to build the tools.">
-  <script>
-    (() => {
-      const key = 'phaedrus-theme';
-      const validThemes = ['editorial', 'contractor', 'lattice'];
-      const params = new URLSearchParams(window.location.search);
-      const forcedTheme = params.get('theme');
-      const savedTheme = window.localStorage.getItem(key);
-      const theme = validThemes.includes(forcedTheme)
-        ? forcedTheme
-        : validThemes.includes(savedTheme)
-          ? savedTheme
-          : 'lattice';
-      document.documentElement.setAttribute('data-theme', theme);
-    })();
-  </script>
+  <meta name="description" content="Phaedrus builds agent systems, operator tools, and the infrastructure around them.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Crimson+Pro:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="scroll-progress" id="scroll-progress"></div>
+  <main class="hero" aria-labelledby="hero-title">
+    <canvas class="field-canvas" id="field-canvas" aria-hidden="true"></canvas>
 
-  <header class="site-header">
-    <nav class="site-nav">
-      <a href="#" class="logo">phaedrus</a>
-      <div class="nav-links">
-        <a href="#projects">projects</a>
-        <a href="#services" id="services-nav-label">map</a>
-        <a href="#contact">contact</a>
-      </div>
-      <div class="theme-picker" role="group" aria-label="Choose site theme">
-        <button type="button" class="theme-option" data-set-theme="editorial" aria-pressed="false">Editorial</button>
-        <button type="button" class="theme-option" data-set-theme="contractor" aria-pressed="false">Contractor</button>
-        <button type="button" class="theme-option" data-set-theme="lattice" aria-pressed="true">Lattice</button>
-      </div>
-    </nav>
-  </header>
+    <header class="hero-header">
+      <a class="brand" href="#">phaedrus</a>
+      <nav class="view-tabs" aria-label="Page views">
+        <button class="view-tab is-active" type="button" data-view="work" aria-pressed="true">Work</button>
+        <button class="view-tab" type="button" data-view="notes" aria-pressed="false">Notes</button>
+        <button class="view-tab" type="button" data-view="contact" aria-pressed="false">Contact</button>
+      </nav>
+    </header>
 
-  <main>
-    <section class="hero">
-      <canvas class="lattice-canvas" id="hero-lattice"></canvas>
-      <div class="hero-shell">
-        <div class="hero-content">
-          <div class="hero-copy">
-            <p class="hero-kicker reveal" id="hero-kicker">Lattice mode / agent architect</p>
-            <h1 class="hero-title" id="hero-title">I build agents,<br>their infrastructure,<br>and the tools around them.</h1>
-            <p class="hero-sub reveal" id="hero-sub">Independent systems engineering for teams that need working prototypes, reliable harnesses, and software that survives first contact.</p>
-            <div class="hero-actions reveal">
-              <a href="#contact" class="btn" id="hero-cta">Start a build</a>
-            </div>
-          </div>
-
-          <aside class="hero-note reveal">
-            <p class="hero-note-label" id="hero-note-label">Operating mode</p>
-            <p class="hero-note-body" id="hero-note">Rapid prototyping when the idea is still soft. Hard engineering when it needs to hold.</p>
-            <ul class="hero-points" id="hero-points">
-              <li>Multi-agent architecture and evaluation</li>
-              <li>Tooling, harnesses, and operator loops</li>
-              <li>From prototype to production path</li>
-            </ul>
-          </aside>
+    <section class="hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow" id="view-kicker">Independent systems engineering</p>
+        <h1 id="hero-title">Agents, tools, infrastructure.</h1>
+        <p class="lede" id="view-body">I build the operating layer around agents: harnesses, review loops, local tools, and prototypes that turn fuzzy ideas into running systems.</p>
+        <div class="actions">
+          <a class="primary-action" id="view-action" href="mailto:phaedrus.raznikov@pm.me">Start a thread</a>
         </div>
       </div>
-    </section>
 
-    <section id="projects" class="band">
-      <div class="section-shell">
-        <div class="section-heading">
-          <p class="section-kicker reveal">Selected work</p>
-          <h2 class="section-title reveal">Systems, tools, and products with teeth.</h2>
+      <aside class="panel" aria-live="polite">
+        <div class="panel-topline">
+          <span id="panel-label">Current mode</span>
+          <span>01</span>
         </div>
-
-        <a href="https://www.mistystep.io/" target="_blank" rel="noopener" class="featured reveal">
-          <div class="featured-content">
-            <p class="featured-label">Studio</p>
-            <h3>misty step</h3>
-            <p>Software studio for teams that need prototypes, agent tooling, and full-stack delivery without ceremony.</p>
-            <span class="featured-link">Visit the studio</span>
-          </div>
-          <svg class="featured-logo" viewBox="0 0 36 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <circle cx="8" cy="8" r="8" fill="currentColor" fill-opacity="0.15" />
-            <circle cx="17.6" cy="8" r="8" fill="currentColor" fill-opacity="0.35" />
-            <circle cx="27.2" cy="8" r="8" fill="currentColor" fill-opacity="0.6" />
-          </svg>
-        </a>
-
-        <div class="projects-grid" id="projects-grid">
-          <p class="projects-status" id="projects-status">Loading project archive...</p>
-        </div>
-        <noscript>
-          <p class="projects-fallback">Project archive requires JavaScript. The featured studio link above still works without it.</p>
-        </noscript>
-      </div>
-    </section>
-
-    <section id="services">
-      <div class="section-shell section-layout">
-        <div class="section-heading section-heading-tight">
-          <p class="section-kicker reveal" id="services-kicker">Capability map</p>
-          <h2 class="section-title reveal" id="services-title">Agent architect. Independent systems engineering.</h2>
-          <p class="section-intro reveal" id="services-intro">I work where product, infrastructure, and agent behavior meet. The point is not a proof of concept. The point is a system with a clear shape and a short path to shipping.</p>
-        </div>
-
-        <div class="positioning-grid">
-          <div class="positioning-panel reveal">
-            <ol class="positioning-list" id="services-list">
-              <li>
-                <h3>Agent systems</h3>
-                <p>Multi-agent workflows, tool surfaces, evaluation, and control loops.</p>
-              </li>
-              <li>
-                <h3>Tooling and harnesses</h3>
-                <p>CLIs, operator consoles, review automation, and the infrastructure around agents.</p>
-              </li>
-              <li>
-                <h3>Rapid prototyping</h3>
-                <p>Tight cycles from zero to credible software, then the cleanup that keeps it from collapsing.</p>
-              </li>
-            </ol>
-          </div>
-
-          <blockquote class="positioning-quote reveal">
-            <p id="services-quote">I build agents, the tools to build agents, and the tools to build the tools.</p>
-            <cite id="services-quote-source">Current thesis</cite>
-          </blockquote>
-        </div>
-      </div>
-    </section>
-
-    <section id="contact" class="band">
-      <canvas class="lattice-canvas" id="contact-lattice"></canvas>
-      <div class="section-shell contact-shell">
-        <p class="section-kicker reveal">Contact</p>
-        <h2 class="section-title reveal" id="contact-title">Bring me the sharp edge</h2>
-        <p class="contact-intro reveal" id="contact-intro">New product, stubborn legacy system, agent infra that needs discipline, or a prototype that has to exist next week. That is the lane.</p>
-        <a href="mailto:phaedrus.raznikov@pm.me" class="btn reveal" id="contact-cta">Say hello</a>
-      </div>
+        <h2 id="panel-title">Small surface. Real systems.</h2>
+        <ul class="panel-list" id="panel-list">
+          <li>Agent architecture and tool boundaries</li>
+          <li>Evaluation harnesses and operator review</li>
+          <li>Prototype paths that can survive cleanup</li>
+        </ul>
+      </aside>
     </section>
   </main>
-
-  <footer class="site-footer">
-    <p>&copy; 2026 Phaedrus</p>
-    <a href="https://github.com/phrazzld" target="_blank" rel="noopener">GitHub</a>
-  </footer>
 
   <script src="script.js"></script>
 </body>
