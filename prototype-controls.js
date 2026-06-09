@@ -51,17 +51,17 @@ const defaults = {
   titleScale: 6,
   titleLeading: 1,
   roleScale: 1.51,
-  frameWidth: 100,
-  framePadding: 8.5,
-  shellPadding: 7,
+  frameWidth: 96,
+  framePadding: 5.2,
+  shellPadding: 3,
   gridSize: 16,
-  texture: 0.25,
-  wash: 7,
+  texture: 0.28,
+  wash: 5,
   markSize: 1.12,
   markShadow: 0.28,
 };
 
-const storageKey = "vanity.prototype-controls.v2";
+const storageKey = "vanity.prototype-controls.v3";
 
 function isPrototypeHost() {
   const params = new URLSearchParams(window.location.search);
