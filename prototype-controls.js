@@ -48,20 +48,20 @@ const palettes = [
 
 const defaults = {
   paletteId: "paper",
-  titleScale: 12,
-  titleLeading: 0.88,
-  roleScale: 1.7,
-  frameWidth: 68,
-  framePadding: 5,
-  shellPadding: 3,
-  gridSize: 40,
-  texture: 0.14,
-  wash: 8,
-  markSize: 0.82,
-  markShadow: 0.26,
+  titleScale: 6,
+  titleLeading: 1,
+  roleScale: 1.51,
+  frameWidth: 100,
+  framePadding: 8.5,
+  shellPadding: 7,
+  gridSize: 16,
+  texture: 0.25,
+  wash: 7,
+  markSize: 1.12,
+  markShadow: 0.28,
 };
 
-const storageKey = "vanity.prototype-controls.v1";
+const storageKey = "vanity.prototype-controls.v2";
 
 function isPrototypeHost() {
   const params = new URLSearchParams(window.location.search);
