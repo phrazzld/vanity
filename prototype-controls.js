@@ -61,7 +61,12 @@ const defaults = {
   markShadow: 0.28,
 };
 
-const storageKey = "vanity.prototype-controls.v3";
+const legacyStorageKeys = [
+  "vanity.prototype-controls.v1",
+  "vanity.prototype-controls.v2",
+  "vanity.prototype-controls.v3",
+];
+const storageKey = "vanity.prototype-controls.v4";
 
 function isPrototypeHost() {
   const params = new URLSearchParams(window.location.search);
@@ -79,6 +84,8 @@ function rgba(hex, alpha) {
 
 function readState() {
   try {
+    legacyStorageKeys.forEach((key) => window.localStorage.removeItem(key));
+
     return {
       ...defaults,
       ...JSON.parse(window.localStorage.getItem(storageKey) || "{}"),
@@ -145,6 +152,7 @@ function update(key, value) {
 
 function reset() {
   state = { ...defaults };
+  legacyStorageKeys.forEach((key) => window.localStorage.removeItem(key));
   window.localStorage.removeItem(storageKey);
   applyState();
   syncPanel();
