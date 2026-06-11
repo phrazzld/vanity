@@ -4,31 +4,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Personal site for phaedrus.io. One file: `index.html`. No build step, no
-JavaScript, no runtime dependencies beyond two stylesheet links (Geist
-fonts, design system). Open `index.html` or serve the directory; what you
-see is the site.
+Personal site for phaedrus.io. One file: `index.html`. One full-viewport
+screen, no scrolling. The only JavaScript is the small light/dark toggle
+(system default, persisted as `ae-mode` in localStorage).
 
 ## Design Law
 
 The design system is [`@misty-step/aesthetic`](https://github.com/misty-step/aesthetic),
 imported via jsdelivr pinned to a release tag in `index.html`. Never inline
-or fork its styles here; to change the system, change the package and bump
-the pinned tag.
+or fork its styles here; change the package, tag a release, bump the pin.
 
-Every change to `index.html` must stay inside the law:
+Rules for this site:
 
-- One font size everywhere. The headline is heavier, never larger.
-- Hierarchy only via the kit registers: `.ae-name`, `.ae-h`, `.ae-item`,
-  `.ae-dim` (three inks by three weights).
-- Exactly one accent instance per viewport (`.ae-accent`); on this site
-  it is the contact link. Do not add a second.
-- Zero animation. The kit kills all transitions and animations globally.
-- One column (`.ae-page`, max 38em). No rules, no cards, no boxes.
-- Real content only: no fabricated metrics, no em-dashes in copy.
-
-Dark mode follows `prefers-color-scheme`; there is no toggle and no
-client-side script.
+- The page is one `.ae-screen`: everything fits the viewport, desktop and
+  mobile. No scrolling.
+- Content stays tight: name, one-line bio, misty step link, github,
+  email. Do not grow a projects list here; that lives on misty step.
+- Exactly one accent instance (`.ae-accent`): the misty step link.
+- One font size; hierarchy via the registers (`.ae-name`, `.ae-item`,
+  `.ae-dim`). Motion only as the kit's built-in feedback.
+- No meta copy about the design itself. No fabricated claims, no
+  em-dashes.
 
 ## Deploy
 

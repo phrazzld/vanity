@@ -7,57 +7,51 @@
   <meta name="description" content="Independent systems engineering. I build agents, the tools to build agents, and the tools to build the tools.">
   <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fcfcfc">
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#121212">
+  <script>
+    (() => {
+      const saved = localStorage.getItem('ae-mode');
+      if (saved === 'dark' || saved === 'light') {
+        document.documentElement.dataset.aeMode = saved;
+      }
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/misty-step/aesthetic@v1.0.0/aesthetic.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/misty-step/aesthetic@v2.0.0/aesthetic.css">
 </head>
 <body>
-  <main class="ae-page">
-    <h1 class="ae-name">PHAEDRUS</h1>
-
-    <p class="ae-lede">I build agents, the tools to build agents, and the tools
-    to build the tools. Independent systems engineering for teams that need
-    working prototypes, reliable harnesses, and software that survives first
-    contact. Everything on this page is real and most of it is running.</p>
-
-    <section class="ae-group">
-      <h2 class="ae-h">studio</h2>
-      <p><a class="ae-item" href="https://www.mistystep.io/">misty step</a>
-        <span class="ae-dim">a one-person engineering firm for agentic systems</span></p>
-    </section>
-
-    <section class="ae-group">
-      <h2 class="ae-h">work</h2>
-      <p><a class="ae-item" href="https://github.com/misty-step/cerberus">cerberus</a> <span class="ae-dim">multi-agent code review council; five parallel agents gate every PR</span></p>
-      <p><a class="ae-item" href="https://github.com/misty-step/thinktank">thinktank</a> <span class="ae-dim">programmable cognition; route prompts across models in one CLI</span></p>
-      <p><a class="ae-item" href="https://github.com/phrazzld/agent-skills">agent-skills</a> <span class="ae-dim">portable skill library for AI coding agents</span></p>
-      <p><a class="ae-item" href="https://github.com/misty-step/bitterblossom">bitterblossom</a> <span class="ae-dim">agent fleet orchestration on Fly.io</span></p>
-      <p><a class="ae-item" href="https://github.com/misty-step/canary">canary</a> <span class="ae-dim">self-hosted observability for agent-driven infrastructure</span></p>
-      <p><a class="ae-item" href="https://www.heartbeat.engineering/">heartbeat</a> <span class="ae-dim">set-and-forget uptime monitoring with status pages</span></p>
-      <p><a class="ae-item" href="https://www.gitpulse.app/">gitpulse</a> <span class="ae-dim">GitHub analytics with AI summaries; every claim cited</span></p>
-      <p><a class="ae-item" href="https://github.com/misty-step/vox">vox</a> <span class="ae-dim">invisible macOS editor; hotkey dictation to clean text</span></p>
-      <p><a class="ae-item" href="https://timeismoney-splash.vercel.app/">time is money</a> <span class="ae-dim">converts prices into hours of work</span></p>
-      <p><a class="ae-item" href="https://www.scry.study/">scry</a> <span class="ae-dim">paste anything, get flashcards; spaced repetition</span></p>
-      <p><a class="ae-item" href="https://www.volume.fitness/">volume</a> <span class="ae-dim">workout tracking without the cruft</span></p>
-      <p><a class="ae-item" href="https://github.com/misty-step/conviction">conviction</a> <span class="ae-dim">thesis-based portfolio tracker; beliefs, not just assets</span></p>
-      <p><a class="ae-item" href="https://www.chrondle.app/">chrondle</a> <span class="ae-dim">the history nerd's Wordle; six events, one year</span></p>
-      <p><a class="ae-item" href="https://www.caesarinayear.com/">caesar in a year</a> <span class="ae-dim">daily Latin micro-lessons, zero to Gallic Wars</span></p>
-      <p><a class="ae-item" href="https://www.bibliomnomnom.com/">bibliomnomnom</a> <span class="ae-dim">private-first book tracking; no algorithms</span></p>
-      <p><a class="ae-item" href="https://github.com/misty-step/sploot">sploot</a> <span class="ae-dim">browser extension for effortless tab management</span></p>
-      <p><a class="ae-item" href="https://vibe-machine-eight.vercel.app/">vibe machine</a> <span class="ae-dim">audio-reactive visuals; drop a track, zone out</span></p>
-      <p><a class="ae-item" href="https://linejam.vercel.app/">linejam</a> <span class="ae-dim">pass-the-poem party game for friends</span></p>
-    </section>
-
-    <section class="ae-group">
-      <h2 class="ae-h">contact</h2>
-      <p><a class="ae-accent" href="mailto:phaedrus.raznikov@pm.me">Write to me.</a>
-        <span class="ae-dim">the only color on this page, because it is the only thing to do here.</span></p>
-    </section>
-
-    <footer class="ae-group">
-      <p class="ae-dim">&copy; 2026 Phaedrus &middot; <a href="https://github.com/phrazzld">GitHub</a></p>
+  <div class="ae-screen">
+    <main class="ae-stage">
+      <div class="ae-view">
+        <div class="ae-group">
+          <h1 class="ae-name">PHAEDRUS</h1>
+        </div>
+        <p class="ae-lede ae-group">I build agents, the tools to build agents, and
+        the tools to build the tools.</p>
+        <div class="ae-group">
+          <p><a class="ae-accent" href="https://www.mistystep.io/">misty step</a>
+            <span class="ae-dim">my engineering firm</span></p>
+          <p><a href="https://github.com/phrazzld">github</a></p>
+          <p><a href="mailto:phaedrus.raznikov@pm.me">email</a></p>
+        </div>
+      </div>
+    </main>
+    <footer class="ae-bar">
+      <p class="ae-dim">&copy; 2026 Phaedrus</p>
+      <button class="ae-mode" id="mode" aria-label="Toggle color mode">mode</button>
     </footer>
-  </main>
+  </div>
+  <script>
+    document.getElementById('mode').addEventListener('click', () => {
+      const root = document.documentElement;
+      const dark = root.dataset.aeMode
+        ? root.dataset.aeMode === 'dark'
+        : matchMedia('(prefers-color-scheme: dark)').matches;
+      const next = dark ? 'light' : 'dark';
+      root.dataset.aeMode = next;
+      localStorage.setItem('ae-mode', next);
+    });
+  </script>
 </body>
 </html>

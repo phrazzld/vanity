@@ -1,12 +1,9 @@
 # vanity
 
-Personal site for phaedrus.io. One file: `index.html`. No build step, no
-JavaScript, no local stylesheet.
-
-The design system is [`@misty-step/aesthetic`](https://github.com/misty-step/aesthetic),
-imported from the CDN pinned to a release tag. The v1 language is TACET:
-one text size, hierarchy by ink and weight, exactly one accent instance per
-viewport, zero animation, a single 38em column.
+Personal site for phaedrus.io: one full-viewport screen, no scrolling.
+Name, bio, and three links. The design system is
+[`@misty-step/aesthetic`](https://github.com/misty-step/aesthetic),
+imported from the CDN pinned to a release tag.
 
 ## Development
 
@@ -14,18 +11,15 @@ viewport, zero animation, a single 38em column.
 open index.html        # or any static server
 ```
 
-## Upgrading the design system
+## Conventions
 
-Bump the pinned tag in the jsdelivr `<link>` in `index.html`:
-
-```
-https://cdn.jsdelivr.net/gh/misty-step/aesthetic@v1.0.0/aesthetic.css
-```
-
-Page-level changes happen in `index.html` only and must stay inside the
-law: no second accent, no animation, no new font sizes.
-
-Dark mode follows `prefers-color-scheme`; there is no toggle.
+- Everything lives in `index.html`. The only JavaScript is the ~20-line
+  light/dark toggle (defaults to the system preference, persists to
+  `localStorage` as `ae-mode`).
+- Stay inside the system: one accent instance (the misty step link), no
+  page scrolling, no new font sizes, no decoration.
+- To upgrade the design system, bump the pinned tag in the jsdelivr
+  `<link>`.
 
 ## Deploy
 
