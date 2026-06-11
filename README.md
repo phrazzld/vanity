@@ -1,46 +1,32 @@
 # vanity
 
-Personal portfolio site. Pure HTML, CSS, and vanilla JavaScript.
+Personal site for phaedrus.io. One file: `index.html`. No build step, no
+JavaScript, no local stylesheet.
+
+The design system is [`@misty-step/aesthetic`](https://github.com/misty-step/aesthetic),
+imported from the CDN pinned to a release tag. The v1 language is TACET:
+one text size, hierarchy by ink and weight, exactly one accent instance per
+viewport, zero animation, a single 38em column.
 
 ## Development
 
-Use a local server so `projects.json` can be fetched at runtime:
 ```bash
-npx serve .
+open index.html        # or any static server
 ```
 
-You can still open `index.html` directly for quick layout inspection, but the
-projects grid will show its fallback message because browsers block `fetch`
-from `file://`.
+## Upgrading the design system
 
-## Structure
+Bump the pinned tag in the jsdelivr `<link>` in `index.html`:
 
 ```
-index.html    # Single-page structure and theme picker
-styles.css    # Semantic tokens plus Editorial / Contractor / Lattice themes
-script.js     # Theme resolution, theme-copy rendering, lattice, scroll effects
-projects.json # Project data rendered into the grid at runtime
-themes.json   # Theme-owned copy for hero, positioning, and contact
+https://cdn.jsdelivr.net/gh/misty-step/aesthetic@v1.0.0/aesthetic.css
 ```
 
-## Theme System
+Page-level changes happen in `index.html` only and must stay inside the
+law: no second accent, no animation, no new font sizes.
 
-The site ships three curated themes:
-
-- `editorial`
-- `contractor`
-- `lattice`
-
-Theme selection resolves in this order:
-
-1. `?theme=<name>` query param
-2. saved `localStorage` preference
-3. default theme from `themes.json`
-
-Each theme changes both design tokens and copy. `script.js` reads `themes.json`
-at runtime, applies the matching copy, and keeps the lattice canvas in sync by
-reading CSS custom properties after every theme switch.
+Dark mode follows `prefers-color-scheme`; there is no toggle.
 
 ## Deploy
 
-Push to main. Vercel/Netlify/GitHub Pages will serve static files automatically.
+Push to master. Vercel serves the directory statically (`vercel.json`).
