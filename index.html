@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/misty-step/aesthetic@v2.2.0/aesthetic.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/misty-step/aesthetic@v2.2.1/aesthetic.css">
   <style>
     /* site glue: the chrome link row — one species, icons lead the words */
     .links {
@@ -42,6 +42,10 @@
     .links a:hover { color: var(--ae-ink); }
     .links .ae-icon { width: 1.1em; height: 1.1em; }
     .bio { margin-block: 2.4em 2.2em; }
+    /* footer rides the chrome register and centers the toggle */
+    footer.ae-bar { align-items: center; }
+    footer.ae-bar .ae-mode { width: 1.6em; height: 1.6em; }
+    footer.ae-bar .ae-mode .ae-icon { width: 1.15em; height: 1.15em; }
   </style>
 </head>
 <body>
@@ -69,7 +73,7 @@
       </div>
     </main>
     <footer class="ae-bar">
-      <p class="ae-dim">&copy; 2026 Phaedrus</p>
+      <p class="ae-chrome">&copy; 2026 Phaedrus</p>
       <button class="ae-mode" id="mode" aria-label="Toggle color mode">
         <svg class="ae-icon ae-sun"><use href="#i-sun"/></svg>
         <svg class="ae-icon ae-moon"><use href="#i-moon"/></svg>
