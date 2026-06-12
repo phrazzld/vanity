@@ -1,0 +1,77 @@
+/* vanity site glue — layout only. Color, type, and register decisions
+   belong to aesthetic.css; the steering block below is the only color
+   this repo owns. */
+
+/* the steering block: vanity's mint signature (docs/ADOPTING.md) */
+:root {
+  --ae-accent: #0e7a4d;
+  --ae-accent-dark: #77f0b8;
+}
+
+/* the bar's far end: section links riding beside the mode toggle */
+.bar-end {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1.6em;
+}
+
+.bar-links {
+  display: inline-flex;
+  gap: 1.6em;
+}
+
+/* the lattice plate: a framed field for the one generative element */
+.lattice-plate {
+  margin: 0;
+}
+
+.lattice-field {
+  position: relative;
+  height: 11em;
+}
+
+.lattice-field canvas {
+  position: absolute;
+  inset: 0;
+}
+
+/* lists that are rows, not bullets */
+.bare {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* project rows: a breath above the first row */
+.rows {
+  margin-top: 0.9em;
+}
+
+/* the capability map: term over definition, one breath per pair */
+.map {
+  margin: 0.9em 0 0;
+}
+
+.map dd {
+  margin: 0 0 0.9em;
+}
+
+.map dd:last-child {
+  margin-bottom: 0;
+}
+
+/* the thesis: a hairline-set quote (the document treatment, locally) */
+blockquote {
+  border-left: 1px solid var(--ae-line);
+  padding-left: 1.4em;
+  color: var(--ae-ink-muted);
+  margin: 1.4em 0 0;
+}
+
+blockquote cite {
+  display: block;
+  font-size: 13px;
+  font-style: normal;
+  color: var(--ae-ink-faint);
+  margin-top: 0.2em;
+}

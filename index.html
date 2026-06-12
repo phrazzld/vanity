@@ -4,194 +4,196 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Phaedrus</title>
-  <meta name="description" content="I spend my days getting agents to do real work, and my mornings running. The serious software lives at Misty Step.">
+  <meta name="description" content="Independent systems engineering. I build agents, the tools to build agents, and the tools to build the tools.">
   <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fcfcfc">
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#121212">
+  <link rel="icon" href="data:,">
   <script>
-    (() => {
-      try {
-        const saved = localStorage.getItem('ae-mode');
-        if (saved === 'dark' || saved === 'light') {
-          document.documentElement.dataset.aeMode = saved;
-        }
-      } catch {}
-    })();
+    try {
+      var m = localStorage.getItem('ae-mode');
+      if (m === 'dark' || m === 'light') {
+        document.documentElement.classList.add(m);
+        document.documentElement.style.colorScheme = m;
+      }
+    } catch (e) {}
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/misty-step/aesthetic@v2.2.1/aesthetic.css">
-  <style>
-    /* site glue: the name row carries the mode toggle */
-    .name-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 2em;
-    }
-    .name-row .ae-mode { width: 1.6em; height: 1.6em; }
-    .name-row .ae-mode .ae-icon { width: 1.15em; height: 1.15em; }
-    /* the chrome link row — one species, icons lead the words */
-    .links {
-      display: flex;
-      gap: 2.2em;
-      align-items: center;
-      flex-wrap: wrap;
-      font-size: 13px;
-      margin-block: 1.8em 0;
-    }
-    .links a {
-      display: inline-flex;
-      gap: 0.5em;
-      align-items: center;
-      letter-spacing: 0.1em;
-      color: var(--ae-ink-muted);
-      text-decoration: none;
-      transition: color var(--ae-quick) var(--ae-ease);
-    }
-    .links a:hover { color: var(--ae-ink); }
-    .links .ae-icon { width: 1.1em; height: 1.1em; }
-    /* the colophon: a typewriter working through the quotes collection.
-       The footer height is reserved for the longest quote in the pool,
-       top-aligned, so nothing on the page ever moves. */
-    .q-foot {
-      min-height: 9.5em;
-      align-items: flex-start;
-      padding-top: 1.4em;
-    }
-    .q-foot .q-wrap { max-width: 100%; }
-    .q-line { margin: 0; }
-    .q-cursor {
-      display: inline-block;
-      width: 1px;
-      height: 1em;
-      background: var(--ae-ink-muted);
-      vertical-align: -0.12em;
-      margin-left: 2px;
-      animation: qblink 1.1s steps(1) infinite;
-    }
-    @keyframes qblink { 50% { opacity: 0; } }
-    @media (prefers-reduced-motion: reduce) {
-      .q-cursor { animation: none; }
-    }
-    .q-attr {
-      margin: 0.6em 0 0;
-      font-size: 12px;
-      color: var(--ae-ink-faint);
-      letter-spacing: 0.06em;
-      opacity: 0;
-      transition: opacity var(--ae-gentle) var(--ae-ease);
-    }
-    /* narrow viewports wrap the longest quotes onto more lines; the
-       reserve grows so the stage above never moves */
-    @media (max-width: 700px) {
-      .q-foot { min-height: 13.5em; }
-    }
-  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/misty-step/aesthetic@v2.5.0/aesthetic.css">
+  <link rel="stylesheet" href="site.css">
 </head>
 <body>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
       <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
       <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
-      <symbol id="i-briefcase" viewBox="0 0 24 24"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></symbol>
-      <symbol id="i-github" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></symbol>
-      <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></symbol>
     </defs>
   </svg>
 
   <div class="ae-screen">
-    <main class="ae-stage">
+    <header class="ae-bar">
+      <a class="ae-name" href="./">PHAEDRUS</a>
+      <span class="bar-end">
+        <nav class="ae-chrome bar-links" aria-label="sections">
+          <a href="#projects">projects</a>
+          <a href="#services">map</a>
+          <a href="#contact">contact</a>
+        </nav>
+        <button class="ae-mode" aria-label="toggle color mode">
+          <svg class="ae-icon ae-sun"><use href="#i-sun"/></svg>
+          <svg class="ae-icon ae-moon"><use href="#i-moon"/></svg>
+        </button>
+      </span>
+    </header>
+
+    <main class="ae-stage ae-stage-scroll">
       <div class="ae-view">
-        <div class="name-row">
-          <h1 class="ae-name">PHAEDRUS</h1>
-          <button class="ae-mode" id="mode" aria-label="Toggle color mode">
-            <svg class="ae-icon ae-sun"><use href="#i-sun"/></svg>
-            <svg class="ae-icon ae-moon"><use href="#i-moon"/></svg>
-          </button>
-        </div>
-        <p class="links">
-          <a href="https://www.mistystep.io/"><svg class="ae-icon"><use href="#i-briefcase"/></svg>misty step</a>
-          <a href="https://github.com/phrazzld"><svg class="ae-icon"><use href="#i-github"/></svg>github</a>
-          <a href="mailto:phraznikov@gmail.com"><svg class="ae-icon"><use href="#i-mail"/></svg>email</a>
-        </p>
+        <section class="ae-group">
+          <p class="ae-h">AGENT ARCHITECT</p>
+          <h1 class="ae-strong">I build agents, their infrastructure, and the tools around them.</h1>
+          <p class="ae-lede ae-dim">Independent systems engineering for teams that need working prototypes, reliable harnesses, and software that survives first contact.</p>
+          <p><a href="#contact">Start a build</a></p>
+        </section>
+
+        <section class="ae-group">
+          <figure class="ae-plate lattice-plate">
+            <figcaption class="ae-plate-cap">FIG. 01 · LATTICE — THE CURSOR DRAWS THE CONNECTIONS</figcaption>
+            <div class="lattice-field">
+              <canvas id="lattice" aria-hidden="true"></canvas>
+            </div>
+          </figure>
+        </section>
+
+        <section class="ae-group">
+          <h2 class="ae-h">OPERATING MODE</h2>
+          <p>Rapid prototyping when the idea is still soft. Hard engineering when it needs to hold.</p>
+          <ul class="bare">
+            <li class="ae-dim">Multi-agent architecture and evaluation</li>
+            <li class="ae-dim">Tooling, harnesses, and operator loops</li>
+            <li class="ae-dim">From prototype to production path</li>
+          </ul>
+        </section>
+
+        <section class="ae-group" id="projects">
+          <h2 class="ae-h">SELECTED WORK</h2>
+          <p class="ae-item">Systems, tools, and products with teeth.</p>
+          <div class="rows">
+            <a class="ae-row-link" href="https://www.mistystep.io/" target="_blank" rel="noopener">
+              <span class="ae-item">misty step</span>
+              <span class="ae-dim">— Software studio for teams that need prototypes, agent tooling, and full-stack delivery without ceremony.</span>
+            </a>
+            <a class="ae-row-link" href="https://github.com/misty-step/cerberus" target="_blank" rel="noopener">
+              <span class="ae-item">cerberus</span>
+              <span class="ae-dim">— Multi-agent AI code review council. Five parallel agents gate every PR.</span>
+            </a>
+            <a class="ae-row-link" href="https://github.com/misty-step/thinktank" target="_blank" rel="noopener">
+              <span class="ae-item">thinktank</span>
+              <span class="ae-dim">— Programmable cognition. Route prompts across models in one CLI.</span>
+            </a>
+            <a class="ae-row-link" href="https://github.com/phrazzld/agent-skills" target="_blank" rel="noopener">
+              <span class="ae-item">agent-skills</span>
+              <span class="ae-dim">— Portable skill library for AI coding agents. Debugging, PR workflows, design systems.</span>
+            </a>
+            <a class="ae-row-link" href="https://github.com/misty-step/bitterblossom" target="_blank" rel="noopener">
+              <span class="ae-item">bitterblossom</span>
+              <span class="ae-dim">— Agent fleet orchestration on Fly.io. Declarative sprite provisioning.</span>
+            </a>
+            <a class="ae-row-link" href="https://github.com/misty-step/canary" target="_blank" rel="noopener">
+              <span class="ae-item">canary</span>
+              <span class="ae-dim">— Self-hosted observability for agent-driven infrastructure.</span>
+            </a>
+            <a class="ae-row-link" href="https://www.heartbeat.engineering/" target="_blank" rel="noopener">
+              <span class="ae-item">heartbeat</span>
+              <span class="ae-dim">— Set-and-forget uptime monitoring. Beautiful status pages.</span>
+            </a>
+            <a class="ae-row-link" href="https://www.gitpulse.app/" target="_blank" rel="noopener">
+              <span class="ae-item">gitpulse</span>
+              <span class="ae-dim">— GitHub analytics with AI summaries. Every claim cited.</span>
+            </a>
+            <a class="ae-row-link" href="https://github.com/misty-step/vox" target="_blank" rel="noopener">
+              <span class="ae-item">vox</span>
+              <span class="ae-dim">— Invisible macOS editor. Hotkey dictation to clean text.</span>
+            </a>
+            <a class="ae-row-link" href="https://timeismoney-splash.vercel.app/" target="_blank" rel="noopener">
+              <span class="ae-item">time is money</span>
+              <span class="ae-dim">— Chrome extension that converts prices into hours of work.</span>
+            </a>
+            <a class="ae-row-link" href="https://www.scry.study/" target="_blank" rel="noopener">
+              <span class="ae-item">scry</span>
+              <span class="ae-dim">— Paste anything, get flashcards. Spaced repetition.</span>
+            </a>
+            <a class="ae-row-link" href="https://www.volume.fitness/" target="_blank" rel="noopener">
+              <span class="ae-item">volume</span>
+              <span class="ae-dim">— Workout tracking without the cruft.</span>
+            </a>
+            <a class="ae-row-link" href="https://github.com/misty-step/conviction" target="_blank" rel="noopener">
+              <span class="ae-item">conviction</span>
+              <span class="ae-dim">— Thesis-based portfolio tracker. See beliefs, not just assets.</span>
+            </a>
+            <a class="ae-row-link" href="https://www.chrondle.app/" target="_blank" rel="noopener">
+              <span class="ae-item">chrondle</span>
+              <span class="ae-dim">— The history nerd's Wordle. Six events, one year.</span>
+            </a>
+            <a class="ae-row-link" href="https://www.caesarinayear.com/" target="_blank" rel="noopener">
+              <span class="ae-item">caesar in a year</span>
+              <span class="ae-dim">— Daily Latin micro-lessons. Zero to Gallic Wars.</span>
+            </a>
+            <a class="ae-row-link" href="https://www.bibliomnomnom.com/" target="_blank" rel="noopener">
+              <span class="ae-item">bibliomnomnom</span>
+              <span class="ae-dim">— Private-first book tracking. No algorithms.</span>
+            </a>
+            <a class="ae-row-link" href="https://github.com/misty-step/sploot" target="_blank" rel="noopener">
+              <span class="ae-item">sploot</span>
+              <span class="ae-dim">— Browser extension for effortless tab management.</span>
+            </a>
+            <a class="ae-row-link" href="https://vibe-machine-eight.vercel.app/" target="_blank" rel="noopener">
+              <span class="ae-item">vibe machine</span>
+              <span class="ae-dim">— Audio-reactive visuals. Drop a track, zone out.</span>
+            </a>
+            <a class="ae-row-link" href="https://linejam.vercel.app/" target="_blank" rel="noopener">
+              <span class="ae-item">linejam</span>
+              <span class="ae-dim">— Pass-the-poem party game for friends.</span>
+            </a>
+          </div>
+        </section>
+
+        <section class="ae-group" id="services">
+          <h2 class="ae-h">CAPABILITY MAP</h2>
+          <p class="ae-item">Agent architect. Independent systems engineering.</p>
+          <p>I work where product, infrastructure, and agent behavior meet. The point is not a proof of concept. The point is a system with a clear shape and a short path to shipping.</p>
+          <dl class="map">
+            <dt class="ae-item">Agent systems</dt>
+            <dd class="ae-dim">Multi-agent workflows, tool surfaces, evaluation, and control loops.</dd>
+            <dt class="ae-item">Tooling and harnesses</dt>
+            <dd class="ae-dim">CLIs, operator consoles, review automation, and the infrastructure around agents.</dd>
+            <dt class="ae-item">Rapid prototyping</dt>
+            <dd class="ae-dim">Tight cycles from zero to credible software, then the cleanup that keeps it from collapsing.</dd>
+          </dl>
+          <blockquote>
+            <p>I build agents, the tools to build agents, and the tools to build the tools.</p>
+            <cite>Current thesis</cite>
+          </blockquote>
+        </section>
+
+        <section class="ae-group" id="contact">
+          <h2 class="ae-h">CONTACT</h2>
+          <p class="ae-item">Bring me the sharp edge</p>
+          <p>New product, stubborn legacy system, agent infra that needs discipline, or a prototype that has to exist next week. That is the lane.</p>
+          <p><a class="ae-accent" href="mailto:phaedrus.raznikov@pm.me">Say hello</a></p>
+        </section>
       </div>
     </main>
-    <footer class="ae-bar ae-foot q-foot">
-      <div class="q-wrap">
-        <p class="q-line"><span id="q-text"></span><span class="q-cursor" aria-hidden="true"></span></p>
-        <p class="q-attr" id="q-attr"></p>
-      </div>
+
+    <footer class="ae-bar ae-foot">
+      <span>© 2026 Phaedrus</span>
+      <span class="ae-foot-links">
+        <a href="https://github.com/phrazzld" target="_blank" rel="noopener">github</a>
+      </span>
     </footer>
   </div>
-  <script src="quotes.js"></script>
-  <script>
-    document.getElementById('mode').addEventListener('click', () => {
-      const root = document.documentElement;
-      const dark = root.dataset.aeMode
-        ? root.dataset.aeMode === 'dark'
-        : matchMedia('(prefers-color-scheme: dark)').matches;
-      const next = dark ? 'light' : 'dark';
-      root.dataset.aeMode = next;
-      try { localStorage.setItem('ae-mode', next); } catch {}
-    });
 
-    /* the colophon typewriter: works through the quotes collection.
-       Typing speed adapts to length; reduced motion gets the full
-       quote at rest. */
-    (() => {
-      const pool = window.QUOTES || [];
-      if (!pool.length) {
-        /* no collection, no colophon: collapse the reserved space */
-        document.querySelector('.q-foot').style.minHeight = '0';
-        return;
-      }
-      const textEl = document.getElementById('q-text');
-      const attrEl = document.getElementById('q-attr');
-      const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      let last = -1;
-      const pick = () => {
-        let i;
-        do i = Math.floor(Math.random() * pool.length);
-        while (i === last && pool.length > 1);
-        last = i;
-        return pool[i];
-      };
-      const show = () => {
-        const [q, a] = pick();
-        if (still) {
-          textEl.textContent = q;
-          attrEl.textContent = a;
-          attrEl.style.opacity = 1;
-          return;
-        }
-        const k = Math.max(1, Math.round(q.length / 110));
-        let i = 0;
-        attrEl.style.opacity = 0;
-        const type = () => {
-          i += k;
-          textEl.textContent = q.slice(0, i);
-          if (i < q.length) setTimeout(type, 34 + Math.random() * 40);
-          else {
-            attrEl.textContent = a;
-            attrEl.style.opacity = 1;
-            setTimeout(erase, Math.min(3800 + q.length * 14, 9000));
-          }
-        };
-        const erase = () => {
-          attrEl.style.opacity = 0;
-          const back = () => {
-            i -= 4 * k;
-            textEl.textContent = q.slice(0, Math.max(i, 0));
-            if (i > 0) setTimeout(back, 14);
-            else setTimeout(show, 650);
-          };
-          setTimeout(back, 350);
-        };
-        type();
-      };
-      show();
-    })();
-  </script>
+  <script src="aesthetic.recipes.js"></script>
+  <script src="lattice.js"></script>
 </body>
 </html>

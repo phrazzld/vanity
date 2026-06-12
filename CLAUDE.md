@@ -1,40 +1,44 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working
+with code in this repository.
 
 ## Overview
 
-Personal site for phaedrus.io. One file: `index.html`. One full-viewport
-screen, no scrolling. The only JavaScript is the small light/dark toggle
-(system default, persisted as `ae-mode` in localStorage).
+Personal portfolio site. Static — one `index.html`, one page-local
+stylesheet, two small scripts. No build, no framework, no data files:
+the markup is the content, and view-source is documentation.
 
-## Design Law
+## Design law
 
 The design system is [`@misty-step/aesthetic`](https://github.com/misty-step/aesthetic),
-imported via jsdelivr pinned to a release tag in `index.html`. Never inline
-or fork its styles here; change the package, tag a release, bump the pin.
+imported via jsDelivr pinned to a release tag in `index.html`. Never
+inline or fork its styles here; change the package, tag a release, bump
+the pin, and refresh the vendored `aesthetic.recipes.js` from the same
+tag.
 
 Rules for this site:
 
-- The page is one `.ae-screen`: everything fits the viewport, desktop and
-  mobile. No scrolling.
-- Content stays tight: the name row (PHAEDRUS + the mode toggle), one
-  link row, and the colophon. There is no bio (the operator writes any
-  future copy himself). Do not grow a projects list here; that lives on
-  misty step.
-- The link row is one species: 13px chrome register, lowercase words,
-  Lucide icons leading (briefcase for misty step, github, mail). Email
-  is phraznikov@gmail.com.
-- The footer is the colophon: a typewriter cycling through the quotes
-  collection (`quotes.js`, generated from the daybook, capped at 200
-  characters). Its height is reserved so typing never moves the stage;
-  the attribution sits on its own line; reduced motion gets a full
-  quote at rest. No copyright line.
-- One font size; hierarchy via the registers (`.ae-name`, `.ae-lede`,
-  `.ae-dim`). Motion only as the kit's built-in feedback plus the
-  colophon typewriter.
-- Left-aligned everything. No meta copy about the design itself. No
-  fabricated claims, no em-dashes.
+- One `.ae-screen`: the chrome (header bar, footer) never moves; the
+  document scrolls inside the stage (`.ae-stage-scroll`).
+- One font size; hierarchy via the registers (`.ae-strong`, `.ae-item`,
+  `.ae-dim`, `.ae-h`). The 13px chrome register carries the bar links
+  and the footer; 11px mono carries the plate caption. No new sizes.
+- The steering block at the top of `site.css` is the only color this
+  repo owns: the mint signature (`--ae-accent: #0e7a4d`,
+  `--ae-accent-dark: #77f0b8`). `site.css` is otherwise layout-only —
+  no colors, no font sizes, no radii.
+- Accent spend: the lattice connections (generative) and the contact
+  link (`.ae-accent`). Do not add more.
+- The lattice canvas (`lattice.js`) is the page's one generative
+  element. It reads `--ae-line` / `--ae-accent` from the live computed
+  style at draw time, so light/dark needs no extra wiring. It answers
+  the cursor; it never moves unprompted.
+- Buttons are not links: everything on this page navigates, so
+  everything is a link. No `.ae-button` without a real action.
+- Light/dark defaults to the system; the `.ae-mode` toggle pins a
+  choice to `localStorage` as `ae-mode` (boot script in `<head>`,
+  behavior in the vendored recipes).
 
 ## Deploy
 

@@ -1,25 +1,39 @@
 # vanity
 
-Personal site for phaedrus.io: one full-viewport screen, no scrolling.
-Name, bio, and three links. The design system is
+Personal portfolio site. Pure HTML, CSS, and vanilla JavaScript — no
+build step, no framework. The design system is
 [`@misty-step/aesthetic`](https://github.com/misty-step/aesthetic),
-imported from the CDN pinned to a release tag.
+linked from the CDN pinned to a release tag; everything this repo owns
+is one page, one small stylesheet, and two small scripts.
 
 ## Development
 
 ```bash
-open index.html        # or any static server
+python3 -m http.server   # or any static server, or open index.html
+```
+
+## Structure
+
+```
+index.html            # the whole page: one screen, the document scrolls in the stage
+site.css              # the steering block (the mint signature) + layout-only glue
+lattice.js            # the one generative element: a cursor-coupled node grid
+aesthetic.recipes.js  # vendored kit behavior (mode toggle, et al.)
 ```
 
 ## Conventions
 
-- Everything lives in `index.html`. The only JavaScript is the ~20-line
-  light/dark toggle (defaults to the system preference, persists to
-  `localStorage` as `ae-mode`).
-- Stay inside the system: one accent instance (the misty step link), no
-  page scrolling, no new font sizes, no decoration.
-- To upgrade the design system, bump the pinned tag in the jsdelivr
-  `<link>`.
+- Stay inside the system: one font size (the 13px chrome register and
+  the 11px mono plate caption are the kit's own exceptions), hierarchy
+  via the nine registers, radius 0, motion as feedback only.
+- The steering block at the top of `site.css` is the only color this
+  repo defines. The accent is spent twice: the lattice connections
+  (generative) and the contact link. Everything else is ink.
+- The lattice reads `--ae-line` / `--ae-accent` from the live computed
+  style at draw time, so it follows the mode toggle with no extra
+  wiring. It answers the cursor; it never moves unprompted.
+- To upgrade the design system, bump the pinned tag in `index.html`
+  and refresh `aesthetic.recipes.js` from the same tag.
 
 ## Deploy
 
