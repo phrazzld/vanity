@@ -18,15 +18,21 @@ Rules for this site:
 
 - The page is one `.ae-screen`: everything fits the viewport, desktop and
   mobile. No scrolling.
-- Content stays tight: name, a two-sentence bio (personal line first,
-  then the Misty Step lead), and one link row. Do not grow a projects
-  list here; that lives on misty step.
+- Content stays tight: the name row (PHAEDRUS + the mode toggle), one
+  link row, and the colophon. There is no bio (the operator writes any
+  future copy himself). Do not grow a projects list here; that lives on
+  misty step.
 - The link row is one species: 13px chrome register, lowercase words,
   Lucide icons leading (briefcase for misty step, github, mail). Email
   is phraznikov@gmail.com.
+- The footer is the colophon: a typewriter cycling through the quotes
+  collection (`quotes.js`, generated from the daybook, capped at 200
+  characters). Its height is reserved so typing never moves the stage;
+  the attribution sits on its own line; reduced motion gets a full
+  quote at rest. No copyright line.
 - One font size; hierarchy via the registers (`.ae-name`, `.ae-lede`,
-  `.ae-dim`). Motion only as the kit's built-in feedback. The mode
-  toggle is the kit's `.ae-mode` icon button in the footer.
+  `.ae-dim`). Motion only as the kit's built-in feedback plus the
+  colophon typewriter.
 - Left-aligned everything. No meta copy about the design itself. No
   fabricated claims, no em-dashes.
 
