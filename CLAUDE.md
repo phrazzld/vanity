@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Personal site for phaedrus.io. One file: `index.html`. One full-viewport
-screen, no scrolling. The only JavaScript is the small light/dark toggle
-(system default, persisted as `ae-mode` in localStorage).
+Personal site for phaedrus.io. One full-viewport screen, no scrolling. The
+runtime surface is `index.html`, the generated quote pool in `quotes.js`, and
+the lightweight Canary observer in `canary-observer.js` plus `api/`.
 
 ## Design Law
 
@@ -26,15 +26,28 @@ Rules for this site:
   Lucide icons leading (briefcase for misty step, github, mail). Email
   is phraznikov@gmail.com.
 - The footer is the colophon: a typewriter cycling through the quotes
-  collection (`quotes.js`, generated from the daybook, capped at 200
-  characters). Its height is reserved so typing never moves the stage;
-  the attribution sits on its own line; reduced motion gets a full
-  quote at rest. No copyright line.
+  collection (`quotes.js`, generated from the daybook). The `.q-foot`
+  min-height reserves space for the longest quote in the pool (~250
+  chars) so typing never moves the stage; if a longer quote lands, bump
+  that reserve. The attribution sits on its own line; reduced motion
+  gets a full quote at rest. No copyright line.
 - One font size; hierarchy via the registers (`.ae-name`, `.ae-lede`,
   `.ae-dim`). Motion only as the kit's built-in feedback plus the
   colophon typewriter.
 - Left-aligned everything. No meta copy about the design itself. No
   fabricated claims, no em-dashes.
+- `bio.md` and `explore/` are local draft material. Do not publish or promote
+  them without an explicit operator request.
+
+## Development
+
+```bash
+# Static preview
+python3 -m http.server 4173
+
+# Structural gate
+node --test
+```
 
 ## Deploy
 
