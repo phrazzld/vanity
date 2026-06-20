@@ -1,0 +1,43 @@
+id: vanity-home-allie
+name: Vanity homepage Allie evidence
+app_name: Vanity
+environment: local
+target:
+  kind: web
+  base_url: http://127.0.0.1:4174
+policy:
+  profile: wcag22-aa
+  blocking_classes:
+    - deterministic
+    - scripted
+artifacts:
+  redaction_status: not_redacted_local_static_site
+  retention_class: repo_dogfood_artifact
+model:
+  enabled: false
+  provider_allowlist: []
+  zdr_required: true
+known_nondeterminism: []
+browser:
+  viewport:
+    width: 1280
+    height: 720
+  color_scheme: light
+  reduced_motion: reduce
+  locale: en-US
+  zoom: 1.0
+flow:
+  id: vanity-home-flow
+  description: Vanity homepage
+  states:
+    - id: home
+      path: /
+      description: Vanity homepage
+      required: true
+      axe: true
+      screenshot: true
+      dom_snapshot: true
+      accessibility_tree: true
+      keyboard: true
+      video: false
+      trace: false

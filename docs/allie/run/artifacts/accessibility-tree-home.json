@@ -1,0 +1,32 @@
+{
+  "role": "document",
+  "name": "Phaedrus",
+  "headings": [
+    {
+      "level": 1,
+      "text": "PHAEDRUS"
+    }
+  ],
+  "controls": [
+    {
+      "tag": "button",
+      "role": null,
+      "name": "Toggle color mode"
+    },
+    {
+      "tag": "a",
+      "role": null,
+      "name": "misty step"
+    },
+    {
+      "tag": "a",
+      "role": null,
+      "name": "github"
+    },
+    {
+      "tag": "a",
+      "role": null,
+      "name": "email"
+    }
+  ]
+}

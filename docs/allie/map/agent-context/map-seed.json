@@ -1,0 +1,69 @@
+{
+  "app_name": "Vanity",
+  "environment": "local",
+  "policy_profile": "wcag22-aa",
+  "project_root": "/Users/phaedrus/Development/vanity",
+  "schema": "allie.agent-map-seed.v0",
+  "source_manifest": "/Users/phaedrus/Development/vanity/.allie/manifest.yml",
+  "standards": {
+    "id": "wcag22-aa",
+    "methods": {
+      "axe": 10,
+      "human_review": 44,
+      "scripted": 1
+    },
+    "source_urls": [
+      "https://www.w3.org/WAI/WCAG22/wcag.json",
+      "https://www.w3.org/TR/WCAG22/",
+      "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/"
+    ],
+    "total_obligations": 55
+  },
+  "states": [
+    {
+      "accessibility_tree": true,
+      "axe": true,
+      "description": "Vanity homepage",
+      "dom_snapshot": true,
+      "id": "home",
+      "keyboard": true,
+      "path": "/",
+      "required": true,
+      "screenshot": true,
+      "trace": false,
+      "video": false
+    }
+  ],
+  "surfaces": [
+    {
+      "confidence": "operator_supplied",
+      "evidence_refs": [
+        "home"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "id": "home",
+      "provenance": [
+        "/Users/phaedrus/Development/vanity/.allie/manifest.yml",
+        "/Users/phaedrus/Development/vanity/index.html"
+      ],
+      "review_status": "generated_needs_operator_review",
+      "routes": [
+        "/"
+      ],
+      "services": [
+        "web-app",
+        "static-html"
+      ],
+      "title": "Vanity homepage",
+      "user_stories": [
+        "As a user, I can complete Vanity homepage",
+        "As an application user, I can reach index.html"
+      ],
+      "workflow_refs": [
+        "vanity-home-flow"
+      ]
+    }
+  ]
+}

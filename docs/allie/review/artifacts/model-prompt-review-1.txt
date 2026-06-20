@@ -1,0 +1,1 @@
+Review Allie packet run-1781922616710 for WCAG criteria that need visual or contextual judgment. Return hypotheses only; do not claim legal compliance.

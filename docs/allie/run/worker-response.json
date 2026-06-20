@@ -1,0 +1,54 @@
+{
+  "schema": "allie.worker.response.v0",
+  "status": "failed",
+  "actual_base_url": "http://127.0.0.1:4174",
+  "states": [
+    {
+      "id": "home",
+      "route": "/",
+      "url": "http://127.0.0.1:4174/",
+      "title": "Phaedrus",
+      "http_status": 200,
+      "screenshot_path": "artifacts/home.png",
+      "axe_json_path": "artifacts/axe-home.json",
+      "dom_snapshot_path": "artifacts/dom-home.html",
+      "accessibility_tree_path": "artifacts/accessibility-tree-home.json",
+      "video_path": null,
+      "trace_path": null,
+      "keyboard_focus_order": [
+        "button#mode:Toggle color mode",
+        "a:misty step",
+        "a:github",
+        "a:email",
+        "body"
+      ],
+      "axe_violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "tags": [
+            "cat.color",
+            "wcag2aa",
+            "wcag143",
+            "TTv5",
+            "TT13.c",
+            "EN-301-549",
+            "EN-9.1.4.3",
+            "ACT",
+            "RGAAv4",
+            "RGAA-3.2.1"
+          ],
+          "nodes": 1
+        }
+      ],
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 404 (File not found)"
+      ],
+      "network_errors": [],
+      "state_errors": []
+    }
+  ],
+  "errors": []
+}
