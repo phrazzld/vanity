@@ -1,5 +1,16 @@
 # Allie Dogfood Evidence
 
+**Canonical path:** the host-agnostic [`allie verify`](verify-latest/) command is
+the single entry point, and the [`allie` CI workflow](../../.github/workflows/allie.yml)
+runs it against the homepage on every pull request — see
+[`verify-latest/`](verify-latest/) for the committed snapshot and headline result.
+
+The sections below are an earlier exploratory run using Allie's lower-level
+`map` / `run` / `review` / `report` subcommands (the agentic map path), kept for
+reference.
+
+---
+
 Generated from `.allie/manifest.yml` against the local Vanity static preview on
 `http://127.0.0.1:4174`.
 

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Allie Verification</title>
+  <style>
+    body { margin: 0; color: #151719; background: #f5f7fa; font: 16px/1.5 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    main { width: min(100% - 40px, 920px); margin: 0 auto; padding: 40px 0; }
+    h1 { margin: 0 0 8px; font-size: 42px; line-height: 1.05; letter-spacing: 0; }
+    section { background: #fff; border: 1px solid #d7dde5; margin-top: 18px; padding: 20px; }
+    code { background: #edf1f6; padding: 0.08em 0.28em; border-radius: 4px; }
+    .status { display: inline-block; padding: 4px 8px; border: 1px solid #aab4c0; background: #fff; }
+  </style>
+</head>
+<body>
+  <main>
+    <p>Allie host-agnostic verification, not a legal compliance guarantee</p>
+    <h1>Verification <span class="status">blocked</span></h1>
+    <p>Release projection blocked on evidence: deterministic failures 1, scripted failures 0, infrastructure failures 0, missing required evidence 0, WCAG failing criteria 1.</p>
+    <p>Manifest <code>.allie/manifest.yml</code>. Output root <code>.allie/verify/latest</code>.</p>
+    <section>
+      <h2>Why</h2>
+      <p>Blocking evidence: deterministic failures <strong>1</strong>, scripted failures <strong>0</strong>, infrastructure failures <strong>0</strong>, missing required evidence <strong>0</strong>.</p>
+      <p>Review evidence: review-needed obligations <strong>46</strong>, not-tested obligations <strong>4</strong>.</p>
+      <p>WCAG matrix: pass <strong>9</strong>, fail <strong>1</strong>, needs review <strong>44</strong>, not tested <strong>1</strong>.</p>
+    </section>
+    <section>
+      <h2>Reporter artifacts</h2>
+      <ul><li><a href="allie-report.json">JSON summary</a> <code>reporters/allie-report.json</code></li><li><a href="allie-compliance-report.json">WCAG JSON</a> <code>reporters/allie-compliance-report.json</code></li><li><a href="allie-report.md">Markdown</a> <code>reporters/allie-report.md</code></li><li><a href="junit.xml">JUnit</a> <code>reporters/junit.xml</code></li><li><a href="allie.sarif">SARIF</a> <code>reporters/allie.sarif</code></li><li><a href="../report/compliance-report.html">WCAG report</a> <code>report/compliance-report.html</code></li><li><a href="../map/surface-map.html">Product map</a> <code>map/surface-map.html</code></li><li><a href="../release/release-report.html">Release projection</a> <code>release/release-report.html</code></li></ul>
+    </section>
+  </main>
+</body>
+</html>
