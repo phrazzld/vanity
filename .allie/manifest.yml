@@ -14,9 +14,15 @@ artifacts:
   redaction_status: not_redacted_local_static_site
   retention_class: repo_dogfood_artifact
 model:
-  enabled: false
-  provider_allowlist: []
-  zdr_required: true
+  enabled: true
+  provider_allowlist:
+    - openrouter
+  zdr_required: false
+  provider: openrouter
+  model: anthropic/claude-sonnet-4.5
+  api_key_env: OPENROUTER_API_KEY
+  base_url: https://openrouter.ai/api/v1
+  max_model_calls: 8
 known_nondeterminism: []
 browser:
   viewport:

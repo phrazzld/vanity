@@ -3,31 +3,119 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Allie Verification</title>
+  <title>Allie verification — blocked</title>
   <style>
-    body { margin: 0; color: #151719; background: #f5f7fa; font: 16px/1.5 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    main { width: min(100% - 40px, 920px); margin: 0 auto; padding: 40px 0; }
-    h1 { margin: 0 0 8px; font-size: 42px; line-height: 1.05; letter-spacing: 0; }
-    section { background: #fff; border: 1px solid #d7dde5; margin-top: 18px; padding: 20px; }
-    code { background: #edf1f6; padding: 0.08em 0.28em; border-radius: 4px; }
-    .status { display: inline-block; padding: 4px 8px; border: 1px solid #aab4c0; background: #fff; }
+*{box-sizing:border-box}
+body{margin:0;color:#1a1d24;background:#eef1f6;font:15px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+main{width:min(100% - 32px,1080px);margin:0 auto;padding:34px 0 90px}
+a{color:#3450c4;text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid #3450c4;outline-offset:2px;border-radius:4px}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em}
+.eyebrow{font-size:12px;letter-spacing:.11em;text-transform:uppercase;color:#5a6473;font-weight:700;margin:0 0 8px}
+h1{margin:0;font-size:34px;line-height:1.08;letter-spacing:-.02em}
+.sub{color:#5a6473;margin:8px 0 0;font-size:13px}
+.banner{margin:24px 0 6px;padding:18px 22px;border-radius:16px;border:1px solid;display:flex;gap:15px;align-items:center}
+.banner .dot{width:13px;height:13px;border-radius:50%;flex:none}
+.banner h2{margin:0;font-size:18px;letter-spacing:-.01em}
+.banner p{margin:3px 0 0;font-size:13.5px;opacity:.88}
+.b-fail{background:#fbe9e7;border-color:#f3c8c2}
+.b-review{background:#fbf3e1;border-color:#efdcb0}
+.b-pass{background:#e6f4ec;border-color:#c2e3d0}
+.scorecard{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:20px 0 6px}
+.score{background:#fff;border:1px solid #e4e8ef;border-radius:13px;padding:14px 16px}
+.score .n{font-size:27px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.score .k{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#5a6473;margin-top:3px}
+.score.zero .n{color:#1a9457}
+.bar{height:11px;border-radius:7px;overflow:hidden;display:flex;border:1px solid #e4e8ef;margin:8px 0 4px;background:#fff}
+.bar i{display:block;height:100%}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:#5a6473;margin:0 0 6px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend b{width:10px;height:10px;border-radius:3px;display:inline-block}
+section{margin:38px 0}
+.sh{font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:#5a6473;margin:0 0 16px;font-weight:700}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+figure{margin:0;background:#fff;border:1px solid #e4e8ef;border-radius:13px;overflow:hidden}
+figure img{display:block;width:100%;height:auto;border-bottom:1px solid #e4e8ef;background:#f4f5f8}
+figure video{display:block;width:100%;height:auto;border-bottom:1px solid #e4e8ef;background:#000}
+figcaption{padding:11px 13px;font-size:12.5px;color:#5a6473}
+.principle{margin:24px 0}
+.principle h3{font-size:19px;margin:0 0 2px;letter-spacing:-.01em}
+.principle .pmeta{color:#5a6473;font-size:12.5px;margin:0 0 14px}
+.crit{background:#fff;border:1px solid #e4e8ef;border-left:4px solid #c7ced9;border-radius:13px;padding:16px 18px;margin:11px 0}
+.crit.s-pass{border-left-color:#1a9457}
+.crit.s-fail{border-left-color:#d23b30}
+.crit.s-review{border-left-color:#d39a2a}
+.crit.s-na{border-left-color:#9aa6b6}
+.crit.s-nottested{border-left-color:#8b5cf6}
+.crit-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.crit-id{font-weight:600;font-size:15.5px;letter-spacing:-.01em}
+.crit-id .num{color:#5a6473;font-variant-numeric:tabular-nums;margin-right:9px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap;letter-spacing:.02em}
+.chip-pass{background:#e6f4ec;color:#0f6b3c}
+.chip-fail{background:#fbe9e7;color:#b3271d}
+.chip-review{background:#fbf0db;color:#875400}
+.chip-na{background:#eceff4;color:#4a5566}
+.chip-nottested{background:#efe6fb;color:#6d28b8}
+.chip-method{background:#eef1f7;color:#42506a}
+.chip-level{background:#eef1f7;color:#5a6473}
+.why{margin:11px 0 0;color:#39414f;font-size:14px}
+.crit-foot{margin-top:12px;display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:#5a6473;align-items:center}
+.ai{margin-top:13px;border:1px solid #e3e7f3;border-radius:11px;background:#f7f8fd;padding:13px 15px}
+.ai-h{display:flex;gap:8px;align-items:center;font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#3f4b8a}
+.ai-h .v{margin-left:auto;font-weight:700}
+.ai p{margin:8px 0 0;font-size:13.5px;color:#2c3340}
+.ai .guide{margin-top:9px;padding:10px 12px;background:#fff;border:1px solid #e7eaf2;border-radius:9px;font-size:13px}
+.ai .guide b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#5a6473;margin-bottom:3px}
+.ai-media{display:flex;gap:10px;flex-wrap:wrap;margin-top:11px}
+.ai-media figure{max-width:260px}
+.pending{margin-top:13px;border:1px dashed #d7deea;border-radius:11px;background:#fafbfd;padding:11px 14px;color:#6b7280;font-size:13px}
+.matrix-wrap>summary{cursor:pointer;font-weight:700;color:#3450c4;padding:10px 0;font-size:13.5px}
+table.matrix{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+table.matrix th,table.matrix td{border-bottom:1px solid #e9edf3;padding:8px 10px;text-align:left;vertical-align:top}
+table.matrix th{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#5a6473;position:sticky;top:0;background:#fff}
+.foot{margin-top:46px;color:#5a6473;font-size:12.5px;border-top:1px solid #e1e6ef;padding-top:16px}
+@media(max-width:840px){.scorecard{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.scorecard{grid-template-columns:repeat(2,1fr)}h1{font-size:27px}}
+
+    .statgrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 18px 0 6px; }
+    .stat { background: #fff; border: 1px solid #e4e8ef; border-radius: 13px; padding: 13px 15px; }
+    .stat .n { font-size: 23px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .stat .k { font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: #5a6473; margin-top: 3px; }
+    ul.links { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+    ul.links a { display: block; background: #fff; border: 1px solid #e4e8ef; border-radius: 11px; padding: 12px 14px; font-weight: 600; }
+    ul.links code { display: block; color: #5a6473; font-weight: 400; margin-top: 4px; font-size: 11px; background: none; }
+    @media (max-width: 720px) { .statgrid { grid-template-columns: repeat(2, 1fr); } }
   </style>
 </head>
 <body>
   <main>
-    <p>Allie host-agnostic verification, not a legal compliance guarantee</p>
-    <h1>Verification <span class="status">blocked</span></h1>
-    <p>Release projection blocked on evidence: deterministic failures 1, scripted failures 0, infrastructure failures 0, missing required evidence 0, WCAG failing criteria 1.</p>
-    <p>Manifest <code>.allie/manifest.yml</code>. Output root <code>.allie/verify/latest</code>.</p>
+    <p class="eyebrow">Allie · host-agnostic verification</p>
+    <h1>Verification</h1>
+    <p class="sub">Manifest <code>.allie/manifest.yml</code> · output <code>.allie/verify/latest</code> · evidence visibility, not a legal compliance guarantee</p>
+    <div class="banner b-fail"><span class="dot" style="background:#d23b30"></span><div><h2>Status: Blocked</h2><p>Release projection blocked on evidence: deterministic failures 1, scripted failures 0, infrastructure failures 0, missing required evidence 0, WCAG failing criteria 1.</p></div></div>
     <section>
-      <h2>Why</h2>
-      <p>Blocking evidence: deterministic failures <strong>1</strong>, scripted failures <strong>0</strong>, infrastructure failures <strong>0</strong>, missing required evidence <strong>0</strong>.</p>
-      <p>Review evidence: review-needed obligations <strong>46</strong>, not-tested obligations <strong>4</strong>.</p>
-      <p>WCAG matrix: pass <strong>9</strong>, fail <strong>1</strong>, needs review <strong>44</strong>, not tested <strong>1</strong>.</p>
+      <h2 class="sh">Blocking evidence</h2>
+      <div class="statgrid">
+        <div class="stat"><div class="n">1</div><div class="k">Deterministic fails</div></div>
+        <div class="stat"><div class="n">0</div><div class="k">Scripted fails</div></div>
+        <div class="stat"><div class="n">0</div><div class="k">Infra fails</div></div>
+        <div class="stat"><div class="n">0</div><div class="k">Missing evidence</div></div>
+        <div class="stat"><div class="n">35</div><div class="k">Review needed</div></div>
+      </div>
+      <h2 class="sh">WCAG 2.2 matrix</h2>
+      <div class="statgrid">
+        <div class="stat"><div class="n">11</div><div class="k">Pass</div></div>
+        <div class="stat"><div class="n">1</div><div class="k">Fail</div></div>
+        <div class="stat"><div class="n">30</div><div class="k">Needs review</div></div>
+        <div class="stat"><div class="n">0</div><div class="k">Not-tested obligations</div></div>
+        <div class="stat"><div class="n">0</div><div class="k">WCAG not tested</div></div>
+      </div>
     </section>
     <section>
-      <h2>Reporter artifacts</h2>
-      <ul><li><a href="allie-report.json">JSON summary</a> <code>reporters/allie-report.json</code></li><li><a href="allie-compliance-report.json">WCAG JSON</a> <code>reporters/allie-compliance-report.json</code></li><li><a href="allie-report.md">Markdown</a> <code>reporters/allie-report.md</code></li><li><a href="junit.xml">JUnit</a> <code>reporters/junit.xml</code></li><li><a href="allie.sarif">SARIF</a> <code>reporters/allie.sarif</code></li><li><a href="../report/compliance-report.html">WCAG report</a> <code>report/compliance-report.html</code></li><li><a href="../map/surface-map.html">Product map</a> <code>map/surface-map.html</code></li><li><a href="../release/release-report.html">Release projection</a> <code>release/release-report.html</code></li></ul>
+      <h2 class="sh">Reporter artifacts</h2>
+      <ul class="links"><li><a href="allie-report.json">JSON summary<code>reporters/allie-report.json</code></a></li><li><a href="allie-compliance-report.json">WCAG JSON<code>reporters/allie-compliance-report.json</code></a></li><li><a href="allie-report.md">Markdown<code>reporters/allie-report.md</code></a></li><li><a href="junit.xml">JUnit<code>reporters/junit.xml</code></a></li><li><a href="allie.sarif">SARIF<code>reporters/allie.sarif</code></a></li><li><a href="../report/compliance-report.html">WCAG report<code>report/compliance-report.html</code></a></li><li><a href="../map/surface-map.html">Product map<code>map/surface-map.html</code></a></li><li><a href="../release/release-report.html">Release projection<code>release/release-report.html</code></a></li></ul>
     </section>
   </main>
 </body>

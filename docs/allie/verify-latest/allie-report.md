@@ -8,8 +8,8 @@ Manifest: `.allie/manifest.yml`
 Project root: `/Users/phaedrus/Development/vanity`
 
 Blocking evidence: deterministic failures 1, scripted failures 0, infrastructure failures 0, missing required evidence 0.
-Review evidence: review-needed obligations 46, not-tested obligations 4.
-WCAG matrix: pass 9, fail 1, needs review 44, not tested 1.
+Review evidence: review-needed obligations 35, not-tested obligations 0.
+WCAG matrix: pass 11, fail 1, needs review 30, not tested 0.
 
 Reporters:
 - JSON summary: `reporters/allie-report.json`
