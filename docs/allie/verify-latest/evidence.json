@@ -1,0 +1,1510 @@
+{
+  "schema": "allie.evidence.v0",
+  "summary": {
+    "status": "fail",
+    "exit_code": 1,
+    "deterministic_failures": 1,
+    "scripted_failures": 0,
+    "infrastructure_failures": 0,
+    "states_captured": 1,
+    "failure_class": "blocking-finding"
+  },
+  "run": {
+    "id": "run-1782134905337",
+    "started_at": "2026-06-22T13:28:25.336824+00:00",
+    "finished_at": "2026-06-22T13:28:27.983561+00:00",
+    "allie_version": "0.1.0",
+    "git_sha": "40b8390",
+    "git_branch": "dogfood/allie-map-report",
+    "ci_provider": null,
+    "actor": "phaedrus"
+  },
+  "target": {
+    "base_url": "http://127.0.0.1:4174",
+    "environment": "local",
+    "app_name": "Vanity",
+    "auth_profile": "none",
+    "credential_provider": {
+      "provider": "none",
+      "env": null,
+      "required": false,
+      "status": "not_required"
+    },
+    "flow_manifest": "/tmp/allie-motion-verify/flow/generated-flow.yml"
+  },
+  "policy": {
+    "profile": "wcag22-aa",
+    "blocking_classes": [
+      "deterministic",
+      "scripted"
+    ],
+    "worker_timeout_ms": 30000,
+    "model_provider_allowlist": [
+      "openrouter"
+    ],
+    "model_status": "enabled",
+    "zdr_required": false,
+    "redaction_profile": "not_redacted_local_static_site",
+    "budget": {
+      "model_calls": 0,
+      "max_states": 1
+    }
+  },
+  "coverage": {
+    "routes_visited": [
+      "/"
+    ],
+    "surfaces_discovered": [
+      "Vanity"
+    ],
+    "flows_exercised": [
+      "autonomous-discovered-flow"
+    ],
+    "states_captured": [
+      "home"
+    ],
+    "state_metadata": [
+      {
+        "id": "home",
+        "route": "/",
+        "url": "http://127.0.0.1:4174/",
+        "title": "Phaedrus",
+        "http_status": 200,
+        "keyboard_focus_order": [
+          "button#mode:Toggle color mode",
+          "a:misty step",
+          "a:github",
+          "a:email",
+          "body"
+        ],
+        "console_errors": [
+          "Failed to load resource: the server responded with a status of 404 (File not found)"
+        ],
+        "network_errors": [],
+        "state_errors": [],
+        "features": {
+          "audio": 0,
+          "video": 0,
+          "forms": 0,
+          "inputs": 0,
+          "draggable": 0,
+          "iframes": 0,
+          "images": 0,
+          "links": 3,
+          "headings": 1,
+          "lang": true,
+          "lang_value": "en",
+          "reflow_overflow": false,
+          "reflow_checked": true
+        }
+      }
+    ],
+    "standards_obligations_evaluated": [
+      "wcag22-aa:1.1.1-non-text-content",
+      "wcag22-aa:1.2.1-audio-only-and-video-only-prerecorded",
+      "wcag22-aa:1.2.2-captions-prerecorded",
+      "wcag22-aa:1.2.3-audio-description-or-media-alternative-prerecorded",
+      "wcag22-aa:1.2.4-captions-live",
+      "wcag22-aa:1.2.5-audio-description-prerecorded",
+      "wcag22-aa:1.3.1-info-and-relationships",
+      "wcag22-aa:1.3.2-meaningful-sequence",
+      "wcag22-aa:1.3.3-sensory-characteristics",
+      "wcag22-aa:1.3.4-orientation",
+      "wcag22-aa:1.3.5-identify-input-purpose",
+      "wcag22-aa:1.4.1-use-of-color",
+      "wcag22-aa:1.4.10-reflow",
+      "wcag22-aa:1.4.10-zoom-reflow",
+      "wcag22-aa:1.4.11-non-text-contrast",
+      "wcag22-aa:1.4.12-text-spacing",
+      "wcag22-aa:1.4.13-content-on-hover-or-focus",
+      "wcag22-aa:1.4.2-audio-control",
+      "wcag22-aa:1.4.3-contrast-minimum",
+      "wcag22-aa:1.4.4-resize-text",
+      "wcag22-aa:1.4.5-images-of-text",
+      "wcag22-aa:2.1.1-keyboard",
+      "wcag22-aa:2.1.1-keyboard-traversal",
+      "wcag22-aa:2.1.2-no-keyboard-trap",
+      "wcag22-aa:2.1.4-character-key-shortcuts",
+      "wcag22-aa:2.2.1-timing-adjustable",
+      "wcag22-aa:2.2.2-pause-stop-hide",
+      "wcag22-aa:2.2.2-reduced-motion",
+      "wcag22-aa:2.3.1-three-flashes-or-below-threshold",
+      "wcag22-aa:2.4.1-bypass-blocks",
+      "wcag22-aa:2.4.11-focus-not-obscured-minimum",
+      "wcag22-aa:2.4.2-page-titled",
+      "wcag22-aa:2.4.3-focus-order",
+      "wcag22-aa:2.4.4-link-purpose-in-context",
+      "wcag22-aa:2.4.5-multiple-ways",
+      "wcag22-aa:2.4.6-headings-and-labels",
+      "wcag22-aa:2.4.7-focus-visible",
+      "wcag22-aa:2.5.1-pointer-gestures",
+      "wcag22-aa:2.5.2-pointer-cancellation",
+      "wcag22-aa:2.5.3-label-in-name",
+      "wcag22-aa:2.5.4-motion-actuation",
+      "wcag22-aa:2.5.7-dragging-movements",
+      "wcag22-aa:2.5.8-target-size-minimum",
+      "wcag22-aa:3.1.1-language-of-page",
+      "wcag22-aa:3.1.2-language-of-parts",
+      "wcag22-aa:3.2.1-on-focus",
+      "wcag22-aa:3.2.2-on-input",
+      "wcag22-aa:3.2.3-consistent-navigation",
+      "wcag22-aa:3.2.4-consistent-identification",
+      "wcag22-aa:3.2.6-consistent-help",
+      "wcag22-aa:3.3.1-error-identification",
+      "wcag22-aa:3.3.2-labels-or-instructions",
+      "wcag22-aa:3.3.3-error-suggestion",
+      "wcag22-aa:3.3.4-error-prevention-legal-financial-data",
+      "wcag22-aa:3.3.7-redundant-entry",
+      "wcag22-aa:3.3.8-accessible-authentication-minimum",
+      "wcag22-aa:4.1.2-name-role-value",
+      "wcag22-aa:4.1.3-status-messages",
+      "wcag22-aa:human-assistive-technology-review",
+      "wcag22-aa:human-content-meaning"
+    ],
+    "obligations_not_tested": [
+      "wcag22-aa:1.4.10-reflow",
+      "wcag22-aa:1.4.10-zoom-reflow",
+      "wcag22-aa:2.1.1-keyboard-traversal",
+      "wcag22-aa:2.2.2-reduced-motion"
+    ],
+    "obligations_requiring_human_review": [
+      "wcag22-aa:1.2.1-audio-only-and-video-only-prerecorded",
+      "wcag22-aa:1.2.2-captions-prerecorded",
+      "wcag22-aa:1.2.3-audio-description-or-media-alternative-prerecorded",
+      "wcag22-aa:1.2.4-captions-live",
+      "wcag22-aa:1.2.5-audio-description-prerecorded",
+      "wcag22-aa:1.3.2-meaningful-sequence",
+      "wcag22-aa:1.3.3-sensory-characteristics",
+      "wcag22-aa:1.3.4-orientation",
+      "wcag22-aa:1.3.5-identify-input-purpose",
+      "wcag22-aa:1.4.11-non-text-contrast",
+      "wcag22-aa:1.4.12-text-spacing",
+      "wcag22-aa:1.4.13-content-on-hover-or-focus",
+      "wcag22-aa:1.4.2-audio-control",
+      "wcag22-aa:1.4.4-resize-text",
+      "wcag22-aa:1.4.5-images-of-text",
+      "wcag22-aa:2.1.2-no-keyboard-trap",
+      "wcag22-aa:2.1.4-character-key-shortcuts",
+      "wcag22-aa:2.2.1-timing-adjustable",
+      "wcag22-aa:2.2.2-pause-stop-hide",
+      "wcag22-aa:2.3.1-three-flashes-or-below-threshold",
+      "wcag22-aa:2.4.11-focus-not-obscured-minimum",
+      "wcag22-aa:2.4.3-focus-order",
+      "wcag22-aa:2.4.5-multiple-ways",
+      "wcag22-aa:2.4.6-headings-and-labels",
+      "wcag22-aa:2.4.7-focus-visible",
+      "wcag22-aa:2.5.1-pointer-gestures",
+      "wcag22-aa:2.5.2-pointer-cancellation",
+      "wcag22-aa:2.5.3-label-in-name",
+      "wcag22-aa:2.5.4-motion-actuation",
+      "wcag22-aa:2.5.7-dragging-movements",
+      "wcag22-aa:2.5.8-target-size-minimum",
+      "wcag22-aa:3.1.1-language-of-page",
+      "wcag22-aa:3.1.2-language-of-parts",
+      "wcag22-aa:3.2.1-on-focus",
+      "wcag22-aa:3.2.2-on-input",
+      "wcag22-aa:3.2.3-consistent-navigation",
+      "wcag22-aa:3.2.4-consistent-identification",
+      "wcag22-aa:3.2.6-consistent-help",
+      "wcag22-aa:3.3.1-error-identification",
+      "wcag22-aa:3.3.3-error-suggestion",
+      "wcag22-aa:3.3.4-error-prevention-legal-financial-data",
+      "wcag22-aa:3.3.7-redundant-entry",
+      "wcag22-aa:3.3.8-accessible-authentication-minimum",
+      "wcag22-aa:4.1.3-status-messages",
+      "wcag22-aa:human-assistive-technology-review",
+      "wcag22-aa:human-content-meaning"
+    ]
+  },
+  "artifacts": [
+    {
+      "id": "axe-json-home",
+      "type": "axe_json",
+      "path": "artifacts/axe-home.json",
+      "hash": "sha256:9dcb034d4b64691598e1c409622c3ecf6c7138fac9c90917b1d81d6b659ba754",
+      "redaction_status": "not_redacted_local_static_site",
+      "retention_class": "repo_dogfood_artifact",
+      "unavailable_reason": null,
+      "related_flow_state": "home",
+      "creation_tool": "playwright-axe-worker",
+      "timestamp": "2026-06-22T13:28:27.983561+00:00"
+    },
+    {
+      "id": "screenshot-home",
+      "type": "screenshot",
+      "path": "artifacts/home.png",
+      "hash": "sha256:889aa9ef5614f1220b12f42ed05de8d227fb3072d1f9dc2f428dd3ed813d72b2",
+      "redaction_status": "not_redacted_local_static_site",
+      "retention_class": "repo_dogfood_artifact",
+      "unavailable_reason": null,
+      "related_flow_state": "home",
+      "creation_tool": "playwright-axe-worker",
+      "timestamp": "2026-06-22T13:28:27.983561+00:00"
+    },
+    {
+      "id": "dom-snapshot-home",
+      "type": "dom_snapshot",
+      "path": "artifacts/dom-home.html",
+      "hash": "sha256:43e198bc6e16997bf600418ad735b5fd655206f2830fbdf7f7cf6381fe122548",
+      "redaction_status": "not_redacted_local_static_site",
+      "retention_class": "repo_dogfood_artifact",
+      "unavailable_reason": null,
+      "related_flow_state": "home",
+      "creation_tool": "playwright-axe-worker",
+      "timestamp": "2026-06-22T13:28:27.983561+00:00"
+    },
+    {
+      "id": "accessibility-tree-home",
+      "type": "accessibility_tree",
+      "path": "artifacts/accessibility-tree-home.json",
+      "hash": "sha256:29ba9e931fdcc193f20e2850febbd69eb74c85392b2bd5e59ec57ccbcb3913f8",
+      "redaction_status": "not_redacted_local_static_site",
+      "retention_class": "repo_dogfood_artifact",
+      "unavailable_reason": null,
+      "related_flow_state": "home",
+      "creation_tool": "playwright-axe-worker",
+      "timestamp": "2026-06-22T13:28:27.983561+00:00"
+    },
+    {
+      "id": "video-home",
+      "type": "video",
+      "path": "artifacts/video-home.webm",
+      "hash": "sha256:b1933a327add17dc724bdb61820b9b626b1d7dd7bf18ec8d1547255c6f69cd9c",
+      "redaction_status": "not_redacted_local_static_site",
+      "retention_class": "repo_dogfood_artifact",
+      "unavailable_reason": null,
+      "related_flow_state": "home",
+      "creation_tool": "playwright-axe-worker",
+      "timestamp": "2026-06-22T13:28:27.983561+00:00"
+    },
+    {
+      "id": "trace-home",
+      "type": "trace",
+      "path": "artifacts/trace-home.json",
+      "hash": "sha256:6eb8ccca4c5cb73b7542f6722c82976b5b048d679fb6510b98f9e6fffd6e2926",
+      "redaction_status": "not_redacted_local_static_site",
+      "retention_class": "repo_dogfood_artifact",
+      "unavailable_reason": null,
+      "related_flow_state": "home",
+      "creation_tool": "playwright-axe-worker",
+      "timestamp": "2026-06-22T13:28:27.983561+00:00"
+    },
+    {
+      "id": "report-html",
+      "type": "html_report",
+      "path": "report.html",
+      "hash": "sha256:d1cb14ffbea3d5f7ae5c7ea7b03d96dd006f6d8baa5bff594d419a23d5ae7c4f",
+      "redaction_status": "not_redacted_local_static_site",
+      "retention_class": "repo_dogfood_artifact",
+      "unavailable_reason": null,
+      "related_flow_state": null,
+      "creation_tool": "allie-report-writer",
+      "timestamp": "2026-06-22T13:28:27.983561+00:00"
+    },
+    {
+      "id": "review-focus-1",
+      "type": "screenshot",
+      "path": "artifacts/review-focus-1.png",
+      "hash": "sha256:4e5e1c4e1c9dd5b18a7006cbf22d8073dce8268f8ededb502ac2c196a5c85456",
+      "redaction_status": "not_redacted_local",
+      "retention_class": "local_review",
+      "unavailable_reason": null,
+      "related_flow_state": null,
+      "creation_tool": "allie-agentic-gateway",
+      "timestamp": "2026-06-22T13:29:18.841435+00:00"
+    },
+    {
+      "id": "review-focus-2",
+      "type": "screenshot",
+      "path": "artifacts/review-focus-2.png",
+      "hash": "sha256:408a3baf472d8b716eb6f85dca9835472f9490ac7e7418a0b3495147b514471a",
+      "redaction_status": "not_redacted_local",
+      "retention_class": "local_review",
+      "unavailable_reason": null,
+      "related_flow_state": null,
+      "creation_tool": "allie-agentic-gateway",
+      "timestamp": "2026-06-22T13:29:18.841435+00:00"
+    },
+    {
+      "id": "review-focus-3",
+      "type": "screenshot",
+      "path": "artifacts/review-focus-3.png",
+      "hash": "sha256:f67c39ec17e7ca7620f535e767c66d674a390786ebdce6e462645b7dab770808",
+      "redaction_status": "not_redacted_local",
+      "retention_class": "local_review",
+      "unavailable_reason": null,
+      "related_flow_state": null,
+      "creation_tool": "allie-agentic-gateway",
+      "timestamp": "2026-06-22T13:29:18.841435+00:00"
+    },
+    {
+      "id": "review-focus-clip",
+      "type": "video_clip",
+      "path": "artifacts/review-focus-clip.webm",
+      "hash": "sha256:35cc7a1a9cf6fb11649d34e592dd3161571b80982dc6a2e0fd2debfbd1d16390",
+      "redaction_status": "not_redacted_local",
+      "retention_class": "local_review",
+      "unavailable_reason": null,
+      "related_flow_state": null,
+      "creation_tool": "allie-agentic-gateway",
+      "timestamp": "2026-06-22T13:29:18.841435+00:00"
+    },
+    {
+      "id": "review-motion-clip",
+      "type": "video_clip",
+      "path": "artifacts/review-motion-clip.webm",
+      "hash": "sha256:d8eb77d87f6d3cd3430927ffdc7694d9f96e64b706f69c5ff4ce234fd2ab6213",
+      "redaction_status": "not_redacted_local",
+      "retention_class": "local_review",
+      "unavailable_reason": null,
+      "related_flow_state": null,
+      "creation_tool": "allie-agentic-gateway",
+      "timestamp": "2026-06-22T13:29:18.841435+00:00"
+    }
+  ],
+  "findings": [
+    {
+      "id": "home-axe-color-contrast-1",
+      "title": "Elements must meet minimum color contrast ratio thresholds",
+      "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+      "evidence_class": "deterministic",
+      "standard_obligation": "wcag22-aa:1.4.3-contrast-minimum",
+      "severity": "serious",
+      "status": "fail",
+      "confidence": "machine_proven",
+      "source": "axe-core",
+      "affected_route": "/",
+      "affected_state": "home",
+      "artifact_refs": [
+        "axe-json-home",
+        "screenshot-home",
+        "dom-snapshot-home",
+        "accessibility-tree-home",
+        "video-home",
+        "trace-home"
+      ],
+      "suggested_remediation": "Review axe rule color-contrast in the linked raw axe JSON and rerun the replay command.",
+      "replay_command": "cargo run --locked -- run --manifest /tmp/allie-motion-verify/flow/generated-flow.yml --out /tmp/allie-motion-verify/run"
+    }
+  ],
+  "verdicts": [
+    {
+      "obligation": "wcag22-aa:1.1.1-non-text-content",
+      "status": "pass",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core-success-criterion-tags",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.2.1-audio-only-and-video-only-prerecorded",
+      "status": "not_applicable",
+      "confidence": "machine_proven",
+      "evidence_class": "applicability",
+      "source": "allie-applicability-oracle",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.2.2-captions-prerecorded",
+      "status": "not_applicable",
+      "confidence": "machine_proven",
+      "evidence_class": "applicability",
+      "source": "allie-applicability-oracle",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.2.3-audio-description-or-media-alternative-prerecorded",
+      "status": "not_applicable",
+      "confidence": "machine_proven",
+      "evidence_class": "applicability",
+      "source": "allie-applicability-oracle",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.2.4-captions-live",
+      "status": "not_applicable",
+      "confidence": "machine_proven",
+      "evidence_class": "applicability",
+      "source": "allie-applicability-oracle",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.2.5-audio-description-prerecorded",
+      "status": "not_applicable",
+      "confidence": "machine_proven",
+      "evidence_class": "applicability",
+      "source": "allie-applicability-oracle",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.3.1-info-and-relationships",
+      "status": "pass",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core-success-criterion-tags",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.3.2-meaningful-sequence",
+      "status": "pass",
+      "confidence": "agent_high",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.3.3-sensory-characteristics",
+      "status": "pass",
+      "confidence": "agent_high",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.3.4-orientation",
+      "status": "pass",
+      "confidence": "agent_high",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.3.5-identify-input-purpose",
+      "status": "not_applicable",
+      "confidence": "machine_proven",
+      "evidence_class": "applicability",
+      "source": "allie-applicability-oracle",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.1-use-of-color",
+      "status": "pass",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core-success-criterion-tags",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.2-audio-control",
+      "status": "not_applicable",
+      "confidence": "machine_proven",
+      "evidence_class": "applicability",
+      "source": "allie-applicability-oracle",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.3-contrast-minimum",
+      "status": "fail",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": [
+        "home-axe-color-contrast-1"
+      ]
+    },
+    {
+      "obligation": "wcag22-aa:1.4.4-resize-text",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review-queue",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.5-images-of-text",
+      "status": "pass",
+      "confidence": "agent_high",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.10-reflow",
+      "status": "pass",
+      "confidence": "script_observed",
+      "evidence_class": "scripted",
+      "source": "allie-reflow-320px-check",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.11-non-text-contrast",
+      "status": "fail",
+      "confidence": "agent_high",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.12-text-spacing",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review-queue",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.13-content-on-hover-or-focus",
+      "status": "pass",
+      "confidence": "agent_high",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.1.1-keyboard",
+      "status": "pass",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core-success-criterion-tags",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.1.2-no-keyboard-trap",
+      "status": "pass",
+      "confidence": "agent_high",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.1.4-character-key-shortcuts",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review-queue",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.2.1-timing-adjustable",
+      "status": "pass",
+      "confidence": "agent_high",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.2.2-pause-stop-hide",
+      "status": "fail",
+      "confidence": "agent_high",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.3.1-three-flashes-or-below-threshold",
+      "status": "pass",
+      "confidence": "agent_high",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.4.1-bypass-blocks",
+      "status": "pass",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core-success-criterion-tags",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.4.2-page-titled",
+      "status": "pass",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core-success-criterion-tags",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.4.3-focus-order",
+      "status": "pass",
+      "confidence": "agent_high",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.4.4-link-purpose-in-context",
+      "status": "pass",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core-success-criterion-tags",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.4.5-multiple-ways",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review-queue",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.4.6-headings-and-labels",
+      "status": "pass",
+      "confidence": "agent_high",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.4.7-focus-visible",
+      "status": "pass",
+      "confidence": "agent_high",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.4.11-focus-not-obscured-minimum",
+      "status": "pass",
+      "confidence": "agent_high",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.5.1-pointer-gestures",
+      "status": "pass",
+      "confidence": "agent_high",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.5.2-pointer-cancellation",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review-queue",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.5.3-label-in-name",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review-queue",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.5.4-motion-actuation",
+      "status": "pass",
+      "confidence": "agent_high",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.5.7-dragging-movements",
+      "status": "not_applicable",
+      "confidence": "machine_proven",
+      "evidence_class": "applicability",
+      "source": "allie-applicability-oracle",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.5.8-target-size-minimum",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review-queue",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.1.1-language-of-page",
+      "status": "pass",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "allie-lang-attribute-check",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.1.2-language-of-parts",
+      "status": "pass",
+      "confidence": "agent_high",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.2.1-on-focus",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review-queue",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.2.2-on-input",
+      "status": "pass",
+      "confidence": "agent_high",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.2.3-consistent-navigation",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review-queue",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.2.4-consistent-identification",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review-queue",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.2.6-consistent-help",
+      "status": "pass",
+      "confidence": "agent_medium",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.3.1-error-identification",
+      "status": "not_applicable",
+      "confidence": "machine_proven",
+      "evidence_class": "applicability",
+      "source": "allie-applicability-oracle",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.3.2-labels-or-instructions",
+      "status": "pass",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core-success-criterion-tags",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.3.3-error-suggestion",
+      "status": "not_applicable",
+      "confidence": "machine_proven",
+      "evidence_class": "applicability",
+      "source": "allie-applicability-oracle",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.3.4-error-prevention-legal-financial-data",
+      "status": "not_applicable",
+      "confidence": "machine_proven",
+      "evidence_class": "applicability",
+      "source": "allie-applicability-oracle",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.3.7-redundant-entry",
+      "status": "not_applicable",
+      "confidence": "machine_proven",
+      "evidence_class": "applicability",
+      "source": "allie-applicability-oracle",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.3.8-accessible-authentication-minimum",
+      "status": "not_applicable",
+      "confidence": "machine_proven",
+      "evidence_class": "applicability",
+      "source": "allie-applicability-oracle",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:4.1.2-name-role-value",
+      "status": "pass",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core-success-criterion-tags",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:4.1.3-status-messages",
+      "status": "pass",
+      "confidence": "agent_high",
+      "evidence_class": "agentic",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.1.1-keyboard-traversal",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "scripted",
+      "source": "allie-agentic-review-queue",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.10-zoom-reflow",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "scripted",
+      "source": "allie-agentic-review-queue",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.2.2-reduced-motion",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "scripted",
+      "source": "allie-agentic-review-queue",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:human-content-meaning",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:human-assistive-technology-review",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    }
+  ],
+  "waivers": [],
+  "review": [],
+  "agentic_assessments": [
+    {
+      "obligation": "wcag22-aa:1.3.2-meaningful-sequence",
+      "assessment": "pass",
+      "rationale": "The layout is extremely simple and linear, flowing naturally from the header and navigation links down to the quote at the bottom.",
+      "reviewer_guidance": "Verify using a screen reader or by disabling CSS to ensure the reading order matches the visual order (Header -> Links -> Quote).",
+      "confidence": "high",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:1.3.3-sensory-characteristics",
+      "assessment": "pass",
+      "rationale": "There are no instructions or content elements that rely solely on sensory characteristics like shape, size, visual location, or sound to be understood.",
+      "reviewer_guidance": "Confirm that no instructions on the page require the user to distinguish elements based solely on visual characteristics (e.g., 'click the sun icon on the right').",
+      "confidence": "high",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:1.3.4-orientation",
+      "assessment": "pass",
+      "rationale": "The page design is simple and responsive, with no indication that it restricts its display to a single orientation (portrait or landscape).",
+      "reviewer_guidance": "Rotate the device or simulate mobile orientation changes in developer tools to ensure the page displays correctly in both portrait and landscape modes.",
+      "confidence": "high",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.11-non-text-contrast",
+      "assessment": "fail",
+      "rationale": "The light gray icons (briefcase, GitHub, envelope, and sun/theme switcher) on the white background have very low contrast, visually appearing well below the required 3:1 ratio.",
+      "reviewer_guidance": "Use a color contrast analyzer tool to measure the contrast ratio of the icons (e.g., the sun icon and social icons) against the white background to confirm they meet the 3:1 threshold.",
+      "confidence": "high",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.12-text-spacing",
+      "assessment": "inconclusive",
+      "rationale": "Whether the text spacing can be adjusted without loss of content or functionality cannot be determined from a static screenshot.",
+      "reviewer_guidance": "Apply custom CSS to increase line height, paragraph spacing, letter spacing, and word spacing to the minimum WCAG requirements and verify that no text overlaps or becomes clipped.",
+      "confidence": "not_observed",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.4-resize-text",
+      "assessment": "inconclusive",
+      "rationale": "Text resizing capabilities and potential clipping or overlapping cannot be verified from a static screenshot.",
+      "reviewer_guidance": "Zoom the browser to 200% and verify that all text scales up correctly without clipping, overlapping, or losing functionality.",
+      "confidence": "not_observed",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.5-images-of-text",
+      "assessment": "pass",
+      "rationale": "All text on the page, including the header 'PHAEDRUS' and the quote, appears to be actual renderable text rather than images of text.",
+      "reviewer_guidance": "Attempt to select or highlight the text on the page to confirm it is actual text and not an image.",
+      "confidence": "high",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:2.1.4-character-key-shortcuts",
+      "assessment": "inconclusive",
+      "rationale": "It is impossible to determine if any single-character keyboard shortcuts are active on this page from a static screenshot.",
+      "reviewer_guidance": "Press various single-character keys on your keyboard to check if they trigger any actions, and if they do, verify if they can be turned off or remapped.",
+      "confidence": "not_observed",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:2.4.5-multiple-ways",
+      "assessment": "inconclusive",
+      "rationale": "It is impossible to determine if this is a single-page site or part of a larger multi-page site requiring alternative navigation methods (like a search bar or sitemap) from a single screenshot.",
+      "reviewer_guidance": "Check if the website has multiple pages. If it does, verify if there are at least two ways to locate a page (e.g., navigation menu, sitemap, or search).",
+      "confidence": "not_observed",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:2.4.6-headings-and-labels",
+      "assessment": "pass",
+      "rationale": "The visible labels ('misty step', 'github', 'email') clearly describe the purpose of the links, and 'PHAEDRUS' serves as an identifiable main heading/branding.",
+      "reviewer_guidance": "Confirm that the headings and labels remain descriptive and are coded correctly as headings (e.g., <h1>) in the DOM.",
+      "confidence": "high",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:2.5.1-pointer-gestures",
+      "assessment": "pass",
+      "rationale": "The interface consists of simple links and a toggle button, which do not require multipoint or path-based gestures to operate.",
+      "reviewer_guidance": "Verify that all interactive elements can be operated with a single pointer click without requiring complex gestures like swiping or dragging.",
+      "confidence": "high",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:2.5.2-pointer-cancellation",
+      "assessment": "inconclusive",
+      "rationale": "Pointer cancellation behavior (such as triggering actions on the 'up-event' rather than the 'down-event') cannot be verified from a static screenshot.",
+      "reviewer_guidance": "Click on the links and the theme toggle button to ensure that the click event triggers on mouseup/pointerup, allowing the user to cancel the action by dragging the pointer away before releasing.",
+      "confidence": "not_observed",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:2.5.3-label-in-name",
+      "assessment": "inconclusive",
+      "rationale": "The programmatic accessible names of the text links ('misty step', 'github', 'email') and the icon button cannot be inspected without access to the DOM.",
+      "reviewer_guidance": "Inspect the DOM to ensure that the accessible name (e.g., aria-label or alt text) of each interactive element contains the visible text string ('misty step', 'github', 'email').",
+      "confidence": "not_observed",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:2.5.8-target-size-minimum",
+      "assessment": "inconclusive",
+      "rationale": "The theme toggle icon and text links appear to have sufficient spacing, but their exact target sizes and spacing parameters (minimum 24x24 CSS pixels or sufficient clearance) must be measured programmatically.",
+      "reviewer_guidance": "Use browser developer tools to measure the bounding box of the theme toggle icon and the text links to ensure they meet the 24x24 CSS pixel minimum size or have sufficient spacing/clearance.",
+      "confidence": "not_observed",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:3.1.2-language-of-parts",
+      "assessment": "pass",
+      "rationale": "All text content on the page, including the quote at the bottom, is written in English, meaning there are no foreign language parts requiring individual lang attributes.",
+      "reviewer_guidance": "Verify that the primary language of the document is declared in the HTML tag and that no foreign phrases requiring separate language attributes are present.",
+      "confidence": "high",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:3.2.1-on-focus",
+      "assessment": "inconclusive",
+      "rationale": "Behavior upon receiving focus (such as unexpected context changes or automatic redirection) cannot be evaluated from a static image.",
+      "reviewer_guidance": "Tab through the interactive elements (links and theme toggle) using a keyboard to confirm that focusing on any element does not automatically trigger a change of context (like opening a new window or submitting a form).",
+      "confidence": "not_observed",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:3.2.2-on-input",
+      "assessment": "pass",
+      "rationale": "There are no form inputs or interactive controls on this page that would trigger an unexpected change of context upon user input.",
+      "reviewer_guidance": "Interact with the theme toggle and any other interactive elements to confirm that activating them does not unexpectedly change the context (such as redirecting the user or submitting a form without warning).",
+      "confidence": "high",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:3.2.3-consistent-navigation",
+      "assessment": "inconclusive",
+      "rationale": "Consistent navigation cannot be evaluated from a single screenshot of a single page, as it requires comparing navigation menus across multiple pages of the website.",
+      "reviewer_guidance": "Navigate to other pages on the website and verify that the navigation links (such as 'misty step', 'github', 'email') remain in the same relative order.",
+      "confidence": "not_observed",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:3.2.4-consistent-identification",
+      "assessment": "inconclusive",
+      "rationale": "Consistent identification of components with identical functionality cannot be verified from a single page screenshot.",
+      "reviewer_guidance": "Check other pages on the site to ensure that icons, buttons, or links with the same functionality (e.g., the theme toggle or social links) are labeled and identified consistently.",
+      "confidence": "not_observed",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:3.2.6-consistent-help",
+      "assessment": "pass",
+      "rationale": "There are no self-service help options (like contact details, FAQs, or chat support) displayed on this page that would require consistent placement across the site.",
+      "reviewer_guidance": "If help features are added to other pages of the site, verify that they occur in the same relative order and location.",
+      "confidence": "medium",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:4.1.3-status-messages",
+      "assessment": "pass",
+      "rationale": "There are no dynamic status messages, search results, or success/error alerts present on this static landing page.",
+      "reviewer_guidance": "Verify if any dynamic actions (like copying an email address or toggling the theme) trigger status messages, and ensure they are announced by screen readers using appropriate ARIA live regions.",
+      "confidence": "high",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.13-content-on-hover-or-focus",
+      "assessment": "pass",
+      "rationale": "There is no additional content (like tooltips or submenus) triggered solely by hover or focus on these interactive elements.",
+      "reviewer_guidance": "Hover over and focus on each link to confirm no hidden content or tooltips appear that violate dismissibility, hoverability, or persistence.",
+      "confidence": "high",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": [
+        {
+          "kind": "screenshot",
+          "caption": "Keyboard focus on: Toggle color mode",
+          "path": "artifacts/review-focus-1.png"
+        },
+        {
+          "kind": "screenshot",
+          "caption": "Keyboard focus on: misty step",
+          "path": "artifacts/review-focus-2.png"
+        },
+        {
+          "kind": "screenshot",
+          "caption": "Keyboard focus on: github",
+          "path": "artifacts/review-focus-3.png"
+        },
+        {
+          "kind": "clip",
+          "caption": "Keyboard focus moving through the page",
+          "path": "artifacts/review-focus-clip.webm"
+        }
+      ]
+    },
+    {
+      "obligation": "wcag22-aa:2.1.2-no-keyboard-trap",
+      "assessment": "pass",
+      "rationale": "The focus moves sequentially through the interactive elements without getting stuck on any single control.",
+      "reviewer_guidance": "Tab through all elements using the keyboard to ensure focus can exit each element and return to the browser address bar.",
+      "confidence": "high",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": [
+        {
+          "kind": "screenshot",
+          "caption": "Keyboard focus on: Toggle color mode",
+          "path": "artifacts/review-focus-1.png"
+        },
+        {
+          "kind": "screenshot",
+          "caption": "Keyboard focus on: misty step",
+          "path": "artifacts/review-focus-2.png"
+        },
+        {
+          "kind": "screenshot",
+          "caption": "Keyboard focus on: github",
+          "path": "artifacts/review-focus-3.png"
+        },
+        {
+          "kind": "clip",
+          "caption": "Keyboard focus moving through the page",
+          "path": "artifacts/review-focus-clip.webm"
+        }
+      ]
+    },
+    {
+      "obligation": "wcag22-aa:2.4.11-focus-not-obscured-minimum",
+      "assessment": "pass",
+      "rationale": "The focus indicators are fully visible and not covered or obscured by any other page elements or overlays.",
+      "reviewer_guidance": "Verify that no sticky headers, footers, or overlays obscure the focus ring when navigating the page.",
+      "confidence": "high",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": [
+        {
+          "kind": "screenshot",
+          "caption": "Keyboard focus on: Toggle color mode",
+          "path": "artifacts/review-focus-1.png"
+        },
+        {
+          "kind": "screenshot",
+          "caption": "Keyboard focus on: misty step",
+          "path": "artifacts/review-focus-2.png"
+        },
+        {
+          "kind": "screenshot",
+          "caption": "Keyboard focus on: github",
+          "path": "artifacts/review-focus-3.png"
+        },
+        {
+          "kind": "clip",
+          "caption": "Keyboard focus moving through the page",
+          "path": "artifacts/review-focus-clip.webm"
+        }
+      ]
+    },
+    {
+      "obligation": "wcag22-aa:2.4.3-focus-order",
+      "assessment": "pass",
+      "rationale": "The focus order follows a logical, expected reading flow: first to the theme toggle, then sequentially through the navigation links from left to right.",
+      "reviewer_guidance": "Tab through the page and verify that the focus order matches the visual layout and logical reading order.",
+      "confidence": "high",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": [
+        {
+          "kind": "screenshot",
+          "caption": "Keyboard focus on: Toggle color mode",
+          "path": "artifacts/review-focus-1.png"
+        },
+        {
+          "kind": "screenshot",
+          "caption": "Keyboard focus on: misty step",
+          "path": "artifacts/review-focus-2.png"
+        },
+        {
+          "kind": "screenshot",
+          "caption": "Keyboard focus on: github",
+          "path": "artifacts/review-focus-3.png"
+        },
+        {
+          "kind": "clip",
+          "caption": "Keyboard focus moving through the page",
+          "path": "artifacts/review-focus-clip.webm"
+        }
+      ]
+    },
+    {
+      "obligation": "wcag22-aa:2.4.7-focus-visible",
+      "assessment": "pass",
+      "rationale": "Each focused element displays a highly visible, solid black rectangular border that clearly contrasts with the light background.",
+      "reviewer_guidance": "Tab through the page to confirm that every interactive element has a clear, visible focus indicator.",
+      "confidence": "high",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": [
+        {
+          "kind": "screenshot",
+          "caption": "Keyboard focus on: Toggle color mode",
+          "path": "artifacts/review-focus-1.png"
+        },
+        {
+          "kind": "screenshot",
+          "caption": "Keyboard focus on: misty step",
+          "path": "artifacts/review-focus-2.png"
+        },
+        {
+          "kind": "screenshot",
+          "caption": "Keyboard focus on: github",
+          "path": "artifacts/review-focus-3.png"
+        },
+        {
+          "kind": "clip",
+          "caption": "Keyboard focus moving through the page",
+          "path": "artifacts/review-focus-clip.webm"
+        }
+      ]
+    },
+    {
+      "obligation": "wcag22-aa:2.2.1-timing-adjustable",
+      "assessment": "pass",
+      "rationale": "There are no time limits imposed on user activity or interaction on this page.",
+      "reviewer_guidance": "Verify that no timeout or countdown exists that restricts user input or forces a page refresh.",
+      "confidence": "high",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": [
+        {
+          "kind": "clip",
+          "caption": "The page over ~2.5s (motion / auto-updating content)",
+          "path": "artifacts/review-motion-clip.webm"
+        }
+      ]
+    },
+    {
+      "obligation": "wcag22-aa:2.2.2-pause-stop-hide",
+      "assessment": "fail",
+      "rationale": "The page features an automatic text-typing animation ('At the center of your being...') that starts automatically and lacks any mechanism to pause, stop, or hide the movement.",
+      "reviewer_guidance": "Interact with the page to confirm if there is any keyboard-accessible control or setting to stop the typing animation.",
+      "confidence": "high",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": [
+        {
+          "kind": "clip",
+          "caption": "The page over ~2.5s (motion / auto-updating content)",
+          "path": "artifacts/review-motion-clip.webm"
+        }
+      ]
+    },
+    {
+      "obligation": "wcag22-aa:2.3.1-three-flashes-or-below-threshold",
+      "assessment": "pass",
+      "rationale": "The typing animation is smooth and gradual, presenting no rapid flashing or strobing effects.",
+      "reviewer_guidance": "Confirm visually that no elements flash more than three times per second.",
+      "confidence": "high",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": [
+        {
+          "kind": "clip",
+          "caption": "The page over ~2.5s (motion / auto-updating content)",
+          "path": "artifacts/review-motion-clip.webm"
+        }
+      ]
+    },
+    {
+      "obligation": "wcag22-aa:2.5.4-motion-actuation",
+      "assessment": "pass",
+      "rationale": "The page does not require or respond to physical device motion or gestures.",
+      "reviewer_guidance": "Verify that no features rely on shaking, tilting, or moving the device to operate.",
+      "confidence": "high",
+      "provider": "openrouter",
+      "model": "google/gemini-3.5-flash",
+      "media": [
+        {
+          "kind": "clip",
+          "caption": "The page over ~2.5s (motion / auto-updating content)",
+          "path": "artifacts/review-motion-clip.webm"
+        }
+      ]
+    }
+  ],
+  "replay": {
+    "command": "cargo run --locked -- run --manifest /tmp/allie-motion-verify/flow/generated-flow.yml --out /tmp/allie-motion-verify/run",
+    "manifest_path": "/tmp/allie-motion-verify/flow/generated-flow.yml",
+    "environment_requirements": [
+      "npm install",
+      "npx playwright install chromium"
+    ],
+    "credential_profile": "none",
+    "browser": {
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "color_scheme": "light",
+      "reduced_motion": "reduce",
+      "locale": "en-US",
+      "zoom": 1.0
+    },
+    "seed_data": [
+      "checked-in fixture fixtures/login"
+    ],
+    "known_nondeterminism": []
+  }
+}

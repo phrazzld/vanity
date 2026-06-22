@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Allie Product Map</title>
+  <style>
+    body { margin: 0; color: #151719; background: #f5f7fa; font: 16px/1.5 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    main { width: min(100% - 40px, 1120px); margin: 0 auto; padding: 40px 0; }
+    h1 { margin: 0 0 8px; font-size: 42px; line-height: 1.05; letter-spacing: 0; }
+    h2 { margin: 0 0 12px; color: #58616c; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
+    section { background: #fff; border: 1px solid #d7dde5; margin-top: 18px; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border-bottom: 1px solid #d7dde5; padding: 10px; text-align: left; vertical-align: top; }
+    th { color: #58616c; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; }
+    code { background: #edf1f6; padding: 0.08em 0.28em; border-radius: 4px; }
+    @media (max-width: 760px) { main { width: min(100% - 24px, 1120px); } table { display: block; overflow-x: auto; } }
+  </style>
+</head>
+<body>
+  <main>
+    <p>Allie generated product map, not a legal compliance guarantee</p>
+    <h1>Vanity</h1>
+    <p>Source manifest <code>/Users/phaedrus/Development/vanity/.allie/manifest.yml</code>. Agent runner <code>opencode</code> status <code>agent_timeout_local_fallback</code>.</p>
+    <section>
+      <h2>Surfaces</h2>
+      <table>
+        <thead><tr><th>ID</th><th>Title</th><th>Routes</th><th>Files</th><th>Confidence</th><th>User Stories</th></tr></thead>
+        <tbody><tr><td><code>home</code></td><td>Vanity homepage</td><td>/</td><td>index.html</td><td>operator_supplied</td><td>As a user, I can complete Vanity homepage As an application user, I can reach index.html</td></tr></tbody>
+      </table>
+    </section>
+    <section>
+      <h2>Workflows</h2>
+      <ul><li><strong>Vanity homepage</strong><br>As an accessibility compliance engineer, I can assess Vanity across the discovered product surface.<br><code>generated-flow.yml</code></li></ul>
+    </section>
+    <section>
+      <h2>Standards Profile</h2>
+      <p><code>wcag22-aa</code> contains 55 WCAG A/AA success criteria obligations for this report.</p>
+    </section>
+    <section>
+      <h2>Open Review Questions</h2>
+      <ul><li>Model review is disabled in the manifest; human or agentic review findings remain uncollected until review runs.</li><li>Verify generated user stories and workflow names with the application owner before using them as release blockers.</li></ul>
+    </section>
+  </main>
+</body>
+</html>
