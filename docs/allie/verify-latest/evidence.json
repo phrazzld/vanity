@@ -10,11 +10,11 @@
     "failure_class": "blocking-finding"
   },
   "run": {
-    "id": "run-1782057049121",
-    "started_at": "2026-06-21T15:50:49.121736+00:00",
-    "finished_at": "2026-06-21T15:50:50.841644+00:00",
+    "id": "run-1782134905337",
+    "started_at": "2026-06-22T13:28:25.336824+00:00",
+    "finished_at": "2026-06-22T13:28:27.983561+00:00",
     "allie_version": "0.1.0",
-    "git_sha": "6d75952",
+    "git_sha": "40b8390",
     "git_branch": "dogfood/allie-map-report",
     "ci_provider": null,
     "actor": "phaedrus"
@@ -30,7 +30,7 @@
       "required": false,
       "status": "not_required"
     },
-    "flow_manifest": ".allie/verify/latest/flow/generated-flow.yml"
+    "flow_manifest": "/tmp/allie-motion-verify/flow/generated-flow.yml"
   },
   "policy": {
     "profile": "wcag22-aa",
@@ -221,37 +221,37 @@
       "id": "axe-json-home",
       "type": "axe_json",
       "path": "artifacts/axe-home.json",
-      "hash": "sha256:6a953165cc73397f64558f7b430654283ecbf5eda07058af06bf1e21bf6fe83f",
+      "hash": "sha256:9dcb034d4b64691598e1c409622c3ecf6c7138fac9c90917b1d81d6b659ba754",
       "redaction_status": "not_redacted_local_static_site",
       "retention_class": "repo_dogfood_artifact",
       "unavailable_reason": null,
       "related_flow_state": "home",
       "creation_tool": "playwright-axe-worker",
-      "timestamp": "2026-06-21T15:50:50.841644+00:00"
+      "timestamp": "2026-06-22T13:28:27.983561+00:00"
     },
     {
       "id": "screenshot-home",
       "type": "screenshot",
       "path": "artifacts/home.png",
-      "hash": "sha256:d8f634bd250b22be076cc83a2e97d79ec88a5177b8f208518846678e5c4d3089",
+      "hash": "sha256:889aa9ef5614f1220b12f42ed05de8d227fb3072d1f9dc2f428dd3ed813d72b2",
       "redaction_status": "not_redacted_local_static_site",
       "retention_class": "repo_dogfood_artifact",
       "unavailable_reason": null,
       "related_flow_state": "home",
       "creation_tool": "playwright-axe-worker",
-      "timestamp": "2026-06-21T15:50:50.841644+00:00"
+      "timestamp": "2026-06-22T13:28:27.983561+00:00"
     },
     {
       "id": "dom-snapshot-home",
       "type": "dom_snapshot",
       "path": "artifacts/dom-home.html",
-      "hash": "sha256:5c67308a7df094978a375ec55e9acdeaba2574abb35179f2620f44a1b40dc0ce",
+      "hash": "sha256:43e198bc6e16997bf600418ad735b5fd655206f2830fbdf7f7cf6381fe122548",
       "redaction_status": "not_redacted_local_static_site",
       "retention_class": "repo_dogfood_artifact",
       "unavailable_reason": null,
       "related_flow_state": "home",
       "creation_tool": "playwright-axe-worker",
-      "timestamp": "2026-06-21T15:50:50.841644+00:00"
+      "timestamp": "2026-06-22T13:28:27.983561+00:00"
     },
     {
       "id": "accessibility-tree-home",
@@ -263,19 +263,19 @@
       "unavailable_reason": null,
       "related_flow_state": "home",
       "creation_tool": "playwright-axe-worker",
-      "timestamp": "2026-06-21T15:50:50.841644+00:00"
+      "timestamp": "2026-06-22T13:28:27.983561+00:00"
     },
     {
       "id": "video-home",
       "type": "video",
       "path": "artifacts/video-home.webm",
-      "hash": "sha256:b541b96621662a22f9cc69990292ab67b6dcb41e45a4ee3be671dc48da841a88",
+      "hash": "sha256:b1933a327add17dc724bdb61820b9b626b1d7dd7bf18ec8d1547255c6f69cd9c",
       "redaction_status": "not_redacted_local_static_site",
       "retention_class": "repo_dogfood_artifact",
       "unavailable_reason": null,
       "related_flow_state": "home",
       "creation_tool": "playwright-axe-worker",
-      "timestamp": "2026-06-21T15:50:50.841644+00:00"
+      "timestamp": "2026-06-22T13:28:27.983561+00:00"
     },
     {
       "id": "trace-home",
@@ -287,79 +287,79 @@
       "unavailable_reason": null,
       "related_flow_state": "home",
       "creation_tool": "playwright-axe-worker",
-      "timestamp": "2026-06-21T15:50:50.841644+00:00"
+      "timestamp": "2026-06-22T13:28:27.983561+00:00"
     },
     {
       "id": "report-html",
       "type": "html_report",
       "path": "report.html",
-      "hash": "sha256:35974b33a26cefa94082196dba447323b9db32ee01e70285fc1ad02366679a3f",
+      "hash": "sha256:d1cb14ffbea3d5f7ae5c7ea7b03d96dd006f6d8baa5bff594d419a23d5ae7c4f",
       "redaction_status": "not_redacted_local_static_site",
       "retention_class": "repo_dogfood_artifact",
       "unavailable_reason": null,
       "related_flow_state": null,
       "creation_tool": "allie-report-writer",
-      "timestamp": "2026-06-21T15:50:50.841644+00:00"
+      "timestamp": "2026-06-22T13:28:27.983561+00:00"
     },
     {
       "id": "review-focus-1",
       "type": "screenshot",
       "path": "artifacts/review-focus-1.png",
-      "hash": "sha256:8dd77667e85077cec30ba817176742425ef08aaf08c0b33a2e03dd1c509c9c9d",
+      "hash": "sha256:4e5e1c4e1c9dd5b18a7006cbf22d8073dce8268f8ededb502ac2c196a5c85456",
       "redaction_status": "not_redacted_local",
       "retention_class": "local_review",
       "unavailable_reason": null,
       "related_flow_state": null,
       "creation_tool": "allie-agentic-gateway",
-      "timestamp": "2026-06-21T15:52:22.760059+00:00"
+      "timestamp": "2026-06-22T13:29:18.841435+00:00"
     },
     {
       "id": "review-focus-2",
       "type": "screenshot",
       "path": "artifacts/review-focus-2.png",
-      "hash": "sha256:c24ff1b7f6c28cebc75ca8680e379c60c9588b1ebf5acec45411e84a1473751f",
+      "hash": "sha256:408a3baf472d8b716eb6f85dca9835472f9490ac7e7418a0b3495147b514471a",
       "redaction_status": "not_redacted_local",
       "retention_class": "local_review",
       "unavailable_reason": null,
       "related_flow_state": null,
       "creation_tool": "allie-agentic-gateway",
-      "timestamp": "2026-06-21T15:52:22.760059+00:00"
+      "timestamp": "2026-06-22T13:29:18.841435+00:00"
     },
     {
       "id": "review-focus-3",
       "type": "screenshot",
       "path": "artifacts/review-focus-3.png",
-      "hash": "sha256:a67e02a6d8b438d06227e4481a1cfe0a1c6cafe45b49c21a09cb3a9e98a4434b",
+      "hash": "sha256:f67c39ec17e7ca7620f535e767c66d674a390786ebdce6e462645b7dab770808",
       "redaction_status": "not_redacted_local",
       "retention_class": "local_review",
       "unavailable_reason": null,
       "related_flow_state": null,
       "creation_tool": "allie-agentic-gateway",
-      "timestamp": "2026-06-21T15:52:22.760059+00:00"
+      "timestamp": "2026-06-22T13:29:18.841435+00:00"
     },
     {
       "id": "review-focus-clip",
       "type": "video_clip",
       "path": "artifacts/review-focus-clip.webm",
-      "hash": "sha256:08ff5c92a7901e94250951f9effc3e8e8d5b1b622e6fb5c6103e1ccc660871de",
+      "hash": "sha256:35cc7a1a9cf6fb11649d34e592dd3161571b80982dc6a2e0fd2debfbd1d16390",
       "redaction_status": "not_redacted_local",
       "retention_class": "local_review",
       "unavailable_reason": null,
       "related_flow_state": null,
       "creation_tool": "allie-agentic-gateway",
-      "timestamp": "2026-06-21T15:52:22.760059+00:00"
+      "timestamp": "2026-06-22T13:29:18.841435+00:00"
     },
     {
       "id": "review-motion-clip",
       "type": "video_clip",
       "path": "artifacts/review-motion-clip.webm",
-      "hash": "sha256:0724802d518abe282fea69037a398bd6cf323bfa6d6fdddd79f50a66bf4e5960",
+      "hash": "sha256:d8eb77d87f6d3cd3430927ffdc7694d9f96e64b706f69c5ff4ce234fd2ab6213",
       "redaction_status": "not_redacted_local",
       "retention_class": "local_review",
       "unavailable_reason": null,
       "related_flow_state": null,
       "creation_tool": "allie-agentic-gateway",
-      "timestamp": "2026-06-21T15:52:22.760059+00:00"
+      "timestamp": "2026-06-22T13:29:18.841435+00:00"
     }
   ],
   "findings": [
@@ -384,7 +384,7 @@
         "trace-home"
       ],
       "suggested_remediation": "Review axe rule color-contrast in the linked raw axe JSON and rerun the replay command.",
-      "replay_command": "cargo run --locked -- run --manifest .allie/verify/latest/flow/generated-flow.yml --out .allie/verify/latest/run"
+      "replay_command": "cargo run --locked -- run --manifest /tmp/allie-motion-verify/flow/generated-flow.yml --out /tmp/allie-motion-verify/run"
     }
   ],
   "verdicts": [
@@ -467,10 +467,10 @@
     },
     {
       "obligation": "wcag22-aa:1.3.2-meaningful-sequence",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "pass",
+      "confidence": "agent_high",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -478,10 +478,10 @@
     },
     {
       "obligation": "wcag22-aa:1.3.3-sensory-characteristics",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "pass",
+      "confidence": "agent_high",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -489,10 +489,10 @@
     },
     {
       "obligation": "wcag22-aa:1.3.4-orientation",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "pass",
+      "confidence": "agent_high",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -557,10 +557,10 @@
     },
     {
       "obligation": "wcag22-aa:1.4.5-images-of-text",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "pass",
+      "confidence": "agent_high",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -579,10 +579,10 @@
     },
     {
       "obligation": "wcag22-aa:1.4.11-non-text-contrast",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "fail",
+      "confidence": "agent_high",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -601,10 +601,10 @@
     },
     {
       "obligation": "wcag22-aa:1.4.13-content-on-hover-or-focus",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "pass",
+      "confidence": "agent_high",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -623,10 +623,10 @@
     },
     {
       "obligation": "wcag22-aa:2.1.2-no-keyboard-trap",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "pass",
+      "confidence": "agent_high",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -645,10 +645,10 @@
     },
     {
       "obligation": "wcag22-aa:2.2.1-timing-adjustable",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "pass",
+      "confidence": "agent_high",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -656,10 +656,10 @@
     },
     {
       "obligation": "wcag22-aa:2.2.2-pause-stop-hide",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "fail",
+      "confidence": "agent_high",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -667,10 +667,10 @@
     },
     {
       "obligation": "wcag22-aa:2.3.1-three-flashes-or-below-threshold",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "pass",
+      "confidence": "agent_high",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -700,10 +700,10 @@
     },
     {
       "obligation": "wcag22-aa:2.4.3-focus-order",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "pass",
+      "confidence": "agent_high",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -733,10 +733,10 @@
     },
     {
       "obligation": "wcag22-aa:2.4.6-headings-and-labels",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "pass",
+      "confidence": "agent_high",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -744,10 +744,10 @@
     },
     {
       "obligation": "wcag22-aa:2.4.7-focus-visible",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "pass",
+      "confidence": "agent_high",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -755,10 +755,10 @@
     },
     {
       "obligation": "wcag22-aa:2.4.11-focus-not-obscured-minimum",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "pass",
+      "confidence": "agent_high",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -766,10 +766,10 @@
     },
     {
       "obligation": "wcag22-aa:2.5.1-pointer-gestures",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "pass",
+      "confidence": "agent_high",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -799,10 +799,10 @@
     },
     {
       "obligation": "wcag22-aa:2.5.4-motion-actuation",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "pass",
+      "confidence": "agent_high",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -843,10 +843,10 @@
     },
     {
       "obligation": "wcag22-aa:3.1.2-language-of-parts",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "pass",
+      "confidence": "agent_high",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -865,10 +865,10 @@
     },
     {
       "obligation": "wcag22-aa:3.2.2-on-input",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "pass",
+      "confidence": "agent_high",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -898,10 +898,10 @@
     },
     {
       "obligation": "wcag22-aa:3.2.6-consistent-help",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "pass",
+      "confidence": "agent_medium",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -986,10 +986,10 @@
     },
     {
       "obligation": "wcag22-aa:4.1.3-status-messages",
-      "status": "needs_review",
-      "confidence": "requires_human_or_agent_review",
+      "status": "pass",
+      "confidence": "agent_high",
       "evidence_class": "agentic",
-      "source": "allie-agentic-review-queue",
+      "source": "allie-agentic-review:google/gemini-3.5-flash",
       "affected_states": [
         "home"
       ],
@@ -1056,222 +1056,222 @@
   "agentic_assessments": [
     {
       "obligation": "wcag22-aa:1.3.2-meaningful-sequence",
-      "assessment": "likely_pass",
-      "rationale": "The page has a simple, clear visual hierarchy with the site name 'PHAEDRUS' at the top, followed by navigation links (misty step, github, email), and a quote with attribution at the bottom. The reading order appears logical and meaningful.",
-      "reviewer_guidance": "Use a screen reader or inspect the DOM to verify that the reading order matches the visual presentation: header/title, navigation links, quote, and attribution in that sequence.",
-      "confidence": "agent_inferred",
+      "assessment": "pass",
+      "rationale": "The layout is extremely simple and linear, flowing naturally from the header and navigation links down to the quote at the bottom.",
+      "reviewer_guidance": "Verify using a screen reader or by disabling CSS to ensure the reading order matches the visual order (Header -> Links -> Quote).",
+      "confidence": "high",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:1.3.3-sensory-characteristics",
-      "assessment": "likely_pass",
-      "rationale": "The visible content does not appear to rely solely on sensory characteristics like shape, size, visual location, orientation, or sound to convey information. Navigation links are labeled with text ('misty step', 'github', 'email').",
-      "reviewer_guidance": "Review all instructions and content on the page to confirm no references like 'click the round button' or 'use the icon on the right' exist without additional text labels or context.",
-      "confidence": "agent_inferred",
+      "assessment": "pass",
+      "rationale": "There are no instructions or content elements that rely solely on sensory characteristics like shape, size, visual location, or sound to be understood.",
+      "reviewer_guidance": "Confirm that no instructions on the page require the user to distinguish elements based solely on visual characteristics (e.g., 'click the sun icon on the right').",
+      "confidence": "high",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:1.3.4-orientation",
-      "assessment": "needs_human",
-      "rationale": "The page layout appears simple and could work in both portrait and landscape orientations, but this cannot be definitively determined from a single static screenshot.",
-      "reviewer_guidance": "Test the page by rotating the device or resizing the browser window to both portrait and landscape orientations to verify content is not restricted to a single display orientation and remains functional in both.",
-      "confidence": "agent_inferred",
+      "assessment": "pass",
+      "rationale": "The page design is simple and responsive, with no indication that it restricts its display to a single orientation (portrait or landscape).",
+      "reviewer_guidance": "Rotate the device or simulate mobile orientation changes in developer tools to ensure the page displays correctly in both portrait and landscape modes.",
+      "confidence": "high",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:1.4.11-non-text-contrast",
-      "assessment": "needs_human",
-      "rationale": "The page contains icons (building/briefcase, github logo, email envelope, and sun/theme toggle) that appear to be user interface components. The contrast of these icons against the light background needs measurement to verify 3:1 ratio.",
-      "reviewer_guidance": "Use a color contrast analyzer to measure the contrast ratio between the icon colors and the background. Check all interactive icons including the navigation icons and the sun/theme toggle in the top right to ensure they meet the 3:1 minimum contrast ratio.",
-      "confidence": "agent_inferred",
+      "assessment": "fail",
+      "rationale": "The light gray icons (briefcase, GitHub, envelope, and sun/theme switcher) on the white background have very low contrast, visually appearing well below the required 3:1 ratio.",
+      "reviewer_guidance": "Use a color contrast analyzer tool to measure the contrast ratio of the icons (e.g., the sun icon and social icons) against the white background to confirm they meet the 3:1 threshold.",
+      "confidence": "high",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:1.4.12-text-spacing",
-      "assessment": "needs_human",
-      "rationale": "The text appears properly spaced in the default view, but compliance requires testing whether the page remains functional when users apply custom text spacing via CSS overrides.",
-      "reviewer_guidance": "Apply the following CSS overrides and verify no content is cut off or overlaps: line-height to 1.5x font size, paragraph spacing to 2x font size, letter spacing to 0.12x font size, and word spacing to 0.16x font size.",
-      "confidence": "agent_inferred",
+      "assessment": "inconclusive",
+      "rationale": "Whether the text spacing can be adjusted without loss of content or functionality cannot be determined from a static screenshot.",
+      "reviewer_guidance": "Apply custom CSS to increase line height, paragraph spacing, letter spacing, and word spacing to the minimum WCAG requirements and verify that no text overlaps or becomes clipped.",
+      "confidence": "not_observed",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:1.4.4-resize-text",
-      "assessment": "needs_human",
-      "rationale": "The page layout appears simple and could potentially scale well, but actual testing at 200% zoom is required to verify text remains readable and functionality is preserved.",
-      "reviewer_guidance": "Use browser zoom to increase text size to 200% and verify all text remains visible and readable without horizontal scrolling (in a 1280px wide viewport), and that no functionality is lost.",
-      "confidence": "agent_inferred",
+      "assessment": "inconclusive",
+      "rationale": "Text resizing capabilities and potential clipping or overlapping cannot be verified from a static screenshot.",
+      "reviewer_guidance": "Zoom the browser to 200% and verify that all text scales up correctly without clipping, overlapping, or losing functionality.",
+      "confidence": "not_observed",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:1.4.5-images-of-text",
-      "assessment": "likely_pass",
-      "rationale": "The 'PHAEDRUS' heading and all other visible text appear to be actual text rather than images of text. The icons are graphical elements serving as UI components, not text rendered as images.",
-      "reviewer_guidance": "Inspect the page source to confirm the 'PHAEDRUS' heading and all other text elements are implemented as actual text (HTML/CSS) rather than image files. Verify using browser developer tools or by attempting to select the text.",
-      "confidence": "agent_inferred",
+      "assessment": "pass",
+      "rationale": "All text on the page, including the header 'PHAEDRUS' and the quote, appears to be actual renderable text rather than images of text.",
+      "reviewer_guidance": "Attempt to select or highlight the text on the page to confirm it is actual text and not an image.",
+      "confidence": "high",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:2.1.4-character-key-shortcuts",
-      "assessment": "needs_human",
-      "rationale": "Cannot determine from the screenshot whether single-character keyboard shortcuts are implemented on this page, as this requires testing keyboard interaction.",
-      "reviewer_guidance": "Test the page by pressing individual character keys (letters, numbers, punctuation) to determine if any trigger actions. If single-character shortcuts exist, verify they can be turned off, remapped, or are only active when the relevant component has focus.",
-      "confidence": "agent_inferred",
+      "assessment": "inconclusive",
+      "rationale": "It is impossible to determine if any single-character keyboard shortcuts are active on this page from a static screenshot.",
+      "reviewer_guidance": "Press various single-character keys on your keyboard to check if they trigger any actions, and if they do, verify if they can be turned off or remapped.",
+      "confidence": "not_observed",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:2.4.5-multiple-ways",
-      "assessment": "needs_human",
-      "rationale": "The screenshot shows a simple landing page with three navigation links ('misty step', 'github', 'email') but does not reveal whether multiple ways exist to locate content within the website. This requires inspection of the full site structure.",
-      "reviewer_guidance": "Navigate through the website to verify if there are at least two ways to locate pages (e.g., navigation menu, search function, sitemap, or related links). Check if this is a single-page site (which would be exempt) or a multi-page site requiring multiple navigation methods.",
-      "confidence": "agent_inferred",
+      "assessment": "inconclusive",
+      "rationale": "It is impossible to determine if this is a single-page site or part of a larger multi-page site requiring alternative navigation methods (like a search bar or sitemap) from a single screenshot.",
+      "reviewer_guidance": "Check if the website has multiple pages. If it does, verify if there are at least two ways to locate a page (e.g., navigation menu, sitemap, or search).",
+      "confidence": "not_observed",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:2.4.6-headings-and-labels",
-      "assessment": "likely_pass",
-      "rationale": "The visible page has a clear heading 'PHAEDRUS' and descriptive link labels ('misty step', 'github', 'email'). The quote attribution 'Tim Berners-Lee' is also clearly labeled.",
-      "reviewer_guidance": "Inspect the HTML to verify that 'PHAEDRUS' uses proper heading markup (h1-h6) and that all interactive elements have appropriate accessible names. Verify that the icon-based links have proper aria-labels or text alternatives.",
-      "confidence": "agent_inferred",
+      "assessment": "pass",
+      "rationale": "The visible labels ('misty step', 'github', 'email') clearly describe the purpose of the links, and 'PHAEDRUS' serves as an identifiable main heading/branding.",
+      "reviewer_guidance": "Confirm that the headings and labels remain descriptive and are coded correctly as headings (e.g., <h1>) in the DOM.",
+      "confidence": "high",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:2.5.1-pointer-gestures",
-      "assessment": "likely_pass",
-      "rationale": "The visible interface contains only simple links and a theme toggle button that appear to require single-pointer activation (clicks/taps) with no complex path-based or multipoint gestures visible.",
-      "reviewer_guidance": "Test all interactive elements to confirm they can be activated with single-pointer clicks/taps without requiring path-based gestures like swiping or dragging. Verify the sun/moon icon toggle works with simple clicks.",
-      "confidence": "agent_inferred",
+      "assessment": "pass",
+      "rationale": "The interface consists of simple links and a toggle button, which do not require multipoint or path-based gestures to operate.",
+      "reviewer_guidance": "Verify that all interactive elements can be operated with a single pointer click without requiring complex gestures like swiping or dragging.",
+      "confidence": "high",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:2.5.2-pointer-cancellation",
-      "assessment": "needs_human",
-      "rationale": "The page contains clickable links and a theme toggle button, but the screenshot alone cannot determine whether activation occurs on down-event or up-event, or if there are mechanisms to abort or undo actions.",
-      "reviewer_guidance": "Test each interactive element (links and theme toggle) to verify that activation completes on the up-event (mouseup/touchend) rather than down-event, or that there is a mechanism to abort the action before completion. Verify users can move pointer away before release to cancel.",
-      "confidence": "agent_inferred",
+      "assessment": "inconclusive",
+      "rationale": "Pointer cancellation behavior (such as triggering actions on the 'up-event' rather than the 'down-event') cannot be verified from a static screenshot.",
+      "reviewer_guidance": "Click on the links and the theme toggle button to ensure that the click event triggers on mouseup/pointerup, allowing the user to cancel the action by dragging the pointer away before releasing.",
+      "confidence": "not_observed",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:2.5.3-label-in-name",
-      "assessment": "needs_human",
-      "rationale": "The visible text labels ('misty step', 'github', 'email') appear next to icons, but the screenshot cannot confirm whether the programmatic accessible names match or include these visible text labels.",
-      "reviewer_guidance": "Use browser developer tools or screen reader to inspect the accessible name of each link and button. Verify that the accessible name includes the visible text label (e.g., 'misty step', 'github', 'email') as part of the name.",
-      "confidence": "agent_inferred",
+      "assessment": "inconclusive",
+      "rationale": "The programmatic accessible names of the text links ('misty step', 'github', 'email') and the icon button cannot be inspected without access to the DOM.",
+      "reviewer_guidance": "Inspect the DOM to ensure that the accessible name (e.g., aria-label or alt text) of each interactive element contains the visible text string ('misty step', 'github', 'email').",
+      "confidence": "not_observed",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:2.5.8-target-size-minimum",
-      "assessment": "needs_human",
-      "rationale": "The page contains several clickable targets (three navigation links and a theme toggle), but precise measurements cannot be determined from the screenshot alone to verify they meet the 24x24 CSS pixel minimum.",
-      "reviewer_guidance": "Measure the click/tap target size of each interactive element using browser developer tools. Verify each target is at least 24x24 CSS pixels, or has sufficient spacing from other targets, or meets one of the allowed exceptions.",
-      "confidence": "agent_inferred",
+      "assessment": "inconclusive",
+      "rationale": "The theme toggle icon and text links appear to have sufficient spacing, but their exact target sizes and spacing parameters (minimum 24x24 CSS pixels or sufficient clearance) must be measured programmatically.",
+      "reviewer_guidance": "Use browser developer tools to measure the bounding box of the theme toggle icon and the text links to ensure they meet the 24x24 CSS pixel minimum size or have sufficient spacing/clearance.",
+      "confidence": "not_observed",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:3.1.2-language-of-parts",
-      "assessment": "likely_pass",
-      "rationale": "All visible text content appears to be in English with no obvious passages in other languages that would require lang attribute changes.",
-      "reviewer_guidance": "Inspect the HTML source to verify the page has a lang attribute set on the html element. Check if there are any text passages in languages different from the primary page language that should have lang attributes.",
-      "confidence": "agent_inferred",
+      "assessment": "pass",
+      "rationale": "All text content on the page, including the quote at the bottom, is written in English, meaning there are no foreign language parts requiring individual lang attributes.",
+      "reviewer_guidance": "Verify that the primary language of the document is declared in the HTML tag and that no foreign phrases requiring separate language attributes are present.",
+      "confidence": "high",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:3.2.1-on-focus",
-      "assessment": "needs_human",
-      "rationale": "The page contains focusable elements (links and theme toggle button), but the screenshot cannot demonstrate whether receiving focus triggers any unexpected context changes.",
-      "reviewer_guidance": "Use keyboard navigation to tab through all interactive elements. Verify that simply focusing on links, buttons, or form controls does not automatically trigger navigation, form submission, or other significant context changes without user activation.",
-      "confidence": "agent_inferred",
+      "assessment": "inconclusive",
+      "rationale": "Behavior upon receiving focus (such as unexpected context changes or automatic redirection) cannot be evaluated from a static image.",
+      "reviewer_guidance": "Tab through the interactive elements (links and theme toggle) using a keyboard to confirm that focusing on any element does not automatically trigger a change of context (like opening a new window or submitting a form).",
+      "confidence": "not_observed",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:3.2.2-on-input",
-      "assessment": "needs_human",
-      "rationale": "The page shows navigation links and a theme toggle button, but I cannot determine from a static screenshot whether changing input settings causes unexpected context changes.",
-      "reviewer_guidance": "Test the theme toggle button (sun icon) and any other interactive elements to verify that changing their state does not automatically submit forms, significantly change page content, or cause unexpected navigation without user warning.",
-      "confidence": "agent_inferred",
+      "assessment": "pass",
+      "rationale": "There are no form inputs or interactive controls on this page that would trigger an unexpected change of context upon user input.",
+      "reviewer_guidance": "Interact with the theme toggle and any other interactive elements to confirm that activating them does not unexpectedly change the context (such as redirecting the user or submitting a form without warning).",
+      "confidence": "high",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:3.2.3-consistent-navigation",
-      "assessment": "needs_human",
-      "rationale": "Only a single page view is visible, making it impossible to assess whether navigation mechanisms are repeated consistently across multiple pages.",
-      "reviewer_guidance": "Navigate to other pages in the website and verify that the navigation links ('misty step', 'github', 'email') appear in the same relative order and location across all pages.",
-      "confidence": "agent_inferred",
+      "assessment": "inconclusive",
+      "rationale": "Consistent navigation cannot be evaluated from a single screenshot of a single page, as it requires comparing navigation menus across multiple pages of the website.",
+      "reviewer_guidance": "Navigate to other pages on the website and verify that the navigation links (such as 'misty step', 'github', 'email') remain in the same relative order.",
+      "confidence": "not_observed",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:3.2.4-consistent-identification",
-      "assessment": "needs_human",
-      "rationale": "While icons are visible for navigation items (briefcase, GitHub logo, email), I cannot assess from a single page whether these same components are identified consistently across multiple pages.",
-      "reviewer_guidance": "Check other pages in the website to confirm that identical functional components (like the GitHub link icon, email icon, and theme toggle) use the same icons, labels, and identification throughout the site.",
-      "confidence": "agent_inferred",
+      "assessment": "inconclusive",
+      "rationale": "Consistent identification of components with identical functionality cannot be verified from a single page screenshot.",
+      "reviewer_guidance": "Check other pages on the site to ensure that icons, buttons, or links with the same functionality (e.g., the theme toggle or social links) are labeled and identified consistently.",
+      "confidence": "not_observed",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:3.2.6-consistent-help",
-      "assessment": "likely_pass",
-      "rationale": "No help mechanisms are visible on this page, and the criterion only applies if help mechanisms exist across multiple pages.",
-      "reviewer_guidance": "Verify whether any help mechanisms (contact links, help documentation, chatbots, etc.) exist on other pages of the site. If they do exist, confirm they appear in the same relative order across pages.",
-      "confidence": "agent_inferred",
+      "assessment": "pass",
+      "rationale": "There are no self-service help options (like contact details, FAQs, or chat support) displayed on this page that would require consistent placement across the site.",
+      "reviewer_guidance": "If help features are added to other pages of the site, verify that they occur in the same relative order and location.",
+      "confidence": "medium",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:4.1.3-status-messages",
-      "assessment": "needs_human",
-      "rationale": "The static screenshot shows no visible status messages, but I cannot determine if status messages appear during interaction or if they would be properly announced to assistive technologies.",
-      "reviewer_guidance": "Interact with all page elements (especially the theme toggle) and use a screen reader to verify that any status messages (success confirmations, error messages, loading states) are programmatically announced using appropriate ARIA live regions or role='status'.",
-      "confidence": "agent_inferred",
+      "assessment": "pass",
+      "rationale": "There are no dynamic status messages, search results, or success/error alerts present on this static landing page.",
+      "reviewer_guidance": "Verify if any dynamic actions (like copying an email address or toggling the theme) trigger status messages, and ensure they are announced by screen readers using appropriate ARIA live regions.",
+      "confidence": "high",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": []
     },
     {
       "obligation": "wcag22-aa:1.4.13-content-on-hover-or-focus",
-      "assessment": "needs_human",
-      "rationale": "The images show focus states on interactive elements but do not reveal whether any additional content appears on hover or focus that would need to be dismissible, hoverable, or persistent.",
-      "reviewer_guidance": "Interact with all focusable elements (links, buttons) using both keyboard and mouse hover to check if any additional content (tooltips, popovers, etc.) appears. If so, verify it can be dismissed without moving focus, that pointer can move over the new content, and that it persists until dismissed or focus/hover is removed.",
-      "confidence": "agent_inferred",
+      "assessment": "pass",
+      "rationale": "There is no additional content (like tooltips or submenus) triggered solely by hover or focus on these interactive elements.",
+      "reviewer_guidance": "Hover over and focus on each link to confirm no hidden content or tooltips appear that violate dismissibility, hoverability, or persistence.",
+      "confidence": "high",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": [
         {
           "kind": "screenshot",
@@ -1297,12 +1297,12 @@
     },
     {
       "obligation": "wcag22-aa:2.1.2-no-keyboard-trap",
-      "assessment": "needs_human",
-      "rationale": "The focus montage shows focus moving between elements (theme toggle, misty step, github, email links), but static images cannot confirm whether focus can freely exit all components or if any keyboard traps exist.",
-      "reviewer_guidance": "Use keyboard navigation (Tab, Shift+Tab, arrow keys, Escape) to navigate through all interactive elements on the page. Verify that focus can move forward and backward through all elements without getting trapped, and that any modal or custom components can be exited using standard keyboard commands.",
-      "confidence": "agent_inferred",
+      "assessment": "pass",
+      "rationale": "The focus moves sequentially through the interactive elements without getting stuck on any single control.",
+      "reviewer_guidance": "Tab through all elements using the keyboard to ensure focus can exit each element and return to the browser address bar.",
+      "confidence": "high",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": [
         {
           "kind": "screenshot",
@@ -1328,12 +1328,12 @@
     },
     {
       "obligation": "wcag22-aa:2.4.11-focus-not-obscured-minimum",
-      "assessment": "likely_pass",
-      "rationale": "All focused elements visible in the images (theme toggle button, misty step link, github link) appear fully visible with clear focus indicators and no overlapping content obscuring them.",
-      "reviewer_guidance": "Navigate through all focusable elements using keyboard and verify that when each element receives focus, at least part of the focus indicator is visible and not hidden behind sticky headers, footers, modals, or other overlaying content.",
-      "confidence": "agent_inferred",
+      "assessment": "pass",
+      "rationale": "The focus indicators are fully visible and not covered or obscured by any other page elements or overlays.",
+      "reviewer_guidance": "Verify that no sticky headers, footers, or overlays obscure the focus ring when navigating the page.",
+      "confidence": "high",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": [
         {
           "kind": "screenshot",
@@ -1359,12 +1359,12 @@
     },
     {
       "obligation": "wcag22-aa:2.4.3-focus-order",
-      "assessment": "likely_pass",
-      "rationale": "The focus sequence shown in the images progresses logically from right to left across the navigation links (theme toggle, misty step, github, email), which appears to follow a meaningful reading order for the page layout.",
-      "reviewer_guidance": "Use Tab key to navigate through all interactive elements and verify the focus order matches the visual layout and logical reading order. Confirm that focus moves through the theme toggle, then the three navigation links in sequence, without unexpected jumps.",
-      "confidence": "agent_inferred",
+      "assessment": "pass",
+      "rationale": "The focus order follows a logical, expected reading flow: first to the theme toggle, then sequentially through the navigation links from left to right.",
+      "reviewer_guidance": "Tab through the page and verify that the focus order matches the visual layout and logical reading order.",
+      "confidence": "high",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": [
         {
           "kind": "screenshot",
@@ -1390,12 +1390,12 @@
     },
     {
       "obligation": "wcag22-aa:2.4.7-focus-visible",
-      "assessment": "likely_pass",
-      "rationale": "Each focused element in the images shows a clear black rectangular outline/border around it (visible on theme toggle button, misty step link, and github link), providing visible focus indication.",
-      "reviewer_guidance": "Navigate through all interactive elements using keyboard (Tab key) and verify that each element displays a clearly visible focus indicator when it receives focus. Check that the black border outline is consistently applied and has sufficient contrast against all backgrounds.",
-      "confidence": "agent_inferred",
+      "assessment": "pass",
+      "rationale": "Each focused element displays a highly visible, solid black rectangular border that clearly contrasts with the light background.",
+      "reviewer_guidance": "Tab through the page to confirm that every interactive element has a clear, visible focus indicator.",
+      "confidence": "high",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": [
         {
           "kind": "screenshot",
@@ -1421,12 +1421,12 @@
     },
     {
       "obligation": "wcag22-aa:2.2.1-timing-adjustable",
-      "assessment": "likely_pass",
-      "rationale": "The visible page appears to be a static landing page with a heading 'PHAEDRUS', navigation links (misty step, github, email), a sun icon, and a quote. No time limits or timed interactions are visible in the static screenshot.",
-      "reviewer_guidance": "Interact with all elements on the page to verify no time limits exist. Check if any forms, sessions, or timed processes are present that would require user action within a specific timeframe.",
-      "confidence": "agent_inferred",
+      "assessment": "pass",
+      "rationale": "There are no time limits imposed on user activity or interaction on this page.",
+      "reviewer_guidance": "Verify that no timeout or countdown exists that restricts user input or forces a page refresh.",
+      "confidence": "high",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": [
         {
           "kind": "clip",
@@ -1437,12 +1437,12 @@
     },
     {
       "obligation": "wcag22-aa:2.2.2-pause-stop-hide",
-      "assessment": "needs_human",
-      "rationale": "The static screenshot shows no obvious moving, blinking, or auto-updating content, but the sun icon in the top-right could potentially be animated or the page may have animations not visible in a still image.",
-      "reviewer_guidance": "Load the page in a browser and observe for at least 10 seconds to check if any content moves, blinks, scrolls automatically, or updates. Specifically check if the sun icon animates or if any transitions occur on page load or hover states.",
-      "confidence": "agent_inferred",
+      "assessment": "fail",
+      "rationale": "The page features an automatic text-typing animation ('At the center of your being...') that starts automatically and lacks any mechanism to pause, stop, or hide the movement.",
+      "reviewer_guidance": "Interact with the page to confirm if there is any keyboard-accessible control or setting to stop the typing animation.",
+      "confidence": "high",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": [
         {
           "kind": "clip",
@@ -1453,12 +1453,12 @@
     },
     {
       "obligation": "wcag22-aa:2.3.1-three-flashes-or-below-threshold",
-      "assessment": "needs_human",
-      "rationale": "The static screenshot shows no flashing content, but flashing can only be definitively assessed by observing the live page in motion.",
-      "reviewer_guidance": "Load the page and observe all content for at least 5 seconds, checking for any flashing elements. Use browser developer tools or automated flash detection tools to verify no content flashes more than three times per second.",
-      "confidence": "agent_inferred",
+      "assessment": "pass",
+      "rationale": "The typing animation is smooth and gradual, presenting no rapid flashing or strobing effects.",
+      "reviewer_guidance": "Confirm visually that no elements flash more than three times per second.",
+      "confidence": "high",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": [
         {
           "kind": "clip",
@@ -1469,12 +1469,12 @@
     },
     {
       "obligation": "wcag22-aa:2.5.4-motion-actuation",
-      "assessment": "likely_pass",
-      "rationale": "The visible interface shows standard clickable links and a theme toggle icon with no indication of device motion or gesture-based functionality. All interactions appear to be through conventional pointer/keyboard input.",
-      "reviewer_guidance": "Test the page on a mobile device with motion sensors. Verify that no functionality requires shaking, tilting, or moving the device. Confirm all features work with standard touch/click interactions only.",
-      "confidence": "agent_inferred",
+      "assessment": "pass",
+      "rationale": "The page does not require or respond to physical device motion or gestures.",
+      "reviewer_guidance": "Verify that no features rely on shaking, tilting, or moving the device to operate.",
+      "confidence": "high",
       "provider": "openrouter",
-      "model": "anthropic/claude-sonnet-4.5",
+      "model": "google/gemini-3.5-flash",
       "media": [
         {
           "kind": "clip",
@@ -1485,8 +1485,8 @@
     }
   ],
   "replay": {
-    "command": "cargo run --locked -- run --manifest .allie/verify/latest/flow/generated-flow.yml --out .allie/verify/latest/run",
-    "manifest_path": ".allie/verify/latest/flow/generated-flow.yml",
+    "command": "cargo run --locked -- run --manifest /tmp/allie-motion-verify/flow/generated-flow.yml --out /tmp/allie-motion-verify/run",
+    "manifest_path": "/tmp/allie-motion-verify/flow/generated-flow.yml",
     "environment_requirements": [
       "npm install",
       "npx playwright install chromium"

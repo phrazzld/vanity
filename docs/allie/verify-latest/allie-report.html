@@ -60,6 +60,8 @@ figcaption{padding:11px 13px;font-size:12.5px;color:#5a6473}
 .chip-nottested{background:#efe6fb;color:#6d28b8}
 .chip-method{background:#eef1f7;color:#42506a}
 .chip-level{background:#eef1f7;color:#5a6473}
+.chip-ai{box-shadow:inset 0 0 0 1px rgba(0,0,0,.16)}
+.chip sup{font-size:.72em;font-weight:800;margin-left:1px}
 .why{margin:11px 0 0;color:#39414f;font-size:14px}
 .crit-foot{margin-top:12px;display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:#5a6473;align-items:center}
 .ai{margin-top:13px;border:1px solid #e3e7f3;border-radius:11px;background:#f7f8fd;padding:13px 15px}
@@ -93,8 +95,8 @@ table.matrix th{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;c
   <main>
     <p class="eyebrow">Allie · host-agnostic verification</p>
     <h1>Verification</h1>
-    <p class="sub">Manifest <code>.allie/manifest.yml</code> · output <code>.allie/verify/latest</code> · evidence visibility, not a legal compliance guarantee</p>
-    <div class="banner b-fail"><span class="dot" style="background:#d23b30"></span><div><h2>Status: Blocked</h2><p>Release projection blocked on evidence: deterministic failures 1, scripted failures 0, infrastructure failures 0, missing required evidence 0, WCAG failing criteria 1.</p></div></div>
+    <p class="sub">Manifest <code>.allie/manifest.yml</code> · output <code>/tmp/allie-motion-verify</code> · evidence visibility, not a legal compliance guarantee</p>
+    <div class="banner b-fail"><span class="dot" style="background:#d23b30"></span><div><h2>Status: Blocked</h2><p>Release projection blocked on evidence: deterministic failures 1, scripted failures 0, infrastructure failures 0, missing required evidence 0, WCAG failing criteria 3.</p></div></div>
     <section>
       <h2 class="sh">Blocking evidence</h2>
       <div class="statgrid">
@@ -102,13 +104,13 @@ table.matrix th{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;c
         <div class="stat"><div class="n">0</div><div class="k">Scripted fails</div></div>
         <div class="stat"><div class="n">0</div><div class="k">Infra fails</div></div>
         <div class="stat"><div class="n">0</div><div class="k">Missing evidence</div></div>
-        <div class="stat"><div class="n">35</div><div class="k">Review needed</div></div>
+        <div class="stat"><div class="n">15</div><div class="k">Review needed</div></div>
       </div>
       <h2 class="sh">WCAG 2.2 matrix</h2>
       <div class="statgrid">
-        <div class="stat"><div class="n">11</div><div class="k">Pass</div></div>
-        <div class="stat"><div class="n">1</div><div class="k">Fail</div></div>
-        <div class="stat"><div class="n">30</div><div class="k">Needs review</div></div>
+        <div class="stat"><div class="n">29</div><div class="k">Pass</div></div>
+        <div class="stat"><div class="n">3</div><div class="k">Fail</div></div>
+        <div class="stat"><div class="n">10</div><div class="k">Needs review</div></div>
         <div class="stat"><div class="n">0</div><div class="k">Not-tested obligations</div></div>
         <div class="stat"><div class="n">0</div><div class="k">WCAG not tested</div></div>
       </div>

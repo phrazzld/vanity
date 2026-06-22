@@ -19,7 +19,13 @@ model:
     - openrouter
   zdr_required: false
   provider: openrouter
-  model: anthropic/claude-sonnet-4.5
+  # Latest-gen vision reviewer. In an A/B on this site's captured evidence under a
+  # forced pass/fail prompt, 3.5 Flash was the ONLY model that correctly failed the
+  # real low-contrast icons; every cheaper option (Gemini 3.1 Flash-Lite, Qwen3-VL
+  # 235B/32B, GLM-4.6V) rubber-stamped it as pass. DeepSeek is text-only (no vision).
+  # ~$0.08/PR. "low" thinking keeps full coverage + decisiveness without medium's cost.
+  model: google/gemini-3.5-flash
+  reasoning_effort: low
   api_key_env: OPENROUTER_API_KEY
   base_url: https://openrouter.ai/api/v1
   max_model_calls: 8

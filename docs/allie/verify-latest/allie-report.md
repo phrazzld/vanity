@@ -2,14 +2,14 @@
 
 Status: `blocked`
 
-Why: Release projection blocked on evidence: deterministic failures 1, scripted failures 0, infrastructure failures 0, missing required evidence 0, WCAG failing criteria 1.
+Why: Release projection blocked on evidence: deterministic failures 1, scripted failures 0, infrastructure failures 0, missing required evidence 0, WCAG failing criteria 3.
 
 Manifest: `.allie/manifest.yml`
 Project root: `/Users/phaedrus/Development/vanity`
 
 Blocking evidence: deterministic failures 1, scripted failures 0, infrastructure failures 0, missing required evidence 0.
-Review evidence: review-needed obligations 35, not-tested obligations 0.
-WCAG matrix: pass 11, fail 1, needs review 30, not tested 0.
+Review evidence: review-needed obligations 15, not-tested obligations 0.
+WCAG matrix: pass 29, fail 3, needs review 10, not tested 0.
 
 Reporters:
 - JSON summary: `reporters/allie-report.json`
