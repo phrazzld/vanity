@@ -39,3 +39,8 @@ Rules for this site:
 ## Deploy
 
 Push to master. Vercel serves the directory statically (`vercel.json`).
+
+## CI
+
+Run `./scripts/check.sh` before claiming done. The GitHub workflow calls the
+same script; change the script first if the gate needs to change.
