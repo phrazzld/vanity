@@ -7,6 +7,10 @@ This file provides guidance to Codex when working in this repository.
 Personal site for phaedrus.io. Static HTML, CSS, and vanilla JavaScript. There
 is no build step and no package manager dependency.
 
+Read `VISION.md` before changing the page scope, deployed content surface, or
+the boundary between personal pointer page, local drafts, and Misty Step
+portfolio material.
+
 The production surface is intentionally small: one full-viewport page with the
 name row, three links, and a quote colophon. Do not add a bio page, project
 grid, theme picker, or scrolling content here unless the operator explicitly
