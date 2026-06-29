@@ -1,0 +1,11 @@
+{
+  "finding": {
+    "confidence": "agent_inferred",
+    "description": "Offline vision review recommends human confirmation for visual order, focus visibility, and label usefulness.",
+    "standard_obligation": "wcag22-aa:2.4.7-focus-visible",
+    "title": "Agentic visual review requested"
+  },
+  "model": "allie-vision-fixture",
+  "provider": "offline-recorded",
+  "schema": "allie.offline-model-response.v0"
+}

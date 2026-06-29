@@ -1,0 +1,976 @@
+{
+  "schema": "allie.evidence.v0",
+  "summary": {
+    "status": "fail",
+    "exit_code": 1,
+    "deterministic_failures": 1,
+    "scripted_failures": 0,
+    "infrastructure_failures": 0,
+    "states_captured": 1,
+    "failure_class": "blocking-finding"
+  },
+  "run": {
+    "id": "run-1781922616710",
+    "started_at": "2026-06-20T02:30:16.708629+00:00",
+    "finished_at": "2026-06-20T02:30:18.462712+00:00",
+    "allie_version": "0.1.0",
+    "git_sha": "cbcfd21",
+    "git_branch": "deliver/full-backlog",
+    "ci_provider": null,
+    "actor": "phaedrus"
+  },
+  "target": {
+    "base_url": "http://127.0.0.1:4174",
+    "environment": "local",
+    "app_name": "Vanity",
+    "auth_profile": "none",
+    "credential_provider": {
+      "provider": "none",
+      "env": null,
+      "required": false,
+      "status": "not_required"
+    },
+    "flow_manifest": "/Users/phaedrus/Development/vanity/.allie/manifest.yml"
+  },
+  "policy": {
+    "profile": "wcag22-aa",
+    "blocking_classes": [
+      "deterministic",
+      "scripted"
+    ],
+    "worker_timeout_ms": 30000,
+    "model_provider_allowlist": [],
+    "model_status": "disabled",
+    "zdr_required": true,
+    "redaction_profile": "not_redacted_local_static_site",
+    "budget": {
+      "model_calls": 0,
+      "max_states": 1
+    }
+  },
+  "coverage": {
+    "routes_visited": [
+      "/"
+    ],
+    "surfaces_discovered": [
+      "Vanity"
+    ],
+    "flows_exercised": [
+      "vanity-home-flow"
+    ],
+    "states_captured": [
+      "home"
+    ],
+    "state_metadata": [
+      {
+        "id": "home",
+        "route": "/",
+        "url": "http://127.0.0.1:4174/",
+        "title": "Phaedrus",
+        "http_status": 200,
+        "keyboard_focus_order": [
+          "button#mode:Toggle color mode",
+          "a:misty step",
+          "a:github",
+          "a:email",
+          "body"
+        ],
+        "console_errors": [
+          "Failed to load resource: the server responded with a status of 404 (File not found)"
+        ],
+        "network_errors": [],
+        "state_errors": []
+      }
+    ],
+    "standards_obligations_evaluated": [
+      "wcag22-aa:1.1.1-non-text-content",
+      "wcag22-aa:1.2.1-audio-only-and-video-only-prerecorded",
+      "wcag22-aa:1.2.2-captions-prerecorded",
+      "wcag22-aa:1.2.3-audio-description-or-media-alternative-prerecorded",
+      "wcag22-aa:1.2.4-captions-live",
+      "wcag22-aa:1.2.5-audio-description-prerecorded",
+      "wcag22-aa:1.3.1-info-and-relationships",
+      "wcag22-aa:1.3.2-meaningful-sequence",
+      "wcag22-aa:1.3.3-sensory-characteristics",
+      "wcag22-aa:1.3.4-orientation",
+      "wcag22-aa:1.3.5-identify-input-purpose",
+      "wcag22-aa:1.4.1-use-of-color",
+      "wcag22-aa:1.4.10-reflow",
+      "wcag22-aa:1.4.10-zoom-reflow",
+      "wcag22-aa:1.4.11-non-text-contrast",
+      "wcag22-aa:1.4.12-text-spacing",
+      "wcag22-aa:1.4.13-content-on-hover-or-focus",
+      "wcag22-aa:1.4.2-audio-control",
+      "wcag22-aa:1.4.3-contrast-minimum",
+      "wcag22-aa:1.4.4-resize-text",
+      "wcag22-aa:1.4.5-images-of-text",
+      "wcag22-aa:2.1.1-keyboard",
+      "wcag22-aa:2.1.1-keyboard-traversal",
+      "wcag22-aa:2.1.2-no-keyboard-trap",
+      "wcag22-aa:2.1.4-character-key-shortcuts",
+      "wcag22-aa:2.2.1-timing-adjustable",
+      "wcag22-aa:2.2.2-pause-stop-hide",
+      "wcag22-aa:2.2.2-reduced-motion",
+      "wcag22-aa:2.3.1-three-flashes-or-below-threshold",
+      "wcag22-aa:2.4.1-bypass-blocks",
+      "wcag22-aa:2.4.11-focus-not-obscured-minimum",
+      "wcag22-aa:2.4.2-page-titled",
+      "wcag22-aa:2.4.3-focus-order",
+      "wcag22-aa:2.4.4-link-purpose-in-context",
+      "wcag22-aa:2.4.5-multiple-ways",
+      "wcag22-aa:2.4.6-headings-and-labels",
+      "wcag22-aa:2.4.7-focus-visible",
+      "wcag22-aa:2.5.1-pointer-gestures",
+      "wcag22-aa:2.5.2-pointer-cancellation",
+      "wcag22-aa:2.5.3-label-in-name",
+      "wcag22-aa:2.5.4-motion-actuation",
+      "wcag22-aa:2.5.7-dragging-movements",
+      "wcag22-aa:2.5.8-target-size-minimum",
+      "wcag22-aa:3.1.1-language-of-page",
+      "wcag22-aa:3.1.2-language-of-parts",
+      "wcag22-aa:3.2.1-on-focus",
+      "wcag22-aa:3.2.2-on-input",
+      "wcag22-aa:3.2.3-consistent-navigation",
+      "wcag22-aa:3.2.4-consistent-identification",
+      "wcag22-aa:3.2.6-consistent-help",
+      "wcag22-aa:3.3.1-error-identification",
+      "wcag22-aa:3.3.2-labels-or-instructions",
+      "wcag22-aa:3.3.3-error-suggestion",
+      "wcag22-aa:3.3.4-error-prevention-legal-financial-data",
+      "wcag22-aa:3.3.7-redundant-entry",
+      "wcag22-aa:3.3.8-accessible-authentication-minimum",
+      "wcag22-aa:4.1.2-name-role-value",
+      "wcag22-aa:4.1.3-status-messages",
+      "wcag22-aa:human-assistive-technology-review",
+      "wcag22-aa:human-content-meaning"
+    ],
+    "obligations_not_tested": [
+      "wcag22-aa:1.4.10-reflow",
+      "wcag22-aa:1.4.10-zoom-reflow",
+      "wcag22-aa:2.1.1-keyboard-traversal",
+      "wcag22-aa:2.2.2-reduced-motion"
+    ],
+    "obligations_requiring_human_review": [
+      "wcag22-aa:1.2.1-audio-only-and-video-only-prerecorded",
+      "wcag22-aa:1.2.2-captions-prerecorded",
+      "wcag22-aa:1.2.3-audio-description-or-media-alternative-prerecorded",
+      "wcag22-aa:1.2.4-captions-live",
+      "wcag22-aa:1.2.5-audio-description-prerecorded",
+      "wcag22-aa:1.3.2-meaningful-sequence",
+      "wcag22-aa:1.3.3-sensory-characteristics",
+      "wcag22-aa:1.3.4-orientation",
+      "wcag22-aa:1.3.5-identify-input-purpose",
+      "wcag22-aa:1.4.11-non-text-contrast",
+      "wcag22-aa:1.4.12-text-spacing",
+      "wcag22-aa:1.4.13-content-on-hover-or-focus",
+      "wcag22-aa:1.4.2-audio-control",
+      "wcag22-aa:1.4.4-resize-text",
+      "wcag22-aa:1.4.5-images-of-text",
+      "wcag22-aa:2.1.2-no-keyboard-trap",
+      "wcag22-aa:2.1.4-character-key-shortcuts",
+      "wcag22-aa:2.2.1-timing-adjustable",
+      "wcag22-aa:2.2.2-pause-stop-hide",
+      "wcag22-aa:2.3.1-three-flashes-or-below-threshold",
+      "wcag22-aa:2.4.11-focus-not-obscured-minimum",
+      "wcag22-aa:2.4.3-focus-order",
+      "wcag22-aa:2.4.5-multiple-ways",
+      "wcag22-aa:2.4.6-headings-and-labels",
+      "wcag22-aa:2.4.7-focus-visible",
+      "wcag22-aa:2.5.1-pointer-gestures",
+      "wcag22-aa:2.5.2-pointer-cancellation",
+      "wcag22-aa:2.5.3-label-in-name",
+      "wcag22-aa:2.5.4-motion-actuation",
+      "wcag22-aa:2.5.7-dragging-movements",
+      "wcag22-aa:2.5.8-target-size-minimum",
+      "wcag22-aa:3.1.1-language-of-page",
+      "wcag22-aa:3.1.2-language-of-parts",
+      "wcag22-aa:3.2.1-on-focus",
+      "wcag22-aa:3.2.2-on-input",
+      "wcag22-aa:3.2.3-consistent-navigation",
+      "wcag22-aa:3.2.4-consistent-identification",
+      "wcag22-aa:3.2.6-consistent-help",
+      "wcag22-aa:3.3.1-error-identification",
+      "wcag22-aa:3.3.3-error-suggestion",
+      "wcag22-aa:3.3.4-error-prevention-legal-financial-data",
+      "wcag22-aa:3.3.7-redundant-entry",
+      "wcag22-aa:3.3.8-accessible-authentication-minimum",
+      "wcag22-aa:4.1.3-status-messages",
+      "wcag22-aa:human-assistive-technology-review",
+      "wcag22-aa:human-content-meaning"
+    ]
+  },
+  "artifacts": [
+    {
+      "id": "axe-json-home",
+      "type": "axe_json",
+      "path": "artifacts/axe-home.json",
+      "hash": "sha256:c91631a7d4d28b9439e2fad93d47c9763e855e53dd6831ae742400469739f576",
+      "redaction_status": "not_redacted_local_static_site",
+      "retention_class": "repo_dogfood_artifact",
+      "unavailable_reason": null,
+      "related_flow_state": "home",
+      "creation_tool": "playwright-axe-worker",
+      "timestamp": "2026-06-20T02:30:18.462712+00:00"
+    },
+    {
+      "id": "screenshot-home",
+      "type": "screenshot",
+      "path": "artifacts/home.png",
+      "hash": "sha256:7ab41c3ce6e267feb965b314ec638be034258ec1a25c93543d9f5673fed8b9ad",
+      "redaction_status": "not_redacted_local_static_site",
+      "retention_class": "repo_dogfood_artifact",
+      "unavailable_reason": null,
+      "related_flow_state": "home",
+      "creation_tool": "playwright-axe-worker",
+      "timestamp": "2026-06-20T02:30:18.462712+00:00"
+    },
+    {
+      "id": "dom-snapshot-home",
+      "type": "dom_snapshot",
+      "path": "artifacts/dom-home.html",
+      "hash": "sha256:870e375a745e2032df4fcf6380d82ac628c30aeb89376faaf7e12c7fe616b3cd",
+      "redaction_status": "not_redacted_local_static_site",
+      "retention_class": "repo_dogfood_artifact",
+      "unavailable_reason": null,
+      "related_flow_state": "home",
+      "creation_tool": "playwright-axe-worker",
+      "timestamp": "2026-06-20T02:30:18.462712+00:00"
+    },
+    {
+      "id": "accessibility-tree-home",
+      "type": "accessibility_tree",
+      "path": "artifacts/accessibility-tree-home.json",
+      "hash": "sha256:29ba9e931fdcc193f20e2850febbd69eb74c85392b2bd5e59ec57ccbcb3913f8",
+      "redaction_status": "not_redacted_local_static_site",
+      "retention_class": "repo_dogfood_artifact",
+      "unavailable_reason": null,
+      "related_flow_state": "home",
+      "creation_tool": "playwright-axe-worker",
+      "timestamp": "2026-06-20T02:30:18.462712+00:00"
+    },
+    {
+      "id": "report-html",
+      "type": "html_report",
+      "path": "report.html",
+      "hash": "sha256:663761d720e1da9f7c14f912d6e84d90b33faae32fb62be93339aee6231da74f",
+      "redaction_status": "not_redacted_local_static_site",
+      "retention_class": "repo_dogfood_artifact",
+      "unavailable_reason": null,
+      "related_flow_state": null,
+      "creation_tool": "allie-report-writer",
+      "timestamp": "2026-06-20T02:30:18.462712+00:00"
+    }
+  ],
+  "findings": [
+    {
+      "id": "home-axe-color-contrast-1",
+      "title": "Elements must meet minimum color contrast ratio thresholds",
+      "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+      "evidence_class": "deterministic",
+      "standard_obligation": "wcag22-aa:1.4.3-contrast-minimum",
+      "severity": "serious",
+      "status": "fail",
+      "confidence": "machine_proven",
+      "source": "axe-core",
+      "affected_route": "/",
+      "affected_state": "home",
+      "artifact_refs": [
+        "axe-json-home",
+        "screenshot-home",
+        "dom-snapshot-home",
+        "accessibility-tree-home"
+      ],
+      "suggested_remediation": "Review axe rule color-contrast in the linked raw axe JSON and rerun the replay command.",
+      "replay_command": "cargo run --locked -- run --manifest /Users/phaedrus/Development/vanity/.allie/manifest.yml --out /Users/phaedrus/Development/vanity/docs/allie/run"
+    }
+  ],
+  "verdicts": [
+    {
+      "obligation": "wcag22-aa:1.1.1-non-text-content",
+      "status": "pass",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core-success-criterion-tags",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.2.1-audio-only-and-video-only-prerecorded",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.2.2-captions-prerecorded",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.2.3-audio-description-or-media-alternative-prerecorded",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.2.4-captions-live",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.2.5-audio-description-prerecorded",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.3.1-info-and-relationships",
+      "status": "pass",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core-success-criterion-tags",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.3.2-meaningful-sequence",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.3.3-sensory-characteristics",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.3.4-orientation",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.3.5-identify-input-purpose",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.1-use-of-color",
+      "status": "pass",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core-success-criterion-tags",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.2-audio-control",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.3-contrast-minimum",
+      "status": "fail",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": [
+        "home-axe-color-contrast-1"
+      ]
+    },
+    {
+      "obligation": "wcag22-aa:1.4.4-resize-text",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.5-images-of-text",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.10-reflow",
+      "status": "not_tested",
+      "confidence": "script_observed",
+      "evidence_class": "scripted",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.11-non-text-contrast",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.12-text-spacing",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.13-content-on-hover-or-focus",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.1.1-keyboard",
+      "status": "pass",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core-success-criterion-tags",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.1.2-no-keyboard-trap",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.1.4-character-key-shortcuts",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.2.1-timing-adjustable",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.2.2-pause-stop-hide",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.3.1-three-flashes-or-below-threshold",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.4.1-bypass-blocks",
+      "status": "pass",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core-success-criterion-tags",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.4.2-page-titled",
+      "status": "pass",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core-success-criterion-tags",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.4.3-focus-order",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.4.4-link-purpose-in-context",
+      "status": "pass",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core-success-criterion-tags",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.4.5-multiple-ways",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.4.6-headings-and-labels",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.4.7-focus-visible",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.4.11-focus-not-obscured-minimum",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.5.1-pointer-gestures",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.5.2-pointer-cancellation",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.5.3-label-in-name",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.5.4-motion-actuation",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.5.7-dragging-movements",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.5.8-target-size-minimum",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.1.1-language-of-page",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.1.2-language-of-parts",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.2.1-on-focus",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.2.2-on-input",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.2.3-consistent-navigation",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.2.4-consistent-identification",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.2.6-consistent-help",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.3.1-error-identification",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.3.2-labels-or-instructions",
+      "status": "pass",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core-success-criterion-tags",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.3.3-error-suggestion",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.3.4-error-prevention-legal-financial-data",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.3.7-redundant-entry",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:3.3.8-accessible-authentication-minimum",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:4.1.2-name-role-value",
+      "status": "pass",
+      "confidence": "machine_proven",
+      "evidence_class": "deterministic",
+      "source": "axe-core-success-criterion-tags",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:4.1.3-status-messages",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.1.1-keyboard-traversal",
+      "status": "not_tested",
+      "confidence": "script_observed",
+      "evidence_class": "scripted",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:1.4.10-zoom-reflow",
+      "status": "not_tested",
+      "confidence": "script_observed",
+      "evidence_class": "scripted",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:2.2.2-reduced-motion",
+      "status": "not_tested",
+      "confidence": "script_observed",
+      "evidence_class": "scripted",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:human-content-meaning",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    },
+    {
+      "obligation": "wcag22-aa:human-assistive-technology-review",
+      "status": "needs_review",
+      "confidence": "requires_human_or_agent_review",
+      "evidence_class": "human",
+      "source": "allie-obligation-profile",
+      "affected_states": [
+        "home"
+      ],
+      "finding_refs": []
+    }
+  ],
+  "waivers": [],
+  "review": [],
+  "replay": {
+    "command": "cargo run --locked -- run --manifest /Users/phaedrus/Development/vanity/.allie/manifest.yml --out /Users/phaedrus/Development/vanity/docs/allie/run",
+    "manifest_path": "/Users/phaedrus/Development/vanity/.allie/manifest.yml",
+    "environment_requirements": [
+      "npm install",
+      "npx playwright install chromium"
+    ],
+    "credential_profile": "none",
+    "browser": {
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "color_scheme": "light",
+      "reduced_motion": "reduce",
+      "locale": "en-US",
+      "zoom": 1.0
+    },
+    "seed_data": [
+      "checked-in fixture fixtures/login"
+    ],
+    "known_nondeterminism": []
+  }
+}

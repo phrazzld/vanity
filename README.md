@@ -1,30 +1,36 @@
 # vanity
 
 Personal site for phaedrus.io: one full-viewport screen, no scrolling.
-Name, bio, and three links. The design system is
+Name, three links, and a quote colophon. The design system is
 [`@misty-step/aesthetic`](https://github.com/misty-step/aesthetic),
 imported from the CDN pinned to a release tag.
 
 ## Development
 
 ```bash
-open index.html        # or any static server
-./scripts/check.sh     # repo-owned CI gate
+# Static preview
+python3 -m http.server 4173        # or: open index.html
+
+# Repo-owned CI gate (runs node --test)
+./scripts/check.sh
 ```
 
 ## Conventions
 
-- Everything lives in `index.html`. The only JavaScript is the ~20-line
-  light/dark toggle (defaults to the system preference, persists to
-  `localStorage` as `ae-mode`).
+- `index.html` owns the page structure, site glue CSS, light/dark toggle, and
+  quote typewriter.
+- `quotes.js` is the generated daybook quote pool for the footer colophon.
+- `canary-observer.js` and `api/` provide lightweight browser-error telemetry.
 - Stay inside the system: one accent instance (the misty step link), no
   page scrolling, no new font sizes, no decoration.
 - To upgrade the design system, bump the pinned tag in the jsdelivr
   `<link>`.
+- `bio.md` and `explore/` are local draft material unless explicitly promoted.
 
 ## Deploy
 
-Push to master. Vercel serves the directory statically (`vercel.json`).
+Push to `master`. Vercel serves the directory statically with the API functions
+declared by `vercel.json`.
 
 ## CI
 

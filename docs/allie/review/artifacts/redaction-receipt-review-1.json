@@ -1,0 +1,13 @@
+{
+  "artifacts_reviewed": [
+    "axe-json-home",
+    "screenshot-home",
+    "dom-snapshot-home",
+    "accessibility-tree-home",
+    "report-html"
+  ],
+  "egress": "none-offline-recorded",
+  "schema": "allie.redaction-receipt.v0",
+  "source_packet": "/Users/phaedrus/Development/vanity/docs/allie/run/evidence.json",
+  "status": "redacted"
+}

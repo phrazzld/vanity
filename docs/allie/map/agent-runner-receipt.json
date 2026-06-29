@@ -1,0 +1,33 @@
+{
+  "schema": "allie.agent-runner-receipt.v0",
+  "runner": "opencode",
+  "mode": "isolated-agent-advisory-pass",
+  "status": "agent_timeout_local_fallback",
+  "capabilities": [
+    "headless-opencode-run",
+    "custom-agent-compatible",
+    "session-transcript-capture",
+    "isolated-advisory-context"
+  ],
+  "command": [
+    "opencode",
+    "run",
+    "--format",
+    "json",
+    "--dir",
+    "/Users/phaedrus/Development/vanity/docs/allie/map/agent-context",
+    "Review `agent-map-prompt.md` and `map-seed.json` in this directory. Return concise JSON with missing surfaces, workflows, and WCAG review hypotheses. Do not edit files."
+  ],
+  "prompt_path": "agent-context/agent-map-prompt.md",
+  "transcript_path": "opencode-map-transcript.txt",
+  "warnings": [
+    "Core map generation is deterministic; agent findings are advisory until promoted by evidence.",
+    "opencode exceeded 120000 ms; deterministic local map was kept"
+  ],
+  "sources": [
+    "https://www.w3.org/WAI/WCAG22/wcag.json",
+    "https://www.w3.org/WAI/test-evaluate/",
+    "https://opencode.ai/docs/cli/",
+    "https://opencode.ai/docs/server/"
+  ]
+}

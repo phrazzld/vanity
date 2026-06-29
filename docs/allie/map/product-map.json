@@ -1,0 +1,111 @@
+{
+  "schema": "allie.product-map.v0",
+  "generated_at": "2026-06-20T02:30:00.527209+00:00",
+  "source_manifest": "/Users/phaedrus/Development/vanity/.allie/manifest.yml",
+  "project_root": "/Users/phaedrus/Development/vanity",
+  "app_name": "Vanity",
+  "environment": "local",
+  "policy_profile": "wcag22-aa",
+  "target": {
+    "kind": "web",
+    "fixture_dir": null,
+    "base_url": "http://127.0.0.1:4174"
+  },
+  "agent": {
+    "schema": "allie.agent-runner-receipt.v0",
+    "runner": "opencode",
+    "mode": "isolated-agent-advisory-pass",
+    "status": "agent_timeout_local_fallback",
+    "capabilities": [
+      "headless-opencode-run",
+      "custom-agent-compatible",
+      "session-transcript-capture",
+      "isolated-advisory-context"
+    ],
+    "command": [
+      "opencode",
+      "run",
+      "--format",
+      "json",
+      "--dir",
+      "/Users/phaedrus/Development/vanity/docs/allie/map/agent-context",
+      "Review `agent-map-prompt.md` and `map-seed.json` in this directory. Return concise JSON with missing surfaces, workflows, and WCAG review hypotheses. Do not edit files."
+    ],
+    "prompt_path": "agent-context/agent-map-prompt.md",
+    "transcript_path": "opencode-map-transcript.txt",
+    "warnings": [
+      "Core map generation is deterministic; agent findings are advisory until promoted by evidence.",
+      "opencode exceeded 120000 ms; deterministic local map was kept"
+    ],
+    "sources": [
+      "https://www.w3.org/WAI/WCAG22/wcag.json",
+      "https://www.w3.org/WAI/test-evaluate/",
+      "https://opencode.ai/docs/cli/",
+      "https://opencode.ai/docs/server/"
+    ]
+  },
+  "standards": {
+    "id": "wcag22-aa",
+    "source_urls": [
+      "https://www.w3.org/WAI/WCAG22/wcag.json",
+      "https://www.w3.org/TR/WCAG22/",
+      "https://www.w3.org/WAI/test-evaluate/conformance/wcag-em/"
+    ],
+    "total_obligations": 55,
+    "methods": {
+      "axe": 10,
+      "human_review": 44,
+      "scripted": 1
+    }
+  },
+  "surfaces": [
+    {
+      "id": "home",
+      "title": "Vanity homepage",
+      "routes": [
+        "/"
+      ],
+      "files": [
+        "index.html"
+      ],
+      "services": [
+        "web-app",
+        "static-html"
+      ],
+      "user_stories": [
+        "As a user, I can complete Vanity homepage",
+        "As an application user, I can reach index.html"
+      ],
+      "workflow_refs": [
+        "vanity-home-flow"
+      ],
+      "evidence_refs": [
+        "home"
+      ],
+      "confidence": "operator_supplied",
+      "review_status": "generated_needs_operator_review",
+      "provenance": [
+        "/Users/phaedrus/Development/vanity/.allie/manifest.yml",
+        "/Users/phaedrus/Development/vanity/index.html"
+      ]
+    }
+  ],
+  "workflows": [
+    {
+      "id": "vanity-home-flow",
+      "title": "Vanity homepage",
+      "surface_refs": [
+        "home"
+      ],
+      "user_story": "As an accessibility compliance engineer, I can assess Vanity across the discovered product surface.",
+      "generated_flow_manifest": "generated-flow.yml",
+      "states": [
+        "home"
+      ]
+    }
+  ],
+  "open_questions": [
+    "Model review is disabled in the manifest; human or agentic review findings remain uncollected until review runs.",
+    "Verify generated user stories and workflow names with the application owner before using them as release blockers."
+  ]
+}

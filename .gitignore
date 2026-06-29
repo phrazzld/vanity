@@ -5,6 +5,14 @@
 .polish-sessions
 .design-catalogue/
 experiments/
+explore/
+bio.md
+.pi/
+test-results/
 .claude/launch.json
 .spellbook/
 backlog.d/_cycles/
+
+# Allie: CI-regenerated evidence + cloned tooling (the manifest stays tracked).
+.allie/verify/
+.allie/tooling/
