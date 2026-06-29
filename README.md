@@ -9,10 +9,10 @@ imported from the CDN pinned to a release tag.
 
 ```bash
 # Static preview
-python3 -m http.server 4173
+python3 -m http.server 4173        # or: open index.html
 
-# Structural gate
-node --test
+# Repo-owned CI gate (runs node --test)
+./scripts/check.sh
 ```
 
 ## Conventions
@@ -31,3 +31,8 @@ node --test
 
 Push to `master`. Vercel serves the directory statically with the API functions
 declared by `vercel.json`.
+
+## CI
+
+`./scripts/check.sh` is the canonical gate. GitHub Actions is a thin caller
+around that script so local and hosted validation stay aligned.
