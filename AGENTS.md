@@ -1,11 +1,15 @@
 # AGENTS.md
 
-This file provides guidance to Codex when working in this repository.
+This file provides guidance to Codex and Claude Code (claude.ai/code) when
+working with code in this repository.
 
 ## Overview
 
 Personal site for phaedrus.io. Static HTML, CSS, and vanilla JavaScript. There
-is no build step and no package manager dependency.
+is no build step and no package manager dependency. One full-viewport screen,
+no scrolling. The runtime surface is `index.html`, the generated quote pool in
+`quotes.js`, and the lightweight Canary observer in `canary-observer.js` plus
+`api/`.
 
 Read `VISION.md` before changing the page scope, deployed content surface, or
 the boundary between personal pointer page, local drafts, and Misty Step
@@ -47,23 +51,45 @@ server when browser QA must include `/api/*`.
 
 ## Design Law
 
-The design system is `@misty-step/aesthetic`, imported from the pinned jsdelivr
-tag in `index.html`. Do not inline or fork the design system in this repo;
-change the package, tag a release, and bump the CDN pin.
+The design system is [`@misty-step/aesthetic`](https://github.com/misty-step/aesthetic),
+imported from the pinned jsdelivr tag in `index.html`. Do not inline or fork
+the design system in this repo; change the package, tag a release, and bump
+the CDN pin.
 
 Rules for this site:
 
 - The page remains one `.ae-screen`: everything fits the viewport on desktop
   and mobile. No page scrolling.
-- Content stays tight: name row, link row, quote colophon. No generated copy
-  about the design itself.
-- The footer quote area reserves enough height for the longest quote in
-  `quotes.js`. If the generated quote pool grows, adjust the `.q-foot`
-  reserve and the matching docs together.
+- Content stays tight: the name row (PHAEDRUS + the mode toggle), one link
+  row, and the colophon. There is no bio (the operator writes any future copy
+  himself). Do not grow a projects list here; that lives on Misty Step. No
+  generated copy about the design itself.
+- The link row is one species: 13px chrome register, lowercase words, Lucide
+  icons leading (briefcase for misty step, github, mail). Email is
+  phraznikov@gmail.com.
+- The footer is the colophon: a typewriter cycling through the quotes
+  collection (`quotes.js`, generated from the daybook). The footer quote area
+  reserves enough height for the longest quote in the pool — the `.q-foot`
+  min-height reserve is sized to the longest quote (~250 chars) so typing
+  never moves the stage. If the generated quote pool grows and a longer quote
+  lands, adjust the `.q-foot` reserve and the matching docs together. The
+  attribution sits on its own line; reduced motion gets a full quote at rest.
+  No copyright line.
+- One font size; hierarchy via the registers (`.ae-name`, `.ae-lede`,
+  `.ae-dim`). Motion only as the kit's built-in feedback plus the colophon
+  typewriter.
+- Left-aligned everything. No meta copy about the design itself. No
+  fabricated claims, no em-dashes.
 - Drafts and design explorations are local scratch by default. Keep `bio.md`
-  and `explore/` out of the deployable Git surface unless explicitly promoted.
+  and `explore/` out of the deployable Git surface unless explicitly promoted
+  — do not publish or promote them without an explicit operator request.
 
 ## Deploy
 
 Push to `master`. Vercel serves the directory statically with the serverless
 API functions declared by `vercel.json`.
+
+## CI
+
+Run `./scripts/check.sh` before claiming done. The GitHub workflow calls the
+same script; change the script first if the gate needs to change.
