@@ -17,6 +17,17 @@ test("quote pool entries are renderable quote and attribution pairs", () => {
   }
 });
 
+test("attributions have balanced quotation marks", () => {
+  for (const [quote, attribution] of window.QUOTES) {
+    const marks = (attribution.match(/"/g) || []).length;
+    assert.equal(
+      marks % 2,
+      0,
+      `unbalanced quotation marks in attribution "${attribution}" (quote: ${quote.slice(0, 40)}...)`,
+    );
+  }
+});
+
 test("quote pool stays within the documented footer reserve", () => {
   const longest = window.QUOTES.reduce(
     (max, [quote, attribution]) =>
