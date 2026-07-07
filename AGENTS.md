@@ -38,9 +38,11 @@ server when browser QA must include `/api/*`.
 
 ## Architecture
 
-- `index.html` - The page structure, site glue CSS, theme toggle, and quote
-  typewriter runtime.
+- `index.html` - The page structure, site glue CSS, theme toggle, and the
+  colophon bootstrap that wires the typewriter and its pause/play control.
 - `quotes.js` - Generated daybook quote pool consumed by the colophon.
+- `colophon.js` - The quote typewriter runtime with a pausable state machine
+  (WCAG 2.2.2). Loaded as a browser global and exported for node tests.
 - `canary-observer.js` - Browser error observer. It must never break the page
   it observes.
 - `api/canary-config.js` - Vercel function that exposes only the public Canary
@@ -74,6 +76,8 @@ Rules for this site:
   never moves the stage. If the generated quote pool grows and a longer quote
   lands, adjust the `.q-foot` reserve and the matching docs together. The
   attribution sits on its own line; reduced motion gets a full quote at rest.
+  A chrome pause/play control in the colophon stops the typewriter on demand
+  (WCAG 2.2.2); reduced motion keeps the quote at rest and hides the control.
   No copyright line.
 - One font size; hierarchy via the registers (`.ae-name`, `.ae-lede`,
   `.ae-dim`). Motion only as the kit's built-in feedback plus the colophon
