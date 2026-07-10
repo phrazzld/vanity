@@ -1,0 +1,15 @@
+environment:
+  CANARY_API_KEY: "${CANARY_API_KEY}"
+  CANARY_ENDPOINT: "${CANARY_ENDPOINT}"
+  PUBLIC_CANARY_API_KEY: "${PUBLIC_CANARY_API_KEY}"
+  PUBLIC_CANARY_ENDPOINT: "${PUBLIC_CANARY_ENDPOINT}"
+  PUBLIC_CANARY_ENVIRONMENT: "${PUBLIC_CANARY_ENVIRONMENT}"
+packages:
+  - name: default
+    functions:
+      - name: canary-config
+        runtime: nodejs:22
+        web: true
+      - name: health
+        runtime: nodejs:22
+        web: true
