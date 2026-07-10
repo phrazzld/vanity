@@ -1,4 +1,4 @@
-const { health } = require("../lib/canary-contract");
+const { health } = require("../service/canary-contract");
 
 module.exports = function handler(_request, response) {
   response.setHeader("Cache-Control", "no-store");
