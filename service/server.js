@@ -20,11 +20,11 @@ function handler(request, response) {
   }
 
   const path = new URL(request.url || "/", "http://localhost").pathname;
-  if (path === "/api/canary-config") {
+  if (path === "/api/canary-config" || path === "/canary-config") {
     json(response, 200, config(), includeBody);
     return;
   }
-  if (path === "/api/health") {
+  if (path === "/api/health" || path === "/health") {
     json(response, 200, health(), includeBody);
     return;
   }
