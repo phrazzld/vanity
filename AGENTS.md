@@ -32,9 +32,9 @@ node --test
 
 Direct `file://` opens are acceptable for a quick layout check, but use HTTP
 for delivery QA so root-relative assets such as `/canary-observer.js` load
-normally. `python3 -m http.server` does not emulate Vercel functions; API
-handler behavior is covered by `node --test`, or by a Vercel-shaped local
-server when browser QA must include `/api/*`.
+normally. `python3 -m http.server` does not emulate the DigitalOcean sidecar;
+API handler behavior is covered by `node --test`, or by `service/server.js`
+when browser QA must include `/api/*`.
 
 ## Architecture
 
@@ -43,9 +43,10 @@ server when browser QA must include `/api/*`.
 - `quotes.js` - Generated daybook quote pool consumed by the colophon.
 - `canary-observer.js` - Browser error observer. It must never break the page
   it observes.
-- `api/canary-config.js` - Vercel function that exposes only the public Canary
+- `api/canary-config.js` - portable handler that exposes only the public Canary
   ingest key.
-- `api/health.js` - Vercel health function for Canary key configuration.
+- `api/health.js` - portable health handler for Canary key configuration.
+- `service/server.js` - DigitalOcean sidecar serving both API handlers.
 - `test/*.test.js` - Node test-runner coverage for the API and observer
   contracts.
 
@@ -86,8 +87,9 @@ Rules for this site:
 
 ## Deploy
 
-Push to `master`. Vercel serves the directory statically with the serverless
-API functions declared by `vercel.json`.
+Push to `master`. DigitalOcean serves the static directory and the Node
+sidecar in `service/`; the checked-in App Platform spec is maintained in the
+DigitalOcean migration workspace.
 
 ## CI
 

@@ -95,6 +95,23 @@ test("DigitalOcean service refuses to publish a server-equivalent browser key", 
   );
 });
 
+test("DigitalOcean defaults ignore retired Vercel environment hints", async () => {
+  await withEnv(
+    {
+      CANARY_ENDPOINT: "",
+      PUBLIC_CANARY_ENDPOINT: "",
+      PUBLIC_CANARY_ENVIRONMENT: "",
+      VERCEL_ENV: "preview",
+    },
+    async () => {
+      const config = JSON.parse((await request("/api/canary-config")).body);
+
+      assert.equal(config.environment, "production");
+      assert.equal(config.endpoint, "https://canary.mistystep.io");
+    },
+  );
+});
+
 test("DigitalOcean service rejects unrelated routes and write methods", async () => {
   assert.equal((await request("/api/missing")).status, 404);
   assert.equal((await request("/api/canary-config", "POST")).status, 405);
