@@ -29,8 +29,8 @@ python3 -m http.server 4173        # or: open index.html
 
 ## Deploy
 
-Push to `master`. Vercel serves the directory statically with the API functions
-declared by `vercel.json`.
+Push to `master`. DigitalOcean serves the static directory and the Node
+sidecar in `service/`.
 
 ## CI
 

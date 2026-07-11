@@ -13,14 +13,11 @@ function config(environment = process.env) {
 
   return {
     service: "vanity",
-    environment:
-      environment.PUBLIC_CANARY_ENVIRONMENT ||
-      environment.VERCEL_ENV ||
-      "production",
+    environment: environment.PUBLIC_CANARY_ENVIRONMENT || "production",
     endpoint: withoutTrailingSlash(
       environment.PUBLIC_CANARY_ENDPOINT ||
         environment.CANARY_ENDPOINT ||
-        "https://canary-obs.fly.dev",
+        "https://canary.mistystep.io",
     ),
     apiKey: browserKey && browserKey !== serverKey ? browserKey : null,
   };
