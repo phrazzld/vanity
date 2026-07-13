@@ -17,8 +17,11 @@ python3 -m http.server 4173        # or: open index.html
 
 ## Conventions
 
-- `index.html` owns the page structure, site glue CSS, light/dark toggle, and
-  quote typewriter.
+- `index.html` owns the page structure, site glue CSS, light/dark toggle,
+  and the colophon bootstrap (the typewriter runtime and its pause/play
+  control).
+- `colophon.js` is the quote typewriter runtime with a pausable state
+  machine (WCAG 2.2.2); `index.html` wires it to the colophon.
 - `quotes.js` is the generated daybook quote pool for the footer colophon.
 - `canary-observer.js` and `api/` provide lightweight browser-error telemetry.
 - Stay inside the system: one accent instance (the misty step link), no
