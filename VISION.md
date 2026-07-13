@@ -56,5 +56,5 @@ becoming the reason the site exists.
 - `README.md` gives the short development and deployment map.
 - `index.html`, `quotes.js`, `canary-observer.js`, and `api/` are the actual
   production surface.
-- `backlog.d/` tracks possible future work; it is not a license to expand the
+- Powder tracks possible future work; it is not a license to expand the
   page by default.
