@@ -38,8 +38,8 @@ when browser QA must include `/api/*`.
 
 ## Architecture
 
-- `index.html` - The page structure, site glue CSS, theme toggle, and quote
-  typewriter runtime.
+- `index.html` - The page structure, site glue CSS, theme toggle, ghost
+  watermark, and quote typewriter runtime.
 - `quotes.js` - Generated daybook quote pool consumed by the colophon.
 - `canary-observer.js` - Browser error observer. It must never break the page
   it observes.
@@ -68,6 +68,10 @@ Rules for this site:
 - The link row is one species: 13px chrome register, lowercase words, Lucide
   icons leading (briefcase for misty step, github, mail). Email is
   phraznikov@gmail.com.
+- The portrait is a ghost watermark: the inline SVG line-art symbol rendered
+  large (68vh, max 720px) behind the stage at 3.5% opacity, anchored
+  center-right. No inline portrait in the name row. No image file, no blend
+  mode — `fill: var(--ae-ink)` inherits ink and adapts to light/dark naturally.
 - The footer is the colophon: a typewriter cycling through the quotes
   collection (`quotes.js`, generated from the daybook). The footer quote area
   reserves enough height for the longest quote in the pool — the `.q-foot`

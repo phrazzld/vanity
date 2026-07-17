@@ -18,6 +18,7 @@ model:
   provider_allowlist:
     - openrouter
   zdr_required: false
+  redaction: none
   provider: openrouter
   # Latest-gen vision reviewer. In an A/B on this site's captured evidence under a
   # forced pass/fail prompt, 3.5 Flash was the ONLY model that correctly failed the

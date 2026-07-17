@@ -44,16 +44,15 @@ becoming the reason the site exists.
 
 ## Current Bets
 
-1. Keep the deployed surface to name, links, and colophon.
+1. Keep the deployed surface to name, ghost portrait, links, and colophon.
 2. Preserve enough quote reserve that the generated pool does not cause layout
    shift.
-3. Treat reading-list and `explore/` work as backlog or scratch until promoted.
+3. Treat `explore/` work as backlog or scratch until promoted.
 4. Use `node --test` as the structural gate for even small changes.
 
 ## Where The Depth Lives
 
 - `AGENTS.md` is the operating contract for agents and repo changes.
-- `README.md` gives the short development and deployment map.
 - `index.html`, `quotes.js`, `canary-observer.js`, and `api/` are the actual
   production surface.
 - Powder tracks possible future work; it is not a license to expand the
